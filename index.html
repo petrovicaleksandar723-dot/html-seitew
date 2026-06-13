@@ -1092,15 +1092,70 @@ footer {
   .stats-grid { grid-template-columns: 1fr }
   .stat-cell { border-right: none }
 }
+/* ============================================================
+   AYOCIN-STYLE EFFECTS
+   ============================================================ */
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body { height: auto }
+.lenis.lenis-smooth { scroll-behavior: auto !important }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain }
+.lenis.lenis-stopped { overflow: hidden }
+
+/* Film grain overlay */
+.grain {
+  position: fixed; inset: -50%; z-index: 9000;
+  pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift .7s steps(4) infinite;
+  will-change: transform;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0,0) }
+  25%  { transform: translate(-3%,2%) }
+  50%  { transform: translate(2%,-3%) }
+  75%  { transform: translate(-2%,-2%) }
+  100% { transform: translate(2%,3%) }
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  z-index: 9500; background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  transition: width .08s linear;
+}
+
+/* Line-mask text reveal (signature Ayocin headline move) */
+.line-mask { display: block; overflow: hidden; padding-bottom: .04em }
+.line-inner {
+  display: block;
+  transform: translateY(110%) rotate(3deg);
+  transition: transform .9s cubic-bezier(.16,1,.3,1);
+}
+.reveal-lines.in .line-inner { transform: translateY(0) rotate(0) }
+.reveal-lines.in .line-inner:nth-child(1) { transition-delay: .02s }
+.reveal-lines.in .line-mask:nth-child(2) .line-inner { transition-delay: .12s }
+.reveal-lines.in .line-mask:nth-child(3) .line-inner { transition-delay: .22s }
+
+/* Magnetic targets sit in a smoothing transform context */
+.mag { transition: transform .25s cubic-bezier(.16,1,.3,1); will-change: transform }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
+  .grain { display: none }
+  .line-inner { transform: none !important }
 }
 </style>
 </head>
 <body>
+
+<!-- ═══ FILM GRAIN + SCROLL PROGRESS ══════════ -->
+<div class="grain" aria-hidden="true"></div>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
 <!-- ═══ LOADER ═══════════════════════════════ -->
 <div id="loader" role="status" aria-label="Seite wird geladen">
@@ -1852,9 +1907,12 @@ footer {
 </footer>
 
 <!-- ═══ JAVASCRIPT ════════════════════════════ -->
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 <script>
 (function () {
   'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* LOADER */
   window.addEventListener('load', function () {
@@ -1993,6 +2051,102 @@ footer {
         form.style.display = 'none';
         formSuccess.classList.add('show');
       }, 900);
+    });
+  }
+
+  /* ═══ LENIS SMOOTH SCROLL + PROGRESS ═══ */
+  var progress = document.getElementById('scrollProgress');
+  var lenis = null;
+  if (typeof Lenis !== 'undefined' && !reduceMotion) {
+    lenis = new Lenis({
+      duration: 1.15,
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true,
+      lerp: 0.1
+    });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    lenis.on('scroll', function (e) {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      if (progress) progress.style.width = (max > 0 ? (e.scroll / max) * 100 : 0) + '%';
+    });
+  } else if (progress) {
+    /* Fallback progress without Lenis, rAF-throttled (no scroll listener thrash) */
+    var ticking = false;
+    function updateProgress() {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { requestAnimationFrame(updateProgress); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* Anchor links routed through Lenis for buttery jumps */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href');
+      if (id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      if (lenis) lenis.scrollTo(target, { offset: -20, duration: 1.3 });
+      else target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ═══ LINE-MASK HEADLINE REVEAL ═══ */
+  document.querySelectorAll('.sec-h2, .h1').forEach(function (h) {
+    var parts = h.innerHTML.split(/<br\s*\/?>/i);
+    h.innerHTML = '';
+    h.classList.add('reveal-lines');
+    h.classList.remove('rv', 'd1', 'd2', 'd3', 'd4');
+    parts.forEach(function (p) {
+      var mask = document.createElement('span');
+      mask.className = 'line-mask';
+      var inner = document.createElement('span');
+      inner.className = 'line-inner';
+      inner.innerHTML = p.trim();
+      mask.appendChild(inner);
+      h.appendChild(mask);
+    });
+  });
+  var lineObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); lineObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.reveal-lines').forEach(function (el) { lineObs.observe(el); });
+
+  /* ═══ MAGNETIC BUTTONS ═══ */
+  if (window.matchMedia('(pointer: fine)').matches && !reduceMotion) {
+    document.querySelectorAll('.btn, .nav-cta').forEach(function (el) {
+      el.classList.add('mag');
+      var strength = 0.4;
+      el.addEventListener('mousemove', function (ev) {
+        var r = el.getBoundingClientRect();
+        var x = ev.clientX - r.left - r.width / 2;
+        var y = ev.clientY - r.top - r.height / 2;
+        el.style.transform = 'translate(' + (x * strength) + 'px,' + (y * strength) + 'px)';
+      });
+      el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+    });
+  }
+
+  /* Hero room container parallax tilt (does not touch child float animations) */
+  if (room && window.matchMedia('(pointer: fine)').matches && !reduceMotion) {
+    var heroEl = document.getElementById('hero');
+    room.style.transition = 'transform .3s cubic-bezier(.16,1,.3,1)';
+    room.style.transformStyle = 'preserve-3d';
+    heroEl.addEventListener('mousemove', function (e) {
+      var r = heroEl.getBoundingClientRect();
+      var ox = (e.clientX - r.left - r.width / 2) / r.width;
+      var oy = (e.clientY - r.top - r.height / 2) / r.height;
+      room.style.transform = 'perspective(1000px) rotateY(' + (ox * 6) + 'deg) rotateX(' + (-oy * 6) + 'deg) translateZ(0)';
+    });
+    heroEl.addEventListener('mouseleave', function () {
+      room.style.transform = 'perspective(1000px) rotateY(0) rotateX(0)';
     });
   }
 
