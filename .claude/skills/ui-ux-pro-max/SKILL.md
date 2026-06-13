@@ -1,34 +1,11 @@
-# UI/UX Pro Max - Design Intelligence System
+---
+name: ui-ux-pro-max
+description: "UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples."
+---
 
-This is a comprehensive design framework for web and mobile applications, containing 50+ design styles, 161 color palettes, 57 font pairings, 161 product type patterns, 99 UX guidelines, and 25 chart types across 10 technology stacks.
+# UI/UX Pro Max - Design Intelligence
 
-## Core Purpose
-
-The system guides designers and developers through systematic UI/UX decision-making by prioritizing critical rules (accessibility, touch interaction, performance) before medium-priority concerns (typography, animation, forms). It emphasizes practical checklists, anti-patterns to avoid, and platform-specific guidelines for iOS, Android, React Native, Flutter, and web platforms.
-
-## Key Workflow
-
-Users should follow this process:
-1. **Analyze requirements** (product type, audience, style preferences)
-2. **Generate design system** using the `--design-system` flag with relevant keywords
-3. **Supplement with detailed searches** by domain (color, typography, UX, chart, etc.) as needed
-4. **Apply stack-specific guidelines** for implementation
-5. **Validate against pre-delivery checklist** before handoff
-
-## Critical Rules (Must-Enforce)
-
-The framework identifies three critical-priority categories:
-- **Accessibility**: minimum 4.5:1 contrast, keyboard navigation, semantic labels, focus states
-- **Touch & Interaction**: 44×44pt minimum targets, 8px+ spacing, visible feedback within 100ms
-- **Performance**: optimized images, lazy loading, reserve space to prevent layout shift
-
-## Notable Design Standards
-
-The system incorporates platform guidelines from Apple HIG, Material Design, and WCAG accessibility standards. It stresses using "semantic color tokens mapped per theme" rather than hardcoded hex values, maintaining consistent icon families instead of emoji, and respecting system gestures and safe areas on mobile devices.
-
-## Practical Output
-
-Design system queries return: recommended pattern, style, color palette, typography pairing, recommended effects, key checks, and anti-patterns—all with reasoning rules applied based on product type and industry context.
+Comprehensive design guide for web and mobile applications. Contains 50+ styles, 161 color palettes, 57 font pairings, 161 product types with reasoning rules, 99 UX guidelines, and 25 chart types across 10 technology stacks. Searchable database with priority-based recommendations.
 
 ## When to Apply
 
@@ -76,10 +53,10 @@ This Skill is not needed in the following situations:
 |----------|----------|--------|--------|------------------------|------------------------|
 | 1 | Accessibility | CRITICAL | `ux` | Contrast 4.5:1, Alt text, Keyboard nav, Aria-labels | Removing focus rings, Icon-only buttons without labels |
 | 2 | Touch & Interaction | CRITICAL | `ux` | Min size 44×44px, 8px+ spacing, Loading feedback | Reliance on hover only, Instant state changes (0ms) |
-| 3 | Performance | HIGH | `ux` | WebP/AVIF, Lazy loading, Reserve space (CLS < 0.1) | Layout thrashing, Cumulative Layout Shift |
+| 3 | Performance | HIGH | `ux` | WebP/AVIF, Lazy loading, Reserve space (CLS &lt; 0.1) | Layout thrashing, Cumulative Layout Shift |
 | 4 | Style Selection | HIGH | `style`, `product` | Match product type, Consistency, SVG icons (no emoji) | Mixing flat & skeuomorphic randomly, Emoji as icons |
 | 5 | Layout & Responsive | HIGH | `ux` | Mobile-first breakpoints, Viewport meta, No horizontal scroll | Horizontal scroll, Fixed px container widths, Disable zoom |
-| 6 | Typography & Color | MEDIUM | `typography`, `color` | Base 16px, Line-height 1.5, Semantic color tokens | Text < 12px body, Gray-on-gray, Raw hex in components |
+| 6 | Typography & Color | MEDIUM | `typography`, `color` | Base 16px, Line-height 1.5, Semantic color tokens | Text &lt; 12px body, Gray-on-gray, Raw hex in components |
 | 7 | Animation | MEDIUM | `ux` | Duration 150–300ms, Motion conveys meaning, Spatial continuity | Decorative-only animation, Animating width/height, No reduced-motion |
 | 8 | Forms & Feedback | MEDIUM | `ux` | Visible labels, Error near field, Helper text, Progressive disclosure | Placeholder-only label, Errors only at top, Overwhelm upfront |
 | 9 | Navigation Patterns | HIGH | `ux` | Predictable back, Bottom nav ≤5, Deep linking | Overloaded nav, Broken back behavior, No deep links |
