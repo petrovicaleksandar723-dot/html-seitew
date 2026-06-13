@@ -162,18 +162,46 @@ html.lenis,html.lenis body{height:auto}
 .mob-menu a:hover{color:var(--accent)}
 
 /* ═══════════════════════════════════════════════════════════
-   REVEAL  (3D scroll-driven)
+   REVEAL SYSTEM  (scroll-driven, 3D + directional)
 ═══════════════════════════════════════════════════════════ */
+/* Default: 3D flip up from below */
 .rv{
   opacity:0;
-  transform:perspective(1100px) rotateX(-16deg) translateY(36px);
+  transform:perspective(1100px) rotateX(-18deg) translateY(40px) scale(.98);
   transform-origin:50% 100%;
-  transition:opacity .85s var(--ease),transform .85s var(--ease);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
   will-change:transform,opacity;
 }
-.rv.in{opacity:1;transform:perspective(1100px) rotateX(0deg) translateY(0)}
-.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}
-.rv.d3{transition-delay:.24s}.rv.d4{transition-delay:.32s}.rv.d5{transition-delay:.4s}
+.rv.in{opacity:1;transform:perspective(1100px) rotateX(0deg) translateY(0) scale(1)}
+
+/* Slide from left */
+.rv-left{
+  opacity:0;transform:translateX(-48px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease);
+  will-change:transform,opacity;
+}
+.rv-left.in{opacity:1;transform:translateX(0)}
+
+/* Slide from right */
+.rv-right{
+  opacity:0;transform:translateX(48px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease);
+  will-change:transform,opacity;
+}
+.rv-right.in{opacity:1;transform:translateX(0)}
+
+/* Scale fade (for big display numbers) */
+.rv-scale{
+  opacity:0;transform:scale(.88);
+  transition:opacity .75s var(--ease),transform .75s var(--ease);
+}
+.rv-scale.in{opacity:1;transform:scale(1)}
+
+.rv.d1,.rv-left.d1,.rv-right.d1,.rv-scale.d1{transition-delay:.08s}
+.rv.d2,.rv-left.d2,.rv-right.d2,.rv-scale.d2{transition-delay:.16s}
+.rv.d3,.rv-left.d3,.rv-right.d3,.rv-scale.d3{transition-delay:.24s}
+.rv.d4,.rv-left.d4,.rv-right.d4,.rv-scale.d4{transition-delay:.32s}
+.rv.d5,.rv-left.d5,.rv-right.d5,.rv-scale.d5{transition-delay:.40s}
 
 /* ═══════════════════════════════════════════════════════════
    INTERACTIVE 3D TILT  (pointer only)
@@ -393,7 +421,19 @@ html.lenis,html.lenis body{height:auto}
 .s-card img{
   width:100%;border-radius:var(--r-sm);object-fit:cover;
   border:1px solid var(--border2);margin-bottom:1.5rem;
-  max-height:200px;
+  height:200px;will-change:transform;
+}
+/* Parallax image containers */
+.px-wrap{overflow:hidden;position:relative}
+.px-img{
+  width:100%;height:120%;object-fit:cover;
+  transform:translateY(0) scale(1);
+  will-change:transform;
+}
+.px-img-cover{
+  width:100%;height:115%;object-fit:cover;
+  transform:translateY(0);
+  will-change:transform;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -414,8 +454,11 @@ html.lenis,html.lenis body{height:auto}
   position:relative;overflow:hidden;
   aspect-ratio:16/9;
 }
-.p-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
-.p-card:hover .p-thumb img{transform:scale(1.06)}
+.p-thumb img{
+  width:100%;height:120%;object-fit:cover;
+  transform:translateY(-5%);
+  will-change:transform;
+}
 .p-overlay{
   position:absolute;inset:0;
   background:linear-gradient(to top,rgba(7,7,10,.9) 0%,rgba(7,7,10,.2) 60%,transparent 100%);
@@ -925,22 +968,22 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
 <section id="impact" aria-label="Kennzahlen">
   <div class="impact-grid">
     <div class="impact-cell rv">
-      <div class="impact-num" data-count="120" data-suffix="+">0+</div>
+      <div class="impact-num rv-scale" data-count="120" data-suffix="+">0+</div>
       <div class="impact-label">Abgeschlossene Projekte</div>
       <div class="impact-bar"></div>
     </div>
     <div class="impact-cell rv d1">
-      <div class="impact-num" data-count="4.9" data-suffix="★" data-dec="1">0★</div>
+      <div class="impact-num rv-scale d1" data-count="4.9" data-suffix="★" data-dec="1">0★</div>
       <div class="impact-label">Durchschnittliche Kundenbewertung</div>
       <div class="impact-bar"></div>
     </div>
     <div class="impact-cell rv d2">
-      <div class="impact-num" data-count="7" data-suffix="d">0d</div>
+      <div class="impact-num rv-scale d2" data-count="7" data-suffix="d">0d</div>
       <div class="impact-label">Bis zur fertigen Website</div>
       <div class="impact-bar"></div>
     </div>
     <div class="impact-cell rv d3">
-      <div class="impact-num" data-count="3" data-suffix="x">0x</div>
+      <div class="impact-num rv-scale d3" data-count="3" data-suffix="x">0x</div>
       <div class="impact-label">Mehr Anfragen im Schnitt</div>
       <div class="impact-bar"></div>
     </div>
@@ -955,10 +998,10 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
     <div class="services-head">
       <div>
         <div class="eyebrow rv" style="margin-bottom:1.5rem">Was wir machen</div>
-        <h2 class="sec-h2 rv d1" id="leist-h2">Alles aus<br>einer Hand.</h2>
+        <h2 class="sec-h2 rv-left d1" id="leist-h2">Alles aus<br>einer Hand.</h2>
       </div>
       <div>
-        <p class="sec-sub rv d2">Von der Website bis zum KI-Content-System - wir bauen dein komplettes digitales Fundament und sorgen fur nachhaltiges Wachstum.</p>
+        <p class="sec-sub rv-right d2">Von der Website bis zum KI-Content-System - wir bauen dein komplettes digitales Fundament und sorgen fur nachhaltiges Wachstum.</p>
       </div>
     </div>
 
@@ -966,7 +1009,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
       <div class="s-card tall tilt rv">
         <div class="s-card-glow"></div>
         <div class="s-card-idx">01</div>
-        <img src="https://picsum.photos/seed/localboost-web-design/600/300" alt="Website Design">
+        <img src="https://picsum.photos/seed/localboost-web-design/600/300" alt="Website Design" data-parallax="0.18">
         <span class="s-card-icon">🌐</span>
         <div class="s-card-name">Premium<br>Website</div>
         <p class="s-card-desc">Eine Website, die sofort Vertrauen aufbaut und Kunden zum Anfragen bringt. Mobil, schnell, auf deine Branche zugeschnitten.</p>
@@ -1019,7 +1062,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
     <div class="proj-grid">
       <div class="p-card tilt rv d1">
         <div class="p-thumb">
-          <img src="https://picsum.photos/seed/friseur-salon-berlin/800/450" alt="Friseur Salon Berlin" loading="lazy">
+          <img src="https://picsum.photos/seed/friseur-salon-berlin/800/450" alt="Friseur Salon Berlin" loading="lazy" data-parallax="0.22">
           <div class="p-overlay"></div>
           <div class="p-result-badge">+47% Anfragen</div>
         </div>
@@ -1036,7 +1079,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
 
       <div class="p-card tilt rv d2">
         <div class="p-thumb">
-          <img src="https://picsum.photos/seed/kfz-werkstatt-garage/800/450" alt="KFZ Werkstatt" loading="lazy">
+          <img src="https://picsum.photos/seed/kfz-werkstatt-garage/800/450" alt="KFZ Werkstatt" loading="lazy" data-parallax="0.22">
           <div class="p-overlay"></div>
           <div class="p-result-badge">Google Top 3</div>
         </div>
@@ -1053,7 +1096,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
 
       <div class="p-card tilt rv d3">
         <div class="p-thumb">
-          <img src="https://picsum.photos/seed/italian-restaurant-munich/800/450" alt="Restaurant" loading="lazy">
+          <img src="https://picsum.photos/seed/italian-restaurant-munich/800/450" alt="Restaurant" loading="lazy" data-parallax="0.22">
           <div class="p-overlay"></div>
           <div class="p-result-badge">+35% Reservierungen</div>
         </div>
@@ -1070,7 +1113,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
 
       <div class="p-card tilt rv d4">
         <div class="p-thumb">
-          <img src="https://picsum.photos/seed/beauty-studio-cosmetics/800/450" alt="Kosmetikstudio" loading="lazy">
+          <img src="https://picsum.photos/seed/beauty-studio-cosmetics/800/450" alt="Kosmetikstudio" loading="lazy" data-parallax="0.22">
           <div class="p-overlay"></div>
           <div class="p-result-badge">Premium Setup</div>
         </div>
@@ -1352,7 +1395,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2
 <section class="sec" id="kontakt" aria-labelledby="kontakt-h2">
   <div class="sec-inner">
     <div class="contact-grid">
-      <div class="contact-left rv">
+      <div class="contact-left rv-left">
         <div class="eyebrow" style="margin-bottom:1rem">Kontakt</div>
         <h2 class="contact-h3" id="kontakt-h2">Starten wir<br>zusammen.</h2>
         <p class="contact-desc">Schreib uns und erhalte deine kostenlose Analyse. Kein Risiko, keine Verpflichtung.</p>
@@ -1483,11 +1526,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   });
 });
 
-/* ── 3D SCROLL REVEAL ── */
+/* ── SCROLL REVEAL (all variants) ── */
 var obs=new IntersectionObserver(function(entries){
   entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');obs.unobserve(en.target);}});
-},{threshold:.12});
-document.querySelectorAll('.rv').forEach(function(el){obs.observe(el);});
+},{threshold:.1});
+document.querySelectorAll('.rv,.rv-left,.rv-right,.rv-scale').forEach(function(el){obs.observe(el);});
 
 /* ── IMPACT CELLS animated bar trigger ── */
 var impObs=new IntersectionObserver(function(entries){
@@ -1540,10 +1583,73 @@ if(FINE&&!RM){
   });
 }
 
-/* ── SCROLL-DRIVEN MARQUEE ── */
-var marq=document.getElementById('marqueeTrack');
-function marqFx(){if(marq){var s=(window.scrollY*.3)%(marq.scrollWidth/2);marq.style.transform='translateX('+(-s)+'px)';}requestAnimationFrame(marqFx);}
-if(!RM)requestAnimationFrame(marqFx);
+/* ═══════════════════════════════════════════════════
+   MASTER SCROLL-MOTION RAF LOOP
+   - image parallax (data-parallax attribute)
+   - hero text parallax
+   - marquee driven by scroll + velocity
+   - Three.js scroll data already via global scrollY
+   ═══════════════════════════════════════════════════ */
+var marq = document.getElementById('marqueeTrack');
+var heroLeft = document.querySelector('.hero-left');
+var heroBg   = document.getElementById('heroBg');
+var ctaGlow  = document.querySelector('.cta-glow');
+
+/* collect all parallax images once */
+var pxImages = [];
+document.querySelectorAll('[data-parallax]').forEach(function(el){
+  pxImages.push({ el: el, speed: parseFloat(el.dataset.parallax)||0.2 });
+});
+
+var prevSY = 0, velSY = 0, marqOffset = 0;
+
+function scrollMotion(){
+  var sy = window.scrollY;
+  velSY = sy - prevSY;   /* pixels/frame — indicates scroll speed */
+  prevSY = sy;
+
+  /* ── image parallax ── */
+  pxImages.forEach(function(item){
+    var rect = item.el.getBoundingClientRect();
+    /* only update when near viewport */
+    if(rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
+    var vc   = window.innerHeight / 2;
+    var ec   = rect.top + rect.height / 2;
+    var dist = (ec - vc) * item.speed;
+    item.el.style.transform = 'translateY(' + dist + 'px)';
+  });
+
+  /* ── hero text & canvas parallax (light, stops at section end) ── */
+  var heroEl = document.getElementById('hero');
+  if(heroEl && heroLeft){
+    var hRect = heroEl.getBoundingClientRect();
+    if(hRect.bottom > 0){
+      /* text drifts up slightly slower than page */
+      var hProg = Math.max(0, -hRect.top);
+      heroLeft.style.transform = 'translateY(' + (hProg * 0.18) + 'px)';
+      if(heroBg) heroBg.style.transform = 'translateY(' + (hProg * 0.08) + 'px)';
+    }
+  }
+
+  /* ── CTA glow drifts with scroll ── */
+  if(ctaGlow){
+    var cRect = ctaGlow.parentElement.getBoundingClientRect();
+    var cOff  = (cRect.top - window.innerHeight/2) * 0.12;
+    ctaGlow.style.transform = 'translate(-50%, calc(-50% + ' + cOff + 'px))';
+  }
+
+  /* ── scroll-velocity marquee ── */
+  if(marq && marq.scrollWidth > 0){
+    /* base: crawl forward with scroll; burst: velocity spike */
+    marqOffset += 0.6 + Math.abs(velSY) * 0.4;
+    var half = marq.scrollWidth / 2;
+    if(marqOffset > half) marqOffset -= half;
+    marq.style.transform = 'translateX(' + (-marqOffset) + 'px)';
+  }
+
+  requestAnimationFrame(scrollMotion);
+}
+if(!RM) requestAnimationFrame(scrollMotion);
 
 /* ── THREE.JS HERO SCENE ── */
 var canvas=document.getElementById('heroCanvas');
