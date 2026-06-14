@@ -193,7 +193,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ---- MOTION DESIGN: crisp staggered reveal of each scene's content ------ */
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
-.scene .price-deck,.scene .minis,.scene .reviews,.scene .faq,.scene .paybar,.scene .rev-trust{
+.scene .price-deck,.scene .minis,.scene .reviews,.scene .faq,.scene .paybar,.scene .rev-trust,.scene .hero-stats{
   opacity:0; transform:translateY(64px) scale(.9);
   transition:opacity .5s var(--ease), transform .85s var(--ease);
 }
@@ -205,7 +205,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .minis{ opacity:1; transform:none; transition-delay:.08s; }
 .scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
 .scene.show .ba,.scene.show .price-deck,.scene.show .reviews,.scene.show .faq{ opacity:1; transform:none; transition-delay:.26s; }
-.scene.show .paybar,.scene.show .rev-trust{ opacity:1; transform:none; transition-delay:.5s; }
+.scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
    through, dimmed just enough to keep the content perfectly readable */
 .scene-bg-dark{ background:linear-gradient(180deg, rgba(5,9,14,.58) 0%, rgba(5,9,14,.72) 100%); overflow:hidden; }
@@ -216,7 +216,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bgvids{ position:absolute; inset:0; z-index:0; overflow:hidden; }
 .bgvid{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
   transition:opacity .9s ease; transform:translateZ(0); backface-visibility:hidden;
-  filter:brightness(.92) saturate(1.06); will-change:opacity; }
+  filter:contrast(1.08) saturate(1.14); image-rendering:auto; will-change:opacity; }
 .bgvid.on{ opacity:1; }
 .bgvid-scrim{ position:absolute; inset:0; pointer-events:none;
   background:radial-gradient(125% 100% at 50% 44%, transparent 38%, rgba(0,0,0,.4) 100%); }
@@ -226,7 +226,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   color:var(--orange); font-weight:800; margin-bottom:18px; }
 .eyebrow.dark{ color:#b06a2c; }
 h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; letter-spacing:-.034em; color:#fff;
-  text-shadow:0 1px 1px rgba(0,0,0,.5); }
+  text-shadow:0 2px 22px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.6); }
 .scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
 .subline{ max-width:46ch; font-size:clamp(14px,2.3vmin,21px); line-height:1.5; color:#e4e9f0; margin-top:22px;
   font-weight:450; }
@@ -286,6 +286,10 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .scene .faq,.launcher{ position:relative; z-index:2; }
 #s1 .hero-copy{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
 #s1 .hero-copy .subline{ margin-left:auto; margin-right:auto; }
+.hero-stats{ display:flex; gap:clamp(24px,4.5vmin,68px); margin-top:32px; justify-content:center; position:relative; z-index:2; }
+.hstat{ display:flex; flex-direction:column; align-items:center; }
+.hstat b{ font-size:clamp(24px,3.8vmin,48px); font-weight:800; color:#fff; line-height:1; }
+.hstat span{ font-size:clamp(11px,1.45vmin,14px); color:#b7c0cc; margin-top:7px; letter-spacing:.02em; }
 .engine .tile{
   position:absolute; inset:0; border-radius:22px;
   background:linear-gradient(160deg, #1a2433, #0c121c);
@@ -481,6 +485,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .loader .logo-svg{ width:78px; height:78px; color:#ecd49a;
   filter:drop-shadow(0 0 26px rgba(236,212,154,.45)); animation:logoGlow 2.6s var(--ease) infinite; }
 @keyframes logoGlow{ 0%,100%{opacity:.78; transform:scale(.98);} 50%{opacity:1; transform:scale(1);} }
+.loader-logo{ width:min(440px,72vw); height:auto; filter:drop-shadow(0 0 40px rgba(236,212,154,.25)); }
+.loader-fallback{ display:flex; flex-direction:column; align-items:center; gap:18px; }
 .loader .wordmark{ display:flex; flex-direction:column; align-items:center; gap:5px; }
 .loader .wm1{ font-weight:300; letter-spacing:.42em; font-size:21px; color:#f3ead2; text-indent:.42em;
   background:linear-gradient(180deg,#fff,#e7cf9c); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
@@ -536,8 +542,14 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
 <!-- Premium intro loader -->
 <div class="loader" id="loader">
-  <svg class="logo-svg"><use href="#cl-mark"/></svg>
-  <div class="wordmark"><span class="wm1">CLEANLINES</span><span class="wm2">STUDIOS</span></div>
+  <!-- drop assets/logo.png into the repo and it auto-replaces the vector below -->
+  <img class="loader-logo" src="assets/logo.png" alt="CleanLines Studios"
+       onload="var fb=document.getElementById('loaderFb');if(fb)fb.style.display='none';"
+       onerror="this.style.display='none';">
+  <div class="loader-fallback" id="loaderFb">
+    <svg class="logo-svg"><use href="#cl-mark"/></svg>
+    <div class="wordmark"><span class="wm1">CLEANLINES</span><span class="wm2">STUDIOS</span></div>
+  </div>
   <div class="bar"><i></i></div>
 </div>
 
@@ -603,13 +615,18 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
             <div class="mini m5"><i>▦</i>Monatsplan</div>
           </div>
           <div class="hero-copy">
-            <div class="eyebrow">Creative Content Hub</div>
+            <div class="eyebrow">Creative Content Hub für lokale Betriebe</div>
             <h1 class="lead">Dein Content.<br>Jeden Monat fertig.</h1>
-            <p class="subline">Du musst nicht jeden Tag überlegen, was du posten sollst. Wir liefern dir jeden Monat fertige Ideen, Captions und Beiträge.</p>
+            <p class="subline">Schluss mit dem täglichen Grübeln, was du posten sollst. Wir liefern dir jeden Monat fertige Reels, Captions und Beiträge – sofort einsatzbereit und exakt auf deinen Betrieb zugeschnitten.</p>
           </div>
           <div class="btns">
             <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Preview sichern</a>
             <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
+          </div>
+          <div class="hero-stats">
+            <div class="hstat"><b>120+</b><span>zufriedene Betriebe</span></div>
+            <div class="hstat"><b>4,9★</b><span>Durchschnitt</span></div>
+            <div class="hstat"><b>30+</b><span>Beiträge / Monat</span></div>
           </div>
         </section>
 
@@ -665,11 +682,25 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
           <div class="ba">
             <div class="col before">
               <h4>Vorher</h4>
-              <ul><li>Keine Ideen</li><li>Keine Struktur</li><li>Keine Regelmäßigkeit</li></ul>
+              <ul>
+                <li>Täglich grübeln, was man posten soll</li>
+                <li>Kein roter Faden, keine Struktur</li>
+                <li>Unregelmäßige Posts, lange Pausen</li>
+                <li>Stunden mit Texten &amp; Ideen verschwendet</li>
+                <li>Wenig Reichweite &amp; kaum Anfragen</li>
+                <li>Unprofessioneller, uneinheitlicher Auftritt</li>
+              </ul>
             </div>
             <div class="col after">
               <h4>Nachher</h4>
-              <ul><li>Fertiger Monatsplan</li><li>Klare Captions</li><li>Professioneller Auftritt</li></ul>
+              <ul>
+                <li>Fertiger Monatsplan – Wochen im Voraus</li>
+                <li>Klare, markengerechte Captions</li>
+                <li>Regelmäßige, geplante Beiträge</li>
+                <li>Null Zeitaufwand – alles erledigt für dich</li>
+                <li>Mehr Reichweite, mehr Anfragen</li>
+                <li>Professioneller, einheitlicher Markenauftritt</li>
+              </ul>
             </div>
           </div>
         </section>
