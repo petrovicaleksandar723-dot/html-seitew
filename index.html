@@ -1559,13 +1559,15 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
            perfectly STRAIGHT at native scale so all text renders razor-sharp.
            Only the outer rig is transformed during the intro — never the text. */
     var introK = openK;
-    var startScale = window.innerWidth<780 ? 0.88 : 0.85;
+    // starts already large (just slightly zoomed) + angled, dead-centered,
+    // then settles perfectly straight at native scale(1)
+    var startScale = window.innerWidth<780 ? 0.95 : 0.93;
     var scale = lerp(startScale,1.0,introK);
-    var tiltX = lerp(13, 0, introK);
-    var tiltY = lerp(-9, 0, introK);
-    var tiltZ = lerp(-5, 0, introK);
-    // gentle parallax during intro, fading to a tiny calm drift once settled
-    var tx = mx*lerp(14,5,introK), ty = my*lerp(10,4,introK) + (1-introK)*30;
+    var tiltX = lerp(12, 0, introK);
+    var tiltY = lerp(-8, 0, introK);
+    var tiltZ = lerp(-4, 0, introK);
+    // gentle parallax only — NO vertical entrance offset, so it stays centered
+    var tx = mx*lerp(12,5,introK), ty = my*lerp(9,4,introK);
     if(introK<0.992){
       rig.style.transform=
         "translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) "+
