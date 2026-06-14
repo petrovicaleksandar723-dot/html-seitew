@@ -34,7 +34,7 @@
   --orange-soft: #e8d2a0;          /* light champagne gold */
   --orange-glow: rgba(201,162,90,.5);
   --cream:       #f5f1e8;
-  --gray:        #9a9aa2;
+  --gray:        #b6bcc8;          /* stronger, more opaque muted text */
   --lime:        #d9b978;          /* gold (positive accents) */
 
   --ink:         #f4f1ea;
@@ -127,8 +127,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  width:97vw;
-  height:96vh;
+  /* sized to float centered with safe margins on every viewport — never cut off */
+  width:min(94vw,1560px);
+  height:min(88vh,920px);
   transform:translate(-50%,-50%);
   border-radius:34px;
   /* brushed dark metal bezel */
@@ -209,7 +210,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ---- MOTION DESIGN: crisp staggered reveal of each scene's content ------ */
 .scene .eyebrow,.scene .subline,.scene .btns,
-.scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
+.scene .svc-deck,.scene .branche-stage,.scene .ba,
 .scene .minis,.scene .reviews,.scene .faq,.scene .paybar,.scene .rev-trust,.scene .hero-stats{
   opacity:0; transform:translateY(42px);
   transition:opacity .5s var(--ease), transform .75s var(--ease);
@@ -225,7 +226,7 @@ h1.lead .wd-i{ display:inline-block; opacity:0; transform:translateY(46px); tran
 .scene.show .subline{ opacity:1; transform:none; transition-delay:.22s; }
 .scene.show .btns{ opacity:1; transform:none; transition-delay:.40s; }
 .scene.show .minis{ opacity:1; transform:none; transition-delay:.08s; }
-.scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
+.scene.show .svc-deck,.scene.show .branche-stage,
 .scene.show .ba,.scene.show .reviews,.scene.show .faq{ opacity:1; transform:none; transition-delay:.26s; }
 .scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
@@ -260,13 +261,13 @@ h1.lead .wd-i{ display:inline-block; opacity:0; transform:translateY(46px); tran
 .eyebrow.dark{ color:#b06a2c; }
 /* modern display typeface on headlines, labels, numbers & nav */
 h1.lead,.eyebrow,.launcher h2,.pname,.price,.per,.price-tag,.hstat b,.rev-trust,
-.branche-preview .reel,.svc h3,.brandbar,.wordmark,.ba h4,.tab{
+.branche-content .reel,.svc h3,.brandbar,.wordmark,.ba h4,.tab{
   font-family:var(--font-display); }
 /* global crisp text rendering */
-.scene,.plan-card,.svc,.review,.ba .col,.branche-preview,.launcher,.faq,.tabs,.hero-stats{
+.scene,.plan-card,.svc,.review,.ba .col,.branche-content,.launcher,.faq,.tab,.hero-stats{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; font-synthesis:none;
   text-rendering:geometricPrecision; backface-visibility:hidden; }
-h1.lead,.subline,.eyebrow,.svc h3,.svc p,.review p,.pdesc,.pfeat,.ba li,.branche-preview,.faq-item,.hstat,.price,.pname{
+h1.lead,.subline,.eyebrow,.svc h3,.svc p,.review p,.pdesc,.pfeat,.ba li,.branche-content,.faq-item,.hstat,.price,.pname{
   text-rendering:geometricPrecision; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; font-synthesis:none; }
 h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; letter-spacing:-.02em; color:#fff;
   max-width:15em; margin-left:auto; margin-right:auto; text-shadow:0 2px 16px rgba(0,0,0,.55); }
@@ -325,7 +326,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 }
 /* keep all readable scene content above the engine object + animated bg */
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,.scene .minis,
-.scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
+.scene .svc-deck,.scene .branche-stage,.scene .ba,
 .scene .price-deck,.scene .paybar,.scene .reviews,.scene .rev-trust,
 .scene .faq,.launcher,.scene .hero-grid{ position:relative; z-index:2; }
 .scene .hero-right{ opacity:0; transition:opacity .8s var(--ease) .35s; }
@@ -340,7 +341,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .hero-stats{ display:flex; gap:clamp(20px,3.4vmin,52px); margin-top:32px; justify-content:flex-start; }
 .hstat{ display:flex; flex-direction:column; align-items:flex-start; }
 .hstat b{ font-size:clamp(22px,3.5vmin,44px); font-weight:800; color:#fff; line-height:1; }
-.hstat span{ font-size:clamp(11px,1.4vmin,14px); color:#b7c0cc; margin-top:7px; letter-spacing:.02em; }
+.hstat span{ font-size:clamp(11px,1.4vmin,14px); color:#cdd5e1; margin-top:7px; letter-spacing:.02em; }
 /* animated phone mockup (motion-controlled) */
 .phone{ position:relative; width:clamp(208px,23vmin,322px); aspect-ratio:9/19; border-radius:42px;
   background:#000; padding:9px; border:1px solid rgba(255,255,255,.16);
@@ -439,41 +440,89 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   background:rgba(201,162,90,.16); color:var(--orange); font-size:24px; margin-bottom:18px; }
 .svc h3{ font-size:clamp(22px,2.1vw,30px); font-weight:800; margin-bottom:11px; line-height:1.08; letter-spacing:-.03em;
   overflow-wrap:anywhere; word-break:normal; hyphens:auto; max-width:100%; }
-.svc p{ font-size:clamp(16px,1.35vw,19px); color:#c9d2e0; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
+.svc p{ font-size:clamp(16px,1.35vw,19px); color:#dde4ef; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
 
-/* ---- SCENE 3: BRANCHEN (industry tabs) ---------------------------------- */
-.tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:22px 0; max-width:96%; }
+/* ---- SCENE 3: BRANCHEN — premium interactive industry showcase ---------- */
 .tab{ padding:14px 24px; border-radius:100px; font-size:clamp(13px,1.9vmin,18px); font-weight:700;
-  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color:#cfd6df;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color:#dbe1ea;
   transition:all .35s var(--ease); }
 .tab:hover{ background:rgba(255,255,255,.12); }
 .tab.active{ background:linear-gradient(135deg,var(--orange),#e8d2a0); color:#1a0c00; border-color:transparent;
   box-shadow:0 10px 26px var(--orange-glow); }
-.branche-preview{
-  position:relative; isolation:isolate;
-  width:min(900px,94%); margin-top:10px; padding:clamp(24px,3.4vmin,46px);
-  border-radius:24px; text-align:left;
-  background:radial-gradient(120% 70% at 50% 0%, rgba(201,162,90,.07), transparent 60%), linear-gradient(180deg, rgba(22,22,26,.74), rgba(9,9,12,.86));
-  border:1px solid rgba(255,255,255,.1); box-shadow:0 30px 64px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
-  min-height:200px;
+
+/* three-column stage: left tabs · center cinematic visual · right preview */
+.branche-stage{
+  display:grid; grid-template-columns:0.82fr 1.22fr 1fr;
+  gap:clamp(14px,1.8vmin,24px); width:min(1280px,96%);
+  margin:clamp(16px,2.4vh,28px) auto 0; align-items:stretch; text-align:left;
 }
-.branche-preview::before{ content:""; position:absolute; top:0; left:10%; right:10%; height:1px; pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(232,210,160,.5),transparent); }
-.branche-preview .label{ font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange); font-weight:800; }
-.branche-preview .reel{ font-size:clamp(20px,2.6vw,34px); font-weight:800; margin:12px 0 20px; line-height:1.12; }
-.branche-preview .caption-label{ font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--gray); font-weight:800; }
-.branche-preview .caption{ font-size:clamp(15px,1.9vw,19px); color:#dfe6f0; line-height:1.5; margin-top:10px; }
-.fade-swap{ transition:opacity .35s var(--ease), transform .35s var(--ease);
-  display:flex; gap:18px; align-items:stretch; text-align:left; }
-.fade-swap.swapping{ opacity:0; transform:translateY(8px) scale(.985); }
-.branche-preview .bphoto{ flex:0 0 38%; border-radius:14px; overflow:hidden; position:relative;
-  box-shadow:0 12px 30px rgba(0,0,0,.5); }
-.branche-preview .bphoto::after{ content:""; position:absolute; inset:0;
-  background:linear-gradient(160deg, transparent 40%, rgba(201,162,90,.18)); }
-.branche-preview .bphoto img{ width:100%; height:100%; min-height:140px; object-fit:cover; display:block;
-  transition:transform .6s var(--ease); }
-.branche-preview .btext{ flex:1; }
-@media (max-width:560px){ .fade-swap{ flex-direction:column; } .branche-preview .bphoto{ flex:none; height:120px; } }
+.branche-tabs{ display:flex; flex-direction:column; gap:9px; }
+.branche-tabs .tab{ width:100%; text-align:left; }
+
+/* center: large cinematic image card with floating badges + per-industry glow */
+.branche-visual{ position:relative; isolation:isolate; border-radius:22px; overflow:hidden;
+  min-height:clamp(260px,38vmin,420px);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 30px 70px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); }
+.bv-glow{ position:absolute; inset:-25%; z-index:0; opacity:.7; filter:blur(58px);
+  transition:background .6s var(--ease); will-change:background; }
+.bv-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;
+  transform:scale(1.05); transition:opacity .45s var(--ease), transform 9s var(--ease);
+  backface-visibility:hidden; }
+.branche-visual.swapping .bv-img{ opacity:0; transform:scale(1.08); }
+.bv-scrim{ position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg, rgba(4,6,10,.12) 0%, rgba(4,6,10,.5) 70%, rgba(4,6,10,.82) 100%); }
+.bv-badge{ position:absolute; z-index:3; padding:7px 13px; border-radius:100px;
+  font-family:var(--font-display); font-size:clamp(10px,1.25vmin,12.5px); font-weight:700; letter-spacing:.03em;
+  background:rgba(8,10,14,.72); color:#fff; border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 10px 26px rgba(0,0,0,.45);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); white-space:nowrap; }
+.bv-badge b{ color:var(--orange-soft); font-weight:800; margin-right:5px; }
+.bv-badge-1{ top:16px; left:16px;  animation:bvFloat1 6s var(--ease) infinite; }
+.bv-badge-2{ top:16px; right:16px; animation:bvFloat2 7s var(--ease) infinite; }
+.bv-badge-3{ bottom:64px; left:16px;  animation:bvFloat2 6.6s var(--ease) infinite; }
+.bv-badge-4{ bottom:64px; right:16px; animation:bvFloat1 7.4s var(--ease) infinite; }
+@keyframes bvFloat1{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+@keyframes bvFloat2{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(7px);} }
+.bv-metric{ position:absolute; left:16px; bottom:16px; z-index:3;
+  padding:9px 16px; border-radius:100px; font-family:var(--font-display); font-weight:800;
+  font-size:clamp(11px,1.4vmin,15px); letter-spacing:.01em; color:#1a1206;
+  background:linear-gradient(135deg,var(--orange),#e8d2a0);
+  box-shadow:0 12px 28px var(--orange-glow); }
+
+/* right: generated content preview with staggered reveal */
+.branche-content{ position:relative; isolation:isolate; display:flex; flex-direction:column; gap:13px;
+  padding:clamp(20px,2.6vmin,30px); border-radius:22px;
+  background:radial-gradient(120% 70% at 50% 0%, rgba(201,162,90,.08), transparent 60%),
+            linear-gradient(180deg, rgba(22,22,26,.78), rgba(9,9,12,.9));
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 30px 64px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+  transition:opacity .35s var(--ease), transform .35s var(--ease); }
+.branche-content::before{ content:""; position:absolute; top:0; left:12%; right:12%; height:1px; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(232,210,160,.55),transparent); }
+.branche-content.swapping{ opacity:0; }
+.branche-content > *{ transition:opacity .45s var(--ease), transform .45s var(--ease); }
+.branche-content.swapping > *{ opacity:0; transform:translateY(12px); }
+.branche-content > *:nth-child(2){ transition-delay:.06s; }
+.branche-content > *:nth-child(3){ transition-delay:.12s; }
+.branche-content > *:nth-child(4){ transition-delay:.18s; }
+.branche-content .label,.branche-content .caption-label{
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; color:var(--orange); }
+.branche-content .caption-label{ color:#cfd6e2; }
+.branche-content .reel{ font-family:var(--font-display); font-size:clamp(18px,1.9vw,24px); font-weight:800;
+  margin-top:6px; line-height:1.18; color:#fff; }
+.branche-content .caption{ font-size:clamp(14px,1.55vw,17px); color:#e8edf4; line-height:1.5; margin-top:5px; }
+.bc-cta{ margin-top:auto; padding-top:4px; font-family:var(--font-display); font-weight:800;
+  color:var(--orange-soft); font-size:clamp(13px,1.55vw,16px); line-height:1.35; }
+.bc-cta::before{ content:"→ "; color:var(--orange); }
+
+@media (max-width:900px){
+  .branche-stage{ grid-template-columns:1fr; }
+  .branche-tabs{ flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  .branche-tabs .tab{ width:auto; text-align:center; padding:11px 18px; }
+  .branche-visual{ min-height:200px; }
+  .bv-badge-3{ bottom:60px; } .bv-badge-4{ bottom:60px; }
+}
 
 /* ---- SCENE 5: BEFORE / AFTER -------------------------------------------- */
 .ba{ display:flex; gap:clamp(14px,2.6vmin,32px); width:min(940px,94%); margin-top:28px; }
@@ -488,7 +537,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   border:1px solid rgba(217,185,120,.42); box-shadow:0 24px 56px rgba(0,0,0,.5), 0 0 50px rgba(217,185,120,.14); }
 .ba h4{ font-size:clamp(13px,1.9vmin,17px); letter-spacing:.16em; text-transform:uppercase; margin-bottom:18px; font-weight:800; }
 .ba .before h4{ color:#ff6b6b; } .ba .after h4{ color:var(--lime); }
-.ba li{ list-style:none; font-size:clamp(15px,1.9vw,20px); padding:11px 0 11px 34px; position:relative; color:#dfe5ec; }
+.ba li{ list-style:none; font-size:clamp(15px,1.9vw,20px); padding:11px 0 11px 34px; position:relative; color:#e8edf4; }
 .ba .before li::before{ content:"✕"; position:absolute; left:0; color:#ff6b6b; font-weight:800; }
 .ba .after li::before{ content:"✓"; position:absolute; left:0; color:var(--lime); font-weight:800; }
 
@@ -564,7 +613,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   max-width:100%; overflow:hidden; margin:14px 0 2px; }
 .price{ font-family:var(--font-display); font-size:clamp(3rem,5.6vw,4.8rem); line-height:.9; letter-spacing:-.05em;
   font-weight:800; color:#fff; }
-.per{ font-size:clamp(.9rem,1.4vw,1.2rem); line-height:1; margin-bottom:.55rem; color:#aab4c6; font-weight:600; }
+.per{ font-size:clamp(.9rem,1.4vw,1.2rem); line-height:1; margin-bottom:.55rem; color:#c0c9d8; font-weight:600; }
 
 .pdesc{ font-size:clamp(14px,1.6vw,17px); color:#d8e2ff; margin:10px auto 22px; line-height:1.55; max-width:30ch; }
 
@@ -697,7 +746,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:96vw; height:80vh; border-radius:26px; }
+  .tablet{ width:94vw; height:78vh; border-radius:26px; }
   .screen{ border-radius:18px; } .glass{ border-radius:18px; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
@@ -706,7 +755,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   .scene-dots{ right:12px; }
 }
 @media (max-width:480px){
-  .tablet{ height:66vh; }
+  .tablet{ width:94vw; height:68vh; }
   h1.lead{ font-size:34px; }
   .svc{ width:46%; }
 }
@@ -851,23 +900,42 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
         <section class="scene scene-bg-dark" id="s3">
           <div class="eyebrow">Branchen</div>
           <h1 class="lead">Content, der zu deinem Betrieb passt.</h1>
-          <div class="tabs" id="tabs">
-            <button class="tab active" data-b="0">Friseure</button>
-            <button class="tab" data-b="1">Restaurants</button>
-            <button class="tab" data-b="2">Handwerker</button>
-            <button class="tab" data-b="3">Kosmetikstudios</button>
-            <button class="tab" data-b="4">Fahrschulen</button>
-            <button class="tab" data-b="5">Fitnessstudios</button>
-          </div>
-          <div class="branche-preview">
-            <div class="fade-swap" id="brancheSwap">
-              <div class="bphoto"><img id="bImg" alt="" loading="lazy"></div>
-              <div class="btext">
+          <div class="branche-stage">
+            <!-- left: industry tabs -->
+            <div class="branche-tabs" id="tabs">
+              <button class="tab active" data-b="0">Friseure</button>
+              <button class="tab" data-b="1">Restaurants</button>
+              <button class="tab" data-b="2">Handwerker</button>
+              <button class="tab" data-b="3">Kosmetikstudios</button>
+              <button class="tab" data-b="4">Fahrschulen</button>
+              <button class="tab" data-b="5">Fitnessstudios</button>
+            </div>
+            <!-- center: cinematic visual with floating badges + per-industry glow -->
+            <div class="branche-visual" id="brancheVisual">
+              <div class="bv-glow" id="bvGlow"></div>
+              <img class="bv-img" id="bImg" alt="" loading="lazy">
+              <div class="bv-scrim"></div>
+              <span class="bv-badge bv-badge-1"><b>▶</b>Reel Hook</span>
+              <span class="bv-badge bv-badge-2"><b>✎</b>Caption</span>
+              <span class="bv-badge bv-badge-3"><b>◆</b>Google Post</span>
+              <span class="bv-badge bv-badge-4"><b>★</b>Review Reply</span>
+              <div class="bv-metric" id="bMetric">Mehr Sichtbarkeit</div>
+            </div>
+            <!-- right: generated content preview -->
+            <div class="branche-content" id="brancheSwap">
+              <div>
                 <div class="label">Reel-Idee</div>
                 <div class="reel" id="bReel"></div>
+              </div>
+              <div>
                 <div class="caption-label">Caption</div>
                 <div class="caption" id="bCaption"></div>
               </div>
+              <div>
+                <div class="caption-label">Google-Beitrag</div>
+                <div class="caption" id="bGoogle"></div>
+              </div>
+              <div class="bc-cta" id="bCta"></div>
             </div>
           </div>
         </section>
@@ -1171,20 +1239,59 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   /* ---- branchen data ---------------------------------------------------- */
   var CDN="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/";
   var BRANCHEN=[
-    {img:CDN+"hf_20260614_121505_3df017d3-688d-4350-9362-5167c2efd165.png", reel:"Aus einem normalen Haarschnitt wird ein Vorher-Nachher-Moment", cap:"Neuer Look, neues Gefühl. Zeig deinen Kunden, was mit dem richtigen Schnitt möglich ist."},
-    {img:CDN+"hf_20260614_121507_0737227a-d299-4c94-bdf2-ff59219631c8.png", reel:"Ein Gericht vom ersten Handgriff bis zum fertigen Teller", cap:"Appetit entsteht nicht durch Zufall. Zeig, was bei dir frisch, ehrlich und besonders ist."},
-    {img:CDN+"hf_20260614_121508_62c6e4c1-ec60-419e-b7c9-4a3daf92dc62.png", reel:"Aus Problem wird Lösung – eine Baustelle in 20 Sekunden", cap:"Kunden kaufen Vertrauen. Zeig sauber, wie du arbeitest und warum man dich beauftragen sollte."},
-    {img:CDN+"hf_20260614_121510_e1bfc022-7446-419f-adca-0812f520f80f.png", reel:"Behandlung, Atmosphäre und Ergebnis in einem ruhigen Premium-Clip", cap:"Deine Kunden buchen nicht nur eine Behandlung. Sie buchen ein Gefühl von Pflege, Ruhe und Qualität."},
-    {img:CDN+"hf_20260614_121515_b11ef0c8-ad42-440a-ad08-990a9f74b879.png", reel:"3 Dinge, die jeder Fahrschüler vor der Prüfung wissen sollte", cap:"Nimm deinen Schülern die Angst und zeig, dass deine Fahrschule verständlich, modern und nahbar ist."},
-    {img:CDN+"hf_20260614_121516_eb1db453-247a-4554-b579-1f2a72da9cef.png", reel:"Ein einfaches Workout, das jeder sofort ausprobieren kann", cap:"Keine Ausreden. Keine komplizierten Pläne. Nur ein klarer Start in ein stärkeres Ich."}
+    {img:CDN+"hf_20260614_121505_3df017d3-688d-4350-9362-5167c2efd165.png",
+     reel:"Aus einem normalen Haarschnitt wird ein Vorher-Nachher-Moment",
+     cap:"Neuer Look, neues Gefühl. Zeig deinen Kunden, was mit dem richtigen Schnitt möglich ist.",
+     google:"Neue Termine frei – sichere dir jetzt deinen Wunschtermin für deinen neuen Look.",
+     cta:"Jetzt Wunschtermin sichern", metric:"Mehr Sichtbarkeit", glow:"rgba(201,162,90,.55)"},
+    {img:CDN+"hf_20260614_121507_0737227a-d299-4c94-bdf2-ff59219631c8.png",
+     reel:"Ein Gericht vom ersten Handgriff bis zum fertigen Teller",
+     cap:"Appetit entsteht nicht durch Zufall. Zeig, was bei dir frisch, ehrlich und besonders ist.",
+     google:"Heute frisch für dich gekocht – reservier dir deinen Tisch fürs Wochenende.",
+     cta:"Jetzt Tisch reservieren", metric:"Mehr Gäste", glow:"rgba(214,120,60,.5)"},
+    {img:CDN+"hf_20260614_121508_62c6e4c1-ec60-419e-b7c9-4a3daf92dc62.png",
+     reel:"Aus Problem wird Lösung – eine Baustelle in 20 Sekunden",
+     cap:"Kunden kaufen Vertrauen. Zeig sauber, wie du arbeitest und warum man dich beauftragen sollte.",
+     google:"Saubere Arbeit, faire Preise – fordere jetzt dein unverbindliches Angebot an.",
+     cta:"Jetzt Angebot anfordern", metric:"Mehr Vertrauen", glow:"rgba(70,120,190,.5)"},
+    {img:CDN+"hf_20260614_121510_e1bfc022-7446-419f-adca-0812f520f80f.png",
+     reel:"Behandlung, Atmosphäre und Ergebnis in einem ruhigen Premium-Clip",
+     cap:"Deine Kunden buchen nicht nur eine Behandlung. Sie buchen ein Gefühl von Pflege, Ruhe und Qualität.",
+     google:"Gönn dir eine Auszeit – buche jetzt deine Wohlfühl-Behandlung bei uns.",
+     cta:"Jetzt Behandlung buchen", metric:"Mehr Wohlgefühl", glow:"rgba(206,108,150,.5)"},
+    {img:CDN+"hf_20260614_121515_b11ef0c8-ad42-440a-ad08-990a9f74b879.png",
+     reel:"3 Dinge, die jeder Fahrschüler vor der Prüfung wissen sollte",
+     cap:"Nimm deinen Schülern die Angst und zeig, dass deine Fahrschule verständlich, modern und nahbar ist.",
+     google:"Neuer Kurs startet bald – melde dich jetzt an und starte sicher durch.",
+     cta:"Jetzt zum Kurs anmelden", metric:"Mehr Anmeldungen", glow:"rgba(60,170,170,.5)"},
+    {img:CDN+"hf_20260614_121516_eb1db453-247a-4554-b579-1f2a72da9cef.png",
+     reel:"Ein einfaches Workout, das jeder sofort ausprobieren kann",
+     cap:"Keine Ausreden. Keine komplizierten Pläne. Nur ein klarer Start in ein stärkeres Ich.",
+     google:"Probetraining gratis – komm vorbei und finde deinen Einstieg, der wirklich passt.",
+     cta:"Jetzt Probetraining sichern", metric:"Mehr Motivation", glow:"rgba(90,180,110,.5)"}
   ];
-  var bReel=document.getElementById("bReel"), bCaption=document.getElementById("bCaption"), bImg=document.getElementById("bImg");
+  var bReel=document.getElementById("bReel"), bCaption=document.getElementById("bCaption");
+  var bGoogle=document.getElementById("bGoogle"), bCta=document.getElementById("bCta");
+  var bImg=document.getElementById("bImg"), bMetric=document.getElementById("bMetric");
+  var bvGlow=document.getElementById("bvGlow");
   var brancheSwap=document.getElementById("brancheSwap");
+  var brancheVisual=document.getElementById("brancheVisual");
   function setBranche(i,animate){
-    var apply=function(){ bReel.textContent=BRANCHEN[i].reel; bCaption.textContent=BRANCHEN[i].cap; bImg.src=BRANCHEN[i].img; };
+    var d=BRANCHEN[i];
+    var apply=function(){
+      bReel.textContent=d.reel; bCaption.textContent=d.cap;
+      bGoogle.textContent=d.google; bCta.textContent=d.cta;
+      bMetric.textContent=d.metric; bImg.src=d.img;
+      if(bvGlow){ bvGlow.style.background="radial-gradient(circle at 50% 32%,"+d.glow+",transparent 70%)"; }
+    };
     if(animate && !reduceMotion){
       brancheSwap.classList.add("swapping");
-      setTimeout(function(){ apply(); brancheSwap.classList.remove("swapping"); },330);
+      if(brancheVisual){ brancheVisual.classList.add("swapping"); }
+      setTimeout(function(){
+        apply();
+        brancheSwap.classList.remove("swapping");
+        if(brancheVisual){ brancheVisual.classList.remove("swapping"); }
+      },300);
     } else { apply(); }
   }
   setBranche(0,false);
@@ -1366,9 +1473,10 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
     /* --- TABLET intro: cinematic 3D tilt while opening, then snap to a flat
            2D view so all readable text renders natively sharp (no 3D raster). */
     var introK = openK;
-    var startScale = window.innerWidth<780 ? 0.68 : 0.76;
+    // start slightly zoomed-out + angled, then settle to a centered native scale(1)
+    var startScale = window.innerWidth<780 ? 0.78 : 0.72;
     var scale = lerp(startScale,1.0,introK);
-    var tiltX = lerp(10,0,introK), tiltY = lerp(-7,0,introK), tiltZ = lerp(-5,0,introK);
+    var tiltX = lerp(9,0,introK), tiltY = lerp(-6,0,introK), tiltZ = lerp(-4,0,introK);
     var tx = mx*7*(1-introK*0.6), ty = my*5*(1-introK*0.6);
     if(introK<0.985){
       rig.style.transform="translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) perspective(1400px) rotateX("+tiltX.toFixed(2)+"deg) rotateY("+tiltY.toFixed(2)+"deg) rotateZ("+tiltZ.toFixed(2)+"deg) scale("+scale.toFixed(4)+")";
