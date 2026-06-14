@@ -208,19 +208,28 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
    through, dimmed just enough to keep the content perfectly readable */
-.scene-bg-dark{ background:radial-gradient(130% 110% at 50% -8%, #15171d 0%, #0c0d11 52%, #070809 100%); overflow:hidden; }
-.scene-bg-cream{ background:radial-gradient(130% 110% at 50% 15%, #faf7f0 0%, var(--cream) 60%, #e7e0d0 100%); color:#16120c; overflow:hidden; }
-.scene-bg-split{ background:radial-gradient(130% 110% at 50% 112%, #13151b 0%, #08090c 60%); overflow:hidden; }
+.scene-bg-dark{ background:linear-gradient(180deg, rgba(5,8,12,.46) 0%, rgba(5,8,12,.66) 100%); overflow:hidden; }
+.scene-bg-cream{ background:linear-gradient(180deg, rgba(246,242,233,.84) 0%, rgba(231,224,209,.9) 100%); color:#16120c; overflow:hidden; }
+.scene-bg-split{ background:linear-gradient(180deg, rgba(6,9,14,.44) 0%, rgba(6,9,14,.68) 100%); overflow:hidden; }
+
+/* ---- Fullscreen background video layers -------------------------------- */
+.bgvids{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+.bgvid{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
+  transition:opacity .9s ease; transform:translateZ(0); backface-visibility:hidden;
+  filter:contrast(1.08) saturate(1.14); image-rendering:auto; will-change:opacity; }
+.bgvid.on{ opacity:1; }
+.bgvid-scrim{ position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(125% 100% at 50% 44%, transparent 38%, rgba(0,0,0,.4) 100%); }
 
 /* shared typography inside the tablet */
-.eyebrow{ font-size:clamp(11px,1.7vmin,15px); letter-spacing:.34em; text-transform:uppercase;
+.eyebrow{ font-size:clamp(12px,1.9vmin,17px); letter-spacing:.34em; text-transform:uppercase;
   color:var(--orange); font-weight:800; margin-bottom:18px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(40px,8.6vmin,132px); line-height:.9; font-weight:800; letter-spacing:-.036em; color:#fff;
-  text-shadow:0 2px 24px rgba(0,0,0,.6), 0 1px 2px rgba(0,0,0,.7); }
-.scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
-.subline{ max-width:46ch; font-size:clamp(14px,2.3vmin,21px); line-height:1.5; color:#e4e9f0; margin-top:22px;
-  font-weight:450; }
+h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; letter-spacing:-.038em; color:#fff;
+  text-shadow:0 2px 28px rgba(0,0,0,.7), 0 1px 2px rgba(0,0,0,.8); }
+.scene-bg-cream h1.lead{ color:#16120c; text-shadow:0 1px 1px rgba(255,255,255,.4); }
+.subline{ max-width:48ch; font-size:clamp(15px,2.5vmin,23px); line-height:1.5; color:#eef1f6; margin-top:24px;
+  font-weight:500; text-shadow:0 1px 10px rgba(0,0,0,.5); }
 .scene-bg-cream .subline{ color:#5a5345; text-shadow:none; }
 
 /* premium buttons */
@@ -491,27 +500,6 @@ h1.lead{ font-size:clamp(40px,8.6vmin,132px); line-height:.9; font-weight:800; l
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
 
-/* ---- Special custom cursor --------------------------------------------- */
-.cursor{ position:fixed; left:0; top:0; z-index:9999; pointer-events:none; }
-.cur-dot{ position:fixed; left:0; top:0; width:7px; height:7px; border-radius:50%; background:var(--orange);
-  transform:translate(-50%,-50%); box-shadow:0 0 14px var(--orange-glow); transition:width .2s,height .2s,opacity .2s; }
-.cur-ring{ position:fixed; left:0; top:0; width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(201,162,90,.65);
-  transform:translate(-50%,-50%); transition:width .28s var(--ease), height .28s var(--ease), border-color .28s, background .28s; }
-.cur-scroll{ position:fixed; left:0; top:0; transform:translate(-50%,28px); font-size:8.5px; font-weight:800; letter-spacing:.28em;
-  color:var(--orange); opacity:0; transition:opacity .3s; }
-.cursor.scroll .cur-scroll{ opacity:.85; }
-.cursor.hover .cur-ring{ width:66px; height:66px; background:rgba(201,162,90,.12); border-color:var(--orange); }
-.cursor.hover .cur-dot{ width:4px; height:4px; }
-body.has-cursor, body.has-cursor *{ cursor:none !important; }
-@media (hover:none),(pointer:coarse){ .cursor{ display:none !important; } }
-
-/* ---- Hover spotlight on the info boxes --------------------------------- */
-.svc,.review,.ba .col{ position:relative; }
-.svc::after,.plan::after,.review::after,.ba .col::after{ content:""; position:absolute; inset:0; border-radius:inherit;
-  pointer-events:none; opacity:0; transition:opacity .35s var(--ease); z-index:3;
-  background:radial-gradient(200px 200px at var(--mx,50%) var(--my,50%), rgba(232,210,160,.18), transparent 60%); }
-.svc:hover::after,.plan:hover::after,.review:hover::after,.ba .col:hover::after{ opacity:1; }
-
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; background:#03070b;
@@ -614,6 +602,14 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
       <div class="tablet-skin" id="tabletSkin"></div>
       <div class="screen" id="screen">
 
+        <!-- Fullscreen background videos (only the active one plays) -->
+        <div class="bgvids" id="bgvids">
+          <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="auto"></video>
+          <div class="bgvid-scrim"></div>
+        </div>
+
         <!-- App status bar -->
         <div class="statusbar" id="statusbar">
           <span>CleanLines</span>
@@ -668,7 +664,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 2 — LEISTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s2">
           <div class="eyebrow">Leistungen</div>
-          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Alles, was du zum Posten brauchst.</h1>
+          <h1 class="lead" style="font-size:clamp(36px,8vmin,124px)">Alles, was du zum Posten brauchst.</h1>
           <div class="svc-deck" id="svcDeck">
             <div class="svc active"><div class="ic">▶</div><h3>Reels-Skripte</h3><p>Fertige Hook-to-CTA Skripte zum Abdrehen.</p><span class="svc-meta">Hook · Story · CTA</span></div>
             <div class="svc"><div class="ic">✎</div><h3>Instagram Captions</h3><p>Texte, die zu deiner Marke sprechen.</p><span class="svc-meta">inkl. Hashtags &amp; Emojis</span></div>
@@ -681,7 +677,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 3 — BRANCHEN ===== -->
         <section class="scene scene-bg-dark" id="s3">
           <div class="eyebrow">Branchen</div>
-          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Content für deinen Betrieb.</h1>
+          <h1 class="lead" style="font-size:clamp(36px,8vmin,124px)">Content für deinen Betrieb.</h1>
           <div class="tabs" id="tabs">
             <button class="tab active" data-b="0">Friseure</button>
             <button class="tab" data-b="1">Restaurants</button>
@@ -706,14 +702,14 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 4 — EDITORIAL MOMENT ===== -->
         <section class="scene scene-bg-cream" id="s4">
           <div class="eyebrow dark">Kein Stress mehr</div>
-          <h1 class="lead" style="font-size:clamp(44px,11vmin,200px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
+          <h1 class="lead" style="font-size:clamp(46px,11vmin,210px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
           <p class="subline">Du bekommst jeden Monat klare Ideen, fertige Texte und Beiträge, die zu deinem Betrieb passen.</p>
         </section>
 
         <!-- ===== SCENE 5 — BEFORE / AFTER ===== -->
         <section class="scene scene-bg-split" id="s5">
           <div class="eyebrow">Vorher / Nachher</div>
-          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Vom Chaos zum System.</h1>
+          <h1 class="lead" style="font-size:clamp(36px,8vmin,124px)">Vom Chaos zum System.</h1>
           <div class="ba">
             <div class="col before">
               <h4>Vorher</h4>
@@ -743,7 +739,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 6 — PRICING (monthly) ===== -->
         <section class="scene scene-bg-dark" id="s6">
           <div class="eyebrow">Monatliche Pakete</div>
-          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Wähle dein Tempo.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.4vmin,108px)">Wähle dein Tempo.</h1>
           <div class="price-deck">
             <div class="plan">
               <div class="pname">Starter</div>
@@ -797,7 +793,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 7 — EINZELAUFTRÄGE (one-off services) ===== -->
         <section class="scene scene-bg-dark" id="s7">
           <div class="eyebrow">Einzelaufträge</div>
-          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Mehr als nur Content.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.4vmin,108px)">Mehr als nur Content.</h1>
           <p class="subline">Einmalige Projekte – professionell umgesetzt, zum fairen Festpreis.</p>
           <div class="svc-deck oneoff">
             <div class="svc">
@@ -833,7 +829,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 8 — BEWERTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s8">
           <div class="eyebrow">Bewertungen</div>
-          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Das sagen unsere Kunden.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.4vmin,108px)">Das sagen unsere Kunden.</h1>
           <div class="reviews">
             <div class="review">
               <div class="stars">★★★★★</div>
@@ -862,7 +858,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
         <!-- ===== SCENE 9 — FAQ ===== -->
         <section class="scene scene-bg-dark" id="s9">
           <div class="eyebrow">FAQ</div>
-          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Häufige Fragen.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.4vmin,108px)">Häufige Fragen.</h1>
           <div class="faq">
             <details class="faq-item" open>
               <summary>Wie schnell bekomme ich meinen Content?<i></i></summary>
@@ -908,13 +904,6 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
   <div class="scene-dots" id="dots"></div>
 </div><!-- /stage -->
 <div class="progress" id="progressBar"></div>
-
-<!-- Special custom cursor -->
-<div class="cursor" id="cursorEl" aria-hidden="true">
-  <span class="cur-ring"></span>
-  <span class="cur-dot"></span>
-  <span class="cur-scroll">SCROLL</span>
-</div>
 
 <script>
 (function(){
@@ -1024,10 +1013,25 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
 
+  /* ---- fullscreen background videos: per-scene, only active plays -------- */
+  var bgvids=document.querySelectorAll(".bgvid");
+  var vidMap=["final","final","reel1","reel2","reel1","reel2","reel1","reel2","final","reel1","final"];
+  var curVidKey=null;
+  function setSceneVideo(idx){
+    var key=vidMap[idx]||"final";
+    if(key===curVidKey) return;
+    curVidKey=key;
+    bgvids.forEach(function(v){
+      if(v.dataset.key===key){ v.classList.add("on"); var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
+      else{ v.classList.remove("on"); try{ v.pause(); }catch(e){} }
+    });
+  }
+  setSceneVideo(0);
+
   /* ---- live, interactive motion for the info boxes + hero phone ---------- */
   var moCards=[];
   document.querySelectorAll(".svc,.plan,.review,.ba .col,#heroPhone").forEach(function(el,i){
-    var o={el:el, ph:i*0.8, hov:0, tx:0, ty:0, ttx:0, tty:0, scene:el.closest(".scene"),
+    var o={el:el, ph:i*0.8, hov:0, hs:0, tx:0, ty:0, ttx:0, tty:0, dirty:false, scene:el.closest(".scene"),
            feat:el.classList.contains("feature"), phone:el.id==="heroPhone"};
     el.addEventListener("mouseenter",function(){o.hov=1;});
     el.addEventListener("mouseleave",function(){o.hov=0;o.ttx=0;o.tty=0;});
@@ -1035,8 +1039,6 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
       var r=el.getBoundingClientRect();
       o.ttx=((e.clientY-r.top)/r.height-0.5)*-2;
       o.tty=((e.clientX-r.left)/r.width-0.5)*2;
-      el.style.setProperty("--mx",((e.clientX-r.left)/r.width*100)+"%");
-      el.style.setProperty("--my",((e.clientY-r.top)/r.height*100)+"%");
     },{passive:true});
     moCards.push(o);
   });
@@ -1044,37 +1046,27 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     var nowS=Date.now()*0.001;
     for(var ci=0;ci<moCards.length;ci++){
       var o=moCards[ci];
-      if(o.scene && !o.scene.classList.contains("show")) continue;   // skip offscreen scenes
-      o.tx+=(o.ttx-o.tx)*0.12; o.ty+=(o.tty-o.ty)*0.12;
-      var fy=reduceMotion?0:Math.sin(nowS*0.8+o.ph)*(o.phone?12:8);
-      var up=o.hov || o.el.classList.contains("active");
-      var amp=(o.phone?9:7)*(o.hov?1.7:1);    // stronger tilt while hovering
-      var sc=up?(o.feat?1.13:1.06):(o.feat?1.08:1);
-      var lift=o.hov?-10:0;
-      o.el.style.transform="perspective(900px) translateY("+(fy+lift)+"px) rotateX("+(o.tx*amp)+"deg) rotateY("+(o.ty*amp)+"deg) scale("+sc+")";
-      o.el.style.zIndex=o.hov?"5":"";
+      var active=!o.scene || o.scene.classList.contains("show");
+      if(o.phone){
+        // the hero phone keeps a gentle continuous float (single element)
+        if(!active){ continue; }
+        o.tx+=(o.ttx-o.tx)*0.12; o.ty+=(o.tty-o.ty)*0.12;
+        var pamp=9*(o.hov?1.4:1);
+        var pfy=reduceMotion?0:Math.sin(nowS*0.9+o.ph)*12;
+        o.el.style.transform="perspective(1000px) translateY("+pfy+"px) rotateX("+(o.tx*pamp)+"deg) rotateY("+(o.ty*pamp)+"deg) scale("+(o.hov?1.05:1)+")";
+        continue;
+      }
+      // info boxes: animate ONLY on hover (zero idle cost when settled)
+      if(!active){ if(o.dirty){ o.el.style.transform=""; o.dirty=false; o.hs=0; o.tx=0; o.ty=0; } continue; }
+      var tgt=(o.hov||o.el.classList.contains("active"))?1:0;
+      o.hs+=(tgt-o.hs)*0.16;
+      o.tx+=(o.ttx-o.tx)*0.16; o.ty+=(o.tty-o.ty)*0.16;
+      if(o.hs<0.005 && tgt===0){ if(o.dirty){ o.el.style.transform=""; o.dirty=false; } o.tx=0; o.ty=0; continue; }
+      o.dirty=true;
+      var amp=o.feat?6:7;
+      var base=o.feat?1.12:1;
+      o.el.style.transform="perspective(900px) translateY("+(-12*o.hs)+"px) rotateX("+(o.tx*amp*o.hs)+"deg) rotateY("+(o.ty*amp*o.hs)+"deg) scale("+(base+o.hs*0.06)+")";
     }
-  }
-
-  /* ---- special custom cursor ------------------------------------------- */
-  var cursorEl=document.getElementById("cursorEl");
-  var curDot=cursorEl.querySelector(".cur-dot"), curRing=cursorEl.querySelector(".cur-ring"), curScroll=cursorEl.querySelector(".cur-scroll");
-  var cxp=window.innerWidth/2, cyp=window.innerHeight/2, rxp=cxp, ryp=cyp, scrollHintT=0;
-  var finePointer=window.matchMedia("(hover:hover) and (pointer:fine)").matches;
-  if(finePointer && !reduceMotion){
-    document.body.classList.add("has-cursor");
-    window.addEventListener("mousemove",function(e){ cxp=e.clientX; cyp=e.clientY; },{passive:true});
-    var hoverSel="a,button,.svc,.plan,.review,.tab,.faq-item summary,.phone,.scene-dots b";
-    document.addEventListener("mouseover",function(e){ if(e.target.closest&&e.target.closest(hoverSel)) cursorEl.classList.add("hover"); });
-    document.addEventListener("mouseout",function(e){ if(e.target.closest&&e.target.closest(hoverSel)) cursorEl.classList.remove("hover"); });
-    window.addEventListener("wheel",function(){ cursorEl.classList.add("scroll"); clearTimeout(scrollHintT); scrollHintT=setTimeout(function(){cursorEl.classList.remove("scroll");},700); },{passive:true});
-  }
-  function renderCursor(){
-    if(!finePointer) return;
-    curDot.style.left=cxp+"px"; curDot.style.top=cyp+"px";
-    curScroll.style.left=cxp+"px"; curScroll.style.top=cyp+"px";
-    rxp+=(cxp-rxp)*0.2; ryp+=(cyp-ryp)*0.2;
-    curRing.style.left=rxp+"px"; curRing.style.top=ryp+"px";
   }
 
   /* ---- mouse / touch / gyro parallax ------------------------------------ */
@@ -1178,6 +1170,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     var active=Math.round(pos);
     if(active!==lastDot){
       for(var dd=0;dd<dotEls.length;dd++){ dotEls[dd].classList.toggle("on",dd===active); }
+      setSceneVideo(active);
       lastDot=active;
     }
 
@@ -1187,9 +1180,8 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
       o.el.style.transform="translate("+(dx+mx*10)+"px,"+(dy+my*8)+"px)";
     }
 
-    /* --- live info-box + phone motion + custom cursor --- */
+    /* --- live info-box + phone motion --- */
     renderCards();
-    renderCursor();
 
     requestAnimationFrame(render);
   }
