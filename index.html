@@ -86,7 +86,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   transition:opacity .8s ease;
   will-change:transform;
 }
-.bg-photo.ready{ opacity:.55; }
+.bg-photo.ready{ opacity:.62; }
+/* cursor-follow light that washes over the environment BEHIND the tablet
+   (no z-index -> sits behind the device via DOM order, lights the "room") */
+.cursor-light{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
+  background:radial-gradient(220px 220px at var(--cx,50%) var(--cy,40%), rgba(255,140,40,.18), transparent 70%);
+  transition:background .15s linear; }
 /* atmospheric vignette */
 .bg-vignette{
   position:absolute; inset:0; pointer-events:none;
@@ -177,6 +182,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:#05080c;
   box-shadow:0 0 0 2px #000, 0 0 40px rgba(0,0,0,.8) inset;
   isolation:isolate;
+  perspective:1300px;            /* enables 3D scene depth transitions */
 }
 
 /* Glass reflection over the screen (decorative, never blocks clicks) */
@@ -414,6 +420,20 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
 
+/* ---- Premium intro loader ---------------------------------------------- */
+.loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:22px; background:#03070b;
+  transition:opacity .9s var(--ease), visibility .9s; }
+.loader.done{ opacity:0; visibility:hidden; }
+.loader .mark2{ width:64px; height:64px; border-radius:18px; position:relative;
+  background:linear-gradient(150deg,#ff7e1f,var(--orange)); box-shadow:0 0 50px var(--orange-glow);
+  animation:iconPulse 2.4s var(--ease) infinite; }
+.loader .name{ font-weight:800; letter-spacing:.18em; text-transform:uppercase; font-size:13px; color:#fff; }
+.loader .bar{ width:180px; height:3px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden; }
+.loader .bar i{ display:block; height:100%; width:40%; border-radius:3px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent); animation:loadSweep 1.2s var(--ease) infinite; }
+@keyframes loadSweep{ 0%{transform:translateX(-120%);} 100%{transform:translateX(330%);} }
+
 /* ============================================================================
    RESPONSIVE
    ========================================================================== */
@@ -444,6 +464,13 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 </head>
 <body>
 
+<!-- Premium intro loader -->
+<div class="loader" id="loader">
+  <div class="mark2"></div>
+  <div class="name">CleanLines Studio</div>
+  <div class="bar"><i></i></div>
+</div>
+
 <!-- Scroll track drives the whole cinematic timeline -->
 <div class="scroll-track" id="track"></div>
 
@@ -456,11 +483,12 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   <div class="orb" id="orb1" style="width:46vw;height:46vw;top:-10%;right:-6%;background:radial-gradient(circle,rgba(255,106,0,.5),transparent 70%);"></div>
   <div class="orb" id="orb2" style="width:40vw;height:40vw;bottom:-14%;left:-10%;background:radial-gradient(circle,rgba(40,90,150,.5),transparent 70%);"></div>
   <div class="particles" id="particles"></div>
+  <div class="cursor-light" id="cursorLight"></div>
   <div class="bg-vignette"></div>
 
-  <!-- LAYER 3: realistic hands -->
-  <div class="hand hand-left"  id="handL"><img src="hand-left.png"  alt=""></div>
-  <div class="hand hand-right" id="handR"><img src="hand-right.png" alt=""></div>
+  <!-- LAYER 3: realistic hands (AI-generated, transparent cutout) -->
+  <div class="hand hand-left"  id="handL"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120825_24a4ebc8-1a64-4538-bf9a-e4e13027a838.png" alt=""></div>
+  <div class="hand hand-right" id="handR"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120825_24a4ebc8-1a64-4538-bf9a-e4e13027a838.png" alt=""></div>
 
   <!-- LAYER 4–6: tablet device + screen + content -->
   <div class="tablet-rig" id="rig">
@@ -645,15 +673,24 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   var orb1=document.getElementById("orb1"), orb2=document.getElementById("orb2");
   var bg=document.getElementById("bg");
   var handL=document.getElementById("handL"), handR=document.getElementById("handR");
+  var glass=document.querySelector(".glass");
+  var cursorLight=document.getElementById("cursorLight");
+  var loader=document.getElementById("loader");
   var scenesEls=[]; for(var i=0;i<SCENES;i++){ scenesEls[i]=document.getElementById("s"+i); }
 
-  /* ---- optional asset detection (graceful fallbacks) -------------------- */
+  /* ---- intro loader: fade out once ready -------------------------------- */
+  function hideLoader(){ if(loader){ loader.classList.add("done"); } }
+  window.addEventListener("load",function(){ setTimeout(hideLoader,650); });
+  setTimeout(hideLoader,2600); // safety net
+
+  /* ---- asset slots (AI-generated via Higgsfield; swap freely) ----------- */
+  var ASSETS={
+    // cinematic studio environment (background.jpg slot)
+    bg:"https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120546_bf114837-7536-405c-921d-60aac4f982b1.png"
+  };
   function tryImage(src,onOk){ var im=new Image(); im.onload=function(){onOk(src);}; im.src=src; }
-  tryImage("background.jpg",function(src){
+  tryImage(ASSETS.bg,function(src){
     var el=document.getElementById("bgPhoto"); el.style.backgroundImage="url('"+src+"')"; el.classList.add("ready");
-  });
-  tryImage("tablet.png",function(src){
-    var el=document.getElementById("tabletSkin"); el.style.backgroundImage="url('"+src+"')"; el.classList.add("ready");
   });
   // hands: if PNG missing, switch the wrapper to the elegant CSS fallback
   [handL,handR].forEach(function(wrap){
@@ -726,16 +763,27 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
 
-  /* ---- mouse / touch parallax ------------------------------------------- */
+  /* ---- mouse / touch / gyro parallax ------------------------------------ */
   var tmx=0,tmy=0,mx=0,my=0;
   if(!reduceMotion){
     window.addEventListener("mousemove",function(e){
       tmx=(e.clientX/window.innerWidth-.5)*2; tmy=(e.clientY/window.innerHeight-.5)*2;
+      // cursor-follow light
+      cursorLight.style.setProperty("--cx",e.clientX+"px");
+      cursorLight.style.setProperty("--cy",e.clientY+"px");
     },{passive:true});
     window.addEventListener("touchmove",function(e){
       if(e.touches&&e.touches[0]){
         tmx=(e.touches[0].clientX/window.innerWidth-.5)*2; tmy=(e.touches[0].clientY/window.innerHeight-.5)*2;
+        cursorLight.style.setProperty("--cx",e.touches[0].clientX+"px");
+        cursorLight.style.setProperty("--cy",e.touches[0].clientY+"px");
       }
+    },{passive:true});
+    // device orientation (gyro) parallax for immersive mobile tilt
+    window.addEventListener("deviceorientation",function(e){
+      if(e.gamma==null) return;
+      tmx=clamp(e.gamma/30,-1,1);            // left/right tilt
+      tmy=clamp((e.beta-45)/30,-1,1);        // front/back tilt
     },{passive:true});
   }
 
@@ -803,9 +851,13 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
       el.style.opacity=op;
       var tY=delta*7;                 // % travel (scene below rises in)
       var sc=1-ad*0.05;
-      el.style.transform="translateY("+tY+"%) scale("+sc+")";
+      var rX=delta*-7;                // 3D depth tilt during the transition
+      el.style.transform="translateY("+tY+"%) translateZ("+(-ad*120)+"px) rotateX("+rX+"deg) scale("+sc+")";
       el.style.pointerEvents=(ad<0.5)?"auto":"none";
     }
+
+    /* --- tilt-reactive glass reflection on the tablet --- */
+    if(glass){ glass.style.transform="translate("+(mx*14)+"px,"+(my*10)+"px)"; }
 
     /* --- CENTRAL ENGINE: float + tilt + rotate (visibility cascades from
            its parent scene's opacity, so it appears on hero/editorial/final). */
