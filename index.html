@@ -139,11 +139,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  /* huge, near-fullscreen premium device — centred by the flex rig,
+  /* ultra-wide, near-fullscreen premium device — centred by the flex rig,
      settles straight at scale(1) for razor-sharp text */
-  width:min(99vw,2200px);
-  height:min(97vh,1320px);
-  border-radius:34px;
+  width:min(100vw,2400px);
+  height:min(97vh,1340px);
+  border-radius:30px;
   /* black anodized aluminium bezel with brushed metal sheen */
   background:
     linear-gradient(150deg,#41464e 0%,#1a1f26 16%,#0a0d12 50%,#1a1f26 84%,#4a4f57 100%);
@@ -1551,8 +1551,8 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    curScroll += (scrollP-curScroll)*0.065;
-    mx += (tmx-mx)*0.055; my += (tmy-my)*0.055;
+    curScroll += (scrollP-curScroll)*0.058;
+    mx += (tmx-mx)*0.05; my += (tmy-my)*0.05;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
     var openK = ss(clamp(pos,0,1));      // 0 = closed launcher, 1 = app fully open
@@ -1566,21 +1566,23 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
     /* --- background parallax + atmosphere (slow, calm) --- */
     orb1.style.transform="translate("+(mx*-26)+"px,"+(my*-20 + curScroll*-60)+"px)";
     orb2.style.transform="translate("+(mx*22)+"px,"+(my*16 + curScroll*40)+"px)";
-    bg.style.transform="translate("+(mx*-10)+"px,"+(my*-8)+"px) scale(1.06)";
+    bg.style.transform="translate("+(mx*-10)+"px,"+(my*-8)+"px) scale("+(1.06+curScroll*0.1).toFixed(3)+")";
 
     /* --- TABLET: floats in LARGE + angled (schräg) at the start, then settles
            perfectly STRAIGHT at native scale so all text renders razor-sharp.
            Only the outer rig is transformed during the intro — never the text. */
     var introK = openK;
-    // GROWS as you scroll in: starts smaller + angled (pushed back), then
-    // grows large and settles perfectly straight at native scale(1)
-    var startScale = window.innerWidth<780 ? 0.90 : 0.87;
-    var scale = lerp(startScale,1.0,introK);
-    var tiltX = lerp(9, 0, introK);
-    var tiltY = lerp(-6, 0, introK);
-    var tiltZ = lerp(-3, 0, introK);
+    // ease-out so the device RUSHES in then decelerates elegantly into place
+    var ek = 1 - Math.pow(1-introK, 2.4);
+    // GROWS as you scroll in: starts a touch smaller + angled, then zooms to
+    // near-fullscreen and settles perfectly straight at native scale(1)
+    var startScale = window.innerWidth<780 ? 0.88 : 0.84;
+    var scale = lerp(startScale,1.0,ek);
+    var tiltX = lerp(9, 0, ek);
+    var tiltY = lerp(-6, 0, ek);
+    var tiltZ = lerp(-3, 0, ek);
     // gentle parallax only — no vertical offset, stays centered
-    var tx = mx*lerp(12,5,introK), ty = my*lerp(9,4,introK);
+    var tx = mx*lerp(12,5,ek), ty = my*lerp(9,4,ek);
     if(introK<0.992){
       rig.style.transform=
         "translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) "+
