@@ -109,39 +109,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:rgba(255,200,150,.7); box-shadow:0 0 8px rgba(255,160,90,.8); will-change:transform,opacity; }
 
 /* ============================================================================
-   HANDS — first-person, holding the tablet (bottom-left / bottom-right)
-   ========================================================================== */
-.hand{
-  position:absolute; bottom:-9%; z-index:20;
-  width:min(30vw,500px); height:66vh;
-  pointer-events:none; will-change:transform,opacity;
-  filter:drop-shadow(0 26px 50px rgba(0,0,0,.7));
-}
-.hand img{ width:100%; height:100%; object-fit:contain; object-position:bottom; }
-.hand-left{ left:8%; transform-origin:bottom center; }
-.hand-right{ right:8%; transform-origin:bottom center; }
-.hand-right img{ transform:scaleX(-1); }
-
-/* Elegant CSS fallback hand (used when PNG is missing) — stylised, premium,
-   NOT a cheap cartoon: a soft sculpted thumb/palm in warm skin light.       */
-.hand.fallback img{ display:none; }
-.hand.fallback::before{ /* palm / lower hand */
-  content:""; position:absolute; bottom:-6%; width:78%; height:62%;
-  background:linear-gradient(155deg, #d9a487 0%, #b97f63 42%, #8c5740 78%, #5e3829 100%);
-  border-radius:60% 60% 40% 40%/70% 70% 30% 30%;
-  box-shadow:inset 0 20px 40px rgba(255,200,170,.25), inset 0 -30px 50px rgba(0,0,0,.45);
-}
-.hand.fallback::after{ /* thumb reaching onto the tablet edge */
-  content:""; position:absolute; bottom:26%; width:30%; height:46%;
-  background:linear-gradient(150deg, #e0ab8c 0%, #b67d60 55%, #7d4b35 100%);
-  box-shadow:inset 0 8px 22px rgba(255,210,180,.3), inset 0 -10px 24px rgba(0,0,0,.4);
-}
-.hand-left.fallback::before{ left:6%; }
-.hand-left.fallback::after{ left:46%; border-radius:60% 50% 50% 60%/70% 60% 40% 50%; transform:rotate(8deg); }
-.hand-right.fallback::before{ right:6%; }
-.hand-right.fallback::after{ right:46%; border-radius:50% 60% 60% 50%/60% 70% 50% 40%; transform:rotate(-8deg); }
-
-/* ============================================================================
    TABLET — the main world. Premium black-glass device.
    ========================================================================== */
 .tablet-rig{
@@ -151,10 +118,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  width:min(95vw,2000px);
-  height:min(93vh,1120px);
+  width:min(96vw,2400px);
+  height:min(95vh,1380px);
   transform:translate(-50%,-50%);
-  border-radius:42px;
+  border-radius:40px;
   /* brushed dark metal bezel */
   background:
     linear-gradient(150deg,#3a3f47 0%,#171b21 18%,#0a0d12 50%,#171b21 82%,#43484f 100%);
@@ -224,7 +191,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   opacity:0; pointer-events:none;
   will-change:transform,opacity;
   backface-visibility:hidden;
+  transform-style:preserve-3d;
 }
+
+/* ---- 3D MOTION DESIGN: staggered depth reveal of each scene's content --- */
+.scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,
+.scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
+.scene .price-deck,.scene .minis{
+  opacity:0; transform:translateY(30px) translateZ(-90px) rotateX(9deg);
+  transition:opacity .65s var(--ease), transform .85s var(--ease);
+}
+.scene.show .eyebrow{ opacity:1; transform:none; transition-delay:.04s; }
+.scene.show h1.lead{ opacity:1; transform:none; transition-delay:.12s; }
+.scene.show .subline{ opacity:1; transform:none; transition-delay:.20s; }
+.scene.show .btns{ opacity:1; transform:none; transition-delay:.30s; }
+.scene.show .minis{ opacity:1; transform:none; transition-delay:.10s; }
+.scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
+.scene.show .ba,.scene.show .price-deck{ opacity:1; transform:none; transition-delay:.22s; }
 .scene-bg-dark{ background:radial-gradient(120% 100% at 50% 0%, #14202c 0%, #0a121a 55%, #060c12 100%); }
 .scene-bg-cream{ background:radial-gradient(120% 100% at 50% 20%, #fbf8f0 0%, var(--cream) 60%, #e9e2d2 100%); color:#1a1712; }
 .scene-bg-split{ background:#070d13; }
@@ -233,11 +216,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .eyebrow{ font-size:clamp(10px,1.5vmin,13px); letter-spacing:.32em; text-transform:uppercase;
   color:var(--orange); font-weight:700; margin-bottom:14px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; letter-spacing:-.025em; color:#fff;
-  text-shadow:0 2px 30px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.5); }
+h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; letter-spacing:-.028em; color:#fff;
+  text-shadow:0 1px 1px rgba(0,0,0,.55); }
 .scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
-.subline{ max-width:58ch; font-size:clamp(12.5px,2.05vmin,17px); line-height:1.55; color:#d4dbe5; margin-top:16px;
-  font-weight:450; text-shadow:0 1px 12px rgba(0,0,0,.5); }
+.subline{ max-width:56ch; font-size:clamp(13px,2.05vmin,17px); line-height:1.55; color:#dde3ec; margin-top:16px;
+  font-weight:450; }
 .scene-bg-cream .subline{ color:#5a5345; text-shadow:none; }
 
 /* premium buttons */
@@ -250,17 +233,22 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .btn-primary{ background:linear-gradient(135deg,var(--orange),#ff8c2e); color:#1a0c00;
   box-shadow:0 12px 30px var(--orange-glow), 0 1px 0 rgba(255,255,255,.4) inset; }
 .btn-primary:hover{ transform:translateY(-3px) scale(1.03); box-shadow:0 20px 46px var(--orange-glow); }
-.btn-ghost{ background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.18);
-  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+.btn-ghost{ background:rgba(22,28,40,.72); color:#fff; border:1px solid rgba(255,255,255,.2); }
 .btn-ghost:hover{ transform:translateY(-3px); background:rgba(255,255,255,.12); }
 .scene-bg-cream .btn-ghost{ color:#1a1712; border-color:rgba(0,0,0,.16); background:rgba(0,0,0,.04); }
 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
 #s0{ z-index:40; }
-.s0-video{ position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; }
-.s0-scrim{ position:absolute; inset:0; z-index:1;
-  background:radial-gradient(120% 90% at 50% 46%, rgba(4,7,12,.45) 0%, rgba(4,7,12,.82) 100%); }
-.launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:18px; will-change:transform,opacity; }
+.launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; will-change:transform,opacity; }
+.s0-reel{ width:clamp(190px,27vmin,320px); aspect-ratio:9/16; border-radius:24px; overflow:hidden; position:relative;
+  border:1px solid rgba(255,255,255,.16); margin-bottom:6px;
+  box-shadow:0 50px 110px rgba(0,0,0,.65), 0 0 80px rgba(255,106,0,.3); }
+.s0-reel video{ width:100%; height:100%; object-fit:cover; display:block; }
+.s0-reel .reel-badge{ position:absolute; top:10px; left:10px; display:flex; align-items:center; gap:6px;
+  padding:4px 9px; border-radius:100px; font-size:10px; font-weight:800; letter-spacing:.12em;
+  background:rgba(0,0,0,.55); color:#fff; }
+.s0-reel .reel-badge b{ width:7px; height:7px; border-radius:50%; background:var(--orange);
+  box-shadow:0 0 10px var(--orange-glow); animation:iconPulse 1.6s var(--ease) infinite; }
 .app-icon{
   width:clamp(86px,16vmin,150px); height:clamp(86px,16vmin,150px);
   border-radius:26%; position:relative;
@@ -303,11 +291,10 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 #s1 .hero-copy{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
 #s1 .hero-copy .subline{ margin-left:auto; margin-right:auto; }
 .engine .tile{
-  position:absolute; inset:0; border-radius:20px;
-  background:linear-gradient(160deg, rgba(28,36,48,.92), rgba(12,18,26,.92));
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 30px 60px rgba(0,0,0,.5), 0 0 50px rgba(255,106,0,.18);
-  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  position:absolute; inset:0; border-radius:22px;
+  background:linear-gradient(160deg, #1a2433, #0c121c);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 40px 80px rgba(0,0,0,.6), 0 0 60px rgba(255,106,0,.22);
   overflow:hidden;
 }
 .engine .tile::before{ content:""; position:absolute; inset:0;
@@ -436,16 +423,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
 
-/* ---- Showreel player (inside the tablet) ------------------------------- */
-.showreel{ position:absolute; inset:0; z-index:70; display:flex; align-items:center; justify-content:center;
-  background:rgba(2,4,8,.94); opacity:0; visibility:hidden; transition:opacity .45s var(--ease), visibility .45s;
-  border-radius:26px; }
-.showreel.open{ opacity:1; visibility:visible; }
-.showreel video{ max-width:92%; max-height:84%; border-radius:14px; box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px var(--orange-glow); }
-.sr-close{ position:absolute; top:14px; right:16px; width:38px; height:38px; border-radius:50%;
-  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; font-size:16px; }
-.sr-close:hover{ background:var(--orange); color:#1a0c00; }
-
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; background:#03070b;
@@ -469,10 +446,8 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:92vw; height:62vh; border-radius:30px; }
-  .screen{ border-radius:20px; } .glass{ border-radius:20px; }
-  .hand{ width:42vw; height:46vh; opacity:.92; }
-  .hand-left{ left:-3%; } .hand-right{ right:-3%; }
+  .tablet{ width:96vw; height:80vh; border-radius:26px; }
+  .screen{ border-radius:18px; } .glass{ border-radius:18px; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .price-deck{ flex-wrap:wrap; } .plan{ width:44%; } .plan.feature{ transform:scale(1.05); width:60%; }
   .ba{ flex-direction:column; }
@@ -532,9 +507,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
        fades to reveal the environment as you scroll into the app -->
   <div class="black-veil" id="blackVeil"></div>
 
-  <!-- LAYER 3: realistic hands (AI-generated, transparent cutout) -->
-  <div class="hand hand-left"  id="handL"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120825_24a4ebc8-1a64-4538-bf9a-e4e13027a838.png" alt=""></div>
-  <div class="hand hand-right" id="handR"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120825_24a4ebc8-1a64-4538-bf9a-e4e13027a838.png" alt=""></div>
+  <!-- LAYER 3: hands removed by request — pure tablet experience -->
 
   <!-- LAYER 4–6: tablet device + screen + content -->
   <div class="tablet-rig" id="rig">
@@ -551,10 +524,11 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
         <section class="scene" id="s0">
-          <video class="s0-video" src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
-          <div class="s0-scrim"></div>
           <div class="launcher" id="launcher">
-            <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
+            <div class="s0-reel">
+              <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+              <span class="reel-badge"><b></b>LIVE</span>
+            </div>
             <h2>CleanLines Studio</h2>
             <p class="sub">Creative Content Hub</p>
             <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
@@ -581,7 +555,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
           </div>
           <div class="btns">
             <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Preview sichern</a>
-            <button class="btn btn-ghost" data-showreel>▶ Showreel</button>
             <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
           </div>
         </section>
@@ -687,15 +660,9 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
           <h1 class="lead">Dein Betrieb braucht keine Agentur.<br>Er braucht fertigen Content.</h1>
           <div class="btns">
             <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Preview sichern</a>
-            <a class="btn btn-ghost" href="https://wa.me/4900000000000" target="_blank" rel="noopener">WhatsApp schreiben</a>
+            <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
           </div>
         </section>
-
-        <!-- Showreel player (opens inside the tablet) -->
-        <div class="showreel" id="showreel">
-          <video id="showreelVideo" src="assets/videos/showreel.mp4" playsinline preload="none" controls></video>
-          <button class="sr-close" id="srClose" aria-label="Schließen">✕</button>
-        </div>
 
         <!-- Glass overlay (always on top, never blocks clicks) -->
         <div class="glass"></div>
@@ -732,7 +699,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   var progressBar=document.getElementById("progressBar");
   var orb1=document.getElementById("orb1"), orb2=document.getElementById("orb2");
   var bg=document.getElementById("bg");
-  var handL=document.getElementById("handL"), handR=document.getElementById("handR");
   var glass=document.querySelector(".glass");
   var cursorLight=document.getElementById("cursorLight");
   var loader=document.getElementById("loader");
@@ -752,12 +718,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   function tryImage(src,onOk){ var im=new Image(); im.onload=function(){onOk(src);}; im.src=src; }
   tryImage(ASSETS.bg,function(src){
     var el=document.getElementById("bgPhoto"); el.style.backgroundImage="url('"+src+"')"; el.classList.add("ready");
-  });
-  // hands: if PNG missing, switch the wrapper to the elegant CSS fallback
-  [handL,handR].forEach(function(wrap){
-    var img=wrap.querySelector("img");
-    img.addEventListener("error",function(){ wrap.classList.add("fallback"); });
-    if(img.complete && img.naturalWidth===0){ wrap.classList.add("fallback"); }
   });
 
   /* ---- particles -------------------------------------------------------- */
@@ -825,13 +785,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
 
-  /* ---- showreel player -------------------------------------------------- */
-  var showreel=document.getElementById("showreel"), srVideo=document.getElementById("showreelVideo");
-  function openShowreel(){ showreel.classList.add("open"); try{ srVideo.play(); }catch(e){} }
-  function closeShowreel(){ showreel.classList.remove("open"); srVideo.pause(); }
-  document.querySelectorAll("[data-showreel]").forEach(function(el){ el.addEventListener("click",openShowreel); });
-  document.getElementById("srClose").addEventListener("click",closeShowreel);
-
   /* ---- mouse / touch / gyro parallax ------------------------------------ */
   var tmx=0,tmy=0,mx=0,my=0;
   if(!reduceMotion){
@@ -889,7 +842,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     /* --- TABLET outer motion (camera feel) --- */
     var pricingZoom = gauss(pos,6,0.55)*0.05;        // subtle zoom at pricing
     var finalZoom   = ss(clamp(pos-6.2,0,1))*0.06;   // closer on final CTA
-    var scale = lerp(0.66,1.0,openK) + pricingZoom + finalZoom;
+    var scale = lerp(0.9,1.0,openK) + pricingZoom + finalZoom;
     var rotX  = lerp(15,0,openK) + my*2.2;            // tilt flattens as app opens
     var rotY  = lerp(-9,0,openK) + mx*3.2;
     var rotZ  = lerp(2.5,0,openK);
@@ -898,19 +851,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     rig.style.transform=
       "translate("+tx+"px,"+ty+"px) "+
       "rotateX("+rotX+"deg) rotateY("+rotY+"deg) rotateZ("+rotZ+"deg) scale("+scale+")";
-
-    /* --- HANDS: hold the tablet on black, then release & sink away as the
-           app opens and the tablet grows to fill the screen --- */
-    var handOp=clamp(1 - pos*1.55, 0, 1);
-    handL.style.opacity=handOp; handR.style.opacity=handOp;
-    var t=Date.now();
-    var hIdle  = reduceMotion?0:Math.sin(t*0.0013);   // gentle breathing bob
-    var hIdle2 = reduceMotion?0:Math.cos(t*0.0010);   // subtle sway
-    var hY = 4 + hIdle*9 + openK*70;                  // sink down on release
-    var hX = mx*16;
-    var hRot = hIdle2*1.7;
-    handL.style.transform="translateY("+hY+"px) translateX("+(hX-openK*60)+"px) rotate("+hRot+"deg) scale(1.03)";
-    handR.style.transform="translateY("+hY+"px) translateX("+(hX+openK*60)+"px) rotate("+(-hRot)+"deg) scale(1.03)";
 
     /* --- STATUS BAR appears with the app --- */
     statusbar.style.opacity=openK*0.9;
@@ -934,6 +874,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
       var rX=delta*-7;                // 3D depth tilt during the transition
       el.style.transform="translateY("+tY+"%) translateZ("+(-ad*120)+"px) rotateX("+rX+"deg) scale("+sc+")";
       el.style.pointerEvents=(ad<0.5)?"auto":"none";
+      el.classList.toggle("show", ad<0.5);   // trigger staggered 3D reveal
     }
 
     /* --- tilt-reactive glass reflection on the tablet --- */
