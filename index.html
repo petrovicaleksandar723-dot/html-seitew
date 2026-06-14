@@ -127,23 +127,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  /* large, premium floating device — centered with a small safe margin */
-  width:min(96vw,1720px);
-  height:min(93vh,1010px);
+  /* large, heavy, premium floating device — sized so the runtime end-scale
+     (~1.08) still fits fully on screen without cropping */
+  width:min(90vw,1760px);
+  height:min(88vh,1020px);
   transform:translate(-50%,-50%);
-  border-radius:34px;
-  /* brushed dark metal bezel */
+  border-radius:38px;
+  /* black anodized aluminium bezel with brushed metal sheen */
   background:
-    linear-gradient(150deg,#3a3f47 0%,#171b21 18%,#0a0d12 50%,#171b21 82%,#43484f 100%);
-  padding:clamp(8px,0.7vw,14px);
+    linear-gradient(150deg,#41464e 0%,#1a1f26 16%,#0a0d12 50%,#1a1f26 84%,#4a4f57 100%);
+  padding:clamp(9px,0.8vw,16px);
   box-shadow:
-    0 2px 2px rgba(255,255,255,.18) inset,
-    0 -2px 6px rgba(0,0,0,.9) inset,
-    0 40px 90px rgba(0,0,0,.7),
-    0 18px 50px rgba(0,0,0,.55),
-    0 0 0 1px rgba(0,0,0,.6),
-    0 0 80px var(--orange-glow);
+    0 2px 2px rgba(255,255,255,.24) inset,
+    0 -8px 24px rgba(0,0,0,.9) inset,
+    0 55px 120px rgba(0,0,0,.72),
+    0 20px 70px rgba(0,0,0,.58),
+    0 90px 120px rgba(0,0,0,.5),
+    0 0 0 1px rgba(255,255,255,.08),
+    0 0 120px rgba(201,162,90,.32);
   will-change:transform;
+}
+/* top-left raytraced light edge + metallic rim highlight (lives on the FRAME,
+   behind the opaque screen so it never washes over readable text) */
+.tablet::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(900px 420px at var(--light-x,70%) var(--light-y,15%), rgba(255,255,255,.26), transparent 46%),
+    linear-gradient(135deg, rgba(255,255,255,.2), transparent 26%, transparent 70%, rgba(255,255,255,.08));
+  mix-blend-mode:screen; opacity:.7;
+}
+/* ambient occlusion + bottom-right contact shadow inside the bezel */
+.tablet::after{
+  content:""; position:absolute; inset:6px; border-radius:inherit; pointer-events:none; z-index:1;
+  box-shadow:
+    inset 0 0 70px rgba(0,0,0,.6),
+    inset -18px -22px 50px rgba(0,0,0,.6),
+    inset 12px 10px 34px rgba(255,255,255,.07);
 }
 /* optional real device skin (tablet.png) on top of the CSS bezel */
 .tablet-skin{
@@ -155,26 +174,50 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* The SCREEN — everything happens here. Hard clip, nothing leaks out. */
 .screen{
-  position:relative; width:100%; height:100%;
-  border-radius:26px;
+  position:relative; width:100%; height:100%; z-index:2;
+  border-radius:28px;
   overflow:hidden;
   background:#05080c;
-  box-shadow:0 0 0 2px #000, 0 0 40px rgba(0,0,0,.8) inset;
+  box-shadow:0 0 0 2px #000, 0 0 50px rgba(0,0,0,.85) inset;
   isolation:isolate;
 }
+/* inner glass depth: subtle recess shadow so the screen sits below the bezel */
+.screen::before{
+  content:""; position:absolute; inset:0; z-index:58; pointer-events:none; border-radius:inherit;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 0 60px rgba(0,0,0,.45);
+  background:linear-gradient(180deg, rgba(255,255,255,.05) 0%, transparent 12%);
+}
+/* slow raytraced glare that drifts across the glass (premium "live" reflection) */
+.screen::after{
+  content:""; position:absolute; top:-30%; left:-60%; width:55%; height:160%; z-index:59; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.06) 45%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.06) 55%, transparent);
+  transform:rotate(16deg); filter:blur(2px);
+  animation:screenGlare 11s var(--ease) infinite;
+}
+@keyframes screenGlare{ 0%{ left:-60%; opacity:0; } 12%{ opacity:1; } 40%{ left:120%; opacity:0; } 100%{ left:120%; opacity:0; } }
 
 /* Glass reflection over the screen (decorative, never blocks clicks) */
 .glass{
   position:absolute; inset:0; z-index:60; pointer-events:none;
-  border-radius:26px;
+  border-radius:28px; overflow:hidden;
   background:
-    linear-gradient(125deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 24%),
-    radial-gradient(60% 40% at 78% 6%, rgba(255,255,255,.06), transparent 60%);
+    linear-gradient(120deg, rgba(255,255,255,.16) 0%, transparent 22%),
+    radial-gradient(700px 300px at var(--light-x,75%) 8%, rgba(255,255,255,.13), transparent 64%),
+    linear-gradient(75deg, transparent 36%, rgba(255,255,255,.07) 47%, transparent 58%);
 }
-.glass::after{ /* static sheen highlight */
-  content:""; position:absolute; top:-40%; left:-30%; width:50%; height:180%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);
-  transform:rotate(18deg);
+/* diagonal raytraced light sweep */
+.glass::before{
+  content:""; position:absolute; top:-40%; left:-40%; width:60%; height:180%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);
+  transform:rotate(18deg); filter:blur(3px);
+  animation:glassSweep 9s var(--ease) infinite;
+}
+@keyframes glassSweep{ 0%{ left:-40%; opacity:0; } 15%{ opacity:.9; } 45%{ left:130%; opacity:0; } 100%{ left:130%; opacity:0; } }
+/* curved white reflection band near the top */
+.glass::after{
+  content:""; position:absolute; top:-12%; left:-6%; right:-6%; height:34%;
+  background:radial-gradient(120% 100% at 30% 0%, rgba(255,255,255,.1), transparent 60%);
+  transform:rotate(-3deg); border-radius:0 0 60% 40%;
 }
 
 /* App status bar (appears once the app is "open") */
@@ -771,7 +814,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:96vw; height:84vh; border-radius:26px; }
+  .tablet{ width:92vw; height:82vh; border-radius:30px; }
   .screen{ border-radius:18px; } .glass{ border-radius:18px; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
@@ -780,7 +823,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   .scene-dots{ right:12px; }
 }
 @media (max-width:480px){
-  .tablet{ width:96vw; height:74vh; }
+  .tablet{ width:92vw; height:76vh; }
   h1.lead{ font-size:34px; }
   .svc{ width:46%; }
 }
@@ -1204,9 +1247,11 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   var orb1=document.getElementById("orb1"), orb2=document.getElementById("orb2");
   var bg=document.getElementById("bg");
   var glass=document.querySelector(".glass");
+  var screenEl=document.getElementById("screen");
   var cursorLight=document.getElementById("cursorLight");
   var loader=document.getElementById("loader");
   var blackVeil=document.getElementById("blackVeil");
+  var rootEl=document.documentElement;
   var scenesEls=[]; for(var i=0;i<SCENES;i++){ scenesEls[i]=document.getElementById("s"+i); }
 
   /* ---- split headlines into words so they can rise in one-by-one -------- */
@@ -1463,6 +1508,9 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   if(!reduceMotion){
     window.addEventListener("mousemove",function(e){
       tmx=(e.clientX/window.innerWidth-.5)*2; tmy=(e.clientY/window.innerHeight-.5)*2;
+      // dynamic raytraced light source follows the cursor across the glass
+      rootEl.style.setProperty("--light-x",(e.clientX/window.innerWidth*100).toFixed(1)+"%");
+      rootEl.style.setProperty("--light-y",(e.clientY/window.innerHeight*100).toFixed(1)+"%");
     },{passive:true});
     window.addEventListener("touchmove",function(e){
       if(e.touches&&e.touches[0]){
@@ -1490,7 +1538,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    curScroll += (scrollP-curScroll)*0.075;
+    curScroll += (scrollP-curScroll)*0.065;
     mx += (tmx-mx)*0.055; my += (tmy-my)*0.055;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
@@ -1498,27 +1546,41 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 
     progressBar.style.width=(curScroll*100)+"%";
 
-    /* --- BLACK VEIL: pure black at the start (only hands + tablet visible),
-           eases away to reveal the environment as you scroll into the app --- */
-    blackVeil.style.opacity=clamp(1 - pos*0.95, 0.1, 1);
+    /* --- BLACK VEIL: pure black at the start, eases away slowly + cinematically
+           to reveal the environment as you scroll into the app --- */
+    blackVeil.style.opacity=clamp(1.05 - pos*0.82, 0, 1);
 
-    /* --- background parallax + atmosphere --- */
+    /* --- background parallax + atmosphere (slow, calm) --- */
     orb1.style.transform="translate("+(mx*-26)+"px,"+(my*-20 + curScroll*-60)+"px)";
     orb2.style.transform="translate("+(mx*22)+"px,"+(my*16 + curScroll*40)+"px)";
     bg.style.transform="translate("+(mx*-10)+"px,"+(my*-8)+"px) scale(1.06)";
 
-    /* --- TABLET intro: cinematic 3D tilt while opening, then snap to a flat
-           2D view so all readable text renders natively sharp (no 3D raster). */
+    /* --- TABLET: cinematic float-in, then a PERMANENT subtle 3D angle so the
+           device always reads as real glass/metal (never a flat rectangle).
+           Only the outer rig gets 3D — readable text containers are never
+           individually scaled. --- */
     var introK = openK;
-    // start slightly zoomed-out + angled, then settle to a centered native scale(1)
-    var startScale = window.innerWidth<780 ? 0.78 : 0.72;
-    var scale = lerp(startScale,1.0,introK);
-    var tiltX = lerp(9,0,introK), tiltY = lerp(-6,0,introK), tiltZ = lerp(-4,0,introK);
-    var tx = mx*7*(1-introK*0.6), ty = my*5*(1-introK*0.6);
-    if(introK<0.985){
-      rig.style.transform="translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) perspective(1400px) rotateX("+tiltX.toFixed(2)+"deg) rotateY("+tiltY.toFixed(2)+"deg) rotateZ("+tiltZ.toFixed(2)+"deg) scale("+scale.toFixed(4)+")";
-    } else {
-      rig.style.transform="translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) scale(1)";
+    var startScale = window.innerWidth<780 ? 0.86 : 0.84;
+    var endScale   = window.innerWidth<780 ? 1.06 : 1.08;
+    var scale = lerp(startScale,endScale,introK);
+    var tiltX = lerp(13, 1.2, introK);
+    var tiltY = lerp(-10,-1.4, introK);
+    var tiltZ = lerp(-6, -0.6, introK);
+    // gentle, continuous micro-parallax that never fully stops (premium "alive" feel)
+    var tx = mx*lerp(16,5,introK), ty = my*lerp(12,4,introK) + (1-introK)*26;
+    rig.style.transform=
+      "translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) "+
+      "perspective(1800px) "+
+      "rotateX("+(tiltX + my*0.6).toFixed(2)+"deg) "+
+      "rotateY("+(tiltY - mx*0.9).toFixed(2)+"deg) "+
+      "rotateZ("+tiltZ.toFixed(2)+"deg) "+
+      "scale("+scale.toFixed(4)+")";
+
+    /* --- SCREEN WAKE: the screen brightens as the app opens, then renders
+           natively (filter cleared) so text stays crisp once open. --- */
+    if(screenEl){
+      if(openK<0.995){ screenEl.style.filter="brightness("+lerp(0.62,1,openK).toFixed(3)+") saturate("+lerp(0.9,1,openK).toFixed(3)+")"; }
+      else if(screenEl.style.filter){ screenEl.style.filter=""; }
     }
 
     /* --- STATUS BAR appears with the app --- */
