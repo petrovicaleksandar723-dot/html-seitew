@@ -372,7 +372,10 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .scene-bg-cream .btn-ghost{ color:#1a1712; border-color:rgba(0,0,0,.16); background:rgba(0,0,0,.04); }
 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
-#s0{ z-index:40; background:radial-gradient(120% 100% at 50% 46%, rgba(4,7,12,.38) 0%, rgba(4,7,12,.74) 100%); }
+#s0{ z-index:40; background:radial-gradient(120% 100% at 50% 46%, rgba(4,7,12,.26) 0%, rgba(4,7,12,.62) 100%); }
+/* soft dark halo only behind the launcher text so it stays readable over the reel */
+.launcher::before{ content:""; position:absolute; inset:-12% -18%; z-index:-1; pointer-events:none;
+  background:radial-gradient(60% 55% at 50% 52%, rgba(3,5,9,.6), transparent 72%); }
 .launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:18px; will-change:transform,opacity; }
 .app-icon{
   width:clamp(86px,16vmin,150px); height:clamp(86px,16vmin,150px);
@@ -801,6 +804,23 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
 
+/* ---- special animated mouse cursor ------------------------------------- */
+.cursor-ring,.cursor-dot{ position:fixed; top:0; left:0; z-index:130; pointer-events:none;
+  border-radius:50%; opacity:0; mix-blend-mode:screen; will-change:transform;
+  transition:opacity .35s ease, width .28s var(--ease), height .28s var(--ease),
+             background .28s ease, border-color .28s ease; }
+.cursor-ring{ width:32px; height:32px; margin:-16px 0 0 -16px;
+  border:1.5px solid rgba(201,162,90,.85);
+  box-shadow:0 0 18px rgba(201,162,90,.5), inset 0 0 12px rgba(201,162,90,.28); }
+.cursor-dot{ width:6px; height:6px; margin:-3px 0 0 -3px; background:#f3e2bd;
+  box-shadow:0 0 14px rgba(232,210,160,.95); }
+.cursor-ring.hot{ width:64px; height:64px; margin:-32px 0 0 -32px;
+  border-color:rgba(232,210,160,.95); background:rgba(201,162,90,.1);
+  box-shadow:0 0 30px rgba(201,162,90,.55), inset 0 0 18px rgba(201,162,90,.3); }
+.cursor-ring.click{ width:22px; height:22px; margin:-11px 0 0 -11px; }
+body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
+@media (hover:none),(pointer:coarse){ .cursor-ring,.cursor-dot{ display:none !important; } }
+
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; background:#03070b;
@@ -828,6 +848,9 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 @media (max-width:780px){
   .tablet{ width:99vw; height:93vh; border-radius:26px; }
   .screen{ border-radius:18px; } .glass{ border-radius:18px; }
+  /* first page: let the background reel show through clearly on phones */
+  #s0{ background:radial-gradient(120% 100% at 50% 50%, rgba(4,7,12,.12) 0%, rgba(4,7,12,.46) 100%); }
+  .bgvid{ filter:contrast(1.16) saturate(1.32) brightness(1.1); }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
   .minis .mini{ font-size:10px; padding:6px 10px; }
@@ -907,6 +930,8 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
         <div class="bgvids" id="bgvids">
           <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="auto"></video>
           <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel3" src="assets/videos/reel-3.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel4" src="assets/videos/reel-4.mp4" muted loop playsinline preload="auto"></video>
           <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="auto"></video>
           <div class="bgvid-scrim"></div>
         </div>
@@ -1237,6 +1262,10 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 </div><!-- /stage -->
 <div class="progress" id="progressBar"></div>
 
+<!-- special animated mouse cursor (desktop only) -->
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
 <script>
 (function(){
   "use strict";
@@ -1460,7 +1489,8 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   var bgvids=document.querySelectorAll(".bgvid");
   var heroPhoneVid=document.querySelector("#heroPhone video");
   if(heroPhoneVid){ heroPhoneVid.addEventListener("loadedmetadata",function(){ heroPhoneVid.playbackRate=0.7; }); try{heroPhoneVid.playbackRate=0.7;}catch(e){} }
-  var vidMap=["final","final","reel1","reel2","reel1","reel2","reel1","reel2","final","reel1","final"];
+  // varied background reels across the 11 scenes (launcher 0 … final CTA 10)
+  var vidMap=["reel3","reel3","reel1","reel4","reel2","reel3","reel4","reel1","reel2","reel4","final"];
   var curVidKey=null;
   function setSceneVideo(idx){
     var key=vidMap[idx]||"final";
@@ -1548,6 +1578,43 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   window.addEventListener("resize",onScroll);
   onScroll();
 
+  /* ---- special animated mouse cursor (trailing ring + instant dot) ------- */
+  (function(){
+    var fine=window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    if(!fine || reduceMotion) return;
+    var ring=document.getElementById("cursorRing"), dot=document.getElementById("cursorDot");
+    if(!ring||!dot) return;
+    var rx=window.innerWidth/2, ry=window.innerHeight/2, tx=rx, ty=ry, started=false;
+    var HOT="a,button,.tab,.svc,.plan,.review,.faq-item,.bv-badge,[data-goto],[data-b]";
+    window.addEventListener("mousemove",function(e){
+      tx=e.clientX; ty=e.clientY;
+      dot.style.transform="translate("+tx+"px,"+ty+"px)";
+      if(!started){ started=true; document.body.classList.add("cursor-on"); }
+    },{passive:true});
+    document.addEventListener("mouseover",function(e){ if(e.target.closest&&e.target.closest(HOT)) ring.classList.add("hot"); },{passive:true});
+    document.addEventListener("mouseout", function(e){ if(e.target.closest&&e.target.closest(HOT)) ring.classList.remove("hot"); },{passive:true});
+    window.addEventListener("mousedown",function(){ ring.classList.add("click"); },{passive:true});
+    window.addEventListener("mouseup",  function(){ ring.classList.remove("click"); },{passive:true});
+    window.addEventListener("mouseleave",function(){ document.body.classList.remove("cursor-on"); },{passive:true});
+    window.addEventListener("mouseenter",function(){ if(started) document.body.classList.add("cursor-on"); },{passive:true});
+    (function loop(){ rx+=(tx-rx)*0.2; ry+=(ty-ry)*0.2;
+      ring.style.transform="translate("+rx.toFixed(2)+"px,"+ry.toFixed(2)+"px)";
+      requestAnimationFrame(loop); })();
+  })();
+
+  /* ---- magnetic primary buttons (gently pull toward the cursor) ---------- */
+  (function(){
+    if(reduceMotion || !window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+    document.querySelectorAll(".btn").forEach(function(btn){
+      btn.addEventListener("mousemove",function(e){
+        var r=btn.getBoundingClientRect();
+        var dx=(e.clientX-r.left-r.width/2)/r.width, dy=(e.clientY-r.top-r.height/2)/r.height;
+        btn.style.transform="translate("+(dx*10).toFixed(1)+"px,"+(dy*8-3).toFixed(1)+"px) scale(1.03)";
+      },{passive:true});
+      btn.addEventListener("mouseleave",function(){ btn.style.transform=""; },{passive:true});
+    });
+  })();
+
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
@@ -1629,8 +1696,8 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
       el.style.opacity=op;
       // cinematic, pronounced scroll: incoming rises from below + zooms in,
       // NEVER scale text scenes -> keeps text natively sharp. Only translateY.
-      var tY=delta*14;
-      if(ad<0.06){ el.style.transform="none"; }
+      var tY=delta*18;
+      if(ad<0.05){ el.style.transform="none"; }
       else{ el.style.transform="translateY("+tY.toFixed(2)+"%)"; }
       el.style.pointerEvents=(ad<0.5)?"auto":"none";
       el.classList.toggle("show", ad<0.45);
