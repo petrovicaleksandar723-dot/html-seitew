@@ -443,6 +443,19 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   background:linear-gradient(90deg,transparent,var(--orange),transparent); animation:loadSweep 1.2s var(--ease) infinite; }
 @keyframes loadSweep{ 0%{transform:translateX(-120%);} 100%{transform:translateX(330%);} }
 
+/* ---- Photoreal "enter the tablet" intro -------------------------------- */
+.photo-stage{ position:fixed; inset:0; z-index:90; overflow:hidden; background:#03070b;
+  pointer-events:none; will-change:transform,opacity; }
+.photo-hero{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.photo-stage .grade{ position:absolute; inset:0;
+  background:radial-gradient(120% 90% at 50% 44%, transparent 30%, rgba(0,0,0,.5) 100%); }
+.photo-screen{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  transform:translateY(-6%); }
+.ps-inner{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:46px 70px;
+  background:radial-gradient(closest-side, rgba(3,7,11,.66), rgba(3,7,11,0) 82%); }
+.ps-title{ font-size:clamp(20px,3.2vmin,30px); font-weight:800; letter-spacing:-.01em; }
+.ps-sub{ color:var(--gray); font-size:clamp(12px,1.9vmin,15px); margin-top:-6px; }
+
 /* ============================================================================
    RESPONSIVE
    ========================================================================== */
@@ -478,6 +491,20 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   <div class="mark2"></div>
   <div class="name">CleanLines Studio</div>
   <div class="bar"><i></i></div>
+</div>
+
+<!-- Photoreal "enter the tablet" intro (real hands + tablet photo) -->
+<div class="photo-stage" id="photoStage">
+  <img class="photo-hero" id="photoHero" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120545_2b3ab430-efe4-4fad-bb73-eea8b03a07f8.jpeg">
+  <div class="grade"></div>
+  <div class="photo-screen">
+    <div class="ps-inner">
+      <div class="app-icon"><div class="mark"><span></span><span></span><span></span></div></div>
+      <h2 class="ps-title">CleanLines Studio</h2>
+      <p class="ps-sub">Creative Content Hub</p>
+      <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- Scroll track drives the whole cinematic timeline -->
@@ -688,6 +715,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   var glass=document.querySelector(".glass");
   var cursorLight=document.getElementById("cursorLight");
   var loader=document.getElementById("loader");
+  var photoStage=document.getElementById("photoStage");
   var scenesEls=[]; for(var i=0;i<SCENES;i++){ scenesEls[i]=document.getElementById("s"+i); }
 
   /* ---- intro loader: fade out once ready -------------------------------- */
@@ -821,6 +849,18 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 
     progressBar.style.width=(curScroll*100)+"%";
 
+    /* --- PHOTOREAL INTRO: zoom into the tablet screen, then cross-fade --- */
+    var introFade = 1 - ss(clamp((pos-0.5)/0.5,0,1));   // visible until pos .5, gone by 1.0
+    var introZoom = 1 + ss(clamp(pos,0,1))*1.9;          // push the camera into the screen
+    if(introFade<=0.01){
+      if(photoStage.style.display!=="none") photoStage.style.display="none";
+    } else {
+      photoStage.style.display="block";
+      photoStage.style.opacity=introFade;
+      photoStage.style.transformOrigin="50% 42%";
+      photoStage.style.transform="scale("+introZoom+") translate("+(mx*-1.2)+"%,"+(my*-1.2)+"%)";
+    }
+
     /* --- background parallax + atmosphere --- */
     orb1.style.transform="translate("+(mx*-26)+"px,"+(my*-20 + curScroll*-60)+"px)";
     orb2.style.transform="translate("+(mx*22)+"px,"+(my*16 + curScroll*40)+"px)";
@@ -848,12 +888,12 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     /* --- STATUS BAR appears with the app --- */
     statusbar.style.opacity=openK*0.9;
 
-    /* --- SCENE 0 launcher: icon expands & fades (the "app opening") --- */
-    var lOp=clamp(1-pos/0.92,0,1);
+    /* --- SCENE 0 launcher: the photo intro now plays the "app opening", so
+           fade the CSS launcher out early (before the photo dissolves). --- */
+    var lOp=clamp(1-pos/0.4,0,1);
     launcher.style.opacity=lOp;
-    var iconScale=1+ss(clamp(pos,0,1))*5.5;
-    launcher.style.transform="scale("+iconScale+")";
-    s0.style.opacity=lOp; s0.style.pointerEvents=lOp>0.5?"auto":"none";
+    launcher.style.transform="scale("+(1+ss(clamp(pos/0.4,0,1))*2.2)+")";
+    s0.style.opacity=lOp; s0.style.pointerEvents="none";
 
     /* --- SCENES 1..7 crossfade by distance --- */
     for(var i=1;i<SCENES;i++){
