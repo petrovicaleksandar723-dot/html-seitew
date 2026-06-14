@@ -1,1492 +1,1018 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CleanLines Studio erstellt monatliche KI-Content-Pakete für lokale Betriebe: Reels-Skripte, Instagram-Captions, Google-Business-Beiträge, Bewertungsantworten und strukturierte Monatspläne.">
-    <meta name="theme-color" content="#ea580c">
-    <title>CleanLines Studio — Monatlicher Content für lokale Betriebe</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* ============================================================
-           CLEANLINES STUDIO — TRUST & AUTHORITY (LIGHT)
-           Design system: ui-ux-pro-max skill
-           Primary #EA580C · Accent #2563EB · Poppins / Open Sans
-           ============================================================ */
-        :root {
-            --bg: #ffffff;
-            --bg-warm: #fff7ed;
-            --bg-soft: #faf8f5;
-            --card: #ffffff;
-
-            --text: #0f172a;
-            --text-muted: #51607a;
-            --text-dim: #7a869c;
-
-            --primary: #ea580c;
-            --primary-dark: #c2410c;
-            --primary-soft: #fff1e8;
-            --on-primary: #ffffff;
-
-            --accent: #2563eb;
-            --accent-dark: #1d4ed8;
-            --accent-soft: #eff4ff;
-
-            --green: #16a34a;
-            --green-soft: #eafaf0;
-            --star: #f59e0b;
-            --danger: #dc2626;
-
-            --border: #ececea;
-            --border-strong: #dcdad6;
-
-            --font-head: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
-            --font-body: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-
-            --radius: 16px;
-            --radius-sm: 10px;
-            --radius-lg: 24px;
-
-            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
-            --shadow: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
-            --shadow-lg: 0 18px 40px rgba(15, 23, 42, 0.10), 0 6px 14px rgba(15, 23, 42, 0.06);
-            --shadow-primary: 0 10px 24px rgba(234, 88, 12, 0.28);
-
-            --ease: cubic-bezier(0.16, 1, 0.3, 1);
-            --t: 200ms var(--ease);
-
-            --maxw: 1180px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html { scroll-behavior: smooth; scroll-padding-top: 84px; }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--font-body);
-            font-size: 16px;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4 { font-family: var(--font-head); line-height: 1.15; color: var(--text); font-weight: 600; }
-
-        a { color: inherit; text-decoration: none; }
-
-        img, svg { display: block; }
-
-        ::selection { background: var(--primary); color: #fff; }
-
-        /* ---------- Accessibility ---------- */
-        :focus-visible {
-            outline: 3px solid var(--accent);
-            outline-offset: 2px;
-            border-radius: 4px;
-        }
-
-        .skip-link {
-            position: absolute;
-            left: 16px;
-            top: -60px;
-            background: var(--text);
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 8px;
-            z-index: 1000;
-            transition: top var(--t);
-        }
-        .skip-link:focus { top: 16px; }
-
-        .sr-only {
-            position: absolute; width: 1px; height: 1px;
-            padding: 0; margin: -1px; overflow: hidden;
-            clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-        }
-
-        /* ---------- Layout ---------- */
-        .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
-
-        section { padding: 88px 0; }
-
-        .section-head { max-width: 660px; margin: 0 auto 56px; text-align: center; }
-
-        .eyebrow {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: var(--font-head); font-weight: 600;
-            font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
-            color: var(--primary);
-            background: var(--primary-soft);
-            padding: 7px 14px; border-radius: 100px; margin-bottom: 18px;
-        }
-        .eyebrow svg { width: 15px; height: 15px; }
-
-        .section-head h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); letter-spacing: -0.02em; }
-        .section-head p { color: var(--text-muted); font-size: 1.08rem; margin-top: 16px; }
-
-        /* ---------- Buttons ---------- */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-            font-family: var(--font-head); font-weight: 600; font-size: 1rem;
-            padding: 14px 26px; border-radius: var(--radius-sm);
-            border: 1.5px solid transparent; cursor: pointer;
-            transition: transform var(--t), box-shadow var(--t), background var(--t), border-color var(--t);
-            white-space: nowrap; line-height: 1;
-        }
-        .btn svg { width: 18px; height: 18px; }
-        .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow-primary); }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-        .btn-accent { background: var(--accent); color: #fff; box-shadow: 0 10px 24px rgba(37,99,235,0.26); }
-        .btn-accent:hover { background: var(--accent-dark); transform: translateY(-2px); }
-        .btn-ghost { background: var(--card); color: var(--text); border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
-        .btn-ghost:hover { border-color: var(--text); transform: translateY(-2px); }
-        .btn-white { background: #fff; color: var(--primary-dark); }
-        .btn-white:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-        .btn-block { width: 100%; }
-
-        /* ---------- Header ---------- */
-        header {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(255,255,255,0.86);
-            backdrop-filter: saturate(180%) blur(14px);
-            -webkit-backdrop-filter: saturate(180%) blur(14px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
-        .brand { display: flex; align-items: center; gap: 11px; font-family: var(--font-head); font-weight: 700; font-size: 1.18rem; letter-spacing: -0.01em; }
-        .brand .logo {
-            width: 38px; height: 38px; border-radius: 11px;
-            background: linear-gradient(135deg, var(--primary), #fb923c);
-            display: grid; place-items: center; box-shadow: var(--shadow-primary);
-        }
-        .brand .logo svg { width: 21px; height: 21px; color: #fff; }
-        .brand b { color: var(--primary); font-weight: 700; }
-
-        .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-links a {
-            font-weight: 600; font-size: 0.95rem; color: var(--text-muted);
-            padding: 9px 14px; border-radius: 9px; transition: color var(--t), background var(--t);
-        }
-        .nav-links a:hover { color: var(--text); background: var(--bg-warm); }
-        .nav-links > .btn { display: none; } /* nur im Mobile-Menü sichtbar */
-        .nav-links a.btn:hover { background: var(--primary-dark); color: #fff; }
-        .nav-cta { display: flex; align-items: center; gap: 12px; }
-
-        .menu-toggle {
-            display: none; background: var(--card); border: 1.5px solid var(--border-strong);
-            width: 44px; height: 44px; border-radius: 11px; cursor: pointer;
-            align-items: center; justify-content: center; color: var(--text);
-        }
-        .menu-toggle svg { width: 22px; height: 22px; }
-
-        /* ---------- Hero ---------- */
-        .hero { position: relative; padding: 70px 0 90px; background: radial-gradient(120% 90% at 80% -10%, var(--bg-warm) 0%, var(--bg) 55%); overflow: hidden; }
-        .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
-
-        .hero-copy h1 {
-            font-size: clamp(2.3rem, 5.2vw, 3.6rem); font-weight: 700;
-            letter-spacing: -0.03em; line-height: 1.08;
-        }
-        .hero-copy h1 .accent { color: var(--primary); }
-        .hero-lead { color: var(--text-muted); font-size: 1.15rem; margin: 22px 0 30px; max-width: 540px; }
-
-        .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 30px; }
-
-        .hero-badges { display: flex; flex-wrap: wrap; gap: 10px 22px; }
-        .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 0.92rem; font-weight: 600; color: var(--text-muted); }
-        .hero-badge svg { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; }
-
-        /* Hero visual */
-        .hero-visual { position: relative; }
-        .device {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
-            padding: 18px; position: relative; z-index: 2;
-        }
-        .device-bar { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 14px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-        .device-bar .brand { font-size: 0.95rem; }
-        .device-bar .logo { width: 28px; height: 28px; border-radius: 8px; }
-        .device-bar .logo svg { width: 15px; height: 15px; }
-        .live-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700; color: var(--green); background: var(--green-soft); padding: 5px 10px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.05em; }
-        .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s var(--ease) infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.7); } }
-
-        .mock-card { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 12px; background: var(--bg-soft); }
-        .mock-card:last-child { margin-bottom: 0; }
-        .mock-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); margin-bottom: 7px; display: flex; align-items: center; gap: 7px; }
-        .mock-label svg { width: 14px; height: 14px; }
-        .mock-card p { font-size: 0.92rem; color: var(--text); font-weight: 500; }
-        .mock-card .meta { font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; }
-        .mock-tags { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
-        .tag { font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 100px; background: var(--accent-soft); color: var(--accent); }
-        .tag.green { background: var(--green-soft); color: var(--green); }
-        .stars { color: var(--star); letter-spacing: 2px; font-size: 0.85rem; }
-
-        .float-card {
-            position: absolute; z-index: 3; background: var(--card);
-            border: 1px solid var(--border); border-radius: 14px;
-            box-shadow: var(--shadow-lg); padding: 13px 16px;
-            display: flex; align-items: center; gap: 11px;
-        }
-        .float-card .ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
-        .float-card .ic svg { width: 19px; height: 19px; }
-        .float-card .ft { font-family: var(--font-head); font-weight: 600; font-size: 0.9rem; }
-        .float-card .fs { font-size: 0.76rem; color: var(--text-dim); }
-        .float-1 { top: 30px; left: -26px; }
-        .float-1 .ic { background: var(--green-soft); color: var(--green); }
-        .float-2 { bottom: 26px; right: -22px; }
-        .float-2 .ic { background: var(--accent-soft); color: var(--accent); }
-
-        /* ---------- Marquee / trust strip ---------- */
-        .strip { background: var(--text); color: #fff; padding: 0; overflow: hidden; }
-        .marquee { display: flex; gap: 0; white-space: nowrap; animation: scroll 26s linear infinite; }
-        .marquee-wrap:hover .marquee { animation-play-state: paused; }
-        .marquee span {
-            display: inline-flex; align-items: center; gap: 12px;
-            padding: 20px 30px; font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: #fff;
-        }
-        .marquee span svg { width: 17px; height: 17px; color: var(--primary); }
-        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-        /* ---------- Services ---------- */
-        .grid { display: grid; gap: 24px; }
-        .grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .grid-2 { grid-template-columns: repeat(2, 1fr); }
-
-        .service-card {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 30px;
-            transition: transform var(--t), box-shadow var(--t), border-color var(--t);
-            position: relative; overflow: hidden;
-        }
-        .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
-        .service-num { position: absolute; top: 22px; right: 26px; font-family: var(--font-head); font-weight: 700; font-size: 2rem; color: var(--bg-warm); }
-        .service-ic {
-            width: 52px; height: 52px; border-radius: 14px;
-            background: var(--primary-soft); color: var(--primary);
-            display: grid; place-items: center; margin-bottom: 20px;
-        }
-        .service-ic svg { width: 25px; height: 25px; }
-        .service-card h3 { font-size: 1.22rem; margin-bottom: 10px; }
-        .service-card p { color: var(--text-muted); font-size: 0.97rem; }
-
-        /* ---------- Industries (tabs) ---------- */
-        .ind { background: var(--bg-warm); }
-        .tabs { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 44px; }
-        .tab {
-            font-family: var(--font-head); font-weight: 600; font-size: 0.95rem;
-            padding: 11px 20px; border-radius: 100px; cursor: pointer;
-            background: var(--card); border: 1.5px solid var(--border-strong); color: var(--text-muted);
-            transition: all var(--t); display: inline-flex; align-items: center; gap: 8px;
-        }
-        .tab svg { width: 17px; height: 17px; }
-        .tab:hover { border-color: var(--primary); color: var(--primary); }
-        .tab[aria-selected="true"] { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: var(--shadow-primary); }
-
-        .panel { display: none; }
-        .panel.active { display: block; animation: fade 0.4s var(--ease); }
-        @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-
-        .ind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 44px; box-shadow: var(--shadow); }
-        .ind-info h3 { font-size: 1.7rem; letter-spacing: -0.01em; margin-bottom: 14px; }
-        .ind-info .ind-eyebrow { font-family: var(--font-head); font-weight: 600; font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-        .ind-info p { color: var(--text-muted); font-size: 1.02rem; }
-        .ind-preview { background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
-        .ind-preview .plabel { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); margin-bottom: 12px; }
-        .ind-preview h4 { font-size: 1.12rem; margin-bottom: 12px; line-height: 1.3; }
-        .ind-preview .quote { font-size: 0.95rem; color: var(--text-muted); border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 16px; }
-        .cta-chip { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.86rem; color: var(--accent); background: var(--accent-soft); padding: 8px 14px; border-radius: 100px; }
-        .cta-chip svg { width: 15px; height: 15px; }
-
-        /* ---------- Examples ---------- */
-        .example-card {
-            background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 28px; box-shadow: var(--shadow-sm); height: 100%;
-            transition: transform var(--t), box-shadow var(--t);
-        }
-        .example-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .ex-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-        .ex-head .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--primary); }
-        .ex-head span { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
-        .example-card h3 { font-size: 1.2rem; margin-bottom: 16px; line-height: 1.3; }
-        .ex-block { margin-bottom: 14px; }
-        .ex-block .k { font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-        .ex-block .v { font-size: 0.95rem; color: var(--text-muted); }
-        .ex-cta { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border-strong); font-weight: 600; font-size: 0.9rem; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-        .ex-cta svg { width: 16px; height: 16px; }
-        .note { text-align: center; color: var(--text-dim); font-size: 0.9rem; margin-top: 34px; }
-
-        /* ---------- Before / After ---------- */
-        .ba { background: var(--bg-warm); }
-        .ba-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 28px; align-items: stretch; }
-        .ba-col { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 34px; box-shadow: var(--shadow); }
-        .ba-col.before { border-top: 4px solid var(--danger); }
-        .ba-col.after { border-top: 4px solid var(--green); }
-        .ba-col .bl { font-family: var(--font-head); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 22px; display: inline-flex; align-items: center; gap: 8px; }
-        .ba-col.before .bl { color: var(--danger); }
-        .ba-col.after .bl { color: var(--green); }
-        .ba-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-        .ba-list li { display: flex; gap: 12px; font-size: 0.98rem; color: var(--text-muted); }
-        .ba-list li svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
-        .ba-col.before li svg { color: var(--danger); }
-        .ba-col.after li svg { color: var(--green); }
-        .ba-col.after li { color: var(--text); }
-        .ba-vs { display: grid; place-items: center; }
-        .ba-vs span { width: 56px; height: 56px; border-radius: 50%; background: var(--text); color: #fff; display: grid; place-items: center; font-family: var(--font-head); font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-lg); }
-
-        /* ---------- Steps ---------- */
-        .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        .step {
-            background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 30px 26px; position: relative; transition: transform var(--t), box-shadow var(--t);
-        }
-        .step:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .step-num {
-            width: 46px; height: 46px; border-radius: 13px;
-            background: var(--primary); color: #fff; display: grid; place-items: center;
-            font-family: var(--font-head); font-weight: 700; font-size: 1.1rem; margin-bottom: 20px;
-            box-shadow: var(--shadow-primary);
-        }
-        .step h3 { font-size: 1.16rem; margin-bottom: 10px; }
-        .step p { color: var(--text-muted); font-size: 0.95rem; }
-
-        /* ---------- Pricing ---------- */
-        .pricing { background: var(--bg-warm); }
-        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
-        .plan {
-            background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg);
-            padding: 34px 30px; display: flex; flex-direction: column; box-shadow: var(--shadow);
-            transition: transform var(--t), box-shadow var(--t);
-        }
-        .plan:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .plan.featured { border: 2px solid var(--primary); box-shadow: var(--shadow-lg); position: relative; }
-        .plan.featured::before {
-            content: "Beliebt"; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-            background: var(--primary); color: #fff; font-family: var(--font-head); font-weight: 600;
-            font-size: 0.78rem; padding: 6px 16px; border-radius: 100px; letter-spacing: 0.03em;
-            box-shadow: var(--shadow-primary);
-        }
-        .plan h3 { font-size: 1.35rem; margin-bottom: 8px; }
-        .plan .desc { color: var(--text-muted); font-size: 0.92rem; min-height: 44px; margin-bottom: 20px; }
-        .plan .price { font-family: var(--font-head); font-weight: 700; font-size: 2.6rem; color: var(--text); letter-spacing: -0.02em; }
-        .plan .price span { font-size: 1rem; font-weight: 500; color: var(--text-dim); }
-        .plan ul { list-style: none; display: flex; flex-direction: column; gap: 13px; margin: 24px 0 28px; flex-grow: 1; }
-        .plan li { display: flex; gap: 11px; font-size: 0.96rem; color: var(--text-muted); }
-        .plan li svg { width: 19px; height: 19px; color: var(--green); flex-shrink: 0; margin-top: 2px; }
-
-        /* ---------- FAQ ---------- */
-        .faq-wrap { max-width: 760px; margin: 0 auto; }
-        .faq-item { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; background: var(--card); overflow: hidden; transition: box-shadow var(--t), border-color var(--t); }
-        .faq-item[open] { box-shadow: var(--shadow); border-color: var(--border-strong); }
-        .faq-q {
-            display: flex; align-items: center; justify-content: space-between; gap: 16px;
-            padding: 22px 24px; cursor: pointer; font-family: var(--font-head); font-weight: 600;
-            font-size: 1.05rem; list-style: none; color: var(--text);
-        }
-        .faq-q::-webkit-details-marker { display: none; }
-        .faq-q .ico { width: 30px; height: 30px; border-radius: 9px; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; transition: transform var(--t), background var(--t); }
-        .faq-q .ico svg { width: 17px; height: 17px; }
-        .faq-item[open] .faq-q .ico { transform: rotate(45deg); background: var(--primary); color: #fff; }
-        .faq-a { padding: 0 24px 24px; color: var(--text-muted); font-size: 0.99rem; }
-
-        /* ---------- CTA / Preview form ---------- */
-        .cta { background: linear-gradient(135deg, #1a1208 0%, #0f172a 60%, #14213d 100%); color: #fff; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
-        .cta::before { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 90% at 85% 10%, rgba(234,88,12,0.32), transparent 60%); }
-        .cta-inner { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; padding: 60px; align-items: center; }
-        .cta-inner .eyebrow { background: rgba(255,255,255,0.12); color: #fdba74; }
-        .cta-copy h2 { color: #fff; font-size: clamp(1.9rem, 4vw, 2.7rem); letter-spacing: -0.02em; }
-        .cta-copy h2 .accent { color: #fb923c; }
-        .cta-copy > p { color: rgba(255,255,255,0.78); font-size: 1.06rem; margin: 18px 0 26px; }
-        .cta-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-        .cta-list li { display: flex; gap: 11px; align-items: center; font-size: 0.97rem; color: rgba(255,255,255,0.9); }
-        .cta-list li svg { width: 19px; height: 19px; color: #fb923c; flex-shrink: 0; }
-
-        .form-card { background: #fff; border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow-lg); }
-        .form-card h3 { color: var(--text); font-size: 1.2rem; margin-bottom: 4px; }
-        .form-card .fsub { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 22px; }
-        .field { margin-bottom: 16px; }
-        .field label { display: block; font-family: var(--font-head); font-weight: 600; font-size: 0.86rem; color: var(--text); margin-bottom: 7px; }
-        .field label .req { color: var(--primary); }
-        .field input, .field select, .field textarea {
-            width: 100%; font-family: var(--font-body); font-size: 1rem; color: var(--text);
-            padding: 13px 15px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-sm);
-            background: var(--bg-soft); transition: border-color var(--t), box-shadow var(--t), background var(--t);
-        }
-        .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
-        .field input:focus, .field select:focus, .field textarea:focus {
-            outline: none; border-color: var(--primary); background: #fff;
-            box-shadow: 0 0 0 3px rgba(234,88,12,0.14);
-        }
-        .field textarea { resize: vertical; min-height: 84px; }
-        .form-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
-        .form-note { font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-top: 14px; }
-
-        /* ---------- Footer ---------- */
-        footer { background: var(--text); color: rgba(255,255,255,0.72); padding: 56px 0 30px; }
-        .foot-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; align-items: flex-start; padding-bottom: 34px; border-bottom: 1px solid rgba(255,255,255,0.12); }
-        footer .brand { color: #fff; }
-        .foot-about { max-width: 360px; }
-        .foot-about p { margin-top: 14px; font-size: 0.93rem; color: rgba(255,255,255,0.6); }
-        .foot-links { display: flex; gap: 50px; flex-wrap: wrap; }
-        .foot-col h4 { color: #fff; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px; font-weight: 600; }
-        .foot-col a { display: flex; align-items: center; gap: 8px; font-size: 0.93rem; color: rgba(255,255,255,0.65); padding: 6px 0; transition: color var(--t); }
-        .foot-col a:hover { color: #fff; }
-        .foot-col a svg { width: 16px; height: 16px; }
-        .foot-bottom { padding-top: 26px; text-align: center; font-size: 0.86rem; color: rgba(255,255,255,0.5); }
-
-        /* ============================================================
-           PREMIUM MOTION LAYER — scroll reveals, parallax, tilt, stats
-           ============================================================ */
-
-        /* Scroll progress bar */
-        .scroll-progress {
-            position: fixed; top: 0; left: 0; height: 3px; width: 100%;
-            transform: scaleX(0); transform-origin: 0 50%; z-index: 200;
-            background: linear-gradient(90deg, var(--primary), #fb923c, var(--accent));
-            will-change: transform;
-        }
-
-        /* Reveal-on-scroll (motion control) */
-        [data-reveal] {
-            opacity: 0; transform: translateY(34px);
-            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-            transition-delay: var(--reveal-delay, 0ms);
-            will-change: opacity, transform;
-        }
-        [data-reveal="left"]  { transform: translateX(-40px); }
-        [data-reveal="right"] { transform: translateX(40px); }
-        [data-reveal="zoom"]  { transform: scale(0.92); }
-        [data-reveal].in-view { opacity: 1; transform: none; }
-
-        /* Staggered group reveal */
-        [data-reveal-group] > * {
-            opacity: 0; transform: translateY(30px);
-            transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-        }
-        [data-reveal-group].in-view > * { opacity: 1; transform: none; }
-        [data-reveal-group].in-view > *:nth-child(1) { transition-delay: 0ms; }
-        [data-reveal-group].in-view > *:nth-child(2) { transition-delay: 80ms; }
-        [data-reveal-group].in-view > *:nth-child(3) { transition-delay: 160ms; }
-        [data-reveal-group].in-view > *:nth-child(4) { transition-delay: 240ms; }
-        [data-reveal-group].in-view > *:nth-child(5) { transition-delay: 320ms; }
-        [data-reveal-group].in-view > *:nth-child(6) { transition-delay: 400ms; }
-
-        /* Hero parallax image layer */
-        .hero-bg-art {
-            position: absolute; inset: -10% -5% auto auto; width: 62%; max-width: 760px;
-            aspect-ratio: 16/9; z-index: 0; pointer-events: none;
-            border-radius: 40px; opacity: 0.5;
-            -webkit-mask-image: radial-gradient(70% 70% at 60% 40%, #000 35%, transparent 75%);
-            mask-image: radial-gradient(70% 70% at 60% 40%, #000 35%, transparent 75%);
-            background: linear-gradient(120deg, #fff1e8, #eff4ff);
-            background-size: cover; background-position: center;
-            will-change: transform; filter: saturate(1.05);
-        }
-        .hero-grid { position: relative; z-index: 1; }
-
-        /* Stats band with animated counters */
-        .stats { background: var(--text); color: #fff; padding: 64px 0; position: relative; overflow: hidden; }
-        .stats::before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 120% at 15% 0%, rgba(234,88,12,0.20), transparent 60%), radial-gradient(50% 120% at 90% 100%, rgba(37,99,235,0.18), transparent 60%); }
-        .stats-grid { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
-        .stat .num { font-family: var(--font-head); font-weight: 700; font-size: clamp(2.1rem, 4.5vw, 3.1rem); letter-spacing: -0.02em; line-height: 1; background: linear-gradient(120deg, #fff 30%, #fdba74); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .stat .lbl { margin-top: 10px; font-size: 0.95rem; color: rgba(255,255,255,0.72); font-weight: 500; }
-        .stat .num .suffix { color: var(--primary); -webkit-text-fill-color: var(--primary); }
-
-        /* Interactive 3D tilt image (branche) */
-        .ind-media {
-            position: relative; border-radius: var(--radius); overflow: hidden;
-            aspect-ratio: 1/1; background: linear-gradient(135deg, #14213d, #0f172a);
-            box-shadow: var(--shadow-lg); transform-style: preserve-3d;
-            transition: transform 0.3s var(--ease);
-        }
-        .ind-media img {
-            width: 100%; height: 100%; object-fit: cover; display: block;
-            transition: transform 0.5s var(--ease); transform: scale(1.02);
-        }
-        .ind-media::after {
-            content: ""; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.18), transparent 45%);
-            opacity: 0; transition: opacity 0.3s var(--ease);
-        }
-        .ind-media:hover::after { opacity: 1; }
-        .ind-media:hover img { transform: scale(1.07); }
-        .ind-media .media-badge {
-            position: absolute; left: 16px; bottom: 16px; z-index: 2;
-            display: inline-flex; align-items: center; gap: 7px;
-            background: rgba(15,23,42,0.6); backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,255,255,0.16); color: #fff;
-            font-family: var(--font-head); font-weight: 600; font-size: 0.78rem;
-            padding: 7px 13px; border-radius: 100px;
-        }
-        .ind-media .media-badge svg { width: 14px; height: 14px; color: #fdba74; }
-
-        /* Make the industry layout 3-up when media present */
-        .ind-grid.has-media { grid-template-columns: 0.9fr 1.1fr; }
-        .ind-grid.has-media .ind-stack { display: grid; gap: 24px; }
-
-        /* Magnetic hover lift for service cards already exists; add image shimmer */
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .img-skeleton { position: absolute; inset: 0; background: linear-gradient(100deg, #14213d 30%, #1e2b4a 50%, #14213d 70%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
-
-        /* ---------- Responsive ---------- */
-        @media (max-width: 980px) {
-            .hero-grid { grid-template-columns: 1fr; gap: 48px; }
-            .hero-visual { max-width: 440px; margin: 0 auto; }
-            .grid-3 { grid-template-columns: repeat(2, 1fr); }
-            .steps-grid { grid-template-columns: repeat(2, 1fr); }
-            .price-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
-            .plan.featured { order: -1; }
-            .cta-inner { grid-template-columns: 1fr; gap: 36px; padding: 44px 34px; }
-            .ind-grid, .ind-grid.has-media { grid-template-columns: 1fr; gap: 30px; padding: 32px; }
-            .ind-grid.has-media .ind-media { max-width: 420px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
-            .hero-bg-art { width: 80%; opacity: 0.32; inset: -6% -10% auto auto; }
-        }
-
-        @media (max-width: 760px) {
-            section { padding: 64px 0; }
-            .nav-links, .nav-cta .btn { display: none; }
-            .menu-toggle { display: flex; }
-            .nav-cta { gap: 0; }
-            .grid-3, .grid-2 { grid-template-columns: 1fr; }
-            .ba-grid { grid-template-columns: 1fr; }
-            .ba-vs { transform: rotate(90deg); padding: 4px 0; }
-            .steps-grid { grid-template-columns: 1fr; }
-            .float-1, .float-2 { display: none; }
-            .section-head { margin-bottom: 40px; }
-            .hero-bg-art { display: none; }
-
-            /* Mobile menu */
-            .nav-links.open {
-                display: flex; flex-direction: column; align-items: stretch;
-                position: absolute; top: 72px; left: 0; right: 0;
-                background: #fff; border-bottom: 1px solid var(--border);
-                padding: 14px 24px 22px; gap: 4px; box-shadow: var(--shadow-lg);
-            }
-            .nav-links.open a { padding: 13px 14px; font-size: 1rem; }
-            .nav-links.open .btn { display: inline-flex; margin-top: 8px; }
-        }
-
-        @media (max-width: 420px) {
-            .container { padding: 0 18px; }
-            .hero-actions, .hero-actions .btn { width: 100%; }
-            .cta-inner, .form-card { padding: 26px 20px; }
-        }
-
-        /* Respect reduced motion */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
-            .marquee { animation: none; }
-            [data-reveal], [data-reveal-group] > * { opacity: 1 !important; transform: none !important; }
-            .hero-bg-art { transform: none !important; }
-            .scroll-progress { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="CleanLines Studio liefert lokalen Betrieben jeden Monat fertige Content-Pakete: Reels-Skripte, Captions, Google-Beiträge, Bewertungsantworten und Monatspläne. Kein Abo-Zwang, monatlich kündbar.">
+<meta name="theme-color" content="#0b0e18">
+<title>CleanLines Studio — Dein Content. Jeden Monat fertig.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CLEANLINES STUDIO — INTERACTIVE PRODUCT EXPERIENCE
+   Central scroll-driven object · vanilla JS · mobile-first
+   ============================================================ */
+:root{
+  --navy:#0b0e18; --navy-2:#111626; --navy-3:#1a2236;
+  --cream:#f6f1e7; --cream-2:#efe7d8; --off:#fbf8f2;
+  --orange:#ff5b1e; --orange-2:#ff7a3c; --orange-soft:#ffe9df;
+  --text:#0b0e18; --text-cream:#f6f1e7;
+  --muted:#5b6678; --muted-cream:rgba(246,241,231,.62);
+  --line:rgba(11,14,24,.10); --line-cream:rgba(246,241,231,.14);
+  --blue:#3b82f6; --green:#1fb673; --gold:#f5b740;
+  --fh:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fb:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --r:22px; --r-sm:14px; --r-lg:34px;
+  --shadow:0 30px 70px rgba(11,14,24,.16);
+  --shadow-soft:0 18px 50px rgba(11,14,24,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{max-width:100%;overflow-x:clip}
+body{
+  background:var(--cream);color:var(--text);font-family:var(--fb);
+  line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--fh);line-height:1.04;font-weight:700;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+::selection{background:var(--orange);color:#fff}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:6px}
+button{font-family:var(--fh);cursor:pointer}
+
+.skip{position:absolute;left:14px;top:-60px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px;z-index:300;transition:top .2s}
+.skip:focus{top:14px}
+
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ---------- Scroll progress ---------- */
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--orange),var(--orange-2));z-index:250;will-change:transform}
+
+/* ---------- Header ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .4s var(--ease),box-shadow .4s var(--ease)}
+header.solid{background:rgba(246,241,231,.82);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);box-shadow:0 1px 0 var(--line)}
+header.on-dark.solid{background:rgba(11,14,24,.72);box-shadow:0 1px 0 var(--line-cream)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--fh);font-weight:800;font-size:1.16rem;letter-spacing:-.01em;color:var(--text);transition:color .4s}
+header.on-dark .brand,header.on-dark .nav-links a,header.on-dark .burger{color:var(--text-cream)}
+.brand .mark{width:38px;height:38px;border-radius:11px;background:var(--orange);display:grid;place-items:center;box-shadow:0 8px 20px rgba(255,91,30,.4);flex-shrink:0}
+.brand .mark svg{width:20px;height:20px;color:#fff}
+.brand b{color:var(--orange)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{font-family:var(--fh);font-weight:600;font-size:.92rem;color:var(--text);padding:9px 13px;border-radius:9px;opacity:.82;transition:opacity .2s,background .2s}
+.nav-links a:hover{opacity:1;background:rgba(255,91,30,.1)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--orange);color:#fff;font-weight:700;font-size:.92rem;padding:11px 20px;border-radius:100px;border:0;box-shadow:0 10px 24px rgba(255,91,30,.32);transition:transform .2s var(--ease),box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px)}
+.burger{display:none;background:none;border:0;color:var(--text);width:44px;height:44px;align-items:center;justify-content:center}
+.burger svg{width:26px;height:26px}
+
+/* ---------- Central stage (the traveling object) ---------- */
+.stage{position:fixed;left:50%;top:50%;z-index:5;pointer-events:none;will-change:transform,opacity}
+.stage-inner{will-change:transform;transform-style:preserve-3d}
+.device{
+  position:relative;width:300px;height:610px;border-radius:46px;
+  background:linear-gradient(160deg,#1c2438,#0b0e18 60%);
+  padding:13px;box-shadow:0 50px 90px rgba(11,14,24,.5),inset 0 0 0 2px rgba(255,255,255,.05);
+}
+.device::before{content:"";position:absolute;top:16px;left:50%;transform:translateX(-50%);width:120px;height:28px;background:#05070d;border-radius:0 0 18px 18px;z-index:6}
+.screen{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:var(--off)}
+.face{position:absolute;inset:0;opacity:0;transform:scale(.97);transition:opacity .55s var(--ease),transform .55s var(--ease);padding:42px 18px 20px;display:flex;flex-direction:column}
+.face.show{opacity:1;transform:none}
+.face .ftop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.face .pill{font-family:var(--fh);font-weight:700;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:100px;background:var(--orange-soft);color:var(--orange)}
+.face .live{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em}
+.face .live i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.8s var(--ease) infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.face h5{font-family:var(--fh);font-size:1.04rem;line-height:1.2;margin-bottom:8px;color:var(--text)}
+.face p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.ln{height:9px;border-radius:6px;background:#e7ddc9;margin-bottom:8px}
+.ln.s{width:62%}.ln.m{width:84%}.ln.o{background:var(--orange-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.chip{font-size:.62rem;font-weight:700;padding:5px 9px;border-radius:100px;background:#eee3cf;color:#7c6a45}
+.chip.b{background:#e7efff;color:var(--blue)}.chip.g{background:#e3f7ee;color:var(--green)}
+/* Reel face */
+.reel-vid{flex:1;border-radius:18px;background:linear-gradient(150deg,#222b42,#0b0e18);position:relative;overflow:hidden;margin-bottom:12px}
+.reel-vid::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 38%,rgba(255,91,30,.34),transparent 70%)}
+.play{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);display:grid;place-items:center;border:1.5px solid rgba(255,255,255,.4)}
+.play svg{width:22px;height:22px;color:#fff;margin-left:3px}
+.reel-cap{position:absolute;left:12px;right:12px;bottom:12px;color:#fff;font-size:.74rem;font-weight:600;z-index:2}
+.reel-hook{position:absolute;left:12px;top:12px;background:var(--orange);color:#fff;font-size:.6rem;font-weight:800;padding:5px 9px;border-radius:8px;text-transform:uppercase;letter-spacing:.05em;z-index:2}
+/* Stars */
+.stars{color:var(--gold);letter-spacing:2px;font-size:.86rem}
+/* Calendar face */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:6px}
+.cal span{aspect-ratio:1;border-radius:7px;background:#ece2ce;display:grid;place-items:center;font-size:.54rem;font-weight:700;color:#9b8a64}
+.cal span.on{background:var(--orange);color:#fff}
+.cal span.b{background:var(--blue);color:#fff}.cal span.g{background:var(--green);color:#fff}
+/* Google map face */
+.mapbox{flex:1;border-radius:16px;background:linear-gradient(160deg,#e9f0ea,#dfe8e0);position:relative;overflow:hidden;margin-bottom:12px}
+.mapbox .road{position:absolute;background:#cfdacd}
+.mapbox .pin{position:absolute;left:50%;top:46%;transform:translate(-50%,-100%);color:var(--orange)}
+.mapbox .pin svg{width:34px;height:34px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.2))}
+/* Brand final face */
+.final-face{align-items:center;justify-content:center;text-align:center;gap:14px}
+.final-face .bigmark{width:84px;height:84px;border-radius:24px;background:var(--orange);display:grid;place-items:center;box-shadow:0 18px 40px rgba(255,91,30,.5)}
+.final-face .bigmark svg{width:46px;height:46px;color:#fff}
+.final-face strong{font-family:var(--fh);font-size:1.2rem;color:var(--text)}
+/* Branche face accent (set via --acc) */
+.face.branche .pill{background:color-mix(in srgb,var(--acc) 16%,#fff);color:var(--acc)}
+.face.branche .ln.o{background:color-mix(in srgb,var(--acc) 22%,#fff)}
+.face.branche .badge-ic{width:46px;height:46px;border-radius:13px;background:color-mix(in srgb,var(--acc) 15%,#fff);color:var(--acc);display:grid;place-items:center;margin-bottom:12px}
+.face.branche .badge-ic svg{width:24px;height:24px}
+
+/* glow orbs around object */
+.orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:.6;z-index:-1}
+.orb.a{width:340px;height:340px;background:var(--orange);left:-120px;top:-80px;opacity:.34}
+.orb.b{width:300px;height:300px;background:var(--blue);right:-120px;bottom:-60px;opacity:.22}
+
+/* ---------- Sections base ---------- */
+main{position:relative;z-index:2}
+.scene{position:relative;min-height:100svh;display:flex;align-items:center;padding:120px 0}
+.scene.short{min-height:auto;padding:110px 0}
+.cream{background:var(--cream);color:var(--text)}
+.dark{background:var(--navy);color:var(--text-cream)}
+.dark .muted,.dark p.sub{color:var(--muted-cream)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:20px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--orange);border-radius:2px}
+h2.big{font-size:clamp(2.3rem,6.5vw,4.6rem);letter-spacing:-.035em;line-height:.98}
+p.sub{font-size:clamp(1.02rem,2.4vw,1.22rem);color:var(--muted);max-width:560px;margin-top:22px}
+
+/* curved section transition */
+.curve{position:relative}
+.curve::before{content:"";position:absolute;left:0;right:0;top:-1px;height:60px;border-radius:0 0 50% 50%/0 0 100% 100%;transform:translateY(-100%)}
+.curve.to-dark::before{background:var(--navy)}
+.curve.to-cream::before{background:var(--cream)}
+
+/* ---------- Reveal ---------- */
+[data-rv]{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0ms)}
+[data-rv="l"]{transform:translateX(-50px)}
+[data-rv="r"]{transform:translateX(50px)}
+[data-rv].in{opacity:1;transform:none}
+
+/* ---------- HERO ---------- */
+.hero{min-height:100svh;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;width:100%}
+.hero h1{font-size:clamp(2.8rem,8.5vw,6rem);letter-spacing:-.04em;line-height:.92}
+.hero h1 .o{color:var(--orange);display:block}
+.hero .lead{font-size:clamp(1.05rem,2.6vw,1.3rem);color:var(--muted);max-width:480px;margin:26px 0 32px}
+.btn-row{display:flex;flex-wrap:wrap;gap:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--fh);font-weight:700;font-size:1rem;padding:16px 28px;border-radius:100px;border:1.6px solid transparent;transition:transform .2s var(--ease),box-shadow .2s,background .2s,border-color .2s;will-change:transform}
+.btn svg{width:18px;height:18px}
+.btn-pri{background:var(--orange);color:#fff;box-shadow:0 14px 30px rgba(255,91,30,.34)}
+.btn-pri:hover{background:#e94e16}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.dark .btn-ghost{color:var(--text-cream);border-color:var(--line-cream)}
+.btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+.btn-wa{background:#1faa54;color:#fff;box-shadow:0 14px 30px rgba(31,170,84,.3)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:30px}
+.hero-meta span{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;color:var(--muted)}
+.hero-meta svg{width:17px;height:17px;color:var(--green)}
+.hero-spacer{height:610px}
+.float-shape{position:absolute;border-radius:30% 70% 62% 38%/42% 38% 62% 58%;opacity:.5;z-index:0;animation:floaty 9s var(--ease) infinite}
+.fs1{width:160px;height:160px;background:var(--orange-soft);left:6%;top:24%}
+.fs2{width:110px;height:110px;background:#e7efff;right:8%;bottom:18%;animation-delay:-3s}
+.fs3{width:70px;height:70px;background:#e3f7ee;right:30%;top:16%;animation-delay:-5s}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-26px) rotate(12deg)}}
+.scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-family:var(--fh);font-weight:600;z-index:3}
+.scrollcue .m{width:24px;height:38px;border:2px solid var(--muted);border-radius:14px;position:relative}
+.scrollcue .m::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:7px;border-radius:3px;background:var(--orange);transform:translateX(-50%);animation:scroller 1.6s var(--ease) infinite}
+@keyframes scroller{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+
+/* ---------- SHOWCASE (horizontal slider) ---------- */
+.show-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:42px}
+.slider-nav{display:flex;gap:10px}
+.snav{width:54px;height:54px;border-radius:50%;border:1.6px solid var(--line-cream);background:transparent;color:var(--text-cream);display:grid;place-items:center;transition:transform .2s var(--ease),background .2s,border-color .2s}
+.snav svg{width:22px;height:22px}
+.snav:hover{background:var(--orange);border-color:var(--orange);color:#fff;transform:translateY(-2px)}
+.snav:disabled{opacity:.3;cursor:default;transform:none;background:transparent;border-color:var(--line-cream);color:var(--text-cream)}
+.track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 4px 26px;margin:0 -4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.track::-webkit-scrollbar{display:none}
+.scard{scroll-snap-align:center;flex:0 0 84%;max-width:380px;background:var(--navy-2);border:1px solid var(--line-cream);border-radius:var(--r);padding:30px;min-height:340px;display:flex;flex-direction:column;transition:transform .4s var(--ease),border-color .4s,box-shadow .4s;will-change:transform}
+.scard:hover{border-color:rgba(255,91,30,.5)}
+.scard .sn{font-family:var(--fh);font-weight:800;font-size:.8rem;color:var(--orange);letter-spacing:.05em}
+.scard .sic{width:60px;height:60px;border-radius:16px;background:rgba(255,91,30,.14);color:var(--orange);display:grid;place-items:center;margin:18px 0 20px}
+.scard .sic svg{width:28px;height:28px}
+.scard h3{font-size:1.4rem;margin-bottom:10px}
+.scard p{font-size:.96rem;color:var(--muted-cream);flex-grow:1}
+.scard .mini{margin-top:18px;display:flex;gap:7px;flex-wrap:wrap}
+.scard .mini b{font-size:.68rem;font-weight:700;padding:6px 11px;border-radius:100px;background:rgba(246,241,231,.08);color:rgba(246,241,231,.7)}
+.swipehint{text-align:center;font-size:.8rem;color:var(--muted-cream);margin-top:6px}
+.swipehint b{color:var(--orange)}
+
+/* ---------- BRANCHEN ---------- */
+.br-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+.br-tab{display:inline-flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:600;font-size:.92rem;padding:12px 18px;border-radius:100px;border:1.6px solid var(--line);background:#fff;color:var(--text);transition:all .25s var(--ease)}
+.br-tab svg{width:18px;height:18px}
+.br-tab[aria-selected="true"]{color:#fff;border-color:transparent;background:var(--acc,var(--orange));box-shadow:0 10px 24px color-mix(in srgb,var(--acc,var(--orange)) 40%,transparent)}
+.br-panel-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(26px,4vw,48px);box-shadow:var(--shadow-soft);min-height:300px}
+.br-panel{display:none;animation:fade .5s var(--ease)}
+.br-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.br-acc{font-family:var(--fh);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--acc,var(--orange));margin-bottom:10px}
+.br-panel h3{font-size:clamp(1.6rem,3vw,2.2rem);margin-bottom:14px}
+.br-panel .ptxt{color:var(--muted);font-size:1.02rem}
+.br-example{background:var(--off);border:1px solid var(--line);border-radius:var(--r);padding:24px;border-left:4px solid var(--acc,var(--orange))}
+.br-example .lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--acc,var(--orange));margin-bottom:10px}
+.br-example h4{font-size:1.12rem;margin-bottom:10px}
+.br-example .q{font-size:.94rem;color:var(--muted);font-style:italic}
+.br-example .ex-cta{margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:.86rem;color:var(--acc,var(--orange))}
+.br-example .ex-cta svg{width:15px;height:15px}
+
+/* ---------- VORHER / NACHHER ---------- */
+.ba-wrap{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.ba-card{background:var(--navy-2);border:1px solid var(--line-cream);border-radius:var(--r-lg);padding:36px}
+.ba-card.bad{border-top:4px solid #ef5350}
+.ba-card.good{border-top:4px solid var(--green)}
+.ba-card .bt{font-family:var(--fh);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:24px;display:inline-flex;align-items:center;gap:9px}
+.ba-card.bad .bt{color:#ef8a87}.ba-card.good .bt{color:var(--green)}
+.ba-list{list-style:none;display:flex;flex-direction:column;gap:16px}
+.ba-list li{display:flex;gap:12px;font-size:1rem;color:var(--muted-cream)}
+.ba-card.good .ba-list li{color:var(--text-cream)}
+.ba-list svg{width:21px;height:21px;flex-shrink:0;margin-top:2px}
+.ba-card.bad svg{color:#ef5350}.ba-card.good svg{color:var(--green)}
+/* interactive slider */
+.compare{margin-top:48px;position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-cream);aspect-ratio:16/7;min-height:240px;background:var(--navy-2);touch-action:pan-y}
+.cmp-side{position:absolute;inset:0;display:flex;align-items:center;padding:clamp(20px,5vw,56px)}
+.cmp-after{background:linear-gradient(120deg,#13301f,#0b0e18);clip-path:inset(0 0 0 var(--split,50%))}
+.cmp-before{background:linear-gradient(120deg,#3a1414,#0b0e18)}
+.cmp-side h4{font-family:var(--fh);font-size:clamp(1.1rem,2.6vw,1.7rem);margin-bottom:8px}
+.cmp-side p{font-size:.92rem;max-width:300px}
+.cmp-before{color:#ffd9d6}.cmp-after{color:#cdf6df;justify-content:flex-end;text-align:right}
+.cmp-after .cmp-side-in{margin-left:auto}
+.cmp-tag{display:inline-block;font-family:var(--fh);font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;padding:5px 11px;border-radius:100px;margin-bottom:12px}
+.cmp-before .cmp-tag{background:rgba(239,83,80,.2);color:#ff8a87}
+.cmp-after .cmp-tag{background:rgba(31,182,115,.2);color:#5ee6a6}
+.cmp-handle{position:absolute;top:0;bottom:0;left:var(--split,50%);width:3px;background:var(--orange);transform:translateX(-50%);z-index:4}
+.cmp-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:var(--orange);display:grid;place-items:center;box-shadow:0 8px 20px rgba(255,91,30,.5);color:#fff}
+.cmp-grip svg{width:24px;height:24px}
+.cmp-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:5;margin:0}
+
+/* ---------- ABLAUF ---------- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;position:relative}
+.step{background:var(--off);border:1px solid var(--line);border-radius:var(--r);padding:30px 26px;position:relative;transition:transform .3s var(--ease),box-shadow .3s}
+.step:hover{transform:translateY(-6px);box-shadow:var(--shadow-soft)}
+.step .num{width:52px;height:52px;border-radius:15px;background:var(--navy);color:#fff;font-family:var(--fh);font-weight:800;font-size:1.2rem;display:grid;place-items:center;margin-bottom:20px}
+.step:nth-child(2) .num{background:var(--orange)}
+.step h3{font-size:1.2rem;margin-bottom:10px}
+.step p{font-size:.95rem;color:var(--muted)}
+
+/* ---------- PREISE ---------- */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+.plan{position:relative;background:var(--navy-2);border:1px solid var(--line-cream);border-radius:var(--r-lg);padding:36px 30px;display:flex;flex-direction:column;transition:transform .35s var(--ease),box-shadow .35s,border-color .35s;overflow:hidden}
+.plan::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 50% -10%,rgba(255,91,30,.18),transparent 60%);opacity:0;transition:opacity .4s}
+.plan:hover{transform:translateY(-8px);border-color:rgba(255,91,30,.5);box-shadow:0 40px 80px rgba(0,0,0,.4)}
+.plan:hover::after{opacity:1}
+.plan.feat{border:2px solid var(--orange);box-shadow:0 30px 70px rgba(255,91,30,.18)}
+.plan.feat::before{content:"Beliebt";position:absolute;top:18px;right:18px;background:var(--orange);color:#fff;font-family:var(--fh);font-weight:700;font-size:.7rem;padding:6px 13px;border-radius:100px}
+.plan h3{font-size:1.4rem;margin-bottom:6px}
+.plan .pdesc{font-size:.9rem;color:var(--muted-cream);min-height:42px;margin-bottom:18px}
+.plan .price{font-family:var(--fh);font-weight:800;font-size:3rem;letter-spacing:-.03em;position:relative}
+.plan .price span{font-size:1rem;font-weight:500;color:var(--muted-cream)}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:13px;margin:22px 0 28px;flex-grow:1}
+.plan li{display:flex;gap:11px;font-size:.95rem;color:var(--muted-cream)}
+.plan li svg{width:19px;height:19px;color:var(--orange);flex-shrink:0;margin-top:2px}
+.plan .btn{position:relative;z-index:2}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:760px;margin:0 auto}
+.qa{border-bottom:1px solid var(--line);overflow:hidden}
+.qa summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 4px;cursor:pointer;font-family:var(--fh);font-weight:600;font-size:1.08rem;list-style:none}
+.qa summary::-webkit-details-marker{display:none}
+.qa .ic{width:30px;height:30px;border-radius:9px;background:var(--orange-soft);color:var(--orange);display:grid;place-items:center;flex-shrink:0;transition:transform .3s var(--ease)}
+.qa[open] .ic{transform:rotate(45deg);background:var(--orange);color:#fff}
+.qa .ic svg{width:17px;height:17px}
+.qa .ans{padding:0 4px 24px;color:var(--muted);font-size:1rem}
+
+/* ---------- FINAL CTA ---------- */
+.final{position:relative;overflow:hidden;text-align:center;align-items:stretch}
+.final-wrap{display:flex;flex-direction:column;justify-content:space-between;min-height:88vh;gap:24px}
+.final-top{padding-top:2vh}.final-bot{padding-bottom:2vh}
+.final h2{font-size:clamp(2rem,5.4vw,3.7rem);letter-spacing:-.03em;max-width:22ch;margin:0 auto;line-height:1.04}
+.final .o{color:var(--orange)}
+.final .btn-row{justify-content:center}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--navy);color:var(--muted-cream);padding:60px 0 36px;border-top:1px solid var(--line-cream)}
+.foot{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between;padding-bottom:32px;border-bottom:1px solid var(--line-cream)}
+footer .brand{color:#fff}
+.foot-about{max-width:340px}
+.foot-about p{margin-top:14px;font-size:.92rem}
+.foot-cols{display:flex;gap:48px;flex-wrap:wrap}
+.foot-cols h4{color:#fff;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.foot-cols a{display:block;font-size:.92rem;padding:6px 0;color:var(--muted-cream);transition:color .2s}
+.foot-cols a:hover{color:var(--orange)}
+.foot-bot{padding-top:24px;text-align:center;font-size:.84rem;color:rgba(246,241,231,.4)}
+
+/* ---------- Mobile menu ---------- */
+.mmenu{position:fixed;inset:0;z-index:240;background:var(--navy);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:30px;transform:translateY(-100%);transition:transform .5s var(--ease);visibility:hidden}
+.mmenu.open{transform:none;visibility:visible}
+.mmenu a{color:#fff;font-family:var(--fh);font-weight:600;font-size:1.6rem;padding:12px 0;border-bottom:1px solid var(--line-cream)}
+.mmenu .mclose{position:absolute;top:20px;right:20px;background:none;border:0;color:#fff;width:48px;height:48px}
+.mmenu .mclose svg{width:30px;height:30px}
+.mmenu .btn{margin-top:24px}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1000px){
+  .br-panel.active{grid-template-columns:1fr;gap:26px}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .price-grid{grid-template-columns:1fr;max-width:440px;margin:0 auto}
+  .plan.feat{order:-1}
+}
+@media (max-width:760px){
+  .nav-links,.nav .nav-cta{display:none}
+  .burger{display:flex}
+  .hero-grid{grid-template-columns:1fr;gap:0}
+  .hero-spacer{height:clamp(380px,72vh,560px)}
+  .hero h1{font-size:clamp(2.6rem,13vw,4rem)}
+  .ba-wrap{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .scene{padding:90px 0}
+  .device{width:230px;height:468px;border-radius:38px;padding:10px}
+  .device::before{width:92px;height:22px}
+  .float-shape{display:none}
+}
+@media (max-width:380px){
+  .wrap{padding:0 18px}
+  .device{width:210px;height:428px}
+}
+/* Reserve a dedicated lane so the object floats BESIDE content on wide screens */
+@media (min-width:1101px){
+  #leistungen .wrap{padding-right:300px}
+  #branchen .wrap{padding-left:300px}
+  #preise .wrap{padding-right:300px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  [data-rv]{opacity:1!important;transform:none!important}
+  .progress,.scrollcue{display:none}
+  .stage{position:absolute!important}
+}
+</style>
 </head>
 <body>
-    <a class="skip-link" href="#main">Zum Inhalt springen</a>
-    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<a class="skip" href="#main">Zum Inhalt springen</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
-    <!-- ===================== HEADER ===================== -->
-    <header>
-        <div class="container nav">
-            <a href="#top" class="brand" aria-label="CleanLines Studio Startseite">
-                <span class="logo" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg>
-                </span>
-                CleanLines<b>.</b>
-            </a>
+<!-- ===================== HEADER ===================== -->
+<header id="header">
+  <div class="wrap nav">
+    <a href="#top" class="brand" aria-label="CleanLines Studio">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg></span>
+      CleanLines<b>.</b>
+    </a>
+    <nav class="nav-links" aria-label="Hauptnavigation">
+      <a href="#leistungen">Leistungen</a>
+      <a href="#branchen">Branchen</a>
+      <a href="#beispiele">Beispiele</a>
+      <a href="#ablauf">Ablauf</a>
+      <a href="#preise">Preise</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="nav-cta" onclick="location.href='#cta'">Kostenlose Preview</button>
+    <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
 
-            <nav class="nav-links" id="navlinks" aria-label="Hauptnavigation">
-                <a href="#leistungen">Leistungen</a>
-                <a href="#branchen">Branchen</a>
-                <a href="#beispiele">Beispiele</a>
-                <a href="#ablauf">Ablauf</a>
-                <a href="#preise">Preise</a>
-                <a href="#faq">FAQ</a>
-                <a href="#preview" class="btn btn-primary">Kostenlose Preview</a>
-            </nav>
+<!-- mobile menu -->
+<div class="mmenu" id="mmenu" aria-hidden="true">
+  <button class="mclose" id="mclose" aria-label="Menü schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <a href="#leistungen">Leistungen</a>
+  <a href="#branchen">Branchen</a>
+  <a href="#beispiele">Beispiele</a>
+  <a href="#ablauf">Ablauf</a>
+  <a href="#preise">Preise</a>
+  <a href="#faq">FAQ</a>
+  <a href="#cta" class="btn btn-pri">Kostenlose Preview sichern</a>
+</div>
 
-            <div class="nav-cta">
-                <a href="#preview" class="btn btn-primary">Kostenlose Preview</a>
-                <button class="menu-toggle" id="menuToggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navlinks">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-                </button>
-            </div>
-        </div>
-    </header>
+<!-- ===================== THE TRAVELING OBJECT ===================== -->
+<div class="stage" id="stage" aria-hidden="true">
+  <div class="stage-inner" id="stageInner">
+    <div class="orb a"></div><div class="orb b"></div>
+    <div class="device">
+      <div class="screen" id="screen">
 
-    <main id="main">
-        <span id="top"></span>
-
-        <!-- ===================== HERO ===================== -->
-        <section class="hero" aria-labelledby="hero-title">
-            <div class="hero-bg-art" id="heroArt" aria-hidden="true" data-img="hero"></div>
-            <div class="container hero-grid">
-                <div class="hero-copy" data-reveal="left">
-                    <span class="eyebrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>
-                        KI-Content-Pakete für lokale Betriebe
-                    </span>
-                    <h1 id="hero-title">Dein Content.<br><span class="accent">Jeden Monat fertig.</span></h1>
-                    <p class="hero-lead">CleanLines Studio liefert dir monatlich fertige Reels-Skripte, Instagram-Captions, Google-Business-Beiträge und Bewertungsantworten — abgestimmt auf deinen Betrieb. Du postest in Minuten, statt stundenlang zu planen.</p>
-
-                    <div class="hero-actions">
-                        <a href="#preview" class="btn btn-primary">
-                            Kostenlose Preview sichern
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                        </a>
-                        <a href="#preise" class="btn btn-ghost">Pakete ansehen</a>
-                    </div>
-
-                    <div class="hero-badges">
-                        <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Monatlich kündbar</span>
-                        <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Keine Einrichtungsgebühr</span>
-                        <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Auf deine Branche abgestimmt</span>
-                    </div>
-                </div>
-
-                <div class="hero-visual" data-reveal="right" data-parallax="0.06">
-                    <div class="float-card float-1">
-                        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-                        <div><div class="ft">8 Captions</div><div class="fs">fertig formuliert</div></div>
-                    </div>
-                    <div class="float-card float-2">
-                        <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
-                        <div><div class="ft">Monatsplan</div><div class="fs">4 Wochen bereit</div></div>
-                    </div>
-
-                    <div class="device" role="img" aria-label="Vorschau eines fertigen Monats-Content-Pakets">
-                        <div class="device-bar">
-                            <span class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg></span>CleanLines Studio</span>
-                            <span class="live-pill"><span class="live-dot"></span>Live</span>
-                        </div>
-
-                        <div class="mock-card">
-                            <div class="mock-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Reel-Skript</div>
-                            <p>„3 Fehler, die dich Kunden kosten“</p>
-                            <div class="meta">Hook, Ablauf &amp; CTA — Wort für Wort vorbereitet.</div>
-                            <div class="mock-tags"><span class="tag">Hook</span><span class="tag">CTA</span></div>
-                        </div>
-
-                        <div class="mock-card">
-                            <div class="mock-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg>Google-Beitrag</div>
-                            <p>Freie Termine diese Woche</p>
-                            <div class="meta">Lokal optimiert — direkt in deinem Google-Profil sichtbar.</div>
-                            <div class="mock-tags"><span class="tag green">Local SEO</span></div>
-                        </div>
-
-                        <div class="mock-card">
-                            <div class="mock-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Review-Antwort</div>
-                            <p class="stars" aria-label="5 von 5 Sternen">★★★★★</p>
-                            <div class="meta">„Vielen Dank für dein Vertrauen! Wir freuen uns aufs nächste Mal…“</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== TRUST STRIP ===================== -->
-        <div class="strip marquee-wrap" aria-hidden="true">
-            <div class="marquee">
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Reels-Skripte</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>Instagram Captions</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10z"/></svg>Google-Beiträge</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Bewertungsantworten</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Monatspläne</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4M4 6v12a2 2 0 0 0 2 2h14v-4"/></svg>Lokale Aktionen</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Reels-Skripte</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>Instagram Captions</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10z"/></svg>Google-Beiträge</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Bewertungsantworten</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Monatspläne</span>
-                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4M4 6v12a2 2 0 0 0 2 2h14v-4"/></svg>Lokale Aktionen</span>
-            </div>
+        <!-- 0 reel -->
+        <div class="face reel show" data-face="reel">
+          <div class="ftop"><span class="pill">Reel-Skript</span><span class="live"><i></i>Live</span></div>
+          <div class="reel-vid">
+            <span class="reel-hook">Hook · Sek. 1</span>
+            <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="reel-cap">„3 Fehler, die dich Kunden kosten“</span>
+          </div>
+          <p>Wort-für-Wort-Skript mit Hook, Ablauf &amp; CTA. Du liest ab, filmst kurz — fertig.</p>
+          <div class="chips"><span class="chip">Hook</span><span class="chip b">CTA</span><span class="chip g">+ Untertitel</span></div>
         </div>
 
-        <!-- ===================== STATS (animierte Zähler) ===================== -->
-        <section class="stats" aria-label="Auf einen Blick">
-            <div class="container">
-                <div class="stats-grid">
-                    <div class="stat" data-reveal>
-                        <div class="num"><span data-count="6">0</span></div>
-                        <div class="lbl">Branchen mit eigener Strategie</div>
-                    </div>
-                    <div class="stat" data-reveal style="--reveal-delay:90ms">
-                        <div class="num"><span data-count="4">0</span><span class="suffix">&nbsp;Wo.</span></div>
-                        <div class="lbl">Content pro Paket — durchgeplant</div>
-                    </div>
-                    <div class="stat" data-reveal style="--reveal-delay:180ms">
-                        <div class="num"><span data-count="100">0</span><span class="suffix">%</span></div>
-                        <div class="lbl">Individuell auf deinen Betrieb</div>
-                    </div>
-                    <div class="stat" data-reveal style="--reveal-delay:270ms">
-                        <div class="num"><span class="suffix">0&nbsp;€</span></div>
-                        <div class="lbl">Einrichtungsgebühr · monatlich kündbar</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== LEISTUNGEN ===================== -->
-        <section id="leistungen" aria-labelledby="leist-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Was du jeden Monat bekommst</span>
-                    <h2 id="leist-title">Alles, was dein Betrieb online braucht</h2>
-                    <p>Fertig formuliert, auf deine Branche abgestimmt und sofort einsetzbar. Kein leeres Blatt mehr, kein Rätselraten.</p>
-                </div>
-
-                <div class="grid grid-3" data-reveal-group>
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">01</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
-                        <h3>Reels-Skripte</h3>
-                        <p>Wort-für-Wort-Skripte mit starkem Hook, klarem Ablauf und direkter Handlungsaufforderung. Du liest ab, filmst kurz — fertig.</p>
-                    </article>
-
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">02</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2"/></svg></span>
-                        <h3>Instagram Captions</h3>
-                        <p>Captions, die zum Weiterlesen und Anfragen führen — inklusive passender Hashtags für deine Region und Zielgruppe.</p>
-                    </article>
-
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">03</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></span>
-                        <h3>Google-Business-Beiträge</h3>
-                        <p>Regelmäßige Beiträge für dein Google-Profil — mit lokalen Suchbegriffen, damit dich Kunden aus deiner Stadt finden.</p>
-                    </article>
-
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">04</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-                        <h3>Bewertungsantworten</h3>
-                        <p>Professionelle, persönliche Antworten auf neue Rezensionen — auch auf kritische. Das überzeugt jeden, der dein Profil besucht.</p>
-                    </article>
-
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">05</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>
-                        <h3>Strukturierter Monatsplan</h3>
-                        <p>Ein klarer Redaktionsplan zeigt dir vorab, welches Thema wann gepostet wird. Volle Übersicht statt spontanem Chaos.</p>
-                    </article>
-
-                    <article class="service-card">
-                        <span class="service-num" aria-hidden="true">06</span>
-                        <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 3.5a8 8 0 1 0 10.9 10.9A7 7 0 0 1 9.6 3.5z"/><path d="m14 6 1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg></span>
-                        <h3>Lokale Aktions-Ideen</h3>
-                        <p>Saisonale Aktionen und Angebots-Konzepte für deine Region — fertig getextet für Instagram und Google, bereit zum Rausschicken.</p>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== BRANCHEN ===================== -->
-        <section id="branchen" class="ind" aria-labelledby="ind-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Branchen</span>
-                    <h2 id="ind-title">Maßgeschneidert für deine Branche</h2>
-                    <p>Keine Massenware. Jeder Text wird auf dein Angebot, deine Zielgruppe und deinen Standort abgestimmt.</p>
-                </div>
-
-                <div class="tabs" data-reveal role="tablist" aria-label="Branchen auswählen">
-                    <button class="tab" role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4M6 20h12"/></svg>Barbershop</button>
-                    <button class="tab" role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14l-1.5-5.5A2 2 0 0 0 15.6 10H8.4a2 2 0 0 0-1.9 1.5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>Autopflege</button>
-                    <button class="tab" role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11a7 7 0 0 1 14 0M12 11V21"/></svg>Restaurant</button>
-                    <button class="tab" role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 7c-2 0-3 1-3 3s2 3 3 3M16 7c2 0 3 1 3 3s-2 3-3 3"/></svg>Beauty / Kosmetik</button>
-                    <button class="tab" role="tab" id="tab-4" aria-controls="panel-4" aria-selected="false" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7a3 3 0 0 0-3 3l-7 7 2 2 7-7a3 3 0 0 0 4-4l-2 2-2-2 2-2z"/></svg>Handwerk / Kfz</button>
-                    <button class="tab" role="tab" id="tab-5" aria-controls="panel-5" aria-selected="false" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14l-1.5-5.5A2 2 0 0 0 15.6 10H8.4a2 2 0 0 0-1.9 1.5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><path d="M13 10V7h2"/></svg>Fahrschule</button>
-                </div>
-
-                <!-- Panel 0: Barbershop -->
-                <div class="panel active" id="panel-0" role="tabpanel" aria-labelledby="tab-0">
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="barbershop">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Barbershop" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Barbershop · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Terminbuchung &amp; Auslastung</div>
-                                <h3>Barbershop</h3>
-                                <p>Wir füllen leere Stühle. Mit Reels, die deine Cuts und Fades zeigen, Google-Beiträgen für spontan freie Termine und Story-Konzepten, die deine Online-Terminbuchung ankurbeln — Woche für Woche.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">Reel-Skript · Entwurf</div>
-                                <h4>„3 Fehler, die deinen Fade ruinieren“</h4>
-                                <p class="quote">Hook: „Du stylst dein Haar jeden Morgen — und machst trotzdem diesen einen Fehler…“</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Termin online buchen</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel 1: Autopflege &amp; Detailing -->
-                <div class="panel" id="panel-1" role="tabpanel" aria-labelledby="tab-1" hidden>
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="autopflege">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Autopflege &amp; Detailing" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Autopflege · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Vorher / Nachher · Sichtbarkeit</div>
-                                <h3>Autopflege &amp; Detailing</h3>
-                                <p>Glänzende Ergebnisse verkaufen sich von selbst — wenn man sie zeigt. Wir liefern Vorher-Nachher-Reel-Konzepte, Pflege-Tipps als Captions und Google-Beiträge, die spontane Aufbereitungs-Anfragen bringen.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">Vorher / Nachher · Reel-Konzept</div>
-                                <h4>Matt &amp; verkratzt → Keramik-Glanz</h4>
-                                <p class="quote">Reel: „So übersteht dein Lack jeden Sommer“ — plus Pflege-Tipp als Caption.</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Aufbereitung anfragen</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel 2: Restaurant &amp; Gastro -->
-                <div class="panel" id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden>
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="restaurant">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Restaurant &amp; Gastro" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Restaurant · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Reservierungen &amp; Wochenkarte</div>
-                                <h3>Restaurant &amp; Gastro</h3>
-                                <p>Volle Tische statt leerer Stühle. Wir texten appetitliche Wochenkarten-Posts, Reservierungs-CTAs und Google-Beiträge, die Gäste aus deiner Umgebung heute Abend zu dir führen.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">Google-Beitrag · Wochenkarte</div>
-                                <h4>Spezialität der Woche</h4>
-                                <p class="quote">„Hausgemachte Trüffel-Pasta mit Wildkräuter-Pesto — nur diese Woche. Reserviere dir deinen Tisch für heute Abend.“</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Button: Jetzt reservieren</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel 3: Beauty / Kosmetik -->
-                <div class="panel" id="panel-3" role="tabpanel" aria-labelledby="tab-3" hidden>
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="beauty">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Beauty / Kosmetik" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Beauty · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Vertrauen &amp; Treatments</div>
-                                <h3>Beauty / Kosmetik</h3>
-                                <p>Kundinnen buchen, wenn sie Vertrauen haben. Wir erstellen FAQ-Posts zu deinen Treatments, ehrliche Nachpflege-Tipps und Captions, die aus Interesse echte Termin-Anfragen machen.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">FAQ-Post · Treatment</div>
-                                <h4>Brow- &amp; Lash-Lifting: Wie lange hält es?</h4>
-                                <p class="quote">„Die ehrliche Antwort plus 3 Nachpflege-Tipps für maximalen Halt — so buchen Kundinnen mit Vertrauen.“</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Freie Termine diese Woche · Buchungslink</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel 4: Handwerk / Kfz -->
-                <div class="panel" id="panel-4" role="tabpanel" aria-labelledby="tab-4" hidden>
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="handwerk">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Handwerk / Kfz" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Handwerk · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Projekte &amp; lokale Anfragen</div>
-                                <h3>Handwerk / Kfz</h3>
-                                <p>Echte Projekte schaffen Vertrauen. Wir zeigen dein Team im Einsatz und das fertige Ergebnis — mit Projekt-Posts und Captions, die qualifizierte Anfragen aus deiner Region bringen.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">Projekt-Post · Lokal</div>
-                                <h4>Heizungstausch an einem Tag</h4>
-                                <p class="quote">„Wir zeigen dein Team im Einsatz und das fertige Ergebnis — das schafft Nähe und bringt qualifizierte Anfragen aus deiner Region.“</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Kostenvoranschlag anfragen</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Panel 5: Fahrschule -->
-                <div class="panel" id="panel-5" role="tabpanel" aria-labelledby="tab-5" hidden>
-                    <div class="ind-grid has-media">
-                        <div class="ind-media" data-tilt data-img="fahrschule">
-                            <div class="img-skeleton" aria-hidden="true"></div>
-                            <img alt="Abstraktes Marken-Visual für Fahrschule" loading="lazy" decoding="async">
-                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Fahrschule · Markenvisual</span>
-                        </div>
-                        <div class="ind-stack">
-                            <div class="ind-info">
-                                <div class="ind-eyebrow">Nahbarkeit &amp; Anmeldungen</div>
-                                <h3>Fahrschule</h3>
-                                <p>Fahrschüler wählen die Schule, die ihnen die Angst nimmt. Wir liefern interaktive Theorie-Posts, nahbare Inhalte und CTAs, die deine Fahrschule als die entspannteste der Stadt positionieren.</p>
-                            </div>
-                            <div class="ind-preview">
-                                <div class="plabel">Interaktiver Post</div>
-                                <h4>Theorieprüfung: Die 3 kniffligsten Fragen</h4>
-                                <p class="quote">„Nahbare Inhalte, die Prüfungsangst nehmen und deine Fahrschule als die entspannteste der Stadt positionieren.“</p>
-                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Jetzt anmelden</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== BEISPIELE ===================== -->
-        <section id="beispiele" aria-labelledby="ex-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Beispiele</span>
-                    <h2 id="ex-title">So sieht dein Content konkret aus</h2>
-                    <p>Beispiel-Entwürfe, wie du sie jeden Monat von uns bekommst — fertig formuliert und sofort einsetzbar.</p>
-                </div>
-
-                <div class="grid grid-3" data-reveal-group>
-                    <article class="example-card">
-                        <div class="ex-head"><span class="dot" aria-hidden="true"></span><span>Reel-Skript · Barbershop</span></div>
-                        <h3>„Warum dein Haar nach 2 Tagen platt aussieht“</h3>
-                        <div class="ex-block"><div class="k">Hook (0–3 Sek.)</div><div class="v">„Du gibst Geld für einen frischen Cut aus — und nach zwei Tagen sieht er aus wie immer. Hier ist der Grund.“</div></div>
-                        <div class="ex-block"><div class="k">Hauptteil</div><div class="v">Zeige kurz das falsche Produkt, dann den Griff zum richtigen. Ein Satz pro Einstellung, Kamera bleibt nah.</div></div>
-                        <div class="ex-block"><div class="k">Abschluss</div><div class="v">„Beim nächsten Termin zeigen wir dir, was zu deinem Haar passt.“</div></div>
-                        <div class="ex-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Link zur Terminbuchung in der Bio</div>
-                    </article>
-
-                    <article class="example-card">
-                        <div class="ex-head"><span class="dot" aria-hidden="true"></span><span>Google-Beitrag · Autopflege</span></div>
-                        <h3>Freie Termine für Komplettaufbereitung</h3>
-                        <div class="ex-block"><div class="k">Beitrag</div><div class="v">„Diese Woche sind kurzfristig Termine für die Innen- und Außenaufbereitung frei geworden. Lack, Polster, Felgen — dein Auto wie am ersten Tag.“</div></div>
-                        <div class="ex-block"><div class="k">Lokaler Bezug</div><div class="v">Stadtname und Stadtteil werden gezielt in den Text eingebaut, damit dich Google regional anzeigt.</div></div>
-                        <div class="ex-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Button: Termin sichern</div>
-                    </article>
-
-                    <article class="example-card">
-                        <div class="ex-head"><span class="dot" aria-hidden="true"></span><span>Review-Antwort · Beauty-Studio</span></div>
-                        <h3>Antwort auf eine 5-Sterne-Rezension</h3>
-                        <div class="ex-block"><div class="k"><span class="stars" aria-label="5 Sterne">★★★★★</span></div><div class="v">„Liebe Sarah, vielen Dank für dein Vertrauen! Es freut uns sehr, dass du mit deinem Lash-Lifting so zufrieden bist. Denk an die ersten 24 Stunden ohne Wasser — dann hält das Ergebnis am längsten. Bis zum nächsten Termin!“</div></div>
-                        <div class="ex-block"><div class="k">Warum das wirkt</div><div class="v">Persönliche Ansprache, ein echter Pflege-Tipp und ein freundlicher Abschluss — das lesen auch alle zukünftigen Kundinnen.</div></div>
-                        <div class="ex-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Stärkt Vertrauen auf deinem Profil</div>
-                    </article>
-                </div>
-                <p class="note">Alle Beispiele sind Demonstrations-Entwürfe. Deine Texte werden individuell für deinen Betrieb erstellt.</p>
-            </div>
-        </section>
-
-        <!-- ===================== VORHER / NACHHER ===================== -->
-        <section class="ba" aria-labelledby="ba-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Der Unterschied</span>
-                    <h2 id="ba-title">Vorher / Nachher</h2>
-                    <p>So verändert sich dein Alltag, wenn der Content jeden Monat fertig auf dich wartet.</p>
-                </div>
-
-                <div class="ba-grid" data-reveal-group>
-                    <div class="ba-col before">
-                        <div class="bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Vorher · ohne Plan</div>
-                        <ul class="ba-list">
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Content nebenbei, wenn Zeit bleibt — wochenlang nichts, dann hektisch irgendwas hochladen</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Bewertungen bleiben tagelang unbeantwortet</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Google-Profil veraltet, freie Termine bleiben unsichtbar</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Jede Woche neu überlegen: „Was soll ich bloß posten?“</li>
-                        </ul>
-                    </div>
-
-                    <div class="ba-vs" aria-hidden="true"><span>VS</span></div>
-
-                    <div class="ba-col after">
-                        <div class="bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 5-5"/></svg>Nachher · mit CleanLines</div>
-                        <ul class="ba-list">
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Monatsplan steht — du weißt vorab, was wann gepostet wird</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Reels-Skripte und Captions liegen sendefertig bereit</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Review-Antworten in Minuten statt Tagen veröffentlicht</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Google-Profil aktiv — dein Betrieb bleibt lokal sichtbar</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== ABLAUF ===================== -->
-        <section id="ablauf" aria-labelledby="ablauf-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Ablauf</span>
-                    <h2 id="ablauf-title">In 4 Schritten zu fertigem Content</h2>
-                    <p>Kein kompliziertes Onboarding. Du startest in Minuten, nicht in Wochen.</p>
-                </div>
-
-                <div class="steps-grid" data-reveal-group>
-                    <div class="step">
-                        <div class="step-num" aria-hidden="true">1</div>
-                        <h3>Kurzes Briefing</h3>
-                        <p>Du teilst uns Branche, Angebot und Ziele mit — dauert etwa 5 Minuten per Formular oder WhatsApp.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-num" aria-hidden="true">2</div>
-                        <h3>Wir erstellen dein Paket</h3>
-                        <p>Wir erstellen mit KI-Unterstützung deinen kompletten Monats-Content — geprüft und auf deinen Betrieb abgestimmt.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-num" aria-hidden="true">3</div>
-                        <h3>Lieferung &amp; Monatsplan</h3>
-                        <p>Du bekommst alles übersichtlich sortiert — inklusive Plan, wann welcher Beitrag online gehen sollte.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-num" aria-hidden="true">4</div>
-                        <h3>Posten &amp; verfeinern</h3>
-                        <p>Du postest in wenigen Minuten. Dein Feedback fließt in den nächsten Monat ein — der Content wird immer treffsicherer.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== PREISE ===================== -->
-        <section id="preise" class="pricing" aria-labelledby="price-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">Preise</span>
-                    <h2 id="price-title">Planbar. Fair. Monatlich kündbar.</h2>
-                    <p>Keine Einrichtungsgebühr, keine versteckten Kosten, keine Vertragsfallen.</p>
-                </div>
-
-                <div class="price-grid" data-reveal-group>
-                    <div class="plan">
-                        <h3>Starter</h3>
-                        <p class="desc">Für Betriebe, die endlich regelmäßig sichtbar werden wollen.</p>
-                        <div class="price">99 €<span> / Monat</span></div>
-                        <ul>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Instagram Captions</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Story-Ideen</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>2× Google-Beiträge</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Support per E-Mail</li>
-                        </ul>
-                        <a href="#preview" class="btn btn-ghost btn-block">Starter wählen</a>
-                    </div>
-
-                    <div class="plan featured">
-                        <h3>Standard</h3>
-                        <p class="desc">Für Betriebe, die planbar Anfragen über Instagram und Google aufbauen wollen.</p>
-                        <div class="price">199 €<span> / Monat</span></div>
-                        <ul>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Instagram Captions</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Reels-Skripte</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Story-Ideen</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Google-Beiträge</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Strukturierter Monatsplan</li>
-                        </ul>
-                        <a href="#preview" class="btn btn-primary btn-block">Standard wählen</a>
-                    </div>
-
-                    <div class="plan">
-                        <h3>Premium</h3>
-                        <p class="desc">Für Betriebe, die ihren kompletten lokalen Auftritt inkl. Reviews und Aktionen abdecken wollen.</p>
-                        <div class="price">349 €<span> / Monat</span></div>
-                        <ul>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>12× Instagram Captions</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>12× Reels-Skripte</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Google-Beiträge</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Bewertungsantworten inklusive</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Lokale Aktions-Ideen</li>
-                            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Prio-Support per WhatsApp</li>
-                        </ul>
-                        <a href="#preview" class="btn btn-ghost btn-block">Premium wählen</a>
-                    </div>
-                </div>
-                <p class="note">Alle Pakete sind monatlich kündbar. Du behältst alle gelieferten Inhalte — auch nach einer Kündigung.</p>
-            </div>
-        </section>
-
-        <!-- ===================== FAQ ===================== -->
-        <section id="faq" aria-labelledby="faq-title">
-            <div class="container">
-                <div class="section-head" data-reveal>
-                    <span class="eyebrow">FAQ</span>
-                    <h2 id="faq-title">Häufige Fragen</h2>
-                    <p>Schnelle, ehrliche Antworten zur Zusammenarbeit.</p>
-                </div>
-
-                <div class="faq-wrap" data-reveal-group>
-                    <details class="faq-item">
-                        <summary class="faq-q">Muss ich selbst Videos filmen?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-                        <div class="faq-a">Ja — für authentische Reels filmst du oder dein Team kurz vor Ort. Dafür bekommst du von uns ein Wort-für-Wort-Skript mit einfachen Anweisungen, mit dem die Aufnahme in wenigen Minuten erledigt ist. Captions, Google-Beiträge und Review-Antworten sind komplett fertig und brauchen kein Video.</div>
-                    </details>
-                    <details class="faq-item">
-                        <summary class="faq-q">Gibt es eine Mindestvertragslaufzeit?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-                        <div class="faq-a">Nein. Alle Pakete sind monatlich kündbar. Wir setzen auf Zusammenarbeit, die sich für dich lohnt — nicht auf starre Laufzeitverträge.</div>
-                    </details>
-                    <details class="faq-item">
-                        <summary class="faq-q">Werden die Texte für meinen Standort optimiert?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-                        <div class="faq-a">Ja. Wir bauen deinen Standort und branchenrelevante Suchbegriffe gezielt in die Beiträge ein (Local SEO), damit dein Betrieb in den regionalen Google- und Social-Media-Suchen besser gefunden wird.</div>
-                    </details>
-                    <details class="faq-item">
-                        <summary class="faq-q">Wie schnell bekomme ich mein erstes Paket?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-                        <div class="faq-a">Nach deinem Briefing erstellen wir dein erstes Monats-Paket in der Regel innerhalb weniger Werktage. Danach bekommst du dein Paket pünktlich vor Monatsbeginn — inklusive Plan, wann was online geht.</div>
-                    </details>
-                    <details class="faq-item">
-                        <summary class="faq-q">Was, wenn mir ein Text nicht gefällt?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
-                        <div class="faq-a">Dann passen wir ihn an. Dein Feedback fließt direkt in die Überarbeitung und in alle folgenden Monate ein — so wird der Content von Monat zu Monat treffsicherer für deinen Betrieb.</div>
-                    </details>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===================== CTA / PREVIEW FORM ===================== -->
-        <section id="preview" aria-labelledby="cta-title">
-            <div class="container">
-                <div class="cta">
-                    <div class="cta-inner" data-reveal>
-                        <div class="cta-copy">
-                            <span class="eyebrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>
-                                Kostenlose Preview
-                            </span>
-                            <h2 id="cta-title">Hol dir 3 kostenlose <span class="accent">Beispieltexte</span> für deinen Betrieb.</h2>
-                            <p>Wir zeigen dir, wie dein Content für Instagram, Google und Bewertungen aussehen könnte — passend zu deiner Branche. Unverbindlich, ohne Abo, ohne Risiko.</p>
-                            <ul class="cta-list">
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Beispiel 1 · Reel-Skript für deine Branche</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Beispiel 2 · Lokal optimierter Google-Beitrag</li>
-                                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Beispiel 3 · Professionelle Review-Antwort</li>
-                            </ul>
-                        </div>
-
-                        <div class="form-card">
-                            <h3>Deine Preview anfordern</h3>
-                            <p class="fsub">Antwort meist innerhalb von 1 Werktag.</p>
-                            <form id="previewForm" novalidate>
-                                <div class="field">
-                                    <label for="biz">Name deines Betriebs <span class="req" aria-hidden="true">*</span></label>
-                                    <input type="text" id="biz" name="biz" placeholder="z. B. Barbershop Müller" required autocomplete="organization">
-                                </div>
-                                <div class="field">
-                                    <label for="branche">Branche <span class="req" aria-hidden="true">*</span></label>
-                                    <select id="branche" name="branche" required>
-                                        <option value="" disabled selected>Bitte auswählen…</option>
-                                        <option>Barbershop / Friseur</option>
-                                        <option>Autopflege / Detailing</option>
-                                        <option>Restaurant / Gastro</option>
-                                        <option>Beauty / Kosmetik</option>
-                                        <option>Handwerk / Kfz</option>
-                                        <option>Fahrschule</option>
-                                        <option>Andere Branche</option>
-                                    </select>
-                                </div>
-                                <div class="field">
-                                    <label for="email">Deine E-Mail-Adresse <span class="req" aria-hidden="true">*</span></label>
-                                    <input type="email" id="email" name="email" placeholder="du@betrieb.de" required autocomplete="email" inputmode="email">
-                                </div>
-                                <div class="field">
-                                    <label for="msg">Nachricht (optional)</label>
-                                    <textarea id="msg" name="msg" placeholder="Erzähl uns kurz, worum es bei dir geht…"></textarea>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="submit" class="btn btn-primary btn-block">
-                                        Per E-Mail anfragen
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>
-                                    </button>
-                                    <a href="https://wa.me/" id="waLink" class="btn btn-ghost btn-block" target="_blank" rel="noopener">
-                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.69-6.16a11.87 11.87 0 0 1-1.6-5.95C.16 5.34 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.56-5.34 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68 1 3.28 1.6 5.4 1.6 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9C6.56 1.95 2.12 6.4 2.12 11.84c0 2.24.65 3.92 1.75 5.68l-1 3.66 3.73-1.05zM17.5 14.7c-.07-.12-.27-.2-.57-.35-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41z"/></svg>
-                                        Per WhatsApp anfragen
-                                    </a>
-                                </div>
-                                <p class="form-note">Unverbindlich &amp; kostenlos. Deine Daten werden nur zur Beantwortung deiner Anfrage verwendet.</p>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ===================== FOOTER ===================== -->
-    <footer>
-        <div class="container">
-            <div class="foot-grid">
-                <div class="foot-about">
-                    <a href="#top" class="brand">
-                        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg></span>
-                        CleanLines<b style="color:var(--primary)">.</b>
-                    </a>
-                    <p>Monatliche KI-Content-Pakete für lokale Betriebe — Reels-Skripte, Captions, Google-Beiträge und Bewertungsantworten, abgestimmt auf deinen Betrieb.</p>
-                </div>
-
-                <div class="foot-links">
-                    <div class="foot-col">
-                        <h4>Navigation</h4>
-                        <a href="#leistungen">Leistungen</a>
-                        <a href="#branchen">Branchen</a>
-                        <a href="#preise">Preise</a>
-                        <a href="#faq">FAQ</a>
-                    </div>
-                    <div class="foot-col">
-                        <h4>Kontakt</h4>
-                        <!-- TODO: echte E-Mail / WhatsApp-Nummer eintragen -->
-                        <a href="mailto:hallo@cleanlines.studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>E-Mail</a>
-                        <a href="https://wa.me/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.69-6.16a11.87 11.87 0 0 1-1.6-5.95C.16 5.34 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.56-5.34 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68 1 3.28 1.6 5.4 1.6 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9C6.56 1.95 2.12 6.4 2.12 11.84c0 2.24.65 3.92 1.75 5.68l-1 3.66 3.73-1.05z"/></svg>WhatsApp</a>
-                    </div>
-                    <div class="foot-col">
-                        <h4>Rechtliches</h4>
-                        <a href="#">Impressum</a>
-                        <a href="#">Datenschutz</a>
-                    </div>
-                </div>
-            </div>
-            <div class="foot-bottom">© 2026 CleanLines Studio. Alle Rechte vorbehalten.</div>
+        <!-- 1 captions -->
+        <div class="face captions" data-face="captions">
+          <div class="ftop"><span class="pill">Caption</span></div>
+          <h5>Sendefertige Captions</h5>
+          <div class="ln m"></div><div class="ln"></div><div class="ln s"></div>
+          <div class="ln o" style="margin-top:14px"></div><div class="ln m"></div>
+          <p style="margin-top:12px">Texte, die zum Anfragen führen — inkl. Hashtags für deine Region.</p>
+          <div class="chips"><span class="chip">#deinestadt</span><span class="chip">#lokal</span><span class="chip b">#angebot</span></div>
         </div>
-    </footer>
 
-    <script>
-        // ---- Mobile menu ----
-        (function () {
-            var toggle = document.getElementById('menuToggle');
-            var links = document.getElementById('navlinks');
-            if (toggle && links) {
-                toggle.addEventListener('click', function () {
-                    var open = links.classList.toggle('open');
-                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-                    toggle.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
-                });
-                links.addEventListener('click', function (e) {
-                    if (e.target.tagName === 'A') {
-                        links.classList.remove('open');
-                        toggle.setAttribute('aria-expanded', 'false');
-                        toggle.setAttribute('aria-label', 'Menü öffnen');
-                    }
-                });
-            }
-        })();
+        <!-- 2 google -->
+        <div class="face google" data-face="google">
+          <div class="ftop"><span class="pill">Google Business</span><span class="live"><i></i>Sichtbar</span></div>
+          <div class="mapbox">
+            <span class="road" style="left:0;right:0;top:58%;height:10px"></span>
+            <span class="road" style="left:40%;top:0;bottom:0;width:9px"></span>
+            <span class="pin"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg></span>
+          </div>
+          <h5 style="font-size:.96rem">Freie Termine diese Woche</h5>
+          <p>Lokal optimierter Beitrag — dein Betrieb wird in deiner Stadt gefunden.</p>
+        </div>
 
-        // ---- Industry tabs (accessible, keyboard-navigable) ----
-        (function () {
-            var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
-            var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
-            function select(i) {
-                tabs.forEach(function (t, j) {
-                    var on = i === j;
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
-                    t.tabIndex = on ? 0 : -1;
-                    panels[j].classList.toggle('active', on);
-                    if (on) { panels[j].removeAttribute('hidden'); } else { panels[j].setAttribute('hidden', ''); }
-                });
-            }
-            tabs.forEach(function (tab, i) {
-                tab.addEventListener('click', function () { select(i); });
-                tab.addEventListener('keydown', function (e) {
-                    var n = null;
-                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % tabs.length;
-                    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + tabs.length) % tabs.length;
-                    else if (e.key === 'Home') n = 0;
-                    else if (e.key === 'End') n = tabs.length - 1;
-                    if (n !== null) { e.preventDefault(); select(n); tabs[n].focus(); }
-                });
-            });
-        })();
+        <!-- 3 review -->
+        <div class="face review" data-face="review">
+          <div class="ftop"><span class="pill">Bewertung</span><span class="stars">★★★★★</span></div>
+          <h5>Antwort in Minuten</h5>
+          <div class="ln m"></div><div class="ln"></div><div class="ln s"></div>
+          <p style="margin-top:12px">„Vielen Dank für dein Vertrauen! Denk an die ersten 24 Std. — dann hält es am längsten.“</p>
+          <div class="chips"><span class="chip g">persönlich</span><span class="chip">+ Pflege-Tipp</span></div>
+        </div>
 
-        // ---- Preview form -> mailto + WhatsApp prefill ----
-        (function () {
-            var form = document.getElementById('previewForm');
-            var wa = document.getElementById('waLink');
-            // TODO: echte Empfänger-Adresse / Nummer eintragen
-            var EMAIL = 'hallo@cleanlines.studio';
-            function build() {
-                var biz = (document.getElementById('biz').value || '').trim();
-                var br = (document.getElementById('branche').value || '').trim();
-                var msg = (document.getElementById('msg').value || '').trim();
-                var lines = [
-                    'Hallo CleanLines Studio,',
-                    '',
-                    'ich möchte gern meine kostenlose Preview anfordern.',
-                    biz ? ('Betrieb: ' + biz) : '',
-                    br ? ('Branche: ' + br) : '',
-                    msg ? ('Nachricht: ' + msg) : ''
-                ].filter(Boolean);
-                return lines.join('\n');
-            }
-            if (form) {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    if (!form.checkValidity()) { form.reportValidity(); return; }
-                    var subj = 'Kostenlose Preview-Anfrage';
-                    window.location.href = 'mailto:' + EMAIL +
-                        '?subject=' + encodeURIComponent(subj) +
-                        '&body=' + encodeURIComponent(build());
-                });
-            }
-            if (wa) {
-                wa.addEventListener('click', function () {
-                    // wa.me/ ohne Nummer öffnet WhatsApp; Text wird vorbefüllt
-                    wa.href = 'https://wa.me/?text=' + encodeURIComponent(build());
-                });
-            }
-        })();
+        <!-- 4 plan -->
+        <div class="face plan-face" data-face="plan">
+          <div class="ftop"><span class="pill">Monatsplan</span></div>
+          <h5>4 Wochen durchgeplant</h5>
+          <p>Du weißt vorab, was wann online geht.</p>
+          <div class="cal">
+            <span>M</span><span>D</span><span>M</span><span>D</span><span>F</span><span>S</span><span>S</span>
+            <span class="on">R</span><span></span><span class="b">G</span><span></span><span class="on">R</span><span></span><span class="g">★</span>
+            <span></span><span class="b">G</span><span></span><span class="on">R</span><span></span><span></span><span class="g">★</span>
+            <span class="on">R</span><span></span><span></span><span class="b">G</span><span></span><span class="on">R</span><span></span>
+          </div>
+        </div>
 
-        // ============================================================
-        // PREMIUM MOTION LAYER
-        // ============================================================
-        var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        <!-- 5 branche (dynamic) -->
+        <div class="face branche" data-face="branche" style="--acc:var(--orange)">
+          <div class="ftop"><span class="pill" id="brPill">Friseur</span></div>
+          <div class="badge-ic" id="brIc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5 20 18M8.5 15.5 20 6"/></svg></div>
+          <h5 id="brTitle">„3 Fehler, die deinen Fade ruinieren“</h5>
+          <p id="brText">Reel-Konzept, das leere Stühle füllt und die Online-Buchung ankurbelt.</p>
+          <div class="chips" style="margin-top:14px"><span class="chip o" style="background:color-mix(in srgb,var(--acc) 18%,#fff);color:var(--acc)">auf deine Branche</span></div>
+        </div>
 
-        // ---- Generierte Marken-Visuals (Higgsfield / Recraft CDN) ----
-        // Hinweis: extern gehostet; CSS-Verläufe dienen als Fallback.
-        var CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/';
-        var IMG = {
-            hero:       CDN + 'hf_20260614_033146_43abc759-844d-47a2-b1ef-890c1b6bb203.png',
-            barbershop: CDN + 'hf_20260614_033154_6ec25486-28fb-416b-908c-25b3cce52039.png',
-            autopflege: CDN + 'hf_20260614_033156_d9539826-e310-4773-8404-1549903953e9.png',
-            restaurant: CDN + 'hf_20260614_033158_17428ea3-6ab5-4123-a845-06b8e4a8e77f.png',
-            beauty:     CDN + 'hf_20260614_033200_766f9aba-d4e9-4d21-9eaf-2aaf67f35fb1.png',
-            handwerk:   CDN + 'hf_20260614_033202_a54d1f2c-4429-4825-baff-9642feeea697.png',
-            fahrschule: CDN + 'hf_20260614_033204_98901595-2fae-432f-bfcf-ec055674929c.png'
-        };
+        <!-- 6 final -->
+        <div class="face final-face" data-face="final">
+          <div class="bigmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg></div>
+          <strong>CleanLines Studio</strong>
+          <p style="text-align:center">Fertiger Content.<br>Jeden Monat.</p>
+        </div>
 
-        // Hero background art
-        (function () {
-            var art = document.getElementById('heroArt');
-            if (art) {
-                var im = new Image();
-                im.onload = function () { art.style.backgroundImage = 'url("' + IMG.hero + '")'; };
-                im.src = IMG.hero; // bei Fehler bleibt der CSS-Verlauf
-            }
-        })();
+      </div>
+    </div>
+  </div>
+</div>
 
-        // Branche tilt-images: lazy set src, fade skeleton, graceful fallback
-        Array.prototype.forEach.call(document.querySelectorAll('.ind-media[data-img]'), function (box) {
-            var key = box.getAttribute('data-img');
-            var img = box.querySelector('img');
-            var skel = box.querySelector('.img-skeleton');
-            if (!img || !IMG[key]) return;
-            img.style.opacity = '0';
-            img.style.transition = 'opacity .6s ease, transform .5s cubic-bezier(.16,1,.3,1)';
-            img.addEventListener('load', function () { if (skel) skel.style.opacity = '0'; img.style.opacity = '1'; });
-            img.addEventListener('error', function () { if (skel) skel.classList.remove('img-skeleton'); }); // Verlauf bleibt
-            img.src = IMG[key];
-        });
+<main id="main">
+<span id="top"></span>
 
-        // ---- Scroll progress bar ----
-        (function () {
-            var bar = document.getElementById('scrollProgress');
-            if (!bar) return;
-            var ticking = false;
-            function update() {
-                var h = document.documentElement;
-                var max = h.scrollHeight - h.clientHeight;
-                var p = max > 0 ? h.scrollTop / max : 0;
-                bar.style.transform = 'scaleX(' + p + ')';
-                ticking = false;
-            }
-            window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-            update();
-        })();
+<!-- ===================== HERO ===================== -->
+<section class="hero cream" data-scene="hero" id="hero">
+  <span class="float-shape fs1"></span><span class="float-shape fs2"></span><span class="float-shape fs3"></span>
+  <div class="wrap hero-grid">
+    <div data-rv>
+      <span class="eyebrow">Content für lokale Betriebe</span>
+      <h1>Dein Content.<span class="o">Jeden Monat fertig.</span></h1>
+      <p class="lead">Du musst nicht jeden Tag überlegen, was du posten sollst. Wir liefern dir monatlich fertige Reels-Skripte, Captions, Google-Beiträge und Bewertungsantworten — passend zu deiner Branche.</p>
+      <div class="btn-row">
+        <a href="#cta" class="btn btn-pri" data-magnet>Kostenlose Preview sichern
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="#leistungen" class="btn btn-ghost">So funktioniert's</a>
+      </div>
+      <div class="hero-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Kein Abo-Zwang</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Monatlich kündbar</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>0 € Einrichtung</span>
+      </div>
+    </div>
+    <div class="hero-spacer" aria-hidden="true"></div>
+  </div>
+  <div class="scrollcue"><span>Scroll</span><span class="m"></span></div>
+</section>
 
-        // ---- Reveal on scroll (IntersectionObserver) ----
-        (function () {
-            var items = document.querySelectorAll('[data-reveal], [data-reveal-group]');
-            if (REDUCED || !('IntersectionObserver' in window)) {
-                Array.prototype.forEach.call(items, function (el) { el.classList.add('in-view'); });
-                return;
-            }
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
-                });
-            }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-            Array.prototype.forEach.call(items, function (el) { io.observe(el); });
-        })();
+<!-- ===================== SHOWCASE ===================== -->
+<section class="scene dark curve to-dark" data-scene="showcase" id="leistungen">
+  <div class="wrap">
+    <div class="show-head">
+      <div data-rv>
+        <span class="eyebrow">Was du jeden Monat bekommst</span>
+        <h2 class="big">Alles für deinen<br>lokalen Auftritt.</h2>
+      </div>
+      <div class="slider-nav" data-rv="r">
+        <button class="snav" id="prev" aria-label="Vorherige Karte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="snav" id="next" aria-label="Nächste Karte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
 
-        // ---- Parallax (hero art + flagged elements) ----
-        (function () {
-            if (REDUCED) return;
-            var art = document.getElementById('heroArt');
-            var layers = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
-            var ticking = false;
-            function update() {
-                var y = window.pageYOffset;
-                if (art && y < 1100) art.style.transform = 'translate3d(0,' + (y * 0.18) + 'px,0)';
-                layers.forEach(function (el) {
-                    var f = parseFloat(el.getAttribute('data-parallax')) || 0;
-                    if (y < 1100) el.style.transform = 'translate3d(0,' + (-y * f) + 'px,0)';
-                });
-                ticking = false;
-            }
-            window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-            update();
-        })();
+    <div class="track" id="track" tabindex="0" aria-label="Leistungen — horizontal scrollen">
+      <article class="scard" data-face="reel">
+        <span class="sn">01</span>
+        <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
+        <h3>Reels-Skripte</h3>
+        <p>Wort-für-Wort mit starkem Hook und klarem CTA. Du filmst kurz — der Rest ist vorbereitet.</p>
+        <div class="mini"><b>Hook</b><b>Ablauf</b><b>CTA</b></div>
+      </article>
+      <article class="scard" data-face="captions">
+        <span class="sn">02</span>
+        <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2"/></svg></span>
+        <h3>Instagram Captions</h3>
+        <p>Texte, die gelesen werden und zu Anfragen führen — inklusive Hashtags für deine Region.</p>
+        <div class="mini"><b>#lokal</b><b>Story-Ideen</b></div>
+      </article>
+      <article class="scard" data-face="google">
+        <span class="sn">03</span>
+        <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></span>
+        <h3>Google-Beiträge</h3>
+        <p>Regelmäßige Posts fürs Google-Profil mit lokalen Suchbegriffen — damit man dich findet.</p>
+        <div class="mini"><b>Local SEO</b><b>Termine</b></div>
+      </article>
+      <article class="scard" data-face="review">
+        <span class="sn">04</span>
+        <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <h3>Bewertungsantworten</h3>
+        <p>Persönliche, professionelle Antworten — auch auf kritische. Das überzeugt jeden Profil-Besucher.</p>
+        <div class="mini"><b>persönlich</b><b>schnell</b></div>
+      </article>
+      <article class="scard" data-face="plan">
+        <span class="sn">05</span>
+        <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <h3>Monatsplan</h3>
+        <p>Ein klarer Redaktionsplan zeigt dir vorab, was wann gepostet wird. Übersicht statt Chaos.</p>
+        <div class="mini"><b>4 Wochen</b><b>fertig</b></div>
+      </article>
+    </div>
+    <p class="swipehint">← <b>Wischen</b> oder Pfeile nutzen — das Objekt zeigt jede Leistung live →</p>
+  </div>
+</section>
 
-        // ---- Interactive 3D tilt on branche images ----
-        (function () {
-            if (REDUCED || window.matchMedia('(hover: none)').matches) return;
-            Array.prototype.forEach.call(document.querySelectorAll('[data-tilt]'), function (el) {
-                var raf = null;
-                el.addEventListener('pointermove', function (ev) {
-                    var r = el.getBoundingClientRect();
-                    var px = (ev.clientX - r.left) / r.width;
-                    var py = (ev.clientY - r.top) / r.height;
-                    el.style.setProperty('--mx', (px * 100) + '%');
-                    el.style.setProperty('--my', (py * 100) + '%');
-                    if (raf) return;
-                    raf = requestAnimationFrame(function () {
-                        var rx = (0.5 - py) * 9, ry = (px - 0.5) * 11;
-                        el.style.transform = 'perspective(800px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateZ(6px)';
-                        raf = null;
-                    });
-                });
-                el.addEventListener('pointerleave', function () {
-                    el.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
-                });
-            });
-        })();
+<!-- ===================== BRANCHEN ===================== -->
+<section class="scene cream curve to-cream" data-scene="branchen" id="branchen">
+  <div class="wrap">
+    <div data-rv style="margin-bottom:36px">
+      <span class="eyebrow">Branchen</span>
+      <h2 class="big">Genau für<br>deinen Betrieb.</h2>
+      <p class="sub">Du bekommst Content, der zu deiner Branche passt. Wähle deine aus — die Vorschau passt sich sofort an.</p>
+    </div>
 
-        // ---- Animated counters ----
-        (function () {
-            var nums = document.querySelectorAll('[data-count]');
-            if (!nums.length) return;
-            if (REDUCED || !('IntersectionObserver' in window)) {
-                Array.prototype.forEach.call(nums, function (n) { n.textContent = n.getAttribute('data-count'); });
-                return;
-            }
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (!e.isIntersecting) return;
-                    var n = e.target, target = parseInt(n.getAttribute('data-count'), 10), start = null, dur = 1400;
-                    function step(ts) {
-                        if (!start) start = ts;
-                        var p = Math.min((ts - start) / dur, 1);
-                        var eased = 1 - Math.pow(1 - p, 3);
-                        n.textContent = Math.round(eased * target);
-                        if (p < 1) requestAnimationFrame(step);
-                    }
-                    requestAnimationFrame(step);
-                    io.unobserve(n);
-                });
-            }, { threshold: 0.5 });
-            Array.prototype.forEach.call(nums, function (n) { io.observe(n); });
-        })();
-    </script>
+    <div class="br-tabs" role="tablist" aria-label="Branche wählen" data-rv>
+      <button class="br-tab" role="tab" aria-selected="true"  data-i="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5 20 18M8.5 15.5 20 6"/></svg>Friseure</button>
+      <button class="br-tab" role="tab" aria-selected="false" data-i="1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11a7 7 0 0 1 14 0M12 11V21"/></svg>Restaurants</button>
+      <button class="br-tab" role="tab" aria-selected="false" data-i="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7a3 3 0 0 0-3 3l-7 7 2 2 7-7a3 3 0 0 0 4-4l-2 2-2-2 2-2z"/></svg>Handwerker</button>
+      <button class="br-tab" role="tab" aria-selected="false" data-i="3">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 7c-2 0-3 1-3 3s2 3 3 3M16 7c2 0 3 1 3 3s-2 3-3 3"/></svg>Kosmetikstudios</button>
+      <button class="br-tab" role="tab" aria-selected="false" data-i="4">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14l-1.5-5.5A2 2 0 0 0 15.6 10H8.4a2 2 0 0 0-1.9 1.5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>Fahrschulen</button>
+      <button class="br-tab" role="tab" aria-selected="false" data-i="5">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5M4 9l2-2M18 15l2-2M9 4 7 6M17 20l-2-2"/><circle cx="12" cy="12" r="3"/></svg>Fitnessstudios</button>
+    </div>
+
+    <div class="br-panel-wrap" id="brWrap">
+      <div class="br-panel active" id="brPanel">
+        <div>
+          <div class="br-acc" id="pAcc">Terminbuchung &amp; Auslastung</div>
+          <h3 id="pTitle">Friseure &amp; Barbershops</h3>
+          <p class="ptxt" id="pText">Wir füllen leere Stühle: Reels, die deine Cuts zeigen, Google-Beiträge für spontan freie Termine und Captions, die deine Online-Buchung ankurbeln — Woche für Woche.</p>
+        </div>
+        <div class="br-example">
+          <div class="lbl" id="eLbl">Reel-Skript · Entwurf</div>
+          <h4 id="eTitle">„3 Fehler, die deinen Fade ruinieren“</h4>
+          <p class="q" id="eQuote">„Du stylst dein Haar jeden Morgen — und machst trotzdem diesen einen Fehler…“</p>
+          <span class="ex-cta" id="eCta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Termin online buchen</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== VORHER / NACHHER ===================== -->
+<section class="scene dark curve to-dark" data-scene="vn" id="beispiele">
+  <div class="wrap">
+    <div data-rv style="margin-bottom:40px">
+      <span class="eyebrow">Der Unterschied</span>
+      <h2 class="big">Vorher Chaos.<br>Nachher Plan.</h2>
+    </div>
+    <div class="ba-wrap">
+      <div class="ba-card bad" data-rv="l">
+        <div class="bt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Ohne CleanLines</div>
+        <ul class="ba-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Jeden Tag aufs Neue überlegen, was man posten soll</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Wochenlang nichts — dann hektisch irgendwas hochladen</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Bewertungen bleiben tagelang unbeantwortet</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>Google-Profil veraltet, freie Termine unsichtbar</li>
+        </ul>
+      </div>
+      <div class="ba-card good" data-rv="r">
+        <div class="bt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 5-5"/></svg>Mit CleanLines</div>
+        <ul class="ba-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Monatsplan steht — du weißt vorab, was wann läuft</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Reels-Skripte &amp; Captions liegen sendefertig bereit</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Review-Antworten in Minuten statt Tagen</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Google-Profil aktiv — lokal sichtbar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="compare" id="compare" data-rv>
+      <div class="cmp-side cmp-before"><div class="cmp-side-in"><span class="cmp-tag">Vorher</span><h4>Leeres Blatt.</h4><p>Kein Plan, keine Ideen, kein Post seit Wochen.</p></div></div>
+      <div class="cmp-side cmp-after"><div class="cmp-side-in"><span class="cmp-tag">Nachher</span><h4>Fertiges Paket.</h4><p>Plan, Captions &amp; Reels — bereit zum Posten.</p></div></div>
+      <div class="cmp-handle" id="cmpHandle"><span class="cmp-grip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 3 12l6 6M15 6l6 6-6 6"/></svg></span></div>
+      <input class="cmp-range" id="cmpRange" type="range" min="0" max="100" value="50" aria-label="Vorher/Nachher vergleichen">
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABLAUF ===================== -->
+<section class="scene cream curve to-cream short" data-scene="ablauf" id="ablauf">
+  <div class="wrap">
+    <div data-rv style="margin-bottom:44px">
+      <span class="eyebrow">In 4 Schritten</span>
+      <h2 class="big">So einfach<br>läuft's.</h2>
+      <p class="sub">Kein kompliziertes Onboarding. Du startest in Minuten, nicht in Wochen.</p>
+    </div>
+    <div class="steps">
+      <div class="step" data-rv><div class="num">1</div><h3>Betrieb auswählen</h3><p>Du sagst uns deine Branche, dein Angebot und dein Ziel.</p></div>
+      <div class="step" data-rv style="--d:90ms"><div class="num">2</div><h3>Kurze Infos schicken</h3><p>5 Minuten per Formular oder WhatsApp — mehr brauchen wir nicht.</p></div>
+      <div class="step" data-rv style="--d:180ms"><div class="num">3</div><h3>Paket wird erstellt</h3><p>Wir liefern deinen kompletten Monats-Content — geprüft und abgestimmt.</p></div>
+      <div class="step" data-rv style="--d:270ms"><div class="num">4</div><h3>Direkt posten</h3><p>Du postest in Minuten. Dein Feedback fließt in den nächsten Monat.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PREISE ===================== -->
+<section class="scene dark curve to-dark" data-scene="preise" id="preise">
+  <div class="wrap">
+    <div data-rv style="text-align:center;margin-bottom:48px">
+      <span class="eyebrow" style="justify-content:center">Preise</span>
+      <h2 class="big">Planbar. Fair.<br>Monatlich kündbar.</h2>
+      <p class="sub" style="margin:22px auto 0">Keine Einrichtungsgebühr, keine versteckten Kosten, kein Abo-Zwang.</p>
+    </div>
+    <div class="price-grid">
+      <div class="plan" data-rv>
+        <h3>Starter</h3>
+        <p class="pdesc">Für Betriebe, die endlich regelmäßig sichtbar werden.</p>
+        <div class="price">99 €<span> / Monat</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Instagram Captions</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Story-Ideen</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>2× Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Support per E-Mail</li>
+        </ul>
+        <a href="#cta" class="btn btn-ghost" style="width:100%">Starter wählen</a>
+      </div>
+      <div class="plan feat" data-rv style="--d:90ms">
+        <h3>Wachstum</h3>
+        <p class="pdesc">Für Betriebe, die planbar Anfragen aufbauen wollen.</p>
+        <div class="price">199 €<span> / Monat</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Captions &amp; 8× Reels-Skripte</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Story-Ideen</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>4× Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Strukturierter Monatsplan</li>
+        </ul>
+        <a href="#cta" class="btn btn-pri" style="width:100%">Wachstum wählen</a>
+      </div>
+      <div class="plan" data-rv style="--d:180ms">
+        <h3>Premium</h3>
+        <p class="pdesc">Für den kompletten lokalen Auftritt inkl. Reviews.</p>
+        <div class="price">349 €<span> / Monat</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>12× Captions &amp; 12× Reels-Skripte</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8× Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Bewertungsantworten inklusive</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Lokale Aktionen + Prio-WhatsApp</li>
+        </ul>
+        <a href="#cta" class="btn btn-ghost" style="width:100%">Premium wählen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="scene cream curve to-cream short" data-scene="faq" id="faq">
+  <div class="wrap">
+    <div data-rv style="text-align:center;margin-bottom:40px">
+      <span class="eyebrow" style="justify-content:center">FAQ</span>
+      <h2 class="big">Häufige Fragen.</h2>
+    </div>
+    <div class="faq" data-rv>
+      <details class="qa"><summary>Muss ich selbst Videos filmen?<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Für authentische Reels filmst du oder dein Team kurz vor Ort — mit einem Wort-für-Wort-Skript ist das in wenigen Minuten erledigt. Captions, Google-Beiträge und Review-Antworten sind komplett fertig und brauchen kein Video.</div></details>
+      <details class="qa"><summary>Gibt es eine Mindestlaufzeit?<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Nein. Alle Pakete sind monatlich kündbar — kein Abo-Zwang, keine starren Laufzeitverträge.</div></details>
+      <details class="qa"><summary>Werden die Texte für meinen Standort optimiert?<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Ja. Wir bauen deinen Standort und branchenrelevante Suchbegriffe gezielt in die Beiträge ein (Local SEO), damit dich Kunden aus deiner Stadt finden.</div></details>
+      <details class="qa"><summary>Wie schnell bekomme ich mein erstes Paket?<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Nach deinem Briefing in der Regel innerhalb weniger Werktage. Danach bekommst du dein Paket pünktlich vor Monatsbeginn — inklusive Plan, wann was online geht.</div></details>
+      <details class="qa"><summary>Was, wenn mir ein Text nicht gefällt?<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Dann passen wir ihn an. Dein Feedback fließt direkt in die Überarbeitung und alle folgenden Monate ein — der Content wird von Monat zu Monat treffsicherer.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FINAL CTA ===================== -->
+<section class="scene dark final curve to-dark" data-scene="final" id="cta">
+  <div class="wrap final-wrap" style="position:relative;z-index:3">
+    <div data-rv class="final-top">
+      <span class="eyebrow" style="justify-content:center">Bereit?</span>
+      <h2>Dein Betrieb braucht keine Agentur. <span class="o">Er braucht fertigen Content.</span></h2>
+    </div>
+    <div data-rv class="final-bot">
+      <p class="sub" style="margin:0 auto 32px">Hol dir 3 kostenlose Beispieltexte für deine Branche. Unverbindlich, ohne Abo, ohne Risiko.</p>
+      <div class="btn-row">
+        <a class="btn btn-pri" id="mailBtn" href="mailto:hallo@cleanlines.studio?subject=Kostenlose%20Preview-Anfrage" data-magnet>Kostenlose Preview sichern
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-wa" href="https://wa.me/?text=Hallo%20CleanLines%20Studio%2C%20ich%20m%C3%B6chte%20gern%20meine%20kostenlose%20Preview." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.69-6.16a11.87 11.87 0 0 1-1.6-5.95C.16 5.34 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.56-5.34 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68 1 3.28 1.6 5.4 1.6 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9C6.56 1.95 2.12 6.4 2.12 11.84c0 2.24.65 3.92 1.75 5.68l-1 3.66 3.73-1.05z"/></svg>WhatsApp schreiben</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-about">
+        <a href="#top" class="brand"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg></span>CleanLines<b>.</b></a>
+        <p>Ideal für lokale Betriebe, die online professioneller wirken wollen — fertiger Content, jeden Monat, ohne Abo-Zwang.</p>
+      </div>
+      <div class="foot-cols">
+        <div><h4>Seite</h4><a href="#leistungen">Leistungen</a><a href="#branchen">Branchen</a><a href="#preise">Preise</a><a href="#faq">FAQ</a></div>
+        <div><h4>Kontakt</h4>
+          <!-- TODO: echte E-Mail / WhatsApp-Nummer eintragen -->
+          <a href="mailto:hallo@cleanlines.studio">E-Mail</a><a href="https://wa.me/" target="_blank" rel="noopener">WhatsApp</a></div>
+        <div><h4>Rechtliches</h4><a href="#">Impressum</a><a href="#">Datenschutz</a></div>
+      </div>
+    </div>
+    <div class="foot-bot">© 2026 CleanLines Studio. Alle Rechte vorbehalten.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+var $=function(s,c){return (c||document).querySelector(s);};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));};
+var clamp=function(v,a,b){return v<a?a:v>b?b:v;};
+var lerp=function(a,b,t){return a+(b-a)*t;};
+
+/* ---------- Header solid + dark detection + progress ---------- */
+var header=$('#header'), progress=$('#progress');
+var darkScenes=$$('main > section.dark, section.final');
+function headerState(){
+  var y=window.pageYOffset;
+  header.classList.toggle('solid', y>30);
+  // on-dark if a dark section overlaps the header band
+  var onDark=false, hb=78;
+  for(var i=0;i<darkScenes.length;i++){var r=darkScenes[i].getBoundingClientRect();if(r.top<hb&&r.bottom>hb){onDark=true;break;}}
+  header.classList.toggle('on-dark', onDark);
+  var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+  progress.style.transform='scaleX('+(max>0?y/max:0)+')';
+}
+
+/* ---------- Reveal ---------- */
+(function(){
+  var items=$$('[data-rv]');
+  if(reduce||!('IntersectionObserver'in window)){items.forEach(function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  items.forEach(function(e){io.observe(e);});
+})();
+
+/* ---------- THE TRAVELING OBJECT ENGINE ---------- */
+var stage=$('#stage'), inner=$('#stageInner');
+var faces={}; $$('.face',$('#screen')).forEach(function(f){faces[f.getAttribute('data-face')]=f;});
+var curFace='reel';
+function setFace(name){
+  if(!faces[name]||curFace===name) return;
+  if(faces[curFace]) faces[curFace].classList.remove('show');
+  faces[name].classList.add('show'); curFace=name;
+}
+// per-scene target state: x(vw) y(vh) s(scale) r(deg) o(opacity) face
+function states(){
+  var m = matchMedia('(max-width:1100px)').matches;
+  if(m) return {
+    hero:{x:0,y:20,s:.92,r:-4,o:1,f:'reel'},
+    showcase:{x:0,y:-2,s:.62,r:6,o:.16,f:'reel'},
+    branchen:{x:0,y:0,s:.62,r:-5,o:.14,f:'branche'},
+    vn:{x:0,y:20,s:.5,r:0,o:0,f:'plan'},
+    ablauf:{x:0,y:-10,s:.5,r:0,o:0,f:'plan'},
+    preise:{x:0,y:-4,s:.5,r:6,o:.12,f:'plan'},
+    faq:{x:0,y:0,s:.5,r:0,o:0,f:'final'},
+    final:{x:0,y:6,s:.72,r:0,o:.18,f:'final'}
+  };
+  return {
+    hero:{x:24,y:2,s:1,r:-7,o:1,f:'reel'},
+    showcase:{x:36,y:0,s:.8,r:9,o:1,f:'reel'},
+    branchen:{x:-36,y:0,s:.82,r:-9,o:1,f:'branche'},
+    vn:{x:0,y:26,s:.5,r:0,o:0,f:'plan'},
+    ablauf:{x:0,y:-14,s:.5,r:0,o:0,f:'plan'},
+    preise:{x:34,y:6,s:.6,r:11,o:1,f:'plan'},
+    faq:{x:0,y:0,s:.5,r:0,o:0,f:'final'},
+    final:{x:0,y:11,s:.72,r:0,o:1,f:'final'}
+  };
+}
+var ST=states();
+var scenes=$$('main > section[data-scene]');
+var anchors=[]; // {center, key}
+function measure(){
+  ST=states();
+  anchors=scenes.map(function(s){var r=s.getBoundingClientRect();var top=r.top+window.pageYOffset;return {c:top+s.offsetHeight/2,k:s.getAttribute('data-scene')};});
+}
+function applyStage(){
+  if(!anchors.length) return;
+  var sc=window.pageYOffset+window.innerHeight/2;
+  var st;
+  if(sc<=anchors[0].c){ st=ST[anchors[0].k]; }
+  else if(sc>=anchors[anchors.length-1].c){ st=ST[anchors[anchors.length-1].k]; }
+  else{
+    for(var i=0;i<anchors.length-1;i++){
+      if(sc>=anchors[i].c&&sc<anchors[i+1].c){
+        var a=ST[anchors[i].k], b=ST[anchors[i+1].k];
+        var t=(sc-anchors[i].c)/(anchors[i+1].c-anchors[i].c);
+        t=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; // easeInOut
+        st={x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t),s:lerp(a.s,b.s,t),r:lerp(a.r,b.r,t),o:lerp(a.o,b.o,t)};
+        break;
+      }
+    }
+  }
+  if(!st) st=ST.hero;
+  stage.style.transform='translate(calc(-50% + '+st.x.toFixed(2)+'vw), calc(-50% + '+st.y.toFixed(2)+'vh)) scale('+st.s.toFixed(3)+') rotate('+st.r.toFixed(2)+'deg)';
+  stage.style.opacity=st.o.toFixed(2);
+}
+// active scene -> base face (unless overridden by slider/tabs while active)
+var sliderActive=false, branchenActive=false;
+(function(){
+  if(!('IntersectionObserver'in window)) return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var k=e.target.getAttribute('data-scene');
+      sliderActive=(k==='showcase'); branchenActive=(k==='branchen');
+      if(k==='showcase'){ setFace(currentSlideFace()); }
+      else if(k==='branchen'){ setFace('branche'); }
+      else if(ST[k]) setFace(ST[k].f);
+    });
+  },{threshold:.5});
+  scenes.forEach(function(s){io.observe(s);});
+})();
+
+/* ---------- Pointer tilt on the object (hero feel) ---------- */
+(function(){
+  if(reduce||matchMedia('(hover:none)').matches) return;
+  var tx=0,ty=0,cx=0,cy=0,raf=null;
+  window.addEventListener('pointermove',function(e){
+    tx=(e.clientX/window.innerWidth-.5); ty=(e.clientY/window.innerHeight-.5);
+    if(!raf) raf=requestAnimationFrame(loop);
+  },{passive:true});
+  function loop(){
+    cx+=(tx-cx)*.08; cy+=(ty-cy)*.08;
+    inner.style.transform='rotateY('+(cx*10).toFixed(2)+'deg) rotateX('+(-cy*8).toFixed(2)+'deg)';
+    if(Math.abs(tx-cx)>.001||Math.abs(ty-cy)>.001){raf=requestAnimationFrame(loop);}else{raf=null;}
+  }
+})();
+
+/* ---------- Master scroll loop ---------- */
+var ticking=false;
+function onScroll(){ if(!ticking){ticking=true;requestAnimationFrame(function(){headerState();if(!reduce)applyStage();ticking=false;});} }
+window.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('resize',function(){measure();applyStage();headerState();},{passive:true});
+
+/* ---------- SHOWCASE slider ---------- */
+var track=$('#track'), cards=$$('.scard',track), prev=$('#prev'), next=$('#next');
+function currentSlideFace(){
+  var mid=track.scrollLeft+track.clientWidth/2, best=0,bd=1e9;
+  cards.forEach(function(c,i){var cc=c.offsetLeft+c.offsetWidth/2;var d=Math.abs(cc-mid);if(d<bd){bd=d;best=i;}});
+  return cards[best].getAttribute('data-face');
+}
+function updArrows(){
+  if(!prev) return;
+  prev.disabled=track.scrollLeft<8;
+  next.disabled=track.scrollLeft>track.scrollWidth-track.clientWidth-8;
+}
+function scrollByCard(dir){
+  var w=cards[0].offsetWidth+22;
+  track.scrollBy({left:dir*w,behavior:reduce?'auto':'smooth'});
+}
+if(track){
+  prev.addEventListener('click',function(){scrollByCard(-1);});
+  next.addEventListener('click',function(){scrollByCard(1);});
+  var tk=false;
+  track.addEventListener('scroll',function(){
+    if(!tk){tk=true;requestAnimationFrame(function(){updArrows();if(sliderActive)setFace(currentSlideFace());tk=false;});}
+  },{passive:true});
+  updArrows();
+}
+
+/* ---------- BRANCHEN tabs ---------- */
+var BR=[
+ {acc:'#ff5b1e',pill:'Friseur',accLbl:'Terminbuchung & Auslastung',h:'Friseure & Barbershops',
+  txt:'Wir füllen leere Stühle: Reels, die deine Cuts zeigen, Google-Beiträge für spontan freie Termine und Captions, die deine Online-Buchung ankurbeln — Woche für Woche.',
+  elbl:'Reel-Skript · Entwurf',et:'„3 Fehler, die deinen Fade ruinieren“',eq:'„Du stylst dein Haar jeden Morgen — und machst trotzdem diesen einen Fehler…“',ec:'Termin online buchen',
+  ic:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5 20 18M8.5 15.5 20 6"/>'},
+ {acc:'#f5b740',pill:'Restaurant',accLbl:'Reservierungen & Wochenkarte',h:'Restaurants & Gastro',
+  txt:'Volle Tische statt leerer Stühle: appetitliche Wochenkarten-Posts, Reservierungs-CTAs und Google-Beiträge, die Gäste aus deiner Umgebung heute Abend zu dir führen.',
+  elbl:'Google-Beitrag · Wochenkarte',et:'Spezialität der Woche',eq:'„Hausgemachte Trüffel-Pasta — nur diese Woche. Reserviere dir deinen Tisch.“',ec:'Jetzt reservieren',
+  ic:'<path d="M3 11h18M5 11a7 7 0 0 1 14 0M12 11V21"/>'},
+ {acc:'#3b82f6',pill:'Handwerk',accLbl:'Projekte & lokale Anfragen',h:'Handwerker & Kfz',
+  txt:'Echte Projekte schaffen Vertrauen: Projekt-Posts, die dein Team im Einsatz zeigen, und Captions, die qualifizierte Anfragen aus deiner Region bringen.',
+  elbl:'Projekt-Post · Lokal',et:'Heizungstausch an einem Tag',eq:'„Wir zeigen dein Team im Einsatz und das Ergebnis — das bringt Anfragen aus der Region.“',ec:'Kostenvoranschlag anfragen',
+  ic:'<path d="M14 7a3 3 0 0 0-3 3l-7 7 2 2 7-7a3 3 0 0 0 4-4l-2 2-2-2 2-2z"/>'},
+ {acc:'#e0457b',pill:'Kosmetik',accLbl:'Vertrauen & Treatments',h:'Kosmetikstudios',
+  txt:'Kundinnen buchen, wenn sie Vertrauen haben: FAQ-Posts zu Treatments, ehrliche Nachpflege-Tipps und Captions, die aus Interesse echte Termin-Anfragen machen.',
+  elbl:'FAQ-Post · Treatment',et:'Lash-Lifting: Wie lange hält es?',eq:'„Die ehrliche Antwort plus 3 Nachpflege-Tipps für maximalen Halt.“',ec:'Termin sichern',
+  ic:'<path d="M12 3v18M8 7c-2 0-3 1-3 3s2 3 3 3M16 7c2 0 3 1 3 3s-2 3-3 3"/>'},
+ {acc:'#1fb673',pill:'Fahrschule',accLbl:'Nahbarkeit & Anmeldungen',h:'Fahrschulen',
+  txt:'Fahrschüler wählen die Schule, die ihnen die Angst nimmt: interaktive Theorie-Posts und nahbare Inhalte, die deine Fahrschule als die entspannteste der Stadt positionieren.',
+  elbl:'Interaktiver Post',et:'Die 3 kniffligsten Theorie-Fragen',eq:'„Nahbare Inhalte, die Prüfungsangst nehmen — und Anmeldungen bringen.“',ec:'Jetzt anmelden',
+  ic:'<path d="M5 17h14l-1.5-5.5A2 2 0 0 0 15.6 10H8.4a2 2 0 0 0-1.9 1.5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/>'},
+ {acc:'#8b5cf6',pill:'Fitness',accLbl:'Motivation & Mitglieder',h:'Fitnessstudios',
+  txt:'Mehr Probetrainings, weniger Absprünge: motivierende Reels, Übungs-Tipps als Captions und Aktions-Posts, die neue Mitglieder in dein Studio bringen.',
+  elbl:'Reel-Konzept · Motivation',et:'„In 4 Wochen zur ersten Klimmzug-Wiederholung“',eq:'„Zeig den Weg, nicht nur das Ergebnis — das holt Anfänger ab und motiviert.“',ec:'Probetraining buchen',
+  ic:'<path d="M6.5 6.5 17.5 17.5M4 9l2-2M18 15l2-2M9 4 7 6M17 20l-2-2"/><circle cx="12" cy="12" r="3"/>'}
+];
+var tabs=$$('.br-tab'), panel=$('#brPanel');
+var pAcc=$('#pAcc'),pTitle=$('#pTitle'),pText=$('#pText'),eLbl=$('#eLbl'),eTitle=$('#eTitle'),eQuote=$('#eQuote'),eCta=$('#eCta');
+var brPill=$('#brPill'),brIc=$('#brIc'),brTitle=$('#brTitle'),brText=$('#brText'),brFace=faces['branche'];
+function setBranche(i){
+  var d=BR[i];
+  $('#branchen').style.setProperty('--acc',d.acc);
+  $('#brWrap').style.setProperty('--acc',d.acc);
+  pAcc.textContent=d.accLbl; pTitle.textContent=d.h; pText.textContent=d.txt;
+  eLbl.textContent=d.elbl; eTitle.textContent=d.et; eQuote.textContent=d.eq;
+  eCta.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'+d.ec;
+  // sync object
+  brFace.style.setProperty('--acc',d.acc);
+  brPill.textContent=d.pill; brTitle.textContent=d.et; brText.textContent=d.txt;
+  brIc.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d.ic+'</svg>';
+  if(branchenActive) setFace('branche');
+  // re-trigger panel fade
+  panel.style.animation='none'; void panel.offsetWidth; panel.style.animation='';
+}
+tabs.forEach(function(tab,i){
+  tab.addEventListener('click',function(){
+    tabs.forEach(function(t){t.setAttribute('aria-selected','false');t.style.setProperty('--acc',BR[+t.getAttribute('data-i')].acc);});
+    tab.setAttribute('aria-selected','true');
+    setBranche(i);
+  });
+  tab.style.setProperty('--acc',BR[i].acc);
+  tab.addEventListener('keydown',function(e){
+    var n=null;
+    if(e.key==='ArrowRight')n=(i+1)%tabs.length;
+    else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;
+    if(n!==null){e.preventDefault();tabs[n].focus();tabs[n].click();}
+  });
+});
+setBranche(0);
+
+/* ---------- VORHER/NACHHER compare slider ---------- */
+(function(){
+  var cmp=$('#compare'), range=$('#cmpRange');
+  if(!cmp) return;
+  function set(v){cmp.style.setProperty('--split',v+'%');}
+  range.addEventListener('input',function(){set(range.value);});
+  set(50);
+})();
+
+/* ---------- Magnetic buttons ---------- */
+(function(){
+  if(reduce||matchMedia('(hover:none)').matches) return;
+  $$('[data-magnet]').forEach(function(b){
+    b.addEventListener('pointermove',function(e){
+      var r=b.getBoundingClientRect();
+      b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.25)+'px,'+((e.clientY-r.top-r.height/2)*.4)+'px)';
+    });
+    b.addEventListener('pointerleave',function(){b.style.transform='';});
+  });
+})();
+
+/* ---------- Mobile menu ---------- */
+(function(){
+  var burger=$('#burger'),mm=$('#mmenu'),close=$('#mclose');
+  function open(o){mm.classList.toggle('open',o);mm.setAttribute('aria-hidden',o?'false':'true');burger.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';}
+  burger.addEventListener('click',function(){open(true);});
+  close.addEventListener('click',function(){open(false);});
+  $$('a',mm).forEach(function(a){a.addEventListener('click',function(){open(false);});});
+})();
+
+/* ---------- init ---------- */
+function init(){ measure(); headerState(); if(!reduce) applyStage(); }
+if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',init);
+window.addEventListener('load',function(){measure();applyStage();});
+})();
+</script>
 </body>
 </html>
