@@ -111,14 +111,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    HANDS — first-person, holding the tablet (bottom-left / bottom-right)
    ========================================================================== */
 .hand{
-  position:absolute; bottom:-2%; z-index:6;
-  width:min(38vw,430px); height:80vh;
+  position:absolute; bottom:-5%; z-index:20;
+  width:min(26vw,410px); height:60vh;
   pointer-events:none; will-change:transform,opacity;
-  filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));
+  filter:drop-shadow(0 24px 44px rgba(0,0,0,.65));
 }
 .hand img{ width:100%; height:100%; object-fit:contain; object-position:bottom; }
-.hand-left{ left:-4%; transform-origin:bottom left; }
-.hand-right{ right:-4%; transform-origin:bottom right; }
+.hand-left{ left:3%; transform-origin:bottom center; }
+.hand-right{ right:3%; transform-origin:bottom center; }
 .hand-right img{ transform:scaleX(-1); }
 
 /* Elegant CSS fallback hand (used when PNG is missing) — stylised, premium,
@@ -150,10 +150,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  width:min(86vw,940px);
-  height:min(64vh,640px);
+  width:min(92vw,1180px);
+  height:min(78vh,780px);
   transform:translate(-50%,-50%);
-  border-radius:38px;
+  border-radius:40px;
   /* brushed dark metal bezel */
   background:
     linear-gradient(150deg,#3a3f47 0%,#171b21 18%,#0a0d12 50%,#171b21 82%,#43484f 100%);
@@ -469,8 +469,8 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 @media (max-width:780px){
   .tablet{ width:92vw; height:62vh; border-radius:30px; }
   .screen{ border-radius:20px; } .glass{ border-radius:20px; }
-  .hand{ width:46vw; height:50vh; opacity:.9; }
-  .hand-left{ left:-12%; } .hand-right{ right:-12%; }
+  .hand{ width:42vw; height:46vh; opacity:.92; }
+  .hand-left{ left:-3%; } .hand-right{ right:-3%; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .price-deck{ flex-wrap:wrap; } .plan{ width:44%; } .plan.feature{ transform:scale(1.05); width:60%; }
   .ba{ flex-direction:column; }
@@ -901,7 +901,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     /* --- TABLET outer motion (camera feel) --- */
     var pricingZoom = gauss(pos,6,0.55)*0.05;        // subtle zoom at pricing
     var finalZoom   = ss(clamp(pos-6.2,0,1))*0.06;   // closer on final CTA
-    var scale = lerp(0.84,1.0,openK) + pricingZoom + finalZoom;
+    var scale = lerp(0.9,1.05,openK) + pricingZoom + finalZoom;
     var rotX  = lerp(15,0,openK) + my*2.2;            // tilt flattens as app opens
     var rotY  = lerp(-9,0,openK) + mx*3.2;
     var rotZ  = lerp(2.5,0,openK);
@@ -911,11 +911,17 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
       "translate("+tx+"px,"+ty+"px) "+
       "rotateX("+rotX+"deg) rotateY("+rotY+"deg) rotateZ("+rotZ+"deg) scale("+scale+")";
 
-    /* --- HANDS: stay visible, recede slightly as app opens --- */
-    var handOp=lerp(1,0.42,openK);
+    /* --- HANDS: keep holding the tablet, with a living idle motion --- */
+    var handOp=lerp(0.97,0.86,openK);
     handL.style.opacity=handOp; handR.style.opacity=handOp;
-    handL.style.transform="translateY("+(openK*70)+"px) translateX("+(openK*-30 + mx*14)+"px) scale("+(1+openK*.05)+")";
-    handR.style.transform="translateY("+(openK*70)+"px) translateX("+(openK*30 + mx*14)+"px) scale("+(1+openK*.05)+")";
+    var t=Date.now();
+    var hIdle  = reduceMotion?0:Math.sin(t*0.0013);   // gentle breathing bob
+    var hIdle2 = reduceMotion?0:Math.cos(t*0.0010);   // subtle sway
+    var hY = 6 - openK*5 + hIdle*9;
+    var hX = mx*16;
+    var hRot = hIdle2*1.7;
+    handL.style.transform="translateY("+hY+"px) translateX("+(hX-openK*6)+"px) rotate("+hRot+"deg) scale(1.03)";
+    handR.style.transform="translateY("+hY+"px) translateX("+(hX+openK*6)+"px) rotate("+(-hRot)+"deg) scale(1.03)";
 
     /* --- STATUS BAR appears with the app --- */
     statusbar.style.opacity=openK*0.9;
