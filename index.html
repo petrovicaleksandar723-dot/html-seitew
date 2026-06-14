@@ -102,6 +102,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   mix-blend-mode:multiply;
 }
 /* soft floating bokeh / light leaks */
+.black-veil{ position:absolute; inset:0; background:#000; opacity:1; pointer-events:none; will-change:opacity; }
 .orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.3; pointer-events:none; will-change:transform; }
 .particles{ position:absolute; inset:0; pointer-events:none; }
 .dust{ position:absolute; width:3px; height:3px; border-radius:50%;
@@ -111,17 +112,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    HANDS — first-person, holding the tablet (bottom-left / bottom-right)
    ========================================================================== */
 .hand{
-  position:absolute; bottom:-5%; z-index:20;
-  width:min(26vw,410px); height:60vh;
+  position:absolute; bottom:-9%; z-index:20;
+  width:min(30vw,500px); height:66vh;
   pointer-events:none; will-change:transform,opacity;
-  filter:drop-shadow(0 24px 44px rgba(0,0,0,.65));
+  filter:drop-shadow(0 26px 50px rgba(0,0,0,.7));
 }
-/* live cutout hands removed — the photoreal intro provides the holding hands,
-   and they disappear as you scroll into the app */
-.hand{ display:none; }
 .hand img{ width:100%; height:100%; object-fit:contain; object-position:bottom; }
-.hand-left{ left:3%; transform-origin:bottom center; }
-.hand-right{ right:3%; transform-origin:bottom center; }
+.hand-left{ left:8%; transform-origin:bottom center; }
+.hand-right{ right:8%; transform-origin:bottom center; }
 .hand-right img{ transform:scaleX(-1); }
 
 /* Elegant CSS fallback hand (used when PNG is missing) — stylised, premium,
@@ -153,10 +151,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  width:min(95vw,1560px);
-  height:min(90vh,960px);
+  width:min(95vw,2000px);
+  height:min(93vh,1120px);
   transform:translate(-50%,-50%);
-  border-radius:40px;
+  border-radius:42px;
   /* brushed dark metal bezel */
   background:
     linear-gradient(150deg,#3a3f47 0%,#171b21 18%,#0a0d12 50%,#171b21 82%,#43484f 100%);
@@ -259,7 +257,10 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
 #s0{ z-index:40; }
-.launcher{ display:flex; flex-direction:column; align-items:center; gap:18px; will-change:transform,opacity; }
+.s0-video{ position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; }
+.s0-scrim{ position:absolute; inset:0; z-index:1;
+  background:radial-gradient(120% 90% at 50% 46%, rgba(4,7,12,.45) 0%, rgba(4,7,12,.82) 100%); }
+.launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:18px; will-change:transform,opacity; }
 .app-icon{
   width:clamp(86px,16vmin,150px); height:clamp(86px,16vmin,150px);
   border-radius:26%; position:relative;
@@ -464,19 +465,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   background:linear-gradient(90deg,transparent,var(--orange),transparent); animation:loadSweep 1.2s var(--ease) infinite; }
 @keyframes loadSweep{ 0%{transform:translateX(-120%);} 100%{transform:translateX(330%);} }
 
-/* ---- Photoreal "enter the tablet" intro -------------------------------- */
-.photo-stage{ position:fixed; inset:0; z-index:90; overflow:hidden; background:#03070b;
-  pointer-events:none; will-change:transform,opacity; }
-.photo-hero{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-.photo-stage .grade{ position:absolute; inset:0;
-  background:radial-gradient(120% 90% at 50% 44%, transparent 30%, rgba(0,0,0,.5) 100%); }
-.photo-screen{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  transform:translateY(-6%); }
-.ps-inner{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:46px 70px;
-  background:radial-gradient(closest-side, rgba(3,7,11,.66), rgba(3,7,11,0) 82%); }
-.ps-title{ font-size:clamp(20px,3.2vmin,30px); font-weight:800; letter-spacing:-.01em; }
-.ps-sub{ color:var(--gray); font-size:clamp(12px,1.9vmin,15px); margin-top:-6px; }
-
 /* ============================================================================
    RESPONSIVE
    ========================================================================== */
@@ -510,11 +498,11 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 <!-- CleanLines logo (vector, defined once, reused via <use>) -->
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <symbol id="cl-mark" viewBox="0 0 100 100">
-    <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
-      <polygon points="50,5 89,27.5 89,72.5 50,95 11,72.5 11,27.5"/>
-      <polygon points="50,16 79,32.5 79,67.5 50,84 21,67.5 21,32.5" opacity=".72"/>
-      <path d="M50,16 L50,50 M21,32.5 L50,50 M79,32.5 L50,50" opacity=".9"/>
-      <polygon points="50,28 65,36.5 65,63.5 50,72 35,63.5 35,36.5" opacity=".5"/>
+    <g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="50,6 88.1,28 88.1,72 50,94 11.9,72 11.9,28"/>
+      <polygon points="50,17 78.6,33.5 78.6,66.5 50,83 21.4,66.5 21.4,33.5" opacity=".8"/>
+      <polygon points="50,28 69,39 69,61 50,72 31,61 31,39" opacity=".58"/>
+      <path d="M50,50 L50,6 M50,50 L11.9,72 M50,50 L88.1,72"/>
     </g>
   </symbol>
 </svg>
@@ -524,20 +512,6 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   <svg class="logo-svg"><use href="#cl-mark"/></svg>
   <div class="wordmark"><span class="wm1">CLEANLINES</span><span class="wm2">STUDIOS</span></div>
   <div class="bar"><i></i></div>
-</div>
-
-<!-- Photoreal "enter the tablet" intro (real hands + tablet photo) -->
-<div class="photo-stage" id="photoStage">
-  <img class="photo-hero" id="photoHero" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120545_2b3ab430-efe4-4fad-bb73-eea8b03a07f8.jpeg">
-  <div class="grade"></div>
-  <div class="photo-screen">
-    <div class="ps-inner">
-      <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
-      <h2 class="ps-title">CleanLines Studio</h2>
-      <p class="ps-sub">Creative Content Hub</p>
-      <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
-    </div>
-  </div>
 </div>
 
 <!-- Scroll track drives the whole cinematic timeline -->
@@ -554,6 +528,9 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   <div class="particles" id="particles"></div>
   <div class="cursor-light" id="cursorLight"></div>
   <div class="bg-vignette"></div>
+  <!-- pure-black veil: opaque at the start (only hands + tablet visible),
+       fades to reveal the environment as you scroll into the app -->
+  <div class="black-veil" id="blackVeil"></div>
 
   <!-- LAYER 3: realistic hands (AI-generated, transparent cutout) -->
   <div class="hand hand-left"  id="handL"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_120825_24a4ebc8-1a64-4538-bf9a-e4e13027a838.png" alt=""></div>
@@ -574,6 +551,8 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
         <section class="scene" id="s0">
+          <video class="s0-video" src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+          <div class="s0-scrim"></div>
           <div class="launcher" id="launcher">
             <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
             <h2>CleanLines Studio</h2>
@@ -757,7 +736,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   var glass=document.querySelector(".glass");
   var cursorLight=document.getElementById("cursorLight");
   var loader=document.getElementById("loader");
-  var photoStage=document.getElementById("photoStage");
+  var blackVeil=document.getElementById("blackVeil");
   var scenesEls=[]; for(var i=0;i<SCENES;i++){ scenesEls[i]=document.getElementById("s"+i); }
 
   /* ---- intro loader: fade out once ready -------------------------------- */
@@ -898,17 +877,9 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 
     progressBar.style.width=(curScroll*100)+"%";
 
-    /* --- PHOTOREAL INTRO: zoom into the tablet screen, then cross-fade --- */
-    var introFade = 1 - ss(clamp((pos-0.5)/0.5,0,1));   // visible until pos .5, gone by 1.0
-    var introZoom = 1 + ss(clamp(pos,0,1))*1.9;          // push the camera into the screen
-    if(introFade<=0.01){
-      if(photoStage.style.display!=="none") photoStage.style.display="none";
-    } else {
-      photoStage.style.display="block";
-      photoStage.style.opacity=introFade;
-      photoStage.style.transformOrigin="50% 42%";
-      photoStage.style.transform="scale("+introZoom+") translate("+(mx*-1.2)+"%,"+(my*-1.2)+"%)";
-    }
+    /* --- BLACK VEIL: pure black at the start (only hands + tablet visible),
+           eases away to reveal the environment as you scroll into the app --- */
+    blackVeil.style.opacity=clamp(1 - pos*0.95, 0.1, 1);
 
     /* --- background parallax + atmosphere --- */
     orb1.style.transform="translate("+(mx*-26)+"px,"+(my*-20 + curScroll*-60)+"px)";
@@ -918,7 +889,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
     /* --- TABLET outer motion (camera feel) --- */
     var pricingZoom = gauss(pos,6,0.55)*0.05;        // subtle zoom at pricing
     var finalZoom   = ss(clamp(pos-6.2,0,1))*0.06;   // closer on final CTA
-    var scale = lerp(0.9,1.0,openK) + pricingZoom + finalZoom;
+    var scale = lerp(0.66,1.0,openK) + pricingZoom + finalZoom;
     var rotX  = lerp(15,0,openK) + my*2.2;            // tilt flattens as app opens
     var rotY  = lerp(-9,0,openK) + mx*3.2;
     var rotZ  = lerp(2.5,0,openK);
@@ -928,27 +899,28 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
       "translate("+tx+"px,"+ty+"px) "+
       "rotateX("+rotX+"deg) rotateY("+rotY+"deg) rotateZ("+rotZ+"deg) scale("+scale+")";
 
-    /* --- HANDS: keep holding the tablet, with a living idle motion --- */
-    var handOp=lerp(0.97,0.86,openK);
+    /* --- HANDS: hold the tablet on black, then release & sink away as the
+           app opens and the tablet grows to fill the screen --- */
+    var handOp=clamp(1 - pos*1.55, 0, 1);
     handL.style.opacity=handOp; handR.style.opacity=handOp;
     var t=Date.now();
     var hIdle  = reduceMotion?0:Math.sin(t*0.0013);   // gentle breathing bob
     var hIdle2 = reduceMotion?0:Math.cos(t*0.0010);   // subtle sway
-    var hY = 6 - openK*5 + hIdle*9;
+    var hY = 4 + hIdle*9 + openK*70;                  // sink down on release
     var hX = mx*16;
     var hRot = hIdle2*1.7;
-    handL.style.transform="translateY("+hY+"px) translateX("+(hX-openK*6)+"px) rotate("+hRot+"deg) scale(1.03)";
-    handR.style.transform="translateY("+hY+"px) translateX("+(hX+openK*6)+"px) rotate("+(-hRot)+"deg) scale(1.03)";
+    handL.style.transform="translateY("+hY+"px) translateX("+(hX-openK*60)+"px) rotate("+hRot+"deg) scale(1.03)";
+    handR.style.transform="translateY("+hY+"px) translateX("+(hX+openK*60)+"px) rotate("+(-hRot)+"deg) scale(1.03)";
 
     /* --- STATUS BAR appears with the app --- */
     statusbar.style.opacity=openK*0.9;
 
-    /* --- SCENE 0 launcher: the photo intro now plays the "app opening", so
-           fade the CSS launcher out early (before the photo dissolves). --- */
-    var lOp=clamp(1-pos/0.4,0,1);
+    /* --- SCENE 0 launcher: video plays at the start; the text lifts away
+           first, then the whole launcher screen fades into the hero. --- */
+    var lOp=clamp(1-pos/0.45,0,1);
     launcher.style.opacity=lOp;
-    launcher.style.transform="scale("+(1+ss(clamp(pos/0.4,0,1))*2.2)+")";
-    s0.style.opacity=lOp; s0.style.pointerEvents="none";
+    launcher.style.transform="scale("+(1+ss(clamp(pos/0.45,0,1))*0.5)+") translateY("+(pos*-22)+"px)";
+    s0.style.opacity=clamp(1-pos/0.82,0,1); s0.style.pointerEvents="none";
 
     /* --- SCENES 1..7 crossfade by distance --- */
     for(var i=1;i<SCENES;i++){
