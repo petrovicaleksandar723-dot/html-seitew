@@ -7,6 +7,10 @@
 <meta name="description" content="CleanLines Studio — immersive First-Person Tablet Experience. Fertiger Content für lokale Betriebe, jeden Monat.">
 <title>CleanLines Studio — Creative Content Hub</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
 /* ============================================================================
    CLEANLINES STUDIO — IMMERSIVE FIRST-PERSON TABLET EXPERIENCE
@@ -35,6 +39,7 @@
 
   --ink:         #f4f1ea;
   --font: "Inter","Helvetica Neue",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-display: "Space Grotesk","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   --ease:  cubic-bezier(.16,1,.3,1);
   --ease2: cubic-bezier(.65,.05,.36,1);
 }
@@ -191,7 +196,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 
 /* ---- MOTION DESIGN: crisp staggered reveal of each scene's content ------ */
-.scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,
+.scene .eyebrow,.scene .subline,.scene .btns,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
 .scene .price-deck,.scene .minis,.scene .reviews,.scene .faq,.scene .paybar,.scene .rev-trust,.scene .hero-stats{
   opacity:0; transform:translateY(64px) scale(.9);
@@ -199,7 +204,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .scene .eyebrow{ transform:translateY(-24px); }      /* eyebrow drops from above */
 .scene.show .eyebrow{ opacity:1; transform:none; transition-delay:.02s; }
-.scene.show h1.lead{ opacity:1; transform:none; transition-delay:.10s; }
+
+/* ---- headline reveal: words rise in, one after another ------------------ */
+h1.lead .ln{ display:block; }
+h1.lead .wd{ display:inline-block; overflow:hidden; vertical-align:top; padding:0 .02em; }
+h1.lead .wd-i{ display:inline-block; transform:translateY(115%); transition:transform .8s var(--ease); }
+.scene.show h1.lead .wd-i{ transform:translateY(0); }
 .scene.show .subline{ opacity:1; transform:none; transition-delay:.22s; }
 .scene.show .btns{ opacity:1; transform:none; transition-delay:.40s; }
 .scene.show .minis{ opacity:1; transform:none; transition-delay:.08s; }
@@ -225,7 +235,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .eyebrow{ font-size:clamp(12px,1.9vmin,17px); letter-spacing:.34em; text-transform:uppercase;
   color:var(--orange); font-weight:800; margin-bottom:18px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; letter-spacing:-.038em; color:#fff;
+/* modern display typeface on headlines, labels, numbers & nav */
+h1.lead,.eyebrow,.launcher h2,.pname,.pprice,.price-tag,.hstat b,.rev-trust,
+.branche-preview .reel,.svc h3,.plan .pname,.brandbar,.wordmark,.ba h4,.tab{
+  font-family:var(--font-display); }
+h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:700; letter-spacing:-.03em; color:#fff;
   text-shadow:0 2px 28px rgba(0,0,0,.7), 0 1px 2px rgba(0,0,0,.8); }
 .scene-bg-cream h1.lead{ color:#16120c; text-shadow:0 1px 1px rgba(255,255,255,.4); }
 .subline{ max-width:48ch; font-size:clamp(15px,2.5vmin,23px); line-height:1.5; color:#eef1f6; margin-top:24px;
@@ -235,7 +249,7 @@ h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; le
 /* premium buttons */
 .btns{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:26px; }
 .btn{
-  position:relative; padding:18px 36px; border-radius:100px; font-weight:700;
+  position:relative; overflow:hidden; padding:18px 36px; border-radius:100px; font-weight:700;
   font-size:clamp(14px,1.95vmin,19px); letter-spacing:.01em; white-space:nowrap;
   transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s;
 }
@@ -366,6 +380,19 @@ h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; le
 }
 .svc:hover,.svc.active{ transform:translateY(-16px) scale(1.06);
   border-color:rgba(201,162,90,.55); box-shadow:0 40px 80px rgba(0,0,0,.55), 0 0 70px rgba(201,162,90,.3); }
+/* sheen sweep across buttons on hover */
+.btn::before{ content:""; position:absolute; top:0; left:-130%; width:55%; height:100%; transform:skewX(-22deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent); transition:left .6s var(--ease); pointer-events:none; }
+.btn:hover::before{ left:150%; }
+/* symbols / icons animate on hover */
+.svc .ic{ transition:transform .45s var(--ease), background .3s, box-shadow .3s, color .3s; }
+.svc:hover .ic{ transform:rotate(-8deg) scale(1.14); background:var(--orange); color:#1a120a; box-shadow:0 0 26px var(--orange-glow); }
+.tab{ transition:transform .3s var(--ease), background .35s var(--ease), color .35s, border-color .35s, box-shadow .35s; }
+.tab:hover{ transform:translateY(-3px); }
+.svc h3,.review p,.plan .pprice{ transition:transform .4s var(--ease); }
+.svc:hover h3{ transform:translateX(4px); }
+.hstat b{ transition:transform .4s var(--ease), color .3s; }
+.hstat:hover b{ transform:scale(1.12); color:var(--orange); }
 .svc .ic{ width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
   background:rgba(201,162,90,.16); color:var(--orange); font-size:24px; margin-bottom:18px; }
 .svc h3{ font-size:clamp(16px,2.2vmin,23px); font-weight:800; margin-bottom:9px; }
@@ -933,6 +960,29 @@ h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; le
   var blackVeil=document.getElementById("blackVeil");
   var scenesEls=[]; for(var i=0;i<SCENES;i++){ scenesEls[i]=document.getElementById("s"+i); }
 
+  /* ---- split headlines into words so they can rise in one-by-one -------- */
+  document.querySelectorAll("h1.lead").forEach(function(h){
+    var lines=h.innerHTML.split(/<br\s*\/?>/i);
+    h.innerHTML=lines.map(function(line){
+      return '<span class="ln">'+line.trim().split(/\s+/).map(function(w){
+        return '<span class="wd"><span class="wd-i">'+w+'</span></span>';
+      }).join(' ')+'</span>';
+    }).join("");
+    h.querySelectorAll(".wd-i").forEach(function(wi,idx){ wi.style.transitionDelay=(0.06+idx*0.06)+"s"; });
+  });
+
+  /* ---- number count-up (hero stats) ------------------------------------- */
+  function countUp(el){
+    var m=el.textContent.trim().match(/^([\d.,]+)(.*)$/); if(!m) return;
+    var dec=m[1].indexOf(",")>=0?1:0, target=parseFloat(m[1].replace(",",".")), suffix=m[2], start=null;
+    function step(ts){ if(!start)start=ts; var p=Math.min((ts-start)/1100,1), e=1-Math.pow(1-p,3), v=target*e;
+      el.textContent=(dec?v.toFixed(1).replace(".",","):Math.round(v))+suffix; if(p<1)requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  var statsDone=false;
+  function maybeCountStats(){ if(statsDone)return; statsDone=true;
+    document.querySelectorAll("#s1 .hstat b").forEach(countUp); }
+
   /* ---- intro loader: fade out once ready -------------------------------- */
   function hideLoader(){ if(loader){ loader.classList.add("done"); } }
   window.addEventListener("load",function(){ setTimeout(hideLoader,650); });
@@ -1171,6 +1221,7 @@ h1.lead{ font-size:clamp(42px,9vmin,142px); line-height:.88; font-weight:900; le
     if(active!==lastDot){
       for(var dd=0;dd<dotEls.length;dd++){ dotEls[dd].classList.toggle("on",dd===active); }
       setSceneVideo(active);
+      if(active===1) maybeCountStats();
       lastDot=active;
     }
 
