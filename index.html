@@ -118,14 +118,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  width:min(96vw,2400px);
-  height:min(95vh,1380px);
+  width:97vw;
+  height:96vh;
   transform:translate(-50%,-50%);
-  border-radius:40px;
+  border-radius:34px;
   /* brushed dark metal bezel */
   background:
     linear-gradient(150deg,#3a3f47 0%,#171b21 18%,#0a0d12 50%,#171b21 82%,#43484f 100%);
-  padding:clamp(10px,1.4vw,18px);
+  padding:clamp(8px,0.7vw,14px);
   box-shadow:
     0 2px 2px rgba(255,255,255,.18) inset,
     0 -2px 6px rgba(0,0,0,.9) inset,
@@ -191,43 +191,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   opacity:0; pointer-events:none;
   will-change:transform,opacity;
   backface-visibility:hidden;
-  transform-style:preserve-3d;
 }
 
-/* ---- 3D MOTION DESIGN: staggered depth reveal of each scene's content --- */
+/* ---- MOTION DESIGN: crisp staggered reveal of each scene's content ------ */
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
 .scene .price-deck,.scene .minis{
-  opacity:0; transform:translateY(30px) translateZ(-90px) rotateX(9deg);
-  transition:opacity .65s var(--ease), transform .85s var(--ease);
+  opacity:0; transform:translateY(40px) scale(.965);
+  transition:opacity .6s var(--ease), transform .8s var(--ease);
 }
 .scene.show .eyebrow{ opacity:1; transform:none; transition-delay:.04s; }
 .scene.show h1.lead{ opacity:1; transform:none; transition-delay:.12s; }
-.scene.show .subline{ opacity:1; transform:none; transition-delay:.20s; }
-.scene.show .btns{ opacity:1; transform:none; transition-delay:.30s; }
+.scene.show .subline{ opacity:1; transform:none; transition-delay:.22s; }
+.scene.show .btns{ opacity:1; transform:none; transition-delay:.34s; }
 .scene.show .minis{ opacity:1; transform:none; transition-delay:.10s; }
 .scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
-.scene.show .ba,.scene.show .price-deck{ opacity:1; transform:none; transition-delay:.22s; }
+.scene.show .ba,.scene.show .price-deck{ opacity:1; transform:none; transition-delay:.24s; }
 .scene-bg-dark{ background:radial-gradient(120% 100% at 50% 0%, #14202c 0%, #0a121a 55%, #060c12 100%); }
 .scene-bg-cream{ background:radial-gradient(120% 100% at 50% 20%, #fbf8f0 0%, var(--cream) 60%, #e9e2d2 100%); color:#1a1712; }
 .scene-bg-split{ background:#070d13; }
 
 /* shared typography inside the tablet */
-.eyebrow{ font-size:clamp(10px,1.5vmin,13px); letter-spacing:.32em; text-transform:uppercase;
-  color:var(--orange); font-weight:700; margin-bottom:14px; }
+.eyebrow{ font-size:clamp(11px,1.7vmin,15px); letter-spacing:.34em; text-transform:uppercase;
+  color:var(--orange); font-weight:800; margin-bottom:18px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; letter-spacing:-.028em; color:#fff;
-  text-shadow:0 1px 1px rgba(0,0,0,.55); }
+h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; letter-spacing:-.034em; color:#fff;
+  text-shadow:0 1px 1px rgba(0,0,0,.5); }
 .scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
-.subline{ max-width:56ch; font-size:clamp(13px,2.05vmin,17px); line-height:1.55; color:#dde3ec; margin-top:16px;
+.subline{ max-width:46ch; font-size:clamp(14px,2.3vmin,21px); line-height:1.5; color:#e4e9f0; margin-top:22px;
   font-weight:450; }
 .scene-bg-cream .subline{ color:#5a5345; text-shadow:none; }
 
 /* premium buttons */
 .btns{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:26px; }
 .btn{
-  position:relative; padding:14px 26px; border-radius:100px; font-weight:700;
-  font-size:clamp(12px,1.7vmin,15px); letter-spacing:.01em; white-space:nowrap;
+  position:relative; padding:18px 36px; border-radius:100px; font-weight:700;
+  font-size:clamp(14px,1.95vmin,19px); letter-spacing:.01em; white-space:nowrap;
   transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s;
 }
 .btn-primary{ background:linear-gradient(135deg,var(--orange),#ff8c2e); color:#1a0c00;
@@ -240,7 +239,7 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
 #s0{ z-index:40; }
 .launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; will-change:transform,opacity; }
-.s0-reel{ width:clamp(190px,27vmin,320px); aspect-ratio:9/16; border-radius:24px; overflow:hidden; position:relative;
+.s0-reel{ width:clamp(250px,33vmin,460px); aspect-ratio:9/16; border-radius:28px; overflow:hidden; position:relative;
   border:1px solid rgba(255,255,255,.16); margin-bottom:6px;
   box-shadow:0 50px 110px rgba(0,0,0,.65), 0 0 80px rgba(255,106,0,.3); }
 .s0-reel video{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -275,7 +274,7 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
    visibility is driven by its parent scene's opacity. ---------------------- */
 .engine{
   position:absolute; top:50%; left:50%; z-index:1;
-  width:clamp(150px,30vmin,300px); height:clamp(190px,38vmin,380px);
+  width:clamp(220px,26vmin,400px); height:clamp(340px,44vmin,660px);
   transform:translate(-50%,-50%);
   transform-style:preserve-3d; pointer-events:none;
   will-change:transform;
@@ -284,10 +283,10 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,.scene .minis,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
 .scene .price-deck,.launcher{ position:relative; z-index:2; }
-/* hero reel is the centerpiece -> larger */
-.engine-hero{ width:clamp(230px,42vmin,560px); height:clamp(300px,54vmin,680px); }
+/* hero reel is the centerpiece -> large portrait */
+.engine-hero{ width:clamp(260px,27vmin,420px); height:clamp(380px,46vmin,640px); }
 /* hero: copy at top, reel in the centre, buttons at the bottom */
-#s1{ justify-content:space-between; padding-top:5.5%; padding-bottom:5.5%; }
+#s1{ justify-content:space-between; padding-top:4%; padding-bottom:4%; }
 #s1 .hero-copy{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
 #s1 .hero-copy .subline{ margin-left:auto; margin-right:auto; }
 .engine .tile{
@@ -315,9 +314,9 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
 /* floating mini cards orbiting the hero */
 .minis{ position:absolute; inset:0; z-index:9; pointer-events:none; }
 .mini{
-  position:absolute; padding:8px 13px; border-radius:12px; font-size:clamp(10px,1.45vmin,12.5px); font-weight:700;
-  background:rgba(11,15,23,.78); border:1px solid rgba(255,255,255,.13); color:#eef2f7;
-  box-shadow:0 10px 26px rgba(0,0,0,.5); white-space:nowrap; will-change:transform;
+  position:absolute; padding:12px 19px; border-radius:15px; font-size:clamp(13px,1.85vmin,17px); font-weight:700;
+  background:rgba(11,15,23,.82); border:1px solid rgba(255,255,255,.15); color:#eef2f7;
+  box-shadow:0 14px 34px rgba(0,0,0,.55); white-space:nowrap; will-change:transform;
 }
 .mini i{ color:var(--orange); font-style:normal; margin-right:6px; }
 .mini.m1{ top:11%;  left:5%;  animation:float1 6s var(--ease) infinite; }
@@ -332,40 +331,40 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
 .svc-deck{ position:relative; display:flex; gap:clamp(8px,1.5vmin,16px); flex-wrap:wrap;
   justify-content:center; align-items:stretch; margin-top:26px; max-width:96%; }
 .svc{
-  width:clamp(120px,20vmin,170px); padding:clamp(14px,2.4vmin,22px) clamp(12px,2vmin,18px);
-  border-radius:18px; text-align:left;
-  background:linear-gradient(165deg, rgba(28,38,52,.9), rgba(12,18,26,.92));
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:0 18px 40px rgba(0,0,0,.45);
+  width:clamp(165px,22vmin,280px); padding:clamp(22px,3vmin,38px) clamp(18px,2.4vmin,30px);
+  border-radius:22px; text-align:left;
+  background:linear-gradient(165deg, #1b2535, #0d1420);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 22px 50px rgba(0,0,0,.5);
   transition:transform .5s var(--ease), box-shadow .5s var(--ease), border-color .4s;
   will-change:transform;
 }
-.svc:hover,.svc.active{ transform:translateY(-12px) scale(1.05);
-  border-color:rgba(255,106,0,.5); box-shadow:0 30px 60px rgba(0,0,0,.5), 0 0 50px rgba(255,106,0,.25); }
-.svc .ic{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
-  background:rgba(255,106,0,.14); color:var(--orange); font-size:18px; margin-bottom:12px; }
-.svc h3{ font-size:clamp(13px,1.9vmin,16px); font-weight:800; margin-bottom:6px; }
-.svc p{ font-size:clamp(10px,1.5vmin,12px); color:var(--gray); line-height:1.4; }
+.svc:hover,.svc.active{ transform:translateY(-16px) scale(1.06);
+  border-color:rgba(255,106,0,.55); box-shadow:0 40px 80px rgba(0,0,0,.55), 0 0 70px rgba(255,106,0,.3); }
+.svc .ic{ width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+  background:rgba(255,106,0,.16); color:var(--orange); font-size:24px; margin-bottom:18px; }
+.svc h3{ font-size:clamp(16px,2.2vmin,23px); font-weight:800; margin-bottom:9px; }
+.svc p{ font-size:clamp(12px,1.6vmin,15px); color:#aeb7c4; line-height:1.45; }
 
 /* ---- SCENE 3: BRANCHEN (industry tabs) ---------------------------------- */
 .tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:22px 0; max-width:96%; }
-.tab{ padding:10px 16px; border-radius:100px; font-size:clamp(11px,1.6vmin,14px); font-weight:700;
-  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:#cfd6df;
+.tab{ padding:14px 24px; border-radius:100px; font-size:clamp(13px,1.9vmin,18px); font-weight:700;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color:#cfd6df;
   transition:all .35s var(--ease); }
 .tab:hover{ background:rgba(255,255,255,.12); }
 .tab.active{ background:linear-gradient(135deg,var(--orange),#ff8c2e); color:#1a0c00; border-color:transparent;
   box-shadow:0 10px 26px var(--orange-glow); }
 .branche-preview{
-  width:min(560px,92%); margin-top:8px; padding:clamp(18px,3vmin,28px);
-  border-radius:20px; text-align:left;
-  background:linear-gradient(160deg, rgba(24,32,44,.92), rgba(10,16,24,.94));
-  border:1px solid rgba(255,255,255,.10); box-shadow:0 24px 50px rgba(0,0,0,.5);
-  min-height:150px;
+  width:min(900px,94%); margin-top:10px; padding:clamp(24px,3.4vmin,46px);
+  border-radius:24px; text-align:left;
+  background:linear-gradient(160deg, #18222e, #0a1018);
+  border:1px solid rgba(255,255,255,.12); box-shadow:0 30px 64px rgba(0,0,0,.55);
+  min-height:200px;
 }
-.branche-preview .label{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange); font-weight:700; }
-.branche-preview .reel{ font-size:clamp(15px,2.4vmin,22px); font-weight:800; margin:10px 0 16px; line-height:1.15; }
-.branche-preview .caption-label{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--gray); font-weight:700; }
-.branche-preview .caption{ font-size:clamp(12px,1.8vmin,15px); color:#d6dde6; line-height:1.5; margin-top:8px; }
+.branche-preview .label{ font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange); font-weight:800; }
+.branche-preview .reel{ font-size:clamp(20px,3vmin,38px); font-weight:800; margin:12px 0 20px; line-height:1.12; }
+.branche-preview .caption-label{ font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--gray); font-weight:800; }
+.branche-preview .caption{ font-size:clamp(14px,2vmin,19px); color:#d6dde6; line-height:1.5; margin-top:10px; }
 .fade-swap{ transition:opacity .35s var(--ease), transform .35s var(--ease);
   display:flex; gap:18px; align-items:stretch; text-align:left; }
 .fade-swap.swapping{ opacity:0; transform:translateY(8px) scale(.985); }
@@ -379,34 +378,34 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
 @media (max-width:560px){ .fade-swap{ flex-direction:column; } .branche-preview .bphoto{ flex:none; height:120px; } }
 
 /* ---- SCENE 5: BEFORE / AFTER -------------------------------------------- */
-.ba{ display:flex; gap:clamp(10px,2.4vmin,26px); width:min(640px,94%); margin-top:24px; }
-.ba .col{ flex:1; padding:clamp(16px,2.8vmin,26px); border-radius:20px; text-align:left; }
+.ba{ display:flex; gap:clamp(14px,2.6vmin,32px); width:min(940px,94%); margin-top:28px; }
+.ba .col{ flex:1; padding:clamp(24px,3.2vmin,44px); border-radius:24px; text-align:left; }
 .ba .before{ background:linear-gradient(160deg,#1a1216,#120c10); border:1px solid rgba(255,90,90,.22); }
 .ba .after{ background:linear-gradient(160deg, rgba(28,40,30,.9), rgba(14,22,16,.94));
   border:1px solid rgba(201,255,74,.28); box-shadow:0 0 50px rgba(201,255,74,.12); }
-.ba h4{ font-size:clamp(12px,1.7vmin,14px); letter-spacing:.16em; text-transform:uppercase; margin-bottom:14px; font-weight:800; }
+.ba h4{ font-size:clamp(13px,1.9vmin,17px); letter-spacing:.16em; text-transform:uppercase; margin-bottom:18px; font-weight:800; }
 .ba .before h4{ color:#ff6b6b; } .ba .after h4{ color:var(--lime); }
-.ba li{ list-style:none; font-size:clamp(12px,1.8vmin,15px); padding:8px 0 8px 26px; position:relative; color:#dfe5ec; }
+.ba li{ list-style:none; font-size:clamp(15px,2.2vmin,22px); padding:11px 0 11px 32px; position:relative; color:#dfe5ec; }
 .ba .before li::before{ content:"✕"; position:absolute; left:0; color:#ff6b6b; font-weight:800; }
 .ba .after li::before{ content:"✓"; position:absolute; left:0; color:var(--lime); font-weight:800; }
 
 /* ---- SCENE 6: PRICING --------------------------------------------------- */
 .price-deck{ display:flex; gap:clamp(8px,1.6vmin,18px); align-items:center; justify-content:center;
   margin-top:24px; max-width:96%; flex-wrap:nowrap; }
-.plan{ width:clamp(110px,21vmin,200px); padding:clamp(16px,2.6vmin,26px) clamp(12px,2vmin,20px);
-  border-radius:20px; text-align:center;
-  background:linear-gradient(165deg, rgba(26,34,46,.92), rgba(11,17,25,.94));
-  border:1px solid rgba(255,255,255,.10); box-shadow:0 18px 40px rgba(0,0,0,.45);
+.plan{ width:clamp(160px,23vmin,320px); padding:clamp(26px,3.2vmin,48px) clamp(18px,2.4vmin,34px);
+  border-radius:24px; text-align:center;
+  background:linear-gradient(165deg, #1a2230, #0b111a);
+  border:1px solid rgba(255,255,255,.12); box-shadow:0 24px 54px rgba(0,0,0,.5);
   transition:transform .5s var(--ease), box-shadow .5s var(--ease);
 }
 .plan.feature{ transform:scale(1.12) translateY(-6px); z-index:2;
   border-color:rgba(255,106,0,.55);
   background:linear-gradient(165deg, rgba(40,28,16,.94), rgba(20,12,6,.96));
   box-shadow:0 30px 70px rgba(0,0,0,.55), 0 0 60px rgba(255,106,0,.3); }
-.plan .pname{ font-size:clamp(11px,1.6vmin,14px); letter-spacing:.14em; text-transform:uppercase; color:var(--orange); font-weight:800; }
-.plan .pprice{ font-size:clamp(24px,4.6vmin,42px); font-weight:800; margin:8px 0 2px; letter-spacing:-.02em; }
-.plan .pprice small{ font-size:.38em; color:var(--gray); font-weight:600; letter-spacing:0; }
-.plan .pdesc{ font-size:clamp(10px,1.5vmin,12px); color:var(--gray); margin-bottom:14px; line-height:1.4; }
+.plan .pname{ font-size:clamp(13px,1.9vmin,17px); letter-spacing:.14em; text-transform:uppercase; color:var(--orange); font-weight:800; }
+.plan .pprice{ font-size:clamp(34px,6vmin,72px); font-weight:800; margin:10px 0 4px; letter-spacing:-.02em; }
+.plan .pprice small{ font-size:.34em; color:var(--gray); font-weight:600; letter-spacing:0; }
+.plan .pdesc{ font-size:clamp(12px,1.6vmin,16px); color:#aeb7c4; margin-bottom:20px; line-height:1.45; }
 .plan .btn{ padding:10px 18px; font-size:clamp(11px,1.5vmin,13px); width:100%; }
 
 /* ============================================================================
@@ -562,7 +561,7 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
         <!-- ===== SCENE 2 — LEISTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s2">
           <div class="eyebrow">Leistungen</div>
-          <h1 class="lead" style="font-size:clamp(22px,4.6vmin,46px)">Alles, was du zum Posten brauchst.</h1>
+          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Alles, was du zum Posten brauchst.</h1>
           <div class="svc-deck" id="svcDeck">
             <div class="svc active"><div class="ic">▶</div><h3>Reels-Skripte</h3><p>Fertige Hook-to-CTA Skripte zum Abdrehen.</p></div>
             <div class="svc"><div class="ic">✎</div><h3>Instagram Captions</h3><p>Texte, die zu deiner Marke sprechen.</p></div>
@@ -575,7 +574,7 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
         <!-- ===== SCENE 3 — BRANCHEN ===== -->
         <section class="scene scene-bg-dark" id="s3">
           <div class="eyebrow">Branchen</div>
-          <h1 class="lead" style="font-size:clamp(22px,4.4vmin,44px)">Content für deinen Betrieb.</h1>
+          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Content für deinen Betrieb.</h1>
           <div class="tabs" id="tabs">
             <button class="tab active" data-b="0">Friseure</button>
             <button class="tab" data-b="1">Restaurants</button>
@@ -604,14 +603,14 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
             <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
           </div>
           <div class="eyebrow dark">Kein Stress mehr</div>
-          <h1 class="lead" style="font-size:clamp(28px,7.4vmin,80px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
+          <h1 class="lead" style="font-size:clamp(40px,10vmin,180px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
           <p class="subline">Du bekommst jeden Monat klare Ideen, fertige Texte und Beiträge, die zu deinem Betrieb passen.</p>
         </section>
 
         <!-- ===== SCENE 5 — BEFORE / AFTER ===== -->
         <section class="scene scene-bg-split" id="s5">
           <div class="eyebrow">Vorher / Nachher</div>
-          <h1 class="lead" style="font-size:clamp(22px,4.4vmin,44px)">Vom Chaos zum System.</h1>
+          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Vom Chaos zum System.</h1>
           <div class="ba">
             <div class="col before">
               <h4>Vorher</h4>
@@ -627,7 +626,7 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
         <!-- ===== SCENE 6 — PRICING ===== -->
         <section class="scene scene-bg-dark" id="s6">
           <div class="eyebrow">Pakete</div>
-          <h1 class="lead" style="font-size:clamp(22px,4.4vmin,44px)">Wähle dein Tempo.</h1>
+          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Wähle dein Tempo.</h1>
           <div class="price-deck">
             <div class="plan">
               <div class="pname">Starter</div>
@@ -839,15 +838,14 @@ h1.lead{ font-size:clamp(27px,6.8vmin,76px); line-height:.97; font-weight:800; l
     orb2.style.transform="translate("+(mx*22)+"px,"+(my*16 + curScroll*40)+"px)";
     bg.style.transform="translate("+(mx*-10)+"px,"+(my*-8)+"px) scale(1.06)";
 
-    /* --- TABLET outer motion (camera feel) --- */
-    var pricingZoom = gauss(pos,6,0.55)*0.05;        // subtle zoom at pricing
-    var finalZoom   = ss(clamp(pos-6.2,0,1))*0.06;   // closer on final CTA
-    var scale = lerp(0.9,1.0,openK) + pricingZoom + finalZoom;
-    var rotX  = lerp(15,0,openK) + my*2.2;            // tilt flattens as app opens
-    var rotY  = lerp(-9,0,openK) + mx*3.2;
-    var rotZ  = lerp(2.5,0,openK);
-    var tx    = mx*10*(1-openK*0.6);
-    var ty    = my*8*(1-openK*0.6);
+    /* --- TABLET outer motion (camera feel) — settles to a perfectly crisp
+           scale 1.0 / no rotation at rest, so text stays razor sharp --- */
+    var scale = lerp(0.94,1.0,openK);
+    var rotX  = lerp(8,0,openK) + my*0.9;
+    var rotY  = lerp(-6,0,openK) + mx*1.4;
+    var rotZ  = lerp(1.2,0,openK);
+    var tx    = mx*6*(1-openK*0.7);
+    var ty    = my*5*(1-openK*0.7);
     rig.style.transform=
       "translate("+tx+"px,"+ty+"px) "+
       "rotateX("+rotX+"deg) rotateY("+rotY+"deg) rotateZ("+rotZ+"deg) scale("+scale+")";
