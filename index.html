@@ -441,6 +441,100 @@
         .foot-col a svg { width: 16px; height: 16px; }
         .foot-bottom { padding-top: 26px; text-align: center; font-size: 0.86rem; color: rgba(255,255,255,0.5); }
 
+        /* ============================================================
+           PREMIUM MOTION LAYER — scroll reveals, parallax, tilt, stats
+           ============================================================ */
+
+        /* Scroll progress bar */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+            transform: scaleX(0); transform-origin: 0 50%; z-index: 200;
+            background: linear-gradient(90deg, var(--primary), #fb923c, var(--accent));
+            will-change: transform;
+        }
+
+        /* Reveal-on-scroll (motion control) */
+        [data-reveal] {
+            opacity: 0; transform: translateY(34px);
+            transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+            transition-delay: var(--reveal-delay, 0ms);
+            will-change: opacity, transform;
+        }
+        [data-reveal="left"]  { transform: translateX(-40px); }
+        [data-reveal="right"] { transform: translateX(40px); }
+        [data-reveal="zoom"]  { transform: scale(0.92); }
+        [data-reveal].in-view { opacity: 1; transform: none; }
+
+        /* Staggered group reveal */
+        [data-reveal-group] > * {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+        }
+        [data-reveal-group].in-view > * { opacity: 1; transform: none; }
+        [data-reveal-group].in-view > *:nth-child(1) { transition-delay: 0ms; }
+        [data-reveal-group].in-view > *:nth-child(2) { transition-delay: 80ms; }
+        [data-reveal-group].in-view > *:nth-child(3) { transition-delay: 160ms; }
+        [data-reveal-group].in-view > *:nth-child(4) { transition-delay: 240ms; }
+        [data-reveal-group].in-view > *:nth-child(5) { transition-delay: 320ms; }
+        [data-reveal-group].in-view > *:nth-child(6) { transition-delay: 400ms; }
+
+        /* Hero parallax image layer */
+        .hero-bg-art {
+            position: absolute; inset: -10% -5% auto auto; width: 62%; max-width: 760px;
+            aspect-ratio: 16/9; z-index: 0; pointer-events: none;
+            border-radius: 40px; opacity: 0.5;
+            -webkit-mask-image: radial-gradient(70% 70% at 60% 40%, #000 35%, transparent 75%);
+            mask-image: radial-gradient(70% 70% at 60% 40%, #000 35%, transparent 75%);
+            background: linear-gradient(120deg, #fff1e8, #eff4ff);
+            background-size: cover; background-position: center;
+            will-change: transform; filter: saturate(1.05);
+        }
+        .hero-grid { position: relative; z-index: 1; }
+
+        /* Stats band with animated counters */
+        .stats { background: var(--text); color: #fff; padding: 64px 0; position: relative; overflow: hidden; }
+        .stats::before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 120% at 15% 0%, rgba(234,88,12,0.20), transparent 60%), radial-gradient(50% 120% at 90% 100%, rgba(37,99,235,0.18), transparent 60%); }
+        .stats-grid { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+        .stat .num { font-family: var(--font-head); font-weight: 700; font-size: clamp(2.1rem, 4.5vw, 3.1rem); letter-spacing: -0.02em; line-height: 1; background: linear-gradient(120deg, #fff 30%, #fdba74); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .stat .lbl { margin-top: 10px; font-size: 0.95rem; color: rgba(255,255,255,0.72); font-weight: 500; }
+        .stat .num .suffix { color: var(--primary); -webkit-text-fill-color: var(--primary); }
+
+        /* Interactive 3D tilt image (branche) */
+        .ind-media {
+            position: relative; border-radius: var(--radius); overflow: hidden;
+            aspect-ratio: 1/1; background: linear-gradient(135deg, #14213d, #0f172a);
+            box-shadow: var(--shadow-lg); transform-style: preserve-3d;
+            transition: transform 0.3s var(--ease);
+        }
+        .ind-media img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.5s var(--ease); transform: scale(1.02);
+        }
+        .ind-media::after {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.18), transparent 45%);
+            opacity: 0; transition: opacity 0.3s var(--ease);
+        }
+        .ind-media:hover::after { opacity: 1; }
+        .ind-media:hover img { transform: scale(1.07); }
+        .ind-media .media-badge {
+            position: absolute; left: 16px; bottom: 16px; z-index: 2;
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(15,23,42,0.6); backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.16); color: #fff;
+            font-family: var(--font-head); font-weight: 600; font-size: 0.78rem;
+            padding: 7px 13px; border-radius: 100px;
+        }
+        .ind-media .media-badge svg { width: 14px; height: 14px; color: #fdba74; }
+
+        /* Make the industry layout 3-up when media present */
+        .ind-grid.has-media { grid-template-columns: 0.9fr 1.1fr; }
+        .ind-grid.has-media .ind-stack { display: grid; gap: 24px; }
+
+        /* Magnetic hover lift for service cards already exists; add image shimmer */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .img-skeleton { position: absolute; inset: 0; background: linear-gradient(100deg, #14213d 30%, #1e2b4a 50%, #14213d 70%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+
         /* ---------- Responsive ---------- */
         @media (max-width: 980px) {
             .hero-grid { grid-template-columns: 1fr; gap: 48px; }
@@ -450,7 +544,10 @@
             .price-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
             .plan.featured { order: -1; }
             .cta-inner { grid-template-columns: 1fr; gap: 36px; padding: 44px 34px; }
-            .ind-grid { grid-template-columns: 1fr; gap: 30px; padding: 32px; }
+            .ind-grid, .ind-grid.has-media { grid-template-columns: 1fr; gap: 30px; padding: 32px; }
+            .ind-grid.has-media .ind-media { max-width: 420px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+            .hero-bg-art { width: 80%; opacity: 0.32; inset: -6% -10% auto auto; }
         }
 
         @media (max-width: 760px) {
@@ -464,6 +561,7 @@
             .steps-grid { grid-template-columns: 1fr; }
             .float-1, .float-2 { display: none; }
             .section-head { margin-bottom: 40px; }
+            .hero-bg-art { display: none; }
 
             /* Mobile menu */
             .nav-links.open {
@@ -486,11 +584,15 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
             .marquee { animation: none; }
+            [data-reveal], [data-reveal-group] > * { opacity: 1 !important; transform: none !important; }
+            .hero-bg-art { transform: none !important; }
+            .scroll-progress { display: none; }
         }
     </style>
 </head>
 <body>
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
     <!-- ===================== HEADER ===================== -->
     <header>
@@ -526,8 +628,9 @@
 
         <!-- ===================== HERO ===================== -->
         <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-bg-art" id="heroArt" aria-hidden="true" data-img="hero"></div>
             <div class="container hero-grid">
-                <div class="hero-copy">
+                <div class="hero-copy" data-reveal="left">
                     <span class="eyebrow">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>
                         KI-Content-Pakete für lokale Betriebe
@@ -550,7 +653,7 @@
                     </div>
                 </div>
 
-                <div class="hero-visual">
+                <div class="hero-visual" data-reveal="right" data-parallax="0.06">
                     <div class="float-card float-1">
                         <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
                         <div><div class="ft">8 Captions</div><div class="fs">fertig formuliert</div></div>
@@ -608,16 +711,40 @@
             </div>
         </div>
 
+        <!-- ===================== STATS (animierte Zähler) ===================== -->
+        <section class="stats" aria-label="Auf einen Blick">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat" data-reveal>
+                        <div class="num"><span data-count="6">0</span></div>
+                        <div class="lbl">Branchen mit eigener Strategie</div>
+                    </div>
+                    <div class="stat" data-reveal style="--reveal-delay:90ms">
+                        <div class="num"><span data-count="4">0</span><span class="suffix">&nbsp;Wo.</span></div>
+                        <div class="lbl">Content pro Paket — durchgeplant</div>
+                    </div>
+                    <div class="stat" data-reveal style="--reveal-delay:180ms">
+                        <div class="num"><span data-count="100">0</span><span class="suffix">%</span></div>
+                        <div class="lbl">Individuell auf deinen Betrieb</div>
+                    </div>
+                    <div class="stat" data-reveal style="--reveal-delay:270ms">
+                        <div class="num"><span class="suffix">0&nbsp;€</span></div>
+                        <div class="lbl">Einrichtungsgebühr · monatlich kündbar</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ===================== LEISTUNGEN ===================== -->
         <section id="leistungen" aria-labelledby="leist-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Was du jeden Monat bekommst</span>
                     <h2 id="leist-title">Alles, was dein Betrieb online braucht</h2>
                     <p>Fertig formuliert, auf deine Branche abgestimmt und sofort einsetzbar. Kein leeres Blatt mehr, kein Rätselraten.</p>
                 </div>
 
-                <div class="grid grid-3">
+                <div class="grid grid-3" data-reveal-group>
                     <article class="service-card">
                         <span class="service-num" aria-hidden="true">01</span>
                         <span class="service-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
@@ -666,13 +793,13 @@
         <!-- ===================== BRANCHEN ===================== -->
         <section id="branchen" class="ind" aria-labelledby="ind-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Branchen</span>
                     <h2 id="ind-title">Maßgeschneidert für deine Branche</h2>
                     <p>Keine Massenware. Jeder Text wird auf dein Angebot, deine Zielgruppe und deinen Standort abgestimmt.</p>
                 </div>
 
-                <div class="tabs" role="tablist" aria-label="Branchen auswählen">
+                <div class="tabs" data-reveal role="tablist" aria-label="Branchen auswählen">
                     <button class="tab" role="tab" id="tab-0" aria-controls="panel-0" aria-selected="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4M6 20h12"/></svg>Barbershop</button>
                     <button class="tab" role="tab" id="tab-1" aria-controls="panel-1" aria-selected="false" tabindex="-1">
@@ -689,102 +816,144 @@
 
                 <!-- Panel 0: Barbershop -->
                 <div class="panel active" id="panel-0" role="tabpanel" aria-labelledby="tab-0">
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Terminbuchung &amp; Auslastung</div>
-                            <h3>Barbershop</h3>
-                            <p>Wir füllen leere Stühle. Mit Reels, die deine Cuts und Fades zeigen, Google-Beiträgen für spontan freie Termine und Story-Konzepten, die deine Online-Terminbuchung ankurbeln — Woche für Woche.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="barbershop">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Barbershop" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Barbershop · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">Reel-Skript · Entwurf</div>
-                            <h4>„3 Fehler, die deinen Fade ruinieren“</h4>
-                            <p class="quote">Hook: „Du stylst dein Haar jeden Morgen — und machst trotzdem diesen einen Fehler…“</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Termin online buchen</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Terminbuchung &amp; Auslastung</div>
+                                <h3>Barbershop</h3>
+                                <p>Wir füllen leere Stühle. Mit Reels, die deine Cuts und Fades zeigen, Google-Beiträgen für spontan freie Termine und Story-Konzepten, die deine Online-Terminbuchung ankurbeln — Woche für Woche.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">Reel-Skript · Entwurf</div>
+                                <h4>„3 Fehler, die deinen Fade ruinieren“</h4>
+                                <p class="quote">Hook: „Du stylst dein Haar jeden Morgen — und machst trotzdem diesen einen Fehler…“</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Termin online buchen</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Panel 1: Autopflege -->
+                <!-- Panel 1: Autopflege &amp; Detailing -->
                 <div class="panel" id="panel-1" role="tabpanel" aria-labelledby="tab-1" hidden>
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Vorher / Nachher · Sichtbarkeit</div>
-                            <h3>Autopflege &amp; Detailing</h3>
-                            <p>Glänzende Ergebnisse verkaufen sich von selbst — wenn man sie zeigt. Wir liefern Vorher-Nachher-Reel-Konzepte, Pflege-Tipps als Captions und Google-Beiträge, die spontane Aufbereitungs-Anfragen bringen.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="autopflege">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Autopflege &amp; Detailing" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Autopflege · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">Vorher / Nachher · Reel-Konzept</div>
-                            <h4>Matt &amp; verkratzt → Keramik-Glanz</h4>
-                            <p class="quote">Reel: „So übersteht dein Lack jeden Sommer“ — plus Pflege-Tipp als Caption.</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Aufbereitung anfragen</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Vorher / Nachher · Sichtbarkeit</div>
+                                <h3>Autopflege &amp; Detailing</h3>
+                                <p>Glänzende Ergebnisse verkaufen sich von selbst — wenn man sie zeigt. Wir liefern Vorher-Nachher-Reel-Konzepte, Pflege-Tipps als Captions und Google-Beiträge, die spontane Aufbereitungs-Anfragen bringen.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">Vorher / Nachher · Reel-Konzept</div>
+                                <h4>Matt &amp; verkratzt → Keramik-Glanz</h4>
+                                <p class="quote">Reel: „So übersteht dein Lack jeden Sommer“ — plus Pflege-Tipp als Caption.</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Aufbereitung anfragen</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Panel 2: Restaurant -->
+                <!-- Panel 2: Restaurant &amp; Gastro -->
                 <div class="panel" id="panel-2" role="tabpanel" aria-labelledby="tab-2" hidden>
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Reservierungen &amp; Wochenkarte</div>
-                            <h3>Restaurant &amp; Gastro</h3>
-                            <p>Volle Tische statt leerer Stühle. Wir texten appetitliche Wochenkarten-Posts, Reservierungs-CTAs und Google-Beiträge, die Gäste aus deiner Umgebung heute Abend zu dir führen.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="restaurant">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Restaurant &amp; Gastro" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Restaurant · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">Google-Beitrag · Wochenkarte</div>
-                            <h4>Spezialität der Woche</h4>
-                            <p class="quote">„Hausgemachte Trüffel-Pasta mit Wildkräuter-Pesto — nur diese Woche. Reserviere dir deinen Tisch für heute Abend.“</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Button: Jetzt reservieren</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Reservierungen &amp; Wochenkarte</div>
+                                <h3>Restaurant &amp; Gastro</h3>
+                                <p>Volle Tische statt leerer Stühle. Wir texten appetitliche Wochenkarten-Posts, Reservierungs-CTAs und Google-Beiträge, die Gäste aus deiner Umgebung heute Abend zu dir führen.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">Google-Beitrag · Wochenkarte</div>
+                                <h4>Spezialität der Woche</h4>
+                                <p class="quote">„Hausgemachte Trüffel-Pasta mit Wildkräuter-Pesto — nur diese Woche. Reserviere dir deinen Tisch für heute Abend.“</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Button: Jetzt reservieren</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Panel 3: Beauty -->
+                <!-- Panel 3: Beauty / Kosmetik -->
                 <div class="panel" id="panel-3" role="tabpanel" aria-labelledby="tab-3" hidden>
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Vertrauen &amp; Treatments</div>
-                            <h3>Beauty / Kosmetik</h3>
-                            <p>Kundinnen buchen, wenn sie Vertrauen haben. Wir erstellen FAQ-Posts zu deinen Treatments, ehrliche Nachpflege-Tipps und Captions, die aus Interesse echte Termin-Anfragen machen.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="beauty">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Beauty / Kosmetik" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Beauty · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">FAQ-Post · Treatment</div>
-                            <h4>Brow- &amp; Lash-Lifting: Wie lange hält es?</h4>
-                            <p class="quote">„Die ehrliche Antwort plus 3 Nachpflege-Tipps für maximalen Halt — so buchen Kundinnen mit Vertrauen.“</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Freie Termine diese Woche · Buchungslink</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Vertrauen &amp; Treatments</div>
+                                <h3>Beauty / Kosmetik</h3>
+                                <p>Kundinnen buchen, wenn sie Vertrauen haben. Wir erstellen FAQ-Posts zu deinen Treatments, ehrliche Nachpflege-Tipps und Captions, die aus Interesse echte Termin-Anfragen machen.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">FAQ-Post · Treatment</div>
+                                <h4>Brow- &amp; Lash-Lifting: Wie lange hält es?</h4>
+                                <p class="quote">„Die ehrliche Antwort plus 3 Nachpflege-Tipps für maximalen Halt — so buchen Kundinnen mit Vertrauen.“</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Freie Termine diese Woche · Buchungslink</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Panel 4: Handwerk -->
+                <!-- Panel 4: Handwerk / Kfz -->
                 <div class="panel" id="panel-4" role="tabpanel" aria-labelledby="tab-4" hidden>
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Projekte &amp; lokale Anfragen</div>
-                            <h3>Handwerk / Kfz</h3>
-                            <p>Echte Projekte schaffen Vertrauen. Wir zeigen dein Team im Einsatz und das fertige Ergebnis — mit Projekt-Posts und Captions, die qualifizierte Anfragen aus deiner Region bringen.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="handwerk">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Handwerk / Kfz" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Handwerk · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">Projekt-Post · Lokal</div>
-                            <h4>Heizungstausch an einem Tag</h4>
-                            <p class="quote">„Wir zeigen dein Team im Einsatz und das fertige Ergebnis — das schafft Nähe und bringt qualifizierte Anfragen aus deiner Region.“</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Kostenvoranschlag anfragen</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Projekte &amp; lokale Anfragen</div>
+                                <h3>Handwerk / Kfz</h3>
+                                <p>Echte Projekte schaffen Vertrauen. Wir zeigen dein Team im Einsatz und das fertige Ergebnis — mit Projekt-Posts und Captions, die qualifizierte Anfragen aus deiner Region bringen.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">Projekt-Post · Lokal</div>
+                                <h4>Heizungstausch an einem Tag</h4>
+                                <p class="quote">„Wir zeigen dein Team im Einsatz und das fertige Ergebnis — das schafft Nähe und bringt qualifizierte Anfragen aus deiner Region.“</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Kostenvoranschlag anfragen</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Panel 5: Fahrschule -->
                 <div class="panel" id="panel-5" role="tabpanel" aria-labelledby="tab-5" hidden>
-                    <div class="ind-grid">
-                        <div class="ind-info">
-                            <div class="ind-eyebrow">Nahbarkeit &amp; Anmeldungen</div>
-                            <h3>Fahrschule</h3>
-                            <p>Fahrschüler wählen die Schule, die ihnen die Angst nimmt. Wir liefern interaktive Theorie-Posts, nahbare Inhalte und CTAs, die deine Fahrschule als die entspannteste der Stadt positionieren.</p>
+                    <div class="ind-grid has-media">
+                        <div class="ind-media" data-tilt data-img="fahrschule">
+                            <div class="img-skeleton" aria-hidden="true"></div>
+                            <img alt="Abstraktes Marken-Visual für Fahrschule" loading="lazy" decoding="async">
+                            <span class="media-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>Fahrschule · Markenvisual</span>
                         </div>
-                        <div class="ind-preview">
-                            <div class="plabel">Interaktiver Post</div>
-                            <h4>Theorieprüfung: Die 3 kniffligsten Fragen</h4>
-                            <p class="quote">„Nahbare Inhalte, die Prüfungsangst nehmen und deine Fahrschule als die entspannteste der Stadt positionieren.“</p>
-                            <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Jetzt anmelden</span>
+                        <div class="ind-stack">
+                            <div class="ind-info">
+                                <div class="ind-eyebrow">Nahbarkeit &amp; Anmeldungen</div>
+                                <h3>Fahrschule</h3>
+                                <p>Fahrschüler wählen die Schule, die ihnen die Angst nimmt. Wir liefern interaktive Theorie-Posts, nahbare Inhalte und CTAs, die deine Fahrschule als die entspannteste der Stadt positionieren.</p>
+                            </div>
+                            <div class="ind-preview">
+                                <div class="plabel">Interaktiver Post</div>
+                                <h4>Theorieprüfung: Die 3 kniffligsten Fragen</h4>
+                                <p class="quote">„Nahbare Inhalte, die Prüfungsangst nehmen und deine Fahrschule als die entspannteste der Stadt positionieren.“</p>
+                                <span class="cta-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>CTA: Jetzt anmelden</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -794,13 +963,13 @@
         <!-- ===================== BEISPIELE ===================== -->
         <section id="beispiele" aria-labelledby="ex-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Beispiele</span>
                     <h2 id="ex-title">So sieht dein Content konkret aus</h2>
                     <p>Beispiel-Entwürfe, wie du sie jeden Monat von uns bekommst — fertig formuliert und sofort einsetzbar.</p>
                 </div>
 
-                <div class="grid grid-3">
+                <div class="grid grid-3" data-reveal-group>
                     <article class="example-card">
                         <div class="ex-head"><span class="dot" aria-hidden="true"></span><span>Reel-Skript · Barbershop</span></div>
                         <h3>„Warum dein Haar nach 2 Tagen platt aussieht“</h3>
@@ -833,13 +1002,13 @@
         <!-- ===================== VORHER / NACHHER ===================== -->
         <section class="ba" aria-labelledby="ba-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Der Unterschied</span>
                     <h2 id="ba-title">Vorher / Nachher</h2>
                     <p>So verändert sich dein Alltag, wenn der Content jeden Monat fertig auf dich wartet.</p>
                 </div>
 
-                <div class="ba-grid">
+                <div class="ba-grid" data-reveal-group>
                     <div class="ba-col before">
                         <div class="bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Vorher · ohne Plan</div>
                         <ul class="ba-list">
@@ -868,13 +1037,13 @@
         <!-- ===================== ABLAUF ===================== -->
         <section id="ablauf" aria-labelledby="ablauf-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Ablauf</span>
                     <h2 id="ablauf-title">In 4 Schritten zu fertigem Content</h2>
                     <p>Kein kompliziertes Onboarding. Du startest in Minuten, nicht in Wochen.</p>
                 </div>
 
-                <div class="steps-grid">
+                <div class="steps-grid" data-reveal-group>
                     <div class="step">
                         <div class="step-num" aria-hidden="true">1</div>
                         <h3>Kurzes Briefing</h3>
@@ -902,13 +1071,13 @@
         <!-- ===================== PREISE ===================== -->
         <section id="preise" class="pricing" aria-labelledby="price-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">Preise</span>
                     <h2 id="price-title">Planbar. Fair. Monatlich kündbar.</h2>
                     <p>Keine Einrichtungsgebühr, keine versteckten Kosten, keine Vertragsfallen.</p>
                 </div>
 
-                <div class="price-grid">
+                <div class="price-grid" data-reveal-group>
                     <div class="plan">
                         <h3>Starter</h3>
                         <p class="desc">Für Betriebe, die endlich regelmäßig sichtbar werden wollen.</p>
@@ -958,13 +1127,13 @@
         <!-- ===================== FAQ ===================== -->
         <section id="faq" aria-labelledby="faq-title">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <span class="eyebrow">FAQ</span>
                     <h2 id="faq-title">Häufige Fragen</h2>
                     <p>Schnelle, ehrliche Antworten zur Zusammenarbeit.</p>
                 </div>
 
-                <div class="faq-wrap">
+                <div class="faq-wrap" data-reveal-group>
                     <details class="faq-item">
                         <summary class="faq-q">Muss ich selbst Videos filmen?<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary>
                         <div class="faq-a">Ja — für authentische Reels filmst du oder dein Team kurz vor Ort. Dafür bekommst du von uns ein Wort-für-Wort-Skript mit einfachen Anweisungen, mit dem die Aufnahme in wenigen Minuten erledigt ist. Captions, Google-Beiträge und Review-Antworten sind komplett fertig und brauchen kein Video.</div>
@@ -993,7 +1162,7 @@
         <section id="preview" aria-labelledby="cta-title">
             <div class="container">
                 <div class="cta">
-                    <div class="cta-inner">
+                    <div class="cta-inner" data-reveal>
                         <div class="cta-copy">
                             <span class="eyebrow">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg>
@@ -1176,6 +1345,147 @@
                     wa.href = 'https://wa.me/?text=' + encodeURIComponent(build());
                 });
             }
+        })();
+
+        // ============================================================
+        // PREMIUM MOTION LAYER
+        // ============================================================
+        var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ---- Generierte Marken-Visuals (Higgsfield / Recraft CDN) ----
+        // Hinweis: extern gehostet; CSS-Verläufe dienen als Fallback.
+        var CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/';
+        var IMG = {
+            hero:       CDN + 'hf_20260614_033146_43abc759-844d-47a2-b1ef-890c1b6bb203.png',
+            barbershop: CDN + 'hf_20260614_033154_6ec25486-28fb-416b-908c-25b3cce52039.png',
+            autopflege: CDN + 'hf_20260614_033156_d9539826-e310-4773-8404-1549903953e9.png',
+            restaurant: CDN + 'hf_20260614_033158_17428ea3-6ab5-4123-a845-06b8e4a8e77f.png',
+            beauty:     CDN + 'hf_20260614_033200_766f9aba-d4e9-4d21-9eaf-2aaf67f35fb1.png',
+            handwerk:   CDN + 'hf_20260614_033202_a54d1f2c-4429-4825-baff-9642feeea697.png',
+            fahrschule: CDN + 'hf_20260614_033204_98901595-2fae-432f-bfcf-ec055674929c.png'
+        };
+
+        // Hero background art
+        (function () {
+            var art = document.getElementById('heroArt');
+            if (art) {
+                var im = new Image();
+                im.onload = function () { art.style.backgroundImage = 'url("' + IMG.hero + '")'; };
+                im.src = IMG.hero; // bei Fehler bleibt der CSS-Verlauf
+            }
+        })();
+
+        // Branche tilt-images: lazy set src, fade skeleton, graceful fallback
+        Array.prototype.forEach.call(document.querySelectorAll('.ind-media[data-img]'), function (box) {
+            var key = box.getAttribute('data-img');
+            var img = box.querySelector('img');
+            var skel = box.querySelector('.img-skeleton');
+            if (!img || !IMG[key]) return;
+            img.style.opacity = '0';
+            img.style.transition = 'opacity .6s ease, transform .5s cubic-bezier(.16,1,.3,1)';
+            img.addEventListener('load', function () { if (skel) skel.style.opacity = '0'; img.style.opacity = '1'; });
+            img.addEventListener('error', function () { if (skel) skel.classList.remove('img-skeleton'); }); // Verlauf bleibt
+            img.src = IMG[key];
+        });
+
+        // ---- Scroll progress bar ----
+        (function () {
+            var bar = document.getElementById('scrollProgress');
+            if (!bar) return;
+            var ticking = false;
+            function update() {
+                var h = document.documentElement;
+                var max = h.scrollHeight - h.clientHeight;
+                var p = max > 0 ? h.scrollTop / max : 0;
+                bar.style.transform = 'scaleX(' + p + ')';
+                ticking = false;
+            }
+            window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+            update();
+        })();
+
+        // ---- Reveal on scroll (IntersectionObserver) ----
+        (function () {
+            var items = document.querySelectorAll('[data-reveal], [data-reveal-group]');
+            if (REDUCED || !('IntersectionObserver' in window)) {
+                Array.prototype.forEach.call(items, function (el) { el.classList.add('in-view'); });
+                return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+            Array.prototype.forEach.call(items, function (el) { io.observe(el); });
+        })();
+
+        // ---- Parallax (hero art + flagged elements) ----
+        (function () {
+            if (REDUCED) return;
+            var art = document.getElementById('heroArt');
+            var layers = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+            var ticking = false;
+            function update() {
+                var y = window.pageYOffset;
+                if (art && y < 1100) art.style.transform = 'translate3d(0,' + (y * 0.18) + 'px,0)';
+                layers.forEach(function (el) {
+                    var f = parseFloat(el.getAttribute('data-parallax')) || 0;
+                    if (y < 1100) el.style.transform = 'translate3d(0,' + (-y * f) + 'px,0)';
+                });
+                ticking = false;
+            }
+            window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+            update();
+        })();
+
+        // ---- Interactive 3D tilt on branche images ----
+        (function () {
+            if (REDUCED || window.matchMedia('(hover: none)').matches) return;
+            Array.prototype.forEach.call(document.querySelectorAll('[data-tilt]'), function (el) {
+                var raf = null;
+                el.addEventListener('pointermove', function (ev) {
+                    var r = el.getBoundingClientRect();
+                    var px = (ev.clientX - r.left) / r.width;
+                    var py = (ev.clientY - r.top) / r.height;
+                    el.style.setProperty('--mx', (px * 100) + '%');
+                    el.style.setProperty('--my', (py * 100) + '%');
+                    if (raf) return;
+                    raf = requestAnimationFrame(function () {
+                        var rx = (0.5 - py) * 9, ry = (px - 0.5) * 11;
+                        el.style.transform = 'perspective(800px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateZ(6px)';
+                        raf = null;
+                    });
+                });
+                el.addEventListener('pointerleave', function () {
+                    el.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+                });
+            });
+        })();
+
+        // ---- Animated counters ----
+        (function () {
+            var nums = document.querySelectorAll('[data-count]');
+            if (!nums.length) return;
+            if (REDUCED || !('IntersectionObserver' in window)) {
+                Array.prototype.forEach.call(nums, function (n) { n.textContent = n.getAttribute('data-count'); });
+                return;
+            }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (!e.isIntersecting) return;
+                    var n = e.target, target = parseInt(n.getAttribute('data-count'), 10), start = null, dur = 1400;
+                    function step(ts) {
+                        if (!start) start = ts;
+                        var p = Math.min((ts - start) / dur, 1);
+                        var eased = 1 - Math.pow(1 - p, 3);
+                        n.textContent = Math.round(eased * target);
+                        if (p < 1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                    io.unobserve(n);
+                });
+            }, { threshold: 0.5 });
+            Array.prototype.forEach.call(nums, function (n) { io.observe(n); });
         })();
     </script>
 </body>
