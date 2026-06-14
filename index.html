@@ -371,8 +371,17 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .branche-preview .reel{ font-size:clamp(15px,2.4vmin,22px); font-weight:800; margin:10px 0 16px; line-height:1.15; }
 .branche-preview .caption-label{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--gray); font-weight:700; }
 .branche-preview .caption{ font-size:clamp(12px,1.8vmin,15px); color:#d6dde6; line-height:1.5; margin-top:8px; }
-.fade-swap{ transition:opacity .35s var(--ease), transform .35s var(--ease); }
-.fade-swap.swapping{ opacity:0; transform:translateY(8px); }
+.fade-swap{ transition:opacity .35s var(--ease), transform .35s var(--ease);
+  display:flex; gap:18px; align-items:stretch; text-align:left; }
+.fade-swap.swapping{ opacity:0; transform:translateY(8px) scale(.985); }
+.branche-preview .bphoto{ flex:0 0 38%; border-radius:14px; overflow:hidden; position:relative;
+  box-shadow:0 12px 30px rgba(0,0,0,.5); }
+.branche-preview .bphoto::after{ content:""; position:absolute; inset:0;
+  background:linear-gradient(160deg, transparent 40%, rgba(255,106,0,.18)); }
+.branche-preview .bphoto img{ width:100%; height:100%; min-height:140px; object-fit:cover; display:block;
+  transition:transform .6s var(--ease); }
+.branche-preview .btext{ flex:1; }
+@media (max-width:560px){ .fade-swap{ flex-direction:column; } .branche-preview .bphoto{ flex:none; height:120px; } }
 
 /* ---- SCENE 5: BEFORE / AFTER -------------------------------------------- */
 .ba{ display:flex; gap:clamp(10px,2.4vmin,26px); width:min(640px,94%); margin-top:24px; }
@@ -562,10 +571,13 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
           </div>
           <div class="branche-preview">
             <div class="fade-swap" id="brancheSwap">
-              <div class="label">Reel-Idee</div>
-              <div class="reel" id="bReel"></div>
-              <div class="caption-label">Caption</div>
-              <div class="caption" id="bCaption"></div>
+              <div class="bphoto"><img id="bImg" alt="" loading="lazy"></div>
+              <div class="btext">
+                <div class="label">Reel-Idee</div>
+                <div class="reel" id="bReel"></div>
+                <div class="caption-label">Caption</div>
+                <div class="caption" id="bCaption"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -714,18 +726,19 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   }
 
   /* ---- branchen data ---------------------------------------------------- */
+  var CDN="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/";
   var BRANCHEN=[
-    {reel:"3 Frisuren-Trends, die diesen Sommer jeder will",         cap:"Neuer Look gefällig? ✂️ Sichere dir deinen Termin – wir bringen deine Idee in Form. #Friseur #Haircut"},
-    {reel:"Behind the Scenes: So entsteht unser Signature-Gericht",  cap:"Hunger bekommen? 🍝 Reserviere jetzt deinen Tisch und schmeck den Unterschied. #Restaurant #FoodLover"},
-    {reel:"Vorher / Nachher: Diese Renovierung haut dich um",        cap:"Qualität, die bleibt. 🔨 Jetzt unverbindlich anfragen – wir machen's sauber. #Handwerk #Renovierung"},
-    {reel:"Die 5 Schritte zu strahlend reiner Haut",                 cap:"Gönn dir eine Auszeit. ✨ Termin sichern und entspannt strahlen. #Kosmetik #Glow"},
-    {reel:"So bestehst du die Prüfung beim ersten Mal",              cap:"Führerschein in Sicht? 🚗 Melde dich jetzt an und starte durch. #Fahrschule #Führerschein"},
-    {reel:"Dein 20-Minuten Workout für zuhause",                     cap:"Keine Ausreden mehr. 💪 Starte heute – wir trainieren mit dir. #Fitness #Workout"}
+    {img:CDN+"hf_20260614_121505_3df017d3-688d-4350-9362-5167c2efd165.png", reel:"3 Frisuren-Trends, die diesen Sommer jeder will",         cap:"Neuer Look gefällig? ✂️ Sichere dir deinen Termin – wir bringen deine Idee in Form. #Friseur #Haircut"},
+    {img:CDN+"hf_20260614_121507_0737227a-d299-4c94-bdf2-ff59219631c8.png", reel:"Behind the Scenes: So entsteht unser Signature-Gericht",  cap:"Hunger bekommen? 🍝 Reserviere jetzt deinen Tisch und schmeck den Unterschied. #Restaurant #FoodLover"},
+    {img:CDN+"hf_20260614_121508_62c6e4c1-ec60-419e-b7c9-4a3daf92dc62.png", reel:"Vorher / Nachher: Diese Renovierung haut dich um",        cap:"Qualität, die bleibt. 🔨 Jetzt unverbindlich anfragen – wir machen's sauber. #Handwerk #Renovierung"},
+    {img:CDN+"hf_20260614_121510_e1bfc022-7446-419f-adca-0812f520f80f.png", reel:"Die 5 Schritte zu strahlend reiner Haut",                 cap:"Gönn dir eine Auszeit. ✨ Termin sichern und entspannt strahlen. #Kosmetik #Glow"},
+    {img:CDN+"hf_20260614_121515_b11ef0c8-ad42-440a-ad08-990a9f74b879.png", reel:"So bestehst du die Prüfung beim ersten Mal",              cap:"Führerschein in Sicht? 🚗 Melde dich jetzt an und starte durch. #Fahrschule #Führerschein"},
+    {img:CDN+"hf_20260614_121516_eb1db453-247a-4554-b579-1f2a72da9cef.png", reel:"Dein 20-Minuten Workout für zuhause",                     cap:"Keine Ausreden mehr. 💪 Starte heute – wir trainieren mit dir. #Fitness #Workout"}
   ];
-  var bReel=document.getElementById("bReel"), bCaption=document.getElementById("bCaption");
+  var bReel=document.getElementById("bReel"), bCaption=document.getElementById("bCaption"), bImg=document.getElementById("bImg");
   var brancheSwap=document.getElementById("brancheSwap");
   function setBranche(i,animate){
-    var apply=function(){ bReel.textContent=BRANCHEN[i].reel; bCaption.textContent=BRANCHEN[i].cap; };
+    var apply=function(){ bReel.textContent=BRANCHEN[i].reel; bCaption.textContent=BRANCHEN[i].cap; bImg.src=BRANCHEN[i].img; };
     if(animate && !reduceMotion){
       brancheSwap.classList.add("swapping");
       setTimeout(function(){ apply(); brancheSwap.classList.remove("swapping"); },330);
