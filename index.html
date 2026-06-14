@@ -208,9 +208,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
    through, dimmed just enough to keep the content perfectly readable */
-.scene-bg-dark{ background:linear-gradient(180deg, rgba(5,9,14,.58) 0%, rgba(5,9,14,.72) 100%); overflow:hidden; }
-.scene-bg-cream{ background:linear-gradient(180deg, rgba(246,242,233,.85) 0%, rgba(231,224,209,.9) 100%); color:#16120c; overflow:hidden; }
-.scene-bg-split{ background:linear-gradient(180deg, rgba(7,12,19,.56) 0%, rgba(7,12,19,.76) 100%); overflow:hidden; }
+.scene-bg-dark{ background:linear-gradient(180deg, rgba(6,7,10,.4) 0%, rgba(6,7,10,.58) 100%); overflow:hidden; }
+.scene-bg-cream{ background:linear-gradient(180deg, rgba(244,240,231,.8) 0%, rgba(228,221,205,.86) 100%); color:#16120c; overflow:hidden; }
+.scene-bg-split{ background:linear-gradient(180deg, rgba(6,8,12,.38) 0%, rgba(6,8,12,.6) 100%); overflow:hidden; }
 
 /* ---- Fullscreen background video layers -------------------------------- */
 .bgvids{ position:absolute; inset:0; z-index:0; overflow:hidden; }
@@ -225,8 +225,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .eyebrow{ font-size:clamp(11px,1.7vmin,15px); letter-spacing:.34em; text-transform:uppercase;
   color:var(--orange); font-weight:800; margin-bottom:18px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; letter-spacing:-.034em; color:#fff;
-  text-shadow:0 2px 22px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.6); }
+h1.lead{ font-size:clamp(40px,8.6vmin,132px); line-height:.9; font-weight:800; letter-spacing:-.036em; color:#fff;
+  text-shadow:0 2px 24px rgba(0,0,0,.6), 0 1px 2px rgba(0,0,0,.7); }
 .scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
 .subline{ max-width:46ch; font-size:clamp(14px,2.3vmin,21px); line-height:1.5; color:#e4e9f0; margin-top:22px;
   font-weight:450; }
@@ -500,6 +500,27 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
 
+/* ---- Special custom cursor --------------------------------------------- */
+.cursor{ position:fixed; left:0; top:0; z-index:9999; pointer-events:none; }
+.cur-dot{ position:fixed; left:0; top:0; width:7px; height:7px; border-radius:50%; background:var(--orange);
+  transform:translate(-50%,-50%); box-shadow:0 0 14px var(--orange-glow); transition:width .2s,height .2s,opacity .2s; }
+.cur-ring{ position:fixed; left:0; top:0; width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(201,162,90,.65);
+  transform:translate(-50%,-50%); transition:width .28s var(--ease), height .28s var(--ease), border-color .28s, background .28s; }
+.cur-scroll{ position:fixed; left:0; top:0; transform:translate(-50%,28px); font-size:8.5px; font-weight:800; letter-spacing:.28em;
+  color:var(--orange); opacity:0; transition:opacity .3s; }
+.cursor.scroll .cur-scroll{ opacity:.85; }
+.cursor.hover .cur-ring{ width:66px; height:66px; background:rgba(201,162,90,.12); border-color:var(--orange); }
+.cursor.hover .cur-dot{ width:4px; height:4px; }
+body.has-cursor, body.has-cursor *{ cursor:none !important; }
+@media (hover:none),(pointer:coarse){ .cursor{ display:none !important; } }
+
+/* ---- Hover spotlight on the info boxes --------------------------------- */
+.svc,.review,.ba .col{ position:relative; }
+.svc::after,.plan::after,.review::after,.ba .col::after{ content:""; position:absolute; inset:0; border-radius:inherit;
+  pointer-events:none; opacity:0; transition:opacity .35s var(--ease); z-index:3;
+  background:radial-gradient(200px 200px at var(--mx,50%) var(--my,50%), rgba(232,210,160,.18), transparent 60%); }
+.svc:hover::after,.plan:hover::after,.review:hover::after,.ba .col:hover::after{ opacity:1; }
+
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; background:#03070b;
@@ -604,10 +625,11 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
         <!-- Fullscreen background videos (only the active one plays) -->
         <div class="bgvids" id="bgvids">
-          <video class="bgvid" data-key="hero"  src="assets/videos/hero.mp4"   muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="bg1" src="assets/videos/bg1.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="bg2" src="assets/videos/bg2.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="bg3" src="assets/videos/bg3.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="bg4" src="assets/videos/bg4.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="bg5" src="assets/videos/bg5.mp4" muted loop playsinline preload="auto"></video>
           <div class="bgvid-scrim"></div>
         </div>
 
@@ -665,7 +687,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 2 — LEISTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s2">
           <div class="eyebrow">Leistungen</div>
-          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Alles, was du zum Posten brauchst.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Alles, was du zum Posten brauchst.</h1>
           <div class="svc-deck" id="svcDeck">
             <div class="svc active"><div class="ic">▶</div><h3>Reels-Skripte</h3><p>Fertige Hook-to-CTA Skripte zum Abdrehen.</p><span class="svc-meta">Hook · Story · CTA</span></div>
             <div class="svc"><div class="ic">✎</div><h3>Instagram Captions</h3><p>Texte, die zu deiner Marke sprechen.</p><span class="svc-meta">inkl. Hashtags &amp; Emojis</span></div>
@@ -678,7 +700,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 3 — BRANCHEN ===== -->
         <section class="scene scene-bg-dark" id="s3">
           <div class="eyebrow">Branchen</div>
-          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Content für deinen Betrieb.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Content für deinen Betrieb.</h1>
           <div class="tabs" id="tabs">
             <button class="tab active" data-b="0">Friseure</button>
             <button class="tab" data-b="1">Restaurants</button>
@@ -703,14 +725,14 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 4 — EDITORIAL MOMENT ===== -->
         <section class="scene scene-bg-cream" id="s4">
           <div class="eyebrow dark">Kein Stress mehr</div>
-          <h1 class="lead" style="font-size:clamp(40px,10vmin,180px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
+          <h1 class="lead" style="font-size:clamp(44px,11vmin,200px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
           <p class="subline">Du bekommst jeden Monat klare Ideen, fertige Texte und Beiträge, die zu deinem Betrieb passen.</p>
         </section>
 
         <!-- ===== SCENE 5 — BEFORE / AFTER ===== -->
         <section class="scene scene-bg-split" id="s5">
           <div class="eyebrow">Vorher / Nachher</div>
-          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Vom Chaos zum System.</h1>
+          <h1 class="lead" style="font-size:clamp(34px,7.6vmin,112px)">Vom Chaos zum System.</h1>
           <div class="ba">
             <div class="col before">
               <h4>Vorher</h4>
@@ -740,7 +762,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 6 — PRICING (monthly) ===== -->
         <section class="scene scene-bg-dark" id="s6">
           <div class="eyebrow">Monatliche Pakete</div>
-          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Wähle dein Tempo.</h1>
+          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Wähle dein Tempo.</h1>
           <div class="price-deck">
             <div class="plan">
               <div class="pname">Starter</div>
@@ -794,7 +816,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 7 — EINZELAUFTRÄGE (one-off services) ===== -->
         <section class="scene scene-bg-dark" id="s7">
           <div class="eyebrow">Einzelaufträge</div>
-          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Mehr als nur Content.</h1>
+          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Mehr als nur Content.</h1>
           <p class="subline">Einmalige Projekte – professionell umgesetzt, zum fairen Festpreis.</p>
           <div class="svc-deck oneoff">
             <div class="svc">
@@ -830,7 +852,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 8 — BEWERTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s8">
           <div class="eyebrow">Bewertungen</div>
-          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Das sagen unsere Kunden.</h1>
+          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Das sagen unsere Kunden.</h1>
           <div class="reviews">
             <div class="review">
               <div class="stars">★★★★★</div>
@@ -859,7 +881,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 9 — FAQ ===== -->
         <section class="scene scene-bg-dark" id="s9">
           <div class="eyebrow">FAQ</div>
-          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Häufige Fragen.</h1>
+          <h1 class="lead" style="font-size:clamp(30px,6.6vmin,96px)">Häufige Fragen.</h1>
           <div class="faq">
             <details class="faq-item" open>
               <summary>Wie schnell bekomme ich meinen Content?<i></i></summary>
@@ -905,6 +927,13 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   <div class="scene-dots" id="dots"></div>
 </div><!-- /stage -->
 <div class="progress" id="progressBar"></div>
+
+<!-- Special custom cursor -->
+<div class="cursor" id="cursorEl" aria-hidden="true">
+  <span class="cur-ring"></span>
+  <span class="cur-dot"></span>
+  <span class="cur-scroll">SCROLL</span>
+</div>
 
 <script>
 (function(){
@@ -1016,7 +1045,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
   /* ---- fullscreen background videos: per-scene, only active plays -------- */
   var bgvids=document.querySelectorAll(".bgvid");
-  var vidMap=["final","final","reel1","reel2","hero","reel1","reel2","reel1","reel2","hero","final"];
+  var vidMap=["bg1","bg2","bg3","bg4","bg5","bg1","bg2","bg3","bg4","bg5","bg1"];
   var curVidKey=null;
   function setSceneVideo(idx){
     var key=vidMap[idx]||"hero";
@@ -1040,6 +1069,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
       var r=el.getBoundingClientRect();
       o.ttx=((e.clientY-r.top)/r.height-0.5)*-2;
       o.tty=((e.clientX-r.left)/r.width-0.5)*2;
+      el.style.setProperty("--mx",((e.clientX-r.left)/r.width*100)+"%");
+      el.style.setProperty("--my",((e.clientY-r.top)/r.height*100)+"%");
     },{passive:true});
     moCards.push(o);
   });
@@ -1047,13 +1078,36 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
     var nowS=Date.now()*0.001;
     for(var ci=0;ci<moCards.length;ci++){
       var o=moCards[ci];
-      o.tx+=(o.ttx-o.tx)*0.1; o.ty+=(o.tty-o.ty)*0.1;
-      var fy=reduceMotion?0:Math.sin(nowS*0.8+o.ph)*(o.phone?11:7);
-      var amp=o.phone?8:6;
+      o.tx+=(o.ttx-o.tx)*0.12; o.ty+=(o.tty-o.ty)*0.12;
+      var fy=reduceMotion?0:Math.sin(nowS*0.8+o.ph)*(o.phone?12:8);
       var up=o.hov || o.el.classList.contains("active");
-      var sc=up?(o.feat?1.12:1.05):(o.feat?1.08:1);
-      o.el.style.transform="perspective(900px) translateY("+fy+"px) rotateX("+(o.tx*amp)+"deg) rotateY("+(o.ty*amp)+"deg) scale("+sc+")";
+      var amp=(o.phone?9:7)*(o.hov?1.7:1);    // stronger tilt while hovering
+      var sc=up?(o.feat?1.13:1.06):(o.feat?1.08:1);
+      var lift=o.hov?-10:0;
+      o.el.style.transform="perspective(900px) translateY("+(fy+lift)+"px) rotateX("+(o.tx*amp)+"deg) rotateY("+(o.ty*amp)+"deg) scale("+sc+")";
+      o.el.style.zIndex=o.hov?"5":"";
     }
+  }
+
+  /* ---- special custom cursor ------------------------------------------- */
+  var cursorEl=document.getElementById("cursorEl");
+  var curDot=cursorEl.querySelector(".cur-dot"), curRing=cursorEl.querySelector(".cur-ring"), curScroll=cursorEl.querySelector(".cur-scroll");
+  var cxp=window.innerWidth/2, cyp=window.innerHeight/2, rxp=cxp, ryp=cyp, scrollHintT=0;
+  var finePointer=window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+  if(finePointer && !reduceMotion){
+    document.body.classList.add("has-cursor");
+    window.addEventListener("mousemove",function(e){ cxp=e.clientX; cyp=e.clientY; },{passive:true});
+    var hoverSel="a,button,.svc,.plan,.review,.tab,.faq-item summary,.phone,.scene-dots b";
+    document.addEventListener("mouseover",function(e){ if(e.target.closest&&e.target.closest(hoverSel)) cursorEl.classList.add("hover"); });
+    document.addEventListener("mouseout",function(e){ if(e.target.closest&&e.target.closest(hoverSel)) cursorEl.classList.remove("hover"); });
+    window.addEventListener("wheel",function(){ cursorEl.classList.add("scroll"); clearTimeout(scrollHintT); scrollHintT=setTimeout(function(){cursorEl.classList.remove("scroll");},700); },{passive:true});
+  }
+  function renderCursor(){
+    if(!finePointer) return;
+    curDot.style.left=cxp+"px"; curDot.style.top=cyp+"px";
+    curScroll.style.left=cxp+"px"; curScroll.style.top=cyp+"px";
+    rxp+=(cxp-rxp)*0.2; ryp+=(cyp-ryp)*0.2;
+    curRing.style.left=rxp+"px"; curRing.style.top=ryp+"px";
   }
 
   /* ---- mouse / touch / gyro parallax ------------------------------------ */
@@ -1172,8 +1226,9 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
       o.el.style.transform="translate("+(dx+mx*10)+"px,"+(dy+my*8)+"px)";
     }
 
-    /* --- live info-box + phone motion --- */
+    /* --- live info-box + phone motion + custom cursor --- */
     renderCards();
+    renderCursor();
 
     requestAnimationFrame(render);
   }
