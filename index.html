@@ -121,17 +121,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
    TABLET — the main world. Premium black-glass device.
    ========================================================================== */
 .tablet-rig{
-  position:absolute; top:50%; left:50%;
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
   transform-style:preserve-3d;
+  transform-origin:50% 50%;     /* pivot = true viewport centre */
   will-change:transform;
 }
 .tablet{
   position:relative;
-  /* large, heavy, premium floating device — settles straight at scale(1),
-     so it can fill most of the viewport with just a small safe margin */
+  /* large, heavy, premium floating device — centred by the flex rig,
+     settles straight at scale(1), fills most of the viewport */
   width:min(96vw,1880px);
   height:min(94vh,1100px);
-  transform:translate(-50%,-50%);
   border-radius:38px;
   /* black anodized aluminium bezel with brushed metal sheen */
   background:
