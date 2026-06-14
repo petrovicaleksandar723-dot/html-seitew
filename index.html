@@ -55,7 +55,7 @@ a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 
 /* Tall scroll track — drives the cinematic timeline ------------------------ */
-.scroll-track{ height:820vh; position:relative; z-index:1; }
+.scroll-track{ height:1180vh; position:relative; z-index:1; }
 
 /* ============================================================================
    STAGE — fixed full-viewport cinematic frame (never scrolls away)
@@ -196,7 +196,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ---- MOTION DESIGN: crisp staggered reveal of each scene's content ------ */
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
-.scene .price-deck,.scene .minis{
+.scene .price-deck,.scene .minis,.scene .reviews,.scene .faq,.scene .paybar,.scene .rev-trust{
   opacity:0; transform:translateY(40px) scale(.965);
   transition:opacity .6s var(--ease), transform .8s var(--ease);
 }
@@ -206,7 +206,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .btns{ opacity:1; transform:none; transition-delay:.34s; }
 .scene.show .minis{ opacity:1; transform:none; transition-delay:.10s; }
 .scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
-.scene.show .ba,.scene.show .price-deck{ opacity:1; transform:none; transition-delay:.24s; }
+.scene.show .ba,.scene.show .price-deck,.scene.show .reviews,.scene.show .faq{ opacity:1; transform:none; transition-delay:.24s; }
+.scene.show .paybar,.scene.show .rev-trust{ opacity:1; transform:none; transition-delay:.42s; }
 .scene-bg-dark{ background:radial-gradient(120% 100% at 50% 0%, #14202c 0%, #0a121a 55%, #060c12 100%); overflow:hidden; }
 .scene-bg-cream{ background:radial-gradient(120% 100% at 50% 20%, #fbf8f0 0%, var(--cream) 60%, #e9e2d2 100%); color:#1a1712; overflow:hidden; }
 .scene-bg-split{ background:radial-gradient(120% 100% at 50% 100%, #0c1622 0%, #070d13 60%); overflow:hidden; }
@@ -316,10 +317,11 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   transform-style:preserve-3d; pointer-events:none;
   will-change:transform;
 }
-/* keep all readable scene content above the engine object */
+/* keep all readable scene content above the engine object + animated bg */
 .scene .eyebrow,.scene h1.lead,.scene .subline,.scene .btns,.scene .minis,
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
-.scene .price-deck,.launcher{ position:relative; z-index:2; }
+.scene .price-deck,.scene .paybar,.scene .reviews,.scene .rev-trust,
+.scene .faq,.launcher{ position:relative; z-index:2; }
 /* hero reel is the centerpiece -> large portrait */
 .engine-hero{ width:clamp(260px,27vmin,420px); height:clamp(380px,46vmin,640px); }
 /* hero: copy at top, reel in the centre, buttons at the bottom */
@@ -451,8 +453,39 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .price-tag{ font-size:clamp(17px,2.3vmin,24px); font-weight:800; color:var(--orange); margin:2px 0 10px; }
 .svc-deck.oneoff{ max-width:1100px; }
 .svc-deck.oneoff .svc{ width:clamp(170px,21vmin,250px); }
-.plan{ width:clamp(160px,23vmin,320px); padding:clamp(26px,3.2vmin,48px) clamp(18px,2.4vmin,34px);
-  border-radius:24px; text-align:center;
+
+/* ---- Reviews ----------------------------------------------------------- */
+.reviews{ display:flex; gap:clamp(12px,1.8vmin,22px); flex-wrap:wrap; justify-content:center; max-width:1120px; margin-top:26px; }
+.review{ width:clamp(215px,25vmin,330px); padding:clamp(20px,2.6vmin,32px); border-radius:22px; text-align:left;
+  background:linear-gradient(165deg,#1b2535,#0d1420); border:1px solid rgba(255,255,255,.12); box-shadow:0 22px 50px rgba(0,0,0,.5);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease), border-color .4s; }
+.review:hover{ transform:translateY(-10px); border-color:rgba(255,106,0,.4); box-shadow:0 36px 70px rgba(0,0,0,.55),0 0 50px rgba(255,106,0,.2); }
+.review .stars{ color:#ffc24d; font-size:clamp(15px,1.9vmin,20px); letter-spacing:3px; margin-bottom:12px; }
+.review p{ font-size:clamp(13px,1.7vmin,17px); line-height:1.5; color:#e4e9f0; }
+.rev-author{ display:flex; align-items:center; gap:10px; margin-top:18px; font-size:clamp(12px,1.5vmin,14px); font-weight:700; color:#aeb7c4; }
+.rev-ava{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,var(--orange),#ff8c2e); color:#1a0c00; font-weight:800; font-size:14px; flex:none; }
+.rev-trust{ margin-top:24px; font-size:clamp(13px,1.8vmin,18px); color:#cfd6e0; }
+.rev-trust b{ color:#ffc24d; font-weight:800; }
+
+/* ---- FAQ (native accordion) -------------------------------------------- */
+.faq{ width:min(840px,94%); margin-top:24px; display:flex; flex-direction:column; gap:12px; text-align:left; }
+.faq-item{ background:linear-gradient(165deg,#161f2c,#0c121b); border:1px solid rgba(255,255,255,.1); border-radius:16px;
+  padding:0 clamp(18px,2.4vmin,30px); overflow:hidden; transition:border-color .3s, box-shadow .3s; }
+.faq-item[open]{ border-color:rgba(255,106,0,.42); box-shadow:0 18px 40px rgba(0,0,0,.4); }
+.faq-item summary{ list-style:none; cursor:pointer; padding:clamp(16px,2vmin,24px) 0; display:flex; align-items:center; justify-content:space-between;
+  font-weight:700; font-size:clamp(14px,1.95vmin,20px); color:#fff; }
+.faq-item summary::-webkit-details-marker{ display:none; }
+.faq-item summary i{ width:22px; height:22px; position:relative; flex:none; margin-left:18px; }
+.faq-item summary i::before,.faq-item summary i::after{ content:""; position:absolute; background:var(--orange); border-radius:2px; transition:transform .3s var(--ease); }
+.faq-item summary i::before{ top:10px; left:3px; width:16px; height:2px; }
+.faq-item summary i::after{ left:10px; top:3px; width:2px; height:16px; }
+.faq-item[open] summary i::after{ transform:scaleY(0); }
+.faq-item p{ padding:0 0 clamp(16px,2vmin,24px); font-size:clamp(13px,1.75vmin,17px); line-height:1.55; color:#c4ccd6;
+  animation:faqIn .4s var(--ease); }
+@keyframes faqIn{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;} }
+.plan{ width:clamp(160px,22vmin,300px); padding:clamp(20px,2.3vmin,34px) clamp(16px,2vmin,28px);
+  border-radius:22px; text-align:center;
   background:linear-gradient(165deg, #1a2230, #0b111a);
   border:1px solid rgba(255,255,255,.12); box-shadow:0 24px 54px rgba(0,0,0,.5);
   transition:transform .5s var(--ease), box-shadow .5s var(--ease);
@@ -774,8 +807,65 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
           </div>
         </section>
 
-        <!-- ===== SCENE 8 — FINAL CTA ===== -->
+        <!-- ===== SCENE 8 — BEWERTUNGEN ===== -->
         <section class="scene scene-bg-dark" id="s8">
+          <div class="eyebrow">Bewertungen</div>
+          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Das sagen unsere Kunden.</h1>
+          <div class="reviews">
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>"Endlich muss ich mir keine Gedanken mehr über Content machen – jeden Monat liegt alles fertig bereit."</p>
+              <div class="rev-author"><span class="rev-ava">S</span>Sarah M. · Friseursalon</div>
+            </div>
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>"Unsere Instagram-Reichweite hat sich in nur 3 Monaten mehr als verdoppelt. Absolute Empfehlung."</p>
+              <div class="rev-author"><span class="rev-ava">M</span>Marco L. · Restaurant</div>
+            </div>
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>"Professionell, schnell und genau auf meinen Betrieb zugeschnitten. Fühlt sich an wie ein eigenes Team."</p>
+              <div class="rev-author"><span class="rev-ava">D</span>Daniel K. · Handwerksbetrieb</div>
+            </div>
+            <div class="review">
+              <div class="stars">★★★★★</div>
+              <p>"Die Captions klingen genau wie wir – als hätte ich sie selbst geschrieben, nur besser."</p>
+              <div class="rev-author"><span class="rev-ava">L</span>Lena R. · Kosmetikstudio</div>
+            </div>
+          </div>
+          <div class="rev-trust"><b>4,9 / 5</b> · über 120 zufriedene Betriebe</div>
+        </section>
+
+        <!-- ===== SCENE 9 — FAQ ===== -->
+        <section class="scene scene-bg-dark" id="s9">
+          <div class="eyebrow">FAQ</div>
+          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Häufige Fragen.</h1>
+          <div class="faq">
+            <details class="faq-item" open>
+              <summary>Wie schnell bekomme ich meinen Content?<i></i></summary>
+              <p>Innerhalb von 5 Werktagen nach dem Start liegt dein erster kompletter Monatsplan bereit.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Bin ich an einen Vertrag gebunden?<i></i></summary>
+              <p>Nein. Alle Pakete sind monatlich kündbar – ganz ohne Einrichtungsgebühr.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Für welche Branchen ist das geeignet?<i></i></summary>
+              <p>Für lokale Betriebe aller Art: Friseure, Restaurants, Handwerk, Kosmetik, Fahrschulen, Fitness u. v. m.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Erstellt ihr auch die fertigen Reels?<i></i></summary>
+              <p>Die Reels-Skripte sind in jedem Paket inklusive. Die fertige Reel-Produktion gibt es als Einzelauftrag.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Wie funktioniert die Bezahlung?<i></i></summary>
+              <p>Sicher per Kreditkarte, PayPal, Klarna oder SEPA – monatlich und jederzeit kündbar.</p>
+            </details>
+          </div>
+        </section>
+
+        <!-- ===== SCENE 10 — FINAL CTA ===== -->
+        <section class="scene scene-bg-dark" id="s10">
           <div class="engine" aria-hidden="true">
             <div class="tile t3"></div><div class="tile t2"></div>
             <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
@@ -811,8 +901,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   var gauss=function(x,c,w){var d=x-c;return Math.exp(-(d*d)/(2*w*w));}; // bell curve
   var reduceMotion=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-  var SCENES=9;            // launcher(0) + scenes 1..8
-  var LAST=SCENES-1;       // 8
+  var SCENES=11;           // launcher(0) + scenes 1..10
+  var LAST=SCENES-1;       // 10
 
   /* ---- elements --------------------------------------------------------- */
   var rig=document.getElementById("rig");
@@ -990,14 +1080,16 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
       var el=scenesEls[i];
       var delta=pos-i;
       var ad=Math.abs(delta);
-      var op=ss(clamp(1-ad/0.62,0,1));
+      var op=ss(clamp(1-ad/0.58,0,1));
       el.style.opacity=op;
-      var tY=delta*7;                 // % travel (scene below rises in)
-      var sc=1-ad*0.05;
-      var rX=delta*-7;                // 3D depth tilt during the transition
-      el.style.transform="translateY("+tY+"%) translateZ("+(-ad*120)+"px) rotateX("+rX+"deg) scale("+sc+")";
+      var dir=(i%2===0)?1:-1;          // alternate slide direction
+      var tx=delta*dir*11;             // cinematic horizontal slide
+      var tY=Math.abs(delta)*-3;       // slight lift
+      var rY=delta*dir*9;              // 3D rotateY swing (crisp at rest)
+      var sc=1-ad*0.07;
+      el.style.transform="translate("+tx+"%,"+tY+"%) rotateY("+rY+"deg) scale("+sc+")";
       el.style.pointerEvents=(ad<0.5)?"auto":"none";
-      el.classList.toggle("show", ad<0.5);   // trigger staggered 3D reveal
+      el.classList.toggle("show", ad<0.5);   // trigger staggered reveal
     }
 
     /* --- tilt-reactive glass reflection on the tablet --- */
