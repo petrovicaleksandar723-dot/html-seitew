@@ -208,18 +208,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
    through, dimmed just enough to keep the content perfectly readable */
-.scene-bg-dark{ background:linear-gradient(180deg, rgba(6,7,10,.4) 0%, rgba(6,7,10,.58) 100%); overflow:hidden; }
-.scene-bg-cream{ background:linear-gradient(180deg, rgba(244,240,231,.8) 0%, rgba(228,221,205,.86) 100%); color:#16120c; overflow:hidden; }
-.scene-bg-split{ background:linear-gradient(180deg, rgba(6,8,12,.38) 0%, rgba(6,8,12,.6) 100%); overflow:hidden; }
-
-/* ---- Fullscreen background video layers -------------------------------- */
-.bgvids{ position:absolute; inset:0; z-index:0; overflow:hidden; }
-.bgvid{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
-  transition:opacity .9s ease; transform:translateZ(0); backface-visibility:hidden;
-  filter:contrast(1.08) saturate(1.14); image-rendering:auto; will-change:opacity; }
-.bgvid.on{ opacity:1; }
-.bgvid-scrim{ position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(125% 100% at 50% 44%, transparent 38%, rgba(0,0,0,.4) 100%); }
+.scene-bg-dark{ background:radial-gradient(130% 110% at 50% -8%, #15171d 0%, #0c0d11 52%, #070809 100%); overflow:hidden; }
+.scene-bg-cream{ background:radial-gradient(130% 110% at 50% 15%, #faf7f0 0%, var(--cream) 60%, #e7e0d0 100%); color:#16120c; overflow:hidden; }
+.scene-bg-split{ background:radial-gradient(130% 110% at 50% 112%, #13151b 0%, #08090c 60%); overflow:hidden; }
 
 /* shared typography inside the tablet */
 .eyebrow{ font-size:clamp(11px,1.7vmin,15px); letter-spacing:.34em; text-transform:uppercase;
@@ -622,16 +613,6 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     <div class="tablet" id="tablet">
       <div class="tablet-skin" id="tabletSkin"></div>
       <div class="screen" id="screen">
-
-        <!-- Fullscreen background videos (only the active one plays) -->
-        <div class="bgvids" id="bgvids">
-          <video class="bgvid" data-key="bg1" src="assets/videos/bg1.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="bg2" src="assets/videos/bg2.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="bg3" src="assets/videos/bg3.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="bg4" src="assets/videos/bg4.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="bg5" src="assets/videos/bg5.mp4" muted loop playsinline preload="auto"></video>
-          <div class="bgvid-scrim"></div>
-        </div>
 
         <!-- App status bar -->
         <div class="statusbar" id="statusbar">
@@ -1043,25 +1024,10 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
 
-  /* ---- fullscreen background videos: per-scene, only active plays -------- */
-  var bgvids=document.querySelectorAll(".bgvid");
-  var vidMap=["bg1","bg2","bg3","bg4","bg5","bg1","bg2","bg3","bg4","bg5","bg1"];
-  var curVidKey=null;
-  function setSceneVideo(idx){
-    var key=vidMap[idx]||"hero";
-    if(key===curVidKey) return;
-    curVidKey=key;
-    bgvids.forEach(function(v){
-      if(v.dataset.key===key){ v.classList.add("on"); var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
-      else{ v.classList.remove("on"); try{ v.pause(); }catch(e){} }
-    });
-  }
-  setSceneVideo(0);
-
   /* ---- live, interactive motion for the info boxes + hero phone ---------- */
   var moCards=[];
   document.querySelectorAll(".svc,.plan,.review,.ba .col,#heroPhone").forEach(function(el,i){
-    var o={el:el, ph:i*0.8, hov:0, tx:0, ty:0, ttx:0, tty:0,
+    var o={el:el, ph:i*0.8, hov:0, tx:0, ty:0, ttx:0, tty:0, scene:el.closest(".scene"),
            feat:el.classList.contains("feature"), phone:el.id==="heroPhone"};
     el.addEventListener("mouseenter",function(){o.hov=1;});
     el.addEventListener("mouseleave",function(){o.hov=0;o.ttx=0;o.tty=0;});
@@ -1078,6 +1044,7 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     var nowS=Date.now()*0.001;
     for(var ci=0;ci<moCards.length;ci++){
       var o=moCards[ci];
+      if(o.scene && !o.scene.classList.contains("show")) continue;   // skip offscreen scenes
       o.tx+=(o.ttx-o.tx)*0.12; o.ty+=(o.tty-o.ty)*0.12;
       var fy=reduceMotion?0:Math.sin(nowS*0.8+o.ph)*(o.phone?12:8);
       var up=o.hov || o.el.classList.contains("active");
@@ -1115,15 +1082,10 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
   if(!reduceMotion){
     window.addEventListener("mousemove",function(e){
       tmx=(e.clientX/window.innerWidth-.5)*2; tmy=(e.clientY/window.innerHeight-.5)*2;
-      // cursor-follow light
-      cursorLight.style.setProperty("--cx",e.clientX+"px");
-      cursorLight.style.setProperty("--cy",e.clientY+"px");
     },{passive:true});
     window.addEventListener("touchmove",function(e){
       if(e.touches&&e.touches[0]){
         tmx=(e.touches[0].clientX/window.innerWidth-.5)*2; tmy=(e.touches[0].clientY/window.innerHeight-.5)*2;
-        cursorLight.style.setProperty("--cx",e.touches[0].clientX+"px");
-        cursorLight.style.setProperty("--cy",e.touches[0].clientY+"px");
       }
     },{passive:true});
     // device orientation (gyro) parallax for immersive mobile tilt
@@ -1216,7 +1178,6 @@ body.has-cursor, body.has-cursor *{ cursor:none !important; }
     var active=Math.round(pos);
     if(active!==lastDot){
       for(var dd=0;dd<dotEls.length;dd++){ dotEls[dd].classList.toggle("on",dd===active); }
-      setSceneVideo(active);
       lastDot=active;
     }
 
