@@ -139,11 +139,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  /* large, heavy, premium floating device — centred by the flex rig,
-     settles straight at scale(1), fills most of the viewport */
-  width:min(96vw,1880px);
-  height:min(94vh,1100px);
-  border-radius:38px;
+  /* huge, near-fullscreen premium device — centred by the flex rig,
+     settles straight at scale(1) for razor-sharp text */
+  width:min(99vw,2200px);
+  height:min(97vh,1320px);
+  border-radius:34px;
   /* black anodized aluminium bezel with brushed metal sheen */
   background:
     linear-gradient(150deg,#41464e 0%,#1a1f26 16%,#0a0d12 50%,#1a1f26 84%,#4a4f57 100%);
@@ -826,7 +826,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:96vw; height:88vh; border-radius:30px; }
+  .tablet{ width:99vw; height:93vh; border-radius:26px; }
   .screen{ border-radius:18px; } .glass{ border-radius:18px; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
@@ -835,7 +835,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   .scene-dots{ right:12px; }
 }
 @media (max-width:480px){
-  .tablet{ width:96vw; height:82vh; }
+  .tablet{ width:99vw; height:90vh; }
   h1.lead{ font-size:34px; }
   .svc{ width:46%; }
 }
@@ -1574,11 +1574,11 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
     var introK = openK;
     // GROWS as you scroll in: starts smaller + angled (pushed back), then
     // grows large and settles perfectly straight at native scale(1)
-    var startScale = window.innerWidth<780 ? 0.84 : 0.80;
+    var startScale = window.innerWidth<780 ? 0.90 : 0.87;
     var scale = lerp(startScale,1.0,introK);
-    var tiltX = lerp(13, 0, introK);
-    var tiltY = lerp(-9, 0, introK);
-    var tiltZ = lerp(-5, 0, introK);
+    var tiltX = lerp(9, 0, introK);
+    var tiltY = lerp(-6, 0, introK);
+    var tiltZ = lerp(-3, 0, introK);
     // gentle parallax only — no vertical offset, stays centered
     var tx = mx*lerp(12,5,introK), ty = my*lerp(9,4,introK);
     if(introK<0.992){
