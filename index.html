@@ -127,9 +127,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  /* sized to float centered with safe margins on every viewport — never cut off */
-  width:min(94vw,1560px);
-  height:min(88vh,920px);
+  /* large, premium floating device — centered with a small safe margin */
+  width:min(96vw,1720px);
+  height:min(93vh,1010px);
   transform:translate(-50%,-50%);
   border-radius:34px;
   /* brushed dark metal bezel */
@@ -229,6 +229,31 @@ h1.lead .wd-i{ display:inline-block; opacity:0; transform:translateY(46px); tran
 .scene.show .svc-deck,.scene.show .branche-stage,
 .scene.show .ba,.scene.show .reviews,.scene.show .faq{ opacity:1; transform:none; transition-delay:.26s; }
 .scene.show .paybar,.scene.show .rev-trust,.scene.show .hero-stats{ opacity:1; transform:none; transition-delay:.5s; }
+
+/* ---- per-section cascade: children fade in one-by-one (container lifts) --- */
+.svc-deck .svc,.ba .col,.reviews .review,.faq .faq-item,.hero-stats .hstat,.pay-methods .pay{
+  opacity:0; transition:opacity .55s var(--ease); will-change:opacity; }
+.scene.show .svc-deck .svc,.scene.show .ba .col,.scene.show .reviews .review,
+.scene.show .faq .faq-item,.scene.show .hero-stats .hstat,.scene.show .pay-methods .pay{ opacity:1; }
+.scene.show .svc-deck .svc:nth-child(1){ transition-delay:.30s; }
+.scene.show .svc-deck .svc:nth-child(2){ transition-delay:.38s; }
+.scene.show .svc-deck .svc:nth-child(3){ transition-delay:.46s; }
+.scene.show .svc-deck .svc:nth-child(4){ transition-delay:.54s; }
+.scene.show .svc-deck .svc:nth-child(5){ transition-delay:.62s; }
+.scene.show .ba .col:nth-child(2){ transition-delay:.42s; }
+.scene.show .ba .col:nth-child(1){ transition-delay:.30s; }
+.scene.show .reviews .review:nth-child(1){ transition-delay:.30s; }
+.scene.show .reviews .review:nth-child(2){ transition-delay:.40s; }
+.scene.show .reviews .review:nth-child(3){ transition-delay:.50s; }
+.scene.show .reviews .review:nth-child(4){ transition-delay:.60s; }
+.scene.show .faq .faq-item:nth-child(1){ transition-delay:.30s; }
+.scene.show .faq .faq-item:nth-child(2){ transition-delay:.38s; }
+.scene.show .faq .faq-item:nth-child(3){ transition-delay:.46s; }
+.scene.show .faq .faq-item:nth-child(4){ transition-delay:.54s; }
+.scene.show .faq .faq-item:nth-child(5){ transition-delay:.62s; }
+.scene.show .hero-stats .hstat:nth-child(2){ transition-delay:.58s; }
+.scene.show .hero-stats .hstat:nth-child(3){ transition-delay:.66s; }
+.scene.show .pay-methods .pay:nth-child(n){ transition-delay:.55s; }
 /* scenes are now translucent scrims so the fullscreen background video shows
    through, dimmed just enough to keep the content perfectly readable */
 .scene-bg-dark{ background:radial-gradient(120% 100% at 50% 0%, rgba(8,9,13,.5) 0%, rgba(4,5,8,.74) 100%); overflow:hidden; }
@@ -746,7 +771,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:94vw; height:78vh; border-radius:26px; }
+  .tablet{ width:96vw; height:84vh; border-radius:26px; }
   .screen{ border-radius:18px; } .glass{ border-radius:18px; }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
@@ -755,7 +780,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   .scene-dots{ right:12px; }
 }
 @media (max-width:480px){
-  .tablet{ width:94vw; height:68vh; }
+  .tablet{ width:96vw; height:74vh; }
   h1.lead{ font-size:34px; }
   .svc{ width:46%; }
 }
@@ -834,7 +859,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
         <div class="statusbar" id="statusbar">
           <span>CleanLines</span>
           <span class="dots"><i class="on"></i><i></i><i></i></span>
-          <span>09:41</span>
+          <span id="clock">09:41</span>
         </div>
 
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
@@ -1212,6 +1237,18 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   window.addEventListener("load",function(){ setTimeout(hideLoader,650); });
   setTimeout(hideLoader,2600); // safety net
 
+  /* ---- live status-bar clock (real local time, ticks every second) ------- */
+  (function(){
+    var clockEl=document.getElementById("clock");
+    if(!clockEl) return;
+    function pad(n){ return n<10?"0"+n:""+n; }
+    function tick(){
+      var d=new Date();
+      clockEl.textContent=pad(d.getHours())+":"+pad(d.getMinutes());
+    }
+    tick(); setInterval(tick,1000);
+  })();
+
   /* ---- asset slots (AI-generated via Higgsfield; swap freely) ----------- */
   var ASSETS={
     // cinematic studio environment (background.jpg slot)
@@ -1452,9 +1489,9 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 
   /* ---- main render loop ------------------------------------------------- */
   function render(){
-    // eased scroll + parallax smoothing
-    curScroll += (scrollP-curScroll)*0.09;
-    mx += (tmx-mx)*0.07; my += (tmy-my)*0.07;
+    // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
+    curScroll += (scrollP-curScroll)*0.075;
+    mx += (tmx-mx)*0.055; my += (tmy-my)*0.055;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
     var openK = ss(clamp(pos,0,1));      // 0 = closed launcher, 1 = app fully open
