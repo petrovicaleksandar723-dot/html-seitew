@@ -206,46 +206,20 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .scene.show .svc-deck,.scene.show .tabs,.scene.show .branche-preview,
 .scene.show .ba,.scene.show .price-deck,.scene.show .reviews,.scene.show .faq{ opacity:1; transform:none; transition-delay:.26s; }
 .scene.show .paybar,.scene.show .rev-trust{ opacity:1; transform:none; transition-delay:.5s; }
-.scene-bg-dark{ background:radial-gradient(120% 100% at 50% 0%, #14202c 0%, #0a121a 55%, #060c12 100%); overflow:hidden; }
-.scene-bg-cream{ background:radial-gradient(120% 100% at 50% 20%, #fbf8f0 0%, var(--cream) 60%, #e9e2d2 100%); color:#1a1712; overflow:hidden; }
-.scene-bg-split{ background:radial-gradient(120% 100% at 50% 100%, #0c1622 0%, #070d13 60%); overflow:hidden; }
+/* scenes are now translucent scrims so the fullscreen background video shows
+   through, dimmed just enough to keep the content perfectly readable */
+.scene-bg-dark{ background:linear-gradient(180deg, rgba(5,9,14,.58) 0%, rgba(5,9,14,.72) 100%); overflow:hidden; }
+.scene-bg-cream{ background:linear-gradient(180deg, rgba(246,242,233,.85) 0%, rgba(231,224,209,.9) 100%); color:#16120c; overflow:hidden; }
+.scene-bg-split{ background:linear-gradient(180deg, rgba(7,12,19,.56) 0%, rgba(7,12,19,.76) 100%); overflow:hidden; }
 
-/* ---- ANIMATED SCENE BACKGROUNDS — no scene ever feels empty ------------- */
-.scene-bg-dark::before,.scene-bg-split::before{
-  content:""; position:absolute; inset:-28%; z-index:0; pointer-events:none; will-change:transform;
-  background:
-    radial-gradient(closest-side, rgba(255,106,0,.22), transparent 72%) 8% 16%/50% 50% no-repeat,
-    radial-gradient(closest-side, rgba(56,118,196,.18), transparent 72%) 90% 82%/54% 54% no-repeat,
-    radial-gradient(closest-side, rgba(201,255,74,.09), transparent 72%) 72% 10%/42% 42% no-repeat;
-  filter:blur(16px);
-  animation:auroraMove 22s ease-in-out infinite alternate;
-}
-.scene-bg-dark::after,.scene-bg-split::after{
-  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background-image:radial-gradient(rgba(255,255,255,.055) 1.2px, transparent 1.2px);
-  background-size:38px 38px;
-  -webkit-mask-image:radial-gradient(130% 100% at 50% 50%, #000 32%, transparent 78%);
-          mask-image:radial-gradient(130% 100% at 50% 50%, #000 32%, transparent 78%);
-  animation:gridDrift 26s linear infinite;
-}
-.scene-bg-cream::before{
-  content:""; position:absolute; inset:-28%; z-index:0; pointer-events:none; will-change:transform;
-  background:
-    radial-gradient(closest-side, rgba(255,140,40,.16), transparent 72%) 14% 18%/48% 48% no-repeat,
-    radial-gradient(closest-side, rgba(201,160,80,.15), transparent 72%) 84% 80%/52% 52% no-repeat;
-  filter:blur(20px);
-  animation:auroraMove 24s ease-in-out infinite alternate;
-}
-/* only the active scene animates (performance) */
-.scene-bg-dark::before,.scene-bg-dark::after,.scene-bg-split::before,
-.scene-bg-split::after,.scene-bg-cream::before{ animation-play-state:paused; }
-.scene.show::before,.scene.show::after{ animation-play-state:running; }
-@keyframes auroraMove{
-  0%{ transform:translate(0,0) scale(1) rotate(0deg); }
-  50%{ transform:translate(4%,-3%) scale(1.12) rotate(4deg); }
-  100%{ transform:translate(-3%,3%) scale(1.07) rotate(-3deg); }
-}
-@keyframes gridDrift{ from{ background-position:0 0; } to{ background-position:0 380px; } }
+/* ---- Fullscreen background video layers -------------------------------- */
+.bgvids{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+.bgvid{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
+  transition:opacity .9s ease; transform:translateZ(0); backface-visibility:hidden;
+  filter:brightness(.92) saturate(1.06); will-change:opacity; }
+.bgvid.on{ opacity:1; }
+.bgvid-scrim{ position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(125% 100% at 50% 44%, transparent 38%, rgba(0,0,0,.4) 100%); }
 
 /* shared typography inside the tablet */
 .eyebrow{ font-size:clamp(11px,1.7vmin,15px); letter-spacing:.34em; text-transform:uppercase;
@@ -273,17 +247,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .scene-bg-cream .btn-ghost{ color:#1a1712; border-color:rgba(0,0,0,.16); background:rgba(0,0,0,.04); }
 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
-#s0{ z-index:40; }
-.launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; will-change:transform,opacity; }
-.s0-reel{ width:clamp(300px,40vmin,580px); aspect-ratio:9/16; border-radius:30px; overflow:hidden; position:relative;
-  border:1px solid rgba(255,255,255,.16); margin-bottom:6px;
-  box-shadow:0 50px 110px rgba(0,0,0,.65), 0 0 80px rgba(255,106,0,.3); }
-.s0-reel video{ width:100%; height:100%; object-fit:cover; display:block; backface-visibility:hidden; transform:translateZ(0); }
-.s0-reel .reel-badge{ position:absolute; top:10px; left:10px; display:flex; align-items:center; gap:6px;
-  padding:4px 9px; border-radius:100px; font-size:10px; font-weight:800; letter-spacing:.12em;
-  background:rgba(0,0,0,.55); color:#fff; }
-.s0-reel .reel-badge b{ width:7px; height:7px; border-radius:50%; background:var(--orange);
-  box-shadow:0 0 10px var(--orange-glow); animation:iconPulse 1.6s var(--ease) infinite; }
+#s0{ z-index:40; background:radial-gradient(120% 100% at 50% 46%, rgba(4,7,12,.38) 0%, rgba(4,7,12,.74) 100%); }
+.launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:18px; will-change:transform,opacity; }
 .app-icon{
   width:clamp(86px,16vmin,150px); height:clamp(86px,16vmin,150px);
   border-radius:26%; position:relative;
@@ -319,10 +284,6 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .scene .svc-deck,.scene .tabs,.scene .branche-preview,.scene .ba,
 .scene .price-deck,.scene .paybar,.scene .reviews,.scene .rev-trust,
 .scene .faq,.launcher{ position:relative; z-index:2; }
-/* hero reel is the centerpiece -> large portrait */
-.engine-hero{ width:clamp(260px,27vmin,420px); height:clamp(380px,46vmin,640px); }
-/* hero: copy at top, reel in the centre, buttons at the bottom */
-#s1{ justify-content:space-between; padding-top:4%; padding-bottom:4%; }
 #s1 .hero-copy{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
 #s1 .hero-copy .subline{ margin-left:auto; margin-right:auto; }
 .engine .tile{
@@ -606,6 +567,15 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
       <div class="tablet-skin" id="tabletSkin"></div>
       <div class="screen" id="screen">
 
+        <!-- Fullscreen background videos (only the active one plays) -->
+        <div class="bgvids" id="bgvids">
+          <video class="bgvid" data-key="hero"  src="assets/videos/hero.mp4"   muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="auto"></video>
+          <div class="bgvid-scrim"></div>
+        </div>
+
         <!-- App status bar -->
         <div class="statusbar" id="statusbar">
           <span>CleanLines</span>
@@ -616,10 +586,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
         <section class="scene" id="s0">
           <div class="launcher" id="launcher">
-            <div class="s0-reel">
-              <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
-              <span class="reel-badge"><b></b>LIVE</span>
-            </div>
+            <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
             <h2>CleanLines Studio</h2>
             <p class="sub">Creative Content Hub</p>
             <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
@@ -628,10 +595,6 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
         <!-- ===== SCENE 1 — HERO ===== -->
         <section class="scene scene-bg-dark" id="s1">
-          <div class="engine engine-hero" aria-hidden="true">
-            <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><video class="reel" src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video><span class="reel-badge"><b></b>LIVE</span></div>
-          </div>
           <div class="minis" aria-hidden="true">
             <div class="mini m1"><i>▶</i>Reels</div>
             <div class="mini m2"><i>✎</i>Captions</div>
@@ -690,10 +653,6 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
         <!-- ===== SCENE 4 — EDITORIAL MOMENT ===== -->
         <section class="scene scene-bg-cream" id="s4">
-          <div class="engine" aria-hidden="true">
-            <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
-          </div>
           <div class="eyebrow dark">Kein Stress mehr</div>
           <h1 class="lead" style="font-size:clamp(40px,10vmin,180px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
           <p class="subline">Du bekommst jeden Monat klare Ideen, fertige Texte und Beiträge, die zu deinem Betrieb passen.</p>
@@ -864,10 +823,6 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
         <!-- ===== SCENE 10 — FINAL CTA ===== -->
         <section class="scene scene-bg-dark" id="s10">
-          <div class="engine" aria-hidden="true">
-            <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
-          </div>
           <div class="eyebrow">Los geht's</div>
           <h1 class="lead">Dein Betrieb braucht keine Agentur.<br>Er braucht fertigen Content.</h1>
           <div class="btns">
@@ -904,7 +859,6 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 
   /* ---- elements --------------------------------------------------------- */
   var rig=document.getElementById("rig");
-  var engines=document.querySelectorAll(".engine"); // one per featured scene
   var launcher=document.getElementById("launcher");
   var s0=document.getElementById("s0");
   var statusbar=document.getElementById("statusbar");
@@ -996,6 +950,21 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   document.querySelectorAll("[data-goto]").forEach(function(el){
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
+
+  /* ---- fullscreen background videos: per-scene, only active plays -------- */
+  var bgvids=document.querySelectorAll(".bgvid");
+  var vidMap=["hero","hero","reel1","reel2","hero","reel1","reel2","reel1","reel2","hero","final"];
+  var curVidKey=null;
+  function setSceneVideo(idx){
+    var key=vidMap[idx]||"hero";
+    if(key===curVidKey) return;
+    curVidKey=key;
+    bgvids.forEach(function(v){
+      if(v.dataset.key===key){ v.classList.add("on"); var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
+      else{ v.classList.remove("on"); try{ v.pause(); }catch(e){} }
+    });
+  }
+  setSceneVideo(0);
 
   /* ---- mouse / touch / gyro parallax ------------------------------------ */
   var tmx=0,tmy=0,mx=0,my=0;
@@ -1098,18 +1067,12 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
     /* --- tilt-reactive glass reflection on the tablet --- */
     if(glass){ glass.style.transform="translate("+(mx*14)+"px,"+(my*10)+"px)"; }
 
-    /* --- CENTRAL ENGINE: gentle 2D float + sway (flicker-free; cascades from
-           its parent scene's opacity, so it appears on hero/editorial/final). */
-    var floatY=reduceMotion?0:Math.sin(Date.now()*0.0011)*12;
-    var eRot=reduceMotion?0:(mx*3 + Math.sin(Date.now()*0.0008)*2.2);
-    var eScale=0.96+ss(openK)*0.12;
-    var eTransform="translate(-50%,calc(-50% + "+floatY+"px)) rotate("+eRot+"deg) scale("+eScale+")";
-    for(var e=0;e<engines.length;e++){ engines[e].style.transform=eTransform; }
 
     /* --- active scene dot --- */
     var active=Math.round(pos);
     if(active!==lastDot){
       for(var dd=0;dd<dotEls.length;dd++){ dotEls[dd].classList.toggle("on",dd===active); }
+      setSceneVideo(active);
       lastDot=active;
     }
 
