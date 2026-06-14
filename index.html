@@ -72,9 +72,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bg{
   position:absolute; inset:-6%;
   background:
-    radial-gradient(120% 90% at 78% 18%, rgba(255,106,0,.30) 0%, rgba(255,106,0,.06) 26%, transparent 55%),
-    radial-gradient(90% 70% at 20% 88%, rgba(40,70,110,.30) 0%, transparent 60%),
-    radial-gradient(140% 120% at 50% 50%, #0c1620 0%, #071014 45%, #03070b 100%);
+    radial-gradient(95% 75% at 84% 10%, rgba(255,106,0,.15) 0%, transparent 42%),
+    radial-gradient(85% 65% at 16% 94%, rgba(40,70,110,.16) 0%, transparent 55%),
+    radial-gradient(62% 55% at 50% 50%, rgba(0,0,0,.6) 0%, transparent 72%),
+    radial-gradient(140% 120% at 50% 50%, #0a121b 0%, #060d14 45%, #02060b 100%);
   transform:translateZ(0);
   will-change:transform;
 }
@@ -82,11 +83,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .bg-photo{
   position:absolute; inset:-6%;
   background-size:cover; background-position:center;
-  opacity:0; filter:saturate(1.05) brightness(.7);
+  opacity:0; filter:saturate(.95) brightness(.42) contrast(1.05);
   transition:opacity .8s ease;
   will-change:transform;
 }
-.bg-photo.ready{ opacity:.62; }
+.bg-photo.ready{ opacity:.32; }
 /* cursor-follow light that washes over the environment BEHIND the tablet
    (no z-index -> sits behind the device via DOM order, lights the "room") */
 .cursor-light{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen;
@@ -101,7 +102,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   mix-blend-mode:multiply;
 }
 /* soft floating bokeh / light leaks */
-.orb{ position:absolute; border-radius:50%; filter:blur(60px); opacity:.5; pointer-events:none; will-change:transform; }
+.orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.3; pointer-events:none; will-change:transform; }
 .particles{ position:absolute; inset:0; pointer-events:none; }
 .dust{ position:absolute; width:3px; height:3px; border-radius:50%;
   background:rgba(255,200,150,.7); box-shadow:0 0 8px rgba(255,160,90,.8); will-change:transform,opacity; }
@@ -231,9 +232,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .eyebrow{ font-size:clamp(10px,1.5vmin,13px); letter-spacing:.32em; text-transform:uppercase;
   color:var(--orange); font-weight:700; margin-bottom:14px; }
 .eyebrow.dark{ color:#b06a2c; }
-h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; letter-spacing:-.02em; }
-.subline{ max-width:62ch; font-size:clamp(12px,2.1vmin,18px); line-height:1.5; color:#c4ccd6; margin-top:18px; }
-.scene-bg-cream .subline{ color:#5a5345; }
+h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; letter-spacing:-.025em; color:#fff;
+  text-shadow:0 2px 30px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.5); }
+.scene-bg-cream h1.lead{ color:#16120c; text-shadow:none; }
+.subline{ max-width:58ch; font-size:clamp(12.5px,2.05vmin,17px); line-height:1.55; color:#d4dbe5; margin-top:16px;
+  font-weight:450; text-shadow:0 1px 12px rgba(0,0,0,.5); }
+.scene-bg-cream .subline{ color:#5a5345; text-shadow:none; }
 
 /* premium buttons */
 .btns{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:26px; }
@@ -263,11 +267,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 }
 @keyframes iconPulse{ 0%,100%{box-shadow:0 18px 50px var(--orange-glow),0 2px 0 rgba(255,255,255,.5) inset,0 -10px 24px rgba(120,30,0,.5) inset;}
   50%{box-shadow:0 22px 70px var(--orange-glow),0 2px 0 rgba(255,255,255,.6) inset,0 -10px 24px rgba(120,30,0,.5) inset;} }
-.app-icon .mark{ width:54%; height:54%; }
-.app-icon .mark span{ display:block; height:13%; margin:11% 0; border-radius:4px; background:rgba(255,255,255,.95);
-  box-shadow:0 1px 2px rgba(120,30,0,.4); }
-.app-icon .mark span:nth-child(2){ width:70%; }
-.app-icon .mark span:nth-child(3){ width:88%; }
+.app-icon .cl{ width:58%; height:58%; color:#fff; filter:drop-shadow(0 1px 2px rgba(120,30,0,.45)); }
 .launcher h2{ font-size:clamp(20px,3.4vmin,32px); font-weight:800; letter-spacing:-.01em; }
 .launcher .sub{ color:var(--gray); font-size:clamp(12px,1.9vmin,15px); }
 .scroll-hint{ margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:8px;
@@ -305,31 +305,29 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .engine .t1{ transform:translateZ(60px) translateY(-6%); }
 .engine .t2{ transform:translateZ(20px) rotate(-5deg) scale(.96); opacity:.85; }
 .engine .t3{ transform:translateZ(-30px) rotate(6deg) scale(.9); opacity:.6; }
-.engine .tile .row{ position:absolute; left:14%; right:14%; height:8%; border-radius:6px;
-  background:rgba(255,255,255,.14); }
-.engine .tile .row.a{ top:20%; width:50%; background:var(--orange); box-shadow:0 0 18px var(--orange-glow); }
-.engine .tile .row.b{ top:38%; }
-.engine .tile .row.c{ top:52%; width:64%; }
-.engine .tile .row.d{ top:66%; width:40%; }
-.engine .tile .play{ position:absolute; bottom:12%; left:14%; width:30px; height:30px; border-radius:50%;
-  background:var(--orange); box-shadow:0 0 20px var(--orange-glow); }
-.engine .tile .play::after{ content:""; position:absolute; top:50%; left:54%; transform:translate(-50%,-50%);
-  border-left:9px solid #1a0c00; border-top:6px solid transparent; border-bottom:6px solid transparent; }
+.engine .t1{ overflow:hidden; }
+.engine .tile .reel{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.engine .t1::after{ content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35)); }
+.engine .reel-badge{ position:absolute; top:10px; left:10px; z-index:2; display:flex; align-items:center; gap:6px;
+  padding:4px 9px; border-radius:100px; font-size:10px; font-weight:800; letter-spacing:.12em;
+  background:rgba(0,0,0,.55); color:#fff; }
+.engine .reel-badge b{ width:7px; height:7px; border-radius:50%; background:var(--orange);
+  box-shadow:0 0 10px var(--orange-glow); animation:iconPulse 1.6s var(--ease) infinite; }
 
 /* floating mini cards orbiting the hero */
 .minis{ position:absolute; inset:0; z-index:9; pointer-events:none; }
 .mini{
-  position:absolute; padding:9px 15px; border-radius:13px; font-size:clamp(10px,1.5vmin,13px); font-weight:700;
-  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); color:#fff;
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  box-shadow:0 14px 30px rgba(0,0,0,.4); white-space:nowrap; will-change:transform;
+  position:absolute; padding:8px 13px; border-radius:12px; font-size:clamp(10px,1.45vmin,12.5px); font-weight:700;
+  background:rgba(11,15,23,.78); border:1px solid rgba(255,255,255,.13); color:#eef2f7;
+  box-shadow:0 10px 26px rgba(0,0,0,.5); white-space:nowrap; will-change:transform;
 }
 .mini i{ color:var(--orange); font-style:normal; margin-right:6px; }
-.mini.m1{ top:18%; left:9%;  animation:float1 6s var(--ease) infinite; }
-.mini.m2{ top:26%; right:8%; animation:float2 7s var(--ease) infinite; }
-.mini.m3{ top:62%; left:7%;  animation:float2 6.5s var(--ease) infinite; }
-.mini.m4{ top:70%; right:10%;animation:float1 7.5s var(--ease) infinite; }
-.mini.m5{ top:44%; right:4%; animation:float1 5.5s var(--ease) infinite; }
+.mini.m1{ top:11%;  left:5%;  animation:float1 6s var(--ease) infinite; }
+.mini.m2{ top:11%;  right:5%; animation:float2 7s var(--ease) infinite; }
+.mini.m3{ bottom:11%; left:5%; animation:float2 6.5s var(--ease) infinite; }
+.mini.m4{ bottom:11%; right:5%; animation:float1 7.5s var(--ease) infinite; }
+.mini.m5{ display:none; }
 @keyframes float1{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
 @keyframes float2{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(10px);} }
 
@@ -424,19 +422,28 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 .scene-dots b.on{ background:var(--orange); box-shadow:0 0 14px var(--orange-glow); transform:scale(1.35); }
 .brandbar{ position:fixed; top:20px; left:24px; z-index:30; display:flex; align-items:center; gap:10px;
   font-weight:800; letter-spacing:.02em; font-size:15px; mix-blend-mode:difference; }
-.brandbar .b-dot{ width:20px; height:20px; border-radius:6px; background:linear-gradient(135deg,var(--orange),#ff8c2e);
-  box-shadow:0 0 16px var(--orange-glow); }
+.brandbar .bl{ width:24px; height:24px; color:#fff; }
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
+
+/* ---- Showreel player (inside the tablet) ------------------------------- */
+.showreel{ position:absolute; inset:0; z-index:70; display:flex; align-items:center; justify-content:center;
+  background:rgba(2,4,8,.94); opacity:0; visibility:hidden; transition:opacity .45s var(--ease), visibility .45s;
+  border-radius:26px; }
+.showreel.open{ opacity:1; visibility:visible; }
+.showreel video{ max-width:92%; max-height:84%; border-radius:14px; box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px var(--orange-glow); }
+.sr-close{ position:absolute; top:14px; right:16px; width:38px; height:38px; border-radius:50%;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; font-size:16px; }
+.sr-close:hover{ background:var(--orange); color:#1a0c00; }
 
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; background:#03070b;
   transition:opacity .9s var(--ease), visibility .9s; }
 .loader.done{ opacity:0; visibility:hidden; }
-.loader .mark2{ width:64px; height:64px; border-radius:18px; position:relative;
-  background:linear-gradient(150deg,#ff7e1f,var(--orange)); box-shadow:0 0 50px var(--orange-glow);
-  animation:iconPulse 2.4s var(--ease) infinite; }
+.loader .logo-svg{ width:78px; height:78px; color:#ecd49a;
+  filter:drop-shadow(0 0 26px rgba(236,212,154,.45)); animation:logoGlow 2.6s var(--ease) infinite; }
+@keyframes logoGlow{ 0%,100%{opacity:.78; transform:scale(.98);} 50%{opacity:1; transform:scale(1);} }
 .loader .name{ font-weight:800; letter-spacing:.18em; text-transform:uppercase; font-size:13px; color:#fff; }
 .loader .bar{ width:180px; height:3px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden; }
 .loader .bar i{ display:block; height:100%; width:40%; border-radius:3px;
@@ -486,10 +493,21 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
 </head>
 <body>
 
+<!-- CleanLines logo (vector, defined once, reused via <use>) -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <symbol id="cl-mark" viewBox="0 0 100 100">
+    <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="50,7 87,28.5 87,71.5 50,93 13,71.5 13,28.5"/>
+      <polygon points="50,21 75,35.5 75,64.5 50,79 25,64.5 25,35.5" opacity=".82"/>
+      <polygon points="50,35 63,42.5 63,57.5 50,65 37,57.5 37,42.5" opacity=".6"/>
+    </g>
+  </symbol>
+</svg>
+
 <!-- Premium intro loader -->
 <div class="loader" id="loader">
-  <div class="mark2"></div>
-  <div class="name">CleanLines Studio</div>
+  <svg class="logo-svg"><use href="#cl-mark"/></svg>
+  <div class="name">CleanLines&nbsp;&nbsp;Studio</div>
   <div class="bar"><i></i></div>
 </div>
 
@@ -499,7 +517,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   <div class="grade"></div>
   <div class="photo-screen">
     <div class="ps-inner">
-      <div class="app-icon"><div class="mark"><span></span><span></span><span></span></div></div>
+      <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
       <h2 class="ps-title">CleanLines Studio</h2>
       <p class="ps-sub">Creative Content Hub</p>
       <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
@@ -542,7 +560,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
         <section class="scene" id="s0">
           <div class="launcher" id="launcher">
-            <div class="app-icon"><div class="mark"><span></span><span></span><span></span></div></div>
+            <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
             <h2>CleanLines Studio</h2>
             <p class="sub">Creative Content Hub</p>
             <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
@@ -553,7 +571,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
         <section class="scene scene-bg-dark" id="s1">
           <div class="engine" aria-hidden="true">
             <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><div class="row a"></div><div class="row b"></div><div class="row c"></div><div class="row d"></div><div class="play"></div></div>
+            <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
           </div>
           <div class="minis" aria-hidden="true">
             <div class="mini m1"><i>▶</i>Reels</div>
@@ -567,6 +585,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
           <p class="subline">Du musst nicht jeden Tag überlegen, was du posten sollst. Wir liefern dir jeden Monat fertige Ideen, Captions und Beiträge.</p>
           <div class="btns">
             <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Preview sichern</a>
+            <button class="btn btn-ghost" data-showreel>▶ Showreel</button>
             <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
           </div>
         </section>
@@ -613,7 +632,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
         <section class="scene scene-bg-cream" id="s4">
           <div class="engine" aria-hidden="true">
             <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><div class="row a"></div><div class="row b"></div><div class="row c"></div><div class="row d"></div><div class="play"></div></div>
+            <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
           </div>
           <div class="eyebrow dark">Kein Stress mehr</div>
           <h1 class="lead" style="font-size:clamp(28px,7.4vmin,80px)">Content-Stress?<br>Nicht mehr dein Problem.</h1>
@@ -666,7 +685,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
         <section class="scene scene-bg-dark" id="s7">
           <div class="engine" aria-hidden="true">
             <div class="tile t3"></div><div class="tile t2"></div>
-            <div class="tile t1"><div class="row a"></div><div class="row b"></div><div class="row c"></div><div class="row d"></div><div class="play"></div></div>
+            <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
           </div>
           <div class="eyebrow">Los geht's</div>
           <h1 class="lead">Dein Betrieb braucht keine Agentur.<br>Er braucht fertigen Content.</h1>
@@ -676,6 +695,12 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
           </div>
         </section>
 
+        <!-- Showreel player (opens inside the tablet) -->
+        <div class="showreel" id="showreel">
+          <video id="showreelVideo" src="assets/videos/showreel.mp4" playsinline preload="none" controls></video>
+          <button class="sr-close" id="srClose" aria-label="Schließen">✕</button>
+        </div>
+
         <!-- Glass overlay (always on top, never blocks clicks) -->
         <div class="glass"></div>
       </div><!-- /screen -->
@@ -683,7 +708,7 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   </div><!-- /rig -->
 
   <!-- LAYER 7: fixed UI -->
-  <div class="brandbar"><span class="b-dot"></span>CleanLines Studio</div>
+  <div class="brandbar"><svg class="bl"><use href="#cl-mark"/></svg>CleanLines Studio</div>
   <div class="scene-dots" id="dots"></div>
 </div><!-- /stage -->
 <div class="progress" id="progressBar"></div>
@@ -803,6 +828,13 @@ h1.lead{ font-size:clamp(26px,6.6vmin,72px); line-height:.98; font-weight:800; l
   document.querySelectorAll("[data-goto]").forEach(function(el){
     el.addEventListener("click",function(){ scrollToScene(parseInt(el.dataset.goto,10)); });
   });
+
+  /* ---- showreel player -------------------------------------------------- */
+  var showreel=document.getElementById("showreel"), srVideo=document.getElementById("showreelVideo");
+  function openShowreel(){ showreel.classList.add("open"); try{ srVideo.play(); }catch(e){} }
+  function closeShowreel(){ showreel.classList.remove("open"); srVideo.pause(); }
+  document.querySelectorAll("[data-showreel]").forEach(function(el){ el.addEventListener("click",openShowreel); });
+  document.getElementById("srClose").addEventListener("click",closeShowreel);
 
   /* ---- mouse / touch / gyro parallax ------------------------------------ */
   var tmx=0,tmy=0,mx=0,my=0;
