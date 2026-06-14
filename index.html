@@ -239,7 +239,7 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
 #s0{ z-index:40; }
 .launcher{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; will-change:transform,opacity; }
-.s0-reel{ width:clamp(250px,33vmin,460px); aspect-ratio:9/16; border-radius:28px; overflow:hidden; position:relative;
+.s0-reel{ width:clamp(300px,40vmin,580px); aspect-ratio:9/16; border-radius:30px; overflow:hidden; position:relative;
   border:1px solid rgba(255,255,255,.16); margin-bottom:6px;
   box-shadow:0 50px 110px rgba(0,0,0,.65), 0 0 80px rgba(255,106,0,.3); }
 .s0-reel video{ width:100%; height:100%; object-fit:cover; display:block; }
@@ -345,6 +345,9 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   background:rgba(255,106,0,.16); color:var(--orange); font-size:24px; margin-bottom:18px; }
 .svc h3{ font-size:clamp(16px,2.2vmin,23px); font-weight:800; margin-bottom:9px; }
 .svc p{ font-size:clamp(12px,1.6vmin,15px); color:#aeb7c4; line-height:1.45; }
+.svc-meta{ display:inline-block; margin-top:14px; padding:6px 12px; border-radius:100px;
+  font-size:clamp(10px,1.35vmin,12.5px); font-weight:700; letter-spacing:.02em;
+  background:rgba(255,106,0,.12); color:var(--orange-soft); border:1px solid rgba(255,106,0,.28); }
 
 /* ---- SCENE 3: BRANCHEN (industry tabs) ---------------------------------- */
 .tabs{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:22px 0; max-width:96%; }
@@ -390,8 +393,27 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
 .ba .after li::before{ content:"✓"; position:absolute; left:0; color:var(--lime); font-weight:800; }
 
 /* ---- SCENE 6: PRICING --------------------------------------------------- */
-.price-deck{ display:flex; gap:clamp(8px,1.6vmin,18px); align-items:center; justify-content:center;
-  margin-top:24px; max-width:96%; flex-wrap:nowrap; }
+.price-deck{ display:flex; gap:clamp(10px,1.8vmin,22px); align-items:stretch; justify-content:center;
+  margin-top:24px; max-width:97%; flex-wrap:nowrap; }
+.plan{ display:flex; flex-direction:column; position:relative; }
+.plan .pfeat{ list-style:none; text-align:left; margin:6px 0 20px; display:flex; flex-direction:column; gap:9px; flex:1; }
+.plan .pfeat li{ font-size:clamp(12px,1.55vmin,15px); color:#cfd6e0; padding-left:26px; position:relative; line-height:1.35; }
+.plan .pfeat li::before{ content:"✓"; position:absolute; left:0; color:var(--orange); font-weight:800; }
+.plan.feature .pfeat li::before{ color:var(--lime); }
+.plan .btn{ margin-top:auto; }
+.plan-badge{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  padding:5px 14px; border-radius:100px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  background:linear-gradient(135deg,var(--orange),#ff8c2e); color:#1a0c00; box-shadow:0 8px 20px var(--orange-glow); }
+/* secure payment bar */
+.paybar{ margin-top:26px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+.pay-note{ font-size:clamp(11px,1.5vmin,14px); color:#aeb7c4; }
+.pay-methods{ display:flex; flex-wrap:wrap; gap:9px; justify-content:center; }
+.pay{ padding:7px 14px; border-radius:9px; font-size:clamp(11px,1.4vmin,13px); font-weight:800; letter-spacing:.04em;
+  background:#fff; color:#0b1018; box-shadow:0 6px 16px rgba(0,0,0,.4); }
+/* one-off service price tag */
+.price-tag{ font-size:clamp(17px,2.3vmin,24px); font-weight:800; color:var(--orange); margin:2px 0 10px; }
+.svc-deck.oneoff{ max-width:1100px; }
+.svc-deck.oneoff .svc{ width:clamp(170px,21vmin,250px); }
 .plan{ width:clamp(160px,23vmin,320px); padding:clamp(26px,3.2vmin,48px) clamp(18px,2.4vmin,34px);
   border-radius:24px; text-align:center;
   background:linear-gradient(165deg, #1a2230, #0b111a);
@@ -563,11 +585,11 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
           <div class="eyebrow">Leistungen</div>
           <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Alles, was du zum Posten brauchst.</h1>
           <div class="svc-deck" id="svcDeck">
-            <div class="svc active"><div class="ic">▶</div><h3>Reels-Skripte</h3><p>Fertige Hook-to-CTA Skripte zum Abdrehen.</p></div>
-            <div class="svc"><div class="ic">✎</div><h3>Instagram Captions</h3><p>Texte, die zu deiner Marke sprechen.</p></div>
-            <div class="svc"><div class="ic">◆</div><h3>Google Beiträge</h3><p>Lokale Sichtbarkeit, automatisch befüllt.</p></div>
-            <div class="svc"><div class="ic">★</div><h3>Bewertungsantworten</h3><p>Professionelle Antworten auf jedes Review.</p></div>
-            <div class="svc"><div class="ic">▦</div><h3>Monatsplan</h3><p>Ein klarer Plan – kein Rätselraten mehr.</p></div>
+            <div class="svc active"><div class="ic">▶</div><h3>Reels-Skripte</h3><p>Fertige Hook-to-CTA Skripte zum Abdrehen.</p><span class="svc-meta">Hook · Story · CTA</span></div>
+            <div class="svc"><div class="ic">✎</div><h3>Instagram Captions</h3><p>Texte, die zu deiner Marke sprechen.</p><span class="svc-meta">inkl. Hashtags &amp; Emojis</span></div>
+            <div class="svc"><div class="ic">◆</div><h3>Google Beiträge</h3><p>Lokale Sichtbarkeit, automatisch befüllt.</p><span class="svc-meta">Lokal SEO-optimiert</span></div>
+            <div class="svc"><div class="ic">★</div><h3>Bewertungsantworten</h3><p>Professionelle Antworten auf jedes Review.</p><span class="svc-meta">Höflich &amp; markengerecht</span></div>
+            <div class="svc"><div class="ic">▦</div><h3>Monatsplan</h3><p>Ein klarer Plan – kein Rätselraten mehr.</p><span class="svc-meta">30 Tage durchgeplant</span></div>
           </div>
         </section>
 
@@ -623,34 +645,98 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
           </div>
         </section>
 
-        <!-- ===== SCENE 6 — PRICING ===== -->
+        <!-- ===== SCENE 6 — PRICING (monthly) ===== -->
         <section class="scene scene-bg-dark" id="s6">
-          <div class="eyebrow">Pakete</div>
-          <h1 class="lead" style="font-size:clamp(28px,6.6vmin,92px)">Wähle dein Tempo.</h1>
+          <div class="eyebrow">Monatliche Pakete</div>
+          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Wähle dein Tempo.</h1>
           <div class="price-deck">
             <div class="plan">
               <div class="pname">Starter</div>
-              <div class="pprice">99€<small>/mtl.</small></div>
+              <div class="pprice">199€<small>/&nbsp;Monat</small></div>
               <div class="pdesc">Der saubere Einstieg in regelmäßigen Content.</div>
-              <a class="btn btn-ghost" href="mailto:cleanlinesstudio@example.com">Auswählen</a>
+              <ul class="pfeat">
+                <li>8 Reels-Skripte / Monat</li>
+                <li>12 fertige Captions</li>
+                <li>4 Google-Beiträge</li>
+                <li>Fertiger Monatsplan</li>
+              </ul>
+              <a class="btn btn-ghost" href="mailto:cleanlinesstudio@example.com?subject=Paket%20Starter">Starter buchen</a>
             </div>
             <div class="plan feature">
+              <div class="plan-badge">Beliebt</div>
               <div class="pname">Wachstum</div>
-              <div class="pprice">199€<small>/mtl.</small></div>
+              <div class="pprice">449€<small>/&nbsp;Monat</small></div>
               <div class="pdesc">Mehr Reichweite, mehr fertige Beiträge im Monat.</div>
-              <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Auswählen</a>
+              <ul class="pfeat">
+                <li>16 Reels-Skripte / Monat</li>
+                <li>30 fertige Captions</li>
+                <li>8 Google-Beiträge</li>
+                <li>Bewertungsantworten</li>
+                <li>Monatsplan + Strategie-Call</li>
+              </ul>
+              <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Paket%20Wachstum">Wachstum buchen</a>
             </div>
             <div class="plan">
               <div class="pname">Premium</div>
-              <div class="pprice">349€<small>/mtl.</small></div>
+              <div class="pprice">799€<small>/&nbsp;Monat</small></div>
               <div class="pdesc">Voller Content-Motor inkl. allem Drumherum.</div>
-              <a class="btn btn-ghost" href="mailto:cleanlinesstudio@example.com">Auswählen</a>
+              <ul class="pfeat">
+                <li>Unbegrenzte Reels-Skripte</li>
+                <li>60+ Captions / Monat</li>
+                <li>Tägliche Google-Beiträge</li>
+                <li>Persönlicher Content-Manager</li>
+                <li>Priorisierter Support</li>
+              </ul>
+              <a class="btn btn-ghost" href="mailto:cleanlinesstudio@example.com?subject=Paket%20Premium">Premium buchen</a>
+            </div>
+          </div>
+          <div class="paybar">
+            <span class="pay-note">🔒 Sichere Zahlung · monatlich kündbar · keine Einrichtungsgebühr</span>
+            <div class="pay-methods">
+              <span class="pay">VISA</span><span class="pay">Mastercard</span><span class="pay">PayPal</span>
+              <span class="pay">Klarna</span><span class="pay">SEPA</span><span class="pay">Apple&nbsp;Pay</span>
             </div>
           </div>
         </section>
 
-        <!-- ===== SCENE 7 — FINAL CTA ===== -->
+        <!-- ===== SCENE 7 — EINZELAUFTRÄGE (one-off services) ===== -->
         <section class="scene scene-bg-dark" id="s7">
+          <div class="eyebrow">Einzelaufträge</div>
+          <h1 class="lead" style="font-size:clamp(26px,5.6vmin,76px)">Mehr als nur Content.</h1>
+          <p class="subline">Einmalige Projekte – professionell umgesetzt, zum fairen Festpreis.</p>
+          <div class="svc-deck oneoff">
+            <div class="svc">
+              <div class="ic">🌐</div>
+              <h3>Website-Design</h3>
+              <div class="price-tag">ab 1.490€</div>
+              <p>Individuelles, mobil-optimiertes Design inkl. SEO-Basics, Kontaktformular & Google-Anbindung.</p>
+            </div>
+            <div class="svc">
+              <div class="ic">✦</div>
+              <h3>Logo &amp; Branding</h3>
+              <div class="price-tag">ab 590€</div>
+              <p>Logo, Farbwelt &amp; Schriften – ein stimmiger, professioneller Markenauftritt.</p>
+            </div>
+            <div class="svc">
+              <div class="ic">▶</div>
+              <h3>Reel-Produktion</h3>
+              <div class="price-tag">ab 290€ / Reel</div>
+              <p>Professionell geschnittenes Reel mit Hook, Untertiteln &amp; CTA – fertig zum Posten.</p>
+            </div>
+            <div class="svc">
+              <div class="ic">◆</div>
+              <h3>Social-Media-Setup</h3>
+              <div class="price-tag">ab 390€</div>
+              <p>Profil-Optimierung, Highlights, Bio &amp; Content-Strategie für deinen starken Start.</p>
+            </div>
+          </div>
+          <div class="btns">
+            <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Einzelauftrag%20Anfrage">Projekt anfragen</a>
+          </div>
+        </section>
+
+        <!-- ===== SCENE 8 — FINAL CTA ===== -->
+        <section class="scene scene-bg-dark" id="s8">
           <div class="engine" aria-hidden="true">
             <div class="tile t3"></div><div class="tile t2"></div>
             <div class="tile t1"><video class="reel" src="assets/videos/reel-1.mp4" autoplay muted loop playsinline preload="metadata"></video><span class="reel-badge"><b></b>LIVE</span></div>
@@ -686,8 +772,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   var gauss=function(x,c,w){var d=x-c;return Math.exp(-(d*d)/(2*w*w));}; // bell curve
   var reduceMotion=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-  var SCENES=8;            // launcher(0) + scenes 1..7
-  var LAST=SCENES-1;       // 7
+  var SCENES=9;            // launcher(0) + scenes 1..8
+  var LAST=SCENES-1;       // 8
 
   /* ---- elements --------------------------------------------------------- */
   var rig=document.getElementById("rig");
@@ -821,8 +907,8 @@ h1.lead{ font-size:clamp(34px,7.4vmin,108px); line-height:.92; font-weight:800; 
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing
-    curScroll += (scrollP-curScroll)*0.12;
-    mx += (tmx-mx)*0.06; my += (tmy-my)*0.06;
+    curScroll += (scrollP-curScroll)*0.09;
+    mx += (tmx-mx)*0.07; my += (tmy-my)*0.07;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
     var openK = ss(clamp(pos,0,1));      // 0 = closed launcher, 1 = app fully open
