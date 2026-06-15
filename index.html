@@ -522,7 +522,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .btn:hover::before{ left:150%; }
 /* symbols / icons animate on hover */
 .svc .ic{ transition:transform .45s var(--ease), background .3s, box-shadow .3s, color .3s; }
-.svc:hover .ic{ transform:rotate(-8deg) scale(1.14); background:var(--orange); color:#1a120a; box-shadow:0 0 26px var(--orange-glow); }
+.svc:hover .ic{ transform:rotate(-8deg) scale(1.16); box-shadow:0 0 30px var(--icg,var(--orange-glow)); }
 .tab{ transition:transform .3s var(--ease), background .35s var(--ease), color .35s, border-color .35s, box-shadow .35s; }
 .tab:hover{ transform:translateY(-3px); }
 .svc h3,.review p{ transition:transform .4s var(--ease); }
@@ -530,18 +530,36 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .hstat b{ transition:transform .4s var(--ease), color .3s; }
 .hstat:hover b{ transform:scale(1.12); color:var(--orange); }
 .svc .ic{ width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-  background:rgba(201,162,90,.16); color:var(--orange); font-size:24px; margin-bottom:18px; position:relative; isolation:isolate;
+  background:var(--icbg,rgba(201,162,90,.16)); color:var(--ic,var(--orange)); font-size:24px; margin-bottom:18px;
+  position:relative; isolation:isolate; --icg:rgba(201,162,90,.5);
   animation:icGlow 3.6s var(--ease) infinite; }
 .svc:nth-child(2) .ic{ animation-delay:.4s; } .svc:nth-child(3) .ic{ animation-delay:.8s; }
 .svc:nth-child(4) .ic{ animation-delay:1.2s; } .svc:nth-child(5) .ic{ animation-delay:1.6s; }
-/* glow pulse + inner symbol shimmer (no transform -> hover rotate still works) */
-@keyframes icGlow{ 0%,100%{ box-shadow:0 0 0 rgba(201,162,90,0); background:rgba(201,162,90,.16); }
-  50%{ box-shadow:0 0 22px rgba(201,162,90,.45); background:rgba(201,162,90,.24); } }
+/* glow pulse keyed to each icon's own colour (no background change -> colours persist) */
+@keyframes icGlow{ 0%,100%{ box-shadow:0 0 0 rgba(0,0,0,0); }
+  50%{ box-shadow:0 0 22px var(--icg,rgba(201,162,90,.5)); } }
 .svc .ic::after{ content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none;
-  background:conic-gradient(from 0deg, transparent, rgba(232,210,160,.5), transparent 40%);
+  background:conic-gradient(from 0deg, transparent, var(--ic,rgba(232,210,160,.5)), transparent 40%);
   opacity:0; transition:opacity .4s var(--ease); animation:icSpin 5s linear infinite; }
 .svc:hover .ic::after{ opacity:.9; }
 @keyframes icSpin{ to{ transform:rotate(360deg); } }
+/* premium boxes: a soft light travels along the top edge of every card */
+.svc::before,.review::before,.branche-content::before,.plan-card::before,.ba .col::before{
+  background-size:220% 100%; animation:edgeShine 6s linear infinite; }
+@keyframes edgeShine{ 0%{ background-position:220% 0; } 100%{ background-position:-220% 0; } }
+.ba .col::before{ content:""; position:absolute; top:0; left:14%; right:14%; height:1px; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(232,210,160,.55),transparent); }
+/* varied, multi-colour icons — Leistungen */
+#s2 .svc:nth-child(1) .ic{ --ic:#ecd49a; --icbg:rgba(201,162,90,.2);  --icg:rgba(201,162,90,.55); }
+#s2 .svc:nth-child(2) .ic{ --ic:#8fbaff; --icbg:rgba(90,140,235,.22); --icg:rgba(90,140,235,.55); }
+#s2 .svc:nth-child(3) .ic{ --ic:#7ee0b0; --icbg:rgba(70,205,150,.22); --icg:rgba(70,205,150,.5); }
+#s2 .svc:nth-child(4) .ic{ --ic:#ffc46b; --icbg:rgba(255,170,80,.22); --icg:rgba(255,170,80,.5); }
+#s2 .svc:nth-child(5) .ic{ --ic:#c4a3ff; --icbg:rgba(170,130,245,.22);--icg:rgba(170,130,245,.5); }
+/* varied, multi-colour icons — Einzelaufträge (all different) */
+#s7 .svc:nth-child(1) .ic{ --ic:#7fc4ff; --icbg:rgba(70,150,240,.22); --icg:rgba(70,150,240,.55); }
+#s7 .svc:nth-child(2) .ic{ --ic:#ecd49a; --icbg:rgba(201,162,90,.22); --icg:rgba(201,162,90,.55); }
+#s7 .svc:nth-child(3) .ic{ --ic:#ff96b0; --icbg:rgba(240,90,140,.22);  --icg:rgba(240,90,140,.5); }
+#s7 .svc:nth-child(4) .ic{ --ic:#7ee0c0; --icbg:rgba(60,205,170,.22);  --icg:rgba(60,205,170,.5); }
 .svc h3{ font-size:clamp(22px,2.1vw,30px); font-weight:800; margin-bottom:11px; line-height:1.08; letter-spacing:-.03em;
   overflow-wrap:anywhere; word-break:normal; hyphens:auto; max-width:100%; }
 .svc p{ font-size:clamp(16px,1.35vw,19px); color:#dde4ef; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
@@ -802,10 +820,18 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .faq-item summary{ list-style:none; cursor:pointer; padding:clamp(16px,2vmin,24px) 0; display:flex; align-items:center; justify-content:space-between;
   font-weight:700; font-size:clamp(15px,1.7vw,20px); color:#fff; }
 .faq-item summary::-webkit-details-marker{ display:none; }
-.faq-item summary i{ width:22px; height:22px; position:relative; flex:none; margin-left:18px; }
-.faq-item summary i::before,.faq-item summary i::after{ content:""; position:absolute; background:var(--orange); border-radius:2px; transition:transform .3s var(--ease); }
-.faq-item summary i::before{ top:10px; left:3px; width:16px; height:2px; }
-.faq-item summary i::after{ left:10px; top:3px; width:2px; height:16px; }
+.faq-item summary i{ width:30px; height:30px; position:relative; flex:none; margin-left:18px; border-radius:50%;
+  background:rgba(201,162,90,.14); border:1px solid rgba(201,162,90,.32);
+  transition:transform .45s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease), border-color .35s; }
+.faq-item summary i::before,.faq-item summary i::after{ content:""; position:absolute; background:var(--orange); border-radius:2px;
+  transition:transform .45s var(--ease), background .35s; }
+.faq-item summary i::before{ top:14px; left:8px; width:14px; height:2px; }   /* horizontal bar */
+.faq-item summary i::after{ left:14px; top:8px; width:2px; height:14px; }    /* vertical bar */
+.faq-item summary:hover i{ background:rgba(201,162,90,.24); box-shadow:0 0 16px rgba(201,162,90,.4); }
+/* open: spin the badge + collapse the vertical bar -> animated +/- morph */
+.faq-item[open] summary i{ transform:rotate(180deg); background:linear-gradient(135deg,var(--orange),#e8d2a0);
+  border-color:transparent; box-shadow:0 8px 22px var(--orange-glow); }
+.faq-item[open] summary i::before,.faq-item[open] summary i::after{ background:#1a1206; }
 .faq-item[open] summary i::after{ transform:scaleY(0); }
 .faq-item p{ padding:0 0 clamp(16px,2vmin,24px); font-size:clamp(14.5px,1.6vw,18px); line-height:1.6; color:#d2dae6;
   animation:faqIn .4s var(--ease); }
