@@ -1570,7 +1570,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var dust=[];
   var isTouch=window.matchMedia("(pointer:coarse)").matches || window.innerWidth<820;
   if(!reduceMotion){
-    var DUSTN=isTouch?14:46;
+    var DUSTN=isTouch?12:32;
     for(var p=0;p<DUSTN;p++){
       var d=document.createElement("span"); d.className="dust";
       var s=Math.random()*2.4+1;
@@ -1791,14 +1791,12 @@ body.cursor-on .cursor-trail{ opacity:1; }
   }
 
   /* ---- scroll progress -------------------------------------------------- */
-  var scrollP=0, curScroll=0, lastDot=-1;
-  function onScroll(){
-    var max=track.offsetHeight - window.innerHeight;
-    scrollP=clamp(window.scrollY/(max||1),0,1);
-  }
+  var scrollP=0, curScroll=0, lastDot=-1, maxScroll=1;
+  function onScroll(){ scrollP=clamp(window.scrollY/(maxScroll||1),0,1); }   // no layout read per scroll
+  function measureScroll(){ maxScroll=track.offsetHeight - window.innerHeight; onScroll(); }
   window.addEventListener("scroll",onScroll,{passive:true});
-  window.addEventListener("resize",onScroll);
-  onScroll();
+  window.addEventListener("resize",measureScroll);
+  measureScroll();
 
   /* ---- special animated mouse cursor (trailing ring + instant dot) ------- */
   (function(){
@@ -1857,13 +1855,23 @@ body.cursor-on .cursor-trail{ opacity:1; }
   })();
 
   /* ---- main render loop ------------------------------------------------- */
+  var lastS=-1, lastMX=99, lastMY=99;
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    // lighter, more responsive glide (higher factor = less drag/lag)
     curScroll += (scrollP-curScroll)*0.11;
     mx += (tmx-mx)*0.06; my += (tmy-my)*0.06;
 
-    var pos = curScroll*LAST;            // continuous scene position 0..7
+    var pos = curScroll*LAST;            // continuous scene position 0..10
+    var inIntro = pos < 1.06;            // keep the cinematic intro sway alive while there
+    // DIRTY-CHECK: only repaint the heavy stage (3D rig, scene crossfades, orbs)
+    // when the scroll or pointer actually moved -> buttery + stable when idle.
+    var changed = inIntro
+      || Math.abs(curScroll-lastS)>0.00012
+      || Math.abs(mx-lastMX)>0.0005
+      || Math.abs(my-lastMY)>0.0005;
+
+    if(changed){
+    lastS=curScroll; lastMX=mx; lastMY=my;
     var openK = ss(clamp(pos,0,1));      // 0 = closed launcher, 1 = app fully open
 
     progressBar.style.width=(curScroll*100)+"%";
@@ -1960,14 +1968,15 @@ body.cursor-on .cursor-trail{ opacity:1; }
       if(active===6) maybeCountPrices();
       lastDot=active;
     }
+    } /* end dirty-checked heavy stage */
 
-    /* --- drifting dust --- */
+    /* --- drifting dust (ambient; has its own light cost) --- */
     for(var u=0;u<dust.length;u++){
       var o=dust[u]; o.ph+=o.sp; var dy=Math.sin(o.ph)*6, dx=Math.cos(o.ph*0.7)*6;
       o.el.style.transform="translate("+(dx+mx*10)+"px,"+(dy+my*8)+"px)";
     }
 
-    /* --- live info-box + phone motion --- */
+    /* --- live info-box + phone motion (idle-cheap, self-gated) --- */
     renderCards();
 
     requestAnimationFrame(render);
