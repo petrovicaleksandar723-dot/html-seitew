@@ -354,6 +354,27 @@ h1.lead .wd-i{ display:inline-block; opacity:0; transform:translateY(46px); tran
 /* shared typography inside the tablet */
 .eyebrow{ font-size:clamp(12px,1.7vmin,16px); letter-spacing:.3em; text-transform:uppercase;
   color:var(--orange); font-weight:700; margin-bottom:clamp(12px,1.6vmin,20px); }
+/* ============================================================================
+   SENSATIONAL POLISH — cinematic film grain, kinetic gold accents, light sweeps
+   ========================================================================== */
+/* kinetic gold shimmer on every eyebrow label */
+.eyebrow{ background:linear-gradient(100deg, var(--orange) 30%, #fff4d6 50%, var(--orange) 70%);
+  background-size:220% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  color:transparent; animation:goldShimmer 5.5s linear infinite; }
+.scene-bg-cream .eyebrow{ background:linear-gradient(100deg,#8a6d2e 30%,#caa75a 50%,#8a6d2e 70%); background-size:220% auto;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+@keyframes goldShimmer{ to{ background-position:-220% center; } }
+/* premium light sweep across primary CTAs */
+.btn-primary,.plan-cta{ position:relative; overflow:hidden; }
+.btn-primary::after,.plan-cta::after{ content:""; position:absolute; top:0; left:-160%; width:60%; height:100%;
+  transform:skewX(-20deg); pointer-events:none; background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  animation:ctaSweep 4.6s ease-in-out infinite; }
+@keyframes ctaSweep{ 0%,16%{ left:-160%; } 42%,100%{ left:180%; } }
+/* cinematic film grain — fixed, GPU-cheap (only translates a tiled noise) */
+.grain{ position:fixed; inset:-120%; z-index:131; pointer-events:none; opacity:.05; mix-blend-mode:overlay; will-change:transform;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift .5s steps(2) infinite; }
+@keyframes grainShift{ 0%{transform:translate(0,0)} 25%{transform:translate(-6%,4%)} 50%{transform:translate(5%,-5%)} 75%{transform:translate(-4%,-3%)} 100%{transform:translate(4%,5%)} }
 .eyebrow.dark{ color:#b06a2c; }
 /* modern display typeface on headlines, labels, numbers & nav */
 h1.lead,.eyebrow,.launcher h2,.pname,.price,.per,.price-tag,.hstat b,.rev-trust,
@@ -1041,6 +1062,9 @@ body.cursor-on .cursor-trail{ opacity:1; }
   .app-icon,.mini,.scroll-hint .mouse::after,.engine{ animation:none !important; }
   .scene-bg-dark::before,.scene-bg-dark::after,.scene-bg-split::before,
   .scene-bg-split::after,.scene-bg-cream::before{ animation:none !important; }
+  .grain,.eyebrow,.btn-primary::after,.plan-cta::after{ animation:none !important; }
+  .grain{ display:none; }
+  .eyebrow{ -webkit-text-fill-color:var(--orange); color:var(--orange); }
   *{ scroll-behavior:auto !important; }
 }
 
@@ -1051,7 +1075,8 @@ body.cursor-on .cursor-trail{ opacity:1; }
    reveals + the active video are kept.
    ========================================================================== */
 @media (max-width:820px), (pointer:coarse){
-  .rays,.ray-light,.ed-shine,.screen::after,.glass::before{ display:none !important; }
+  .rays,.ray-light,.ed-shine,.screen::after,.glass::before,.grain{ display:none !important; }
+  .btn-primary::after,.plan-cta::after{ animation:none !important; }
   .orb{ animation:none !important; filter:blur(80px); }
   .svc .ic,.plan-ic,.plan.feature .plan-card,.bv-metric,.plan-badge,
   .tab.active,.btn-primary,.review .stars,.app-icon,
@@ -1472,6 +1497,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   </div><!-- /rig -->
 
   <!-- LAYER 7: fixed UI -->
+  <div class="grain" aria-hidden="true"></div>
   <div class="ray-light" id="rayLight" aria-hidden="true"></div>
   <div class="brandbar"><svg class="bl"><use href="#cl-mark"/></svg><span>CLEANLINES&nbsp;STUDIOS</span></div>
   <div class="scene-dots" id="dots"></div>
