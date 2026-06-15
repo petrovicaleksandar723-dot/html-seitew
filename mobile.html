@@ -159,8 +159,9 @@ header{
 /* ---------- showreel ---------- */
 .reel-row{ display:flex; gap:14px; overflow-x:auto; padding:26px 38vw 14px; margin:0 -20px; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .reel-row::-webkit-scrollbar{ display:none; }
-.reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; opacity:.42; transition:opacity .45s var(--ease); }
-.reel-card.active{ opacity:1; }
+.reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; transition:opacity .45s var(--ease); }
+body.pin .reel-card{ opacity:.42; }
+body.pin .reel-card.active{ opacity:1; }
 .reel-card .phone{ width:200px; margin:0; padding:6px; display:block; cursor:pointer; transition:transform .45s var(--ease); }
 .reel-card.active .phone{ transform:scale(1.07); box-shadow:0 30px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(201,162,90,.25), 0 0 50px rgba(201,162,90,.18); }
 .reel-card .phone:active{ transform:scale(.97); }
@@ -170,6 +171,48 @@ header{
   display:flex; align-items:center; justify-content:center; font-size:18px; color:#1a1206; padding-left:3px; z-index:4;
   background:linear-gradient(135deg,var(--gold),var(--gold-soft)); box-shadow:0 8px 22px rgba(0,0,0,.45); opacity:0; transition:opacity .35s, transform .35s var(--ease); }
 .reel-card.active .reel-tap{ opacity:.95; }
+
+/* ============================================================================
+   PINNED HORIZONTAL SECTIONS — scroll down and the content travels SIDEWAYS,
+   then releases to the next section. (transform-only, GPU-cheap)
+   ========================================================================== */
+.hsec{ position:relative; }
+.hsec-pin{ display:flex; flex-direction:column; }
+.hsec-head{ flex:0 0 auto; padding:18px 20px 10px; }
+.hsec-head .lead{ font-size:clamp(22px,6.6vw,32px); }
+.hsec-viewport{ display:flex; align-items:center; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory; scrollbar-width:none; }
+.hsec-viewport::-webkit-scrollbar{ display:none; }
+.hsec-track{ display:flex; gap:16px; padding:0 20px; align-items:center; }
+.hsec-foot{ flex:0 0 auto; padding:10px 20px calc(16px + env(safe-area-inset-bottom)); }
+.hsec-prog{ text-align:center; color:var(--gray); font-size:12px; font-weight:600; letter-spacing:.04em; }
+.bcard,.hsec-track .reel-card,.hsec-track .plan{ scroll-snap-align:center; }
+
+/* JS-enabled PIN mode: sticky stage + transform-driven track */
+body.pin .hsec-pin{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; }
+body.pin .hsec-viewport{ flex:1 1 auto; min-height:0; overflow:hidden; scroll-snap-type:none; }
+body.pin .hsec-track{ will-change:transform; }
+
+/* branche cards (self-contained: image + idea + caption + cta) */
+.bcard{ flex:0 0 84vw; max-width:440px; border-radius:20px; overflow:hidden; border:1px solid var(--line);
+  background:linear-gradient(165deg,var(--card),var(--bg2)); transition:opacity .45s var(--ease), transform .45s var(--ease); }
+body.pin .bcard{ opacity:.5; transform:scale(.96); }
+.bcard.active{ border-color:rgba(201,162,90,.3); }
+body.pin .bcard.active{ opacity:1; transform:scale(1); }
+.bcard-media{ position:relative; aspect-ratio:16/9; overflow:hidden; }
+.bcard-media img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); transition:transform 1.1s var(--ease); }
+.bcard.active .bcard-media img{ transform:scale(1.09); }
+.bcard-media .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.85), transparent 60%); }
+.bcard-media .metric{ position:absolute; left:14px; bottom:12px; font-size:12.5px; font-weight:700; color:#fff; padding:7px 13px; border-radius:999px; background:rgba(0,0,0,.5); border:1px solid rgba(201,162,90,.35); }
+.bcard-body{ padding:16px 18px 18px; }
+.bcard-body .label{ font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.bcard-body .reel{ font-family:var(--display); font-weight:700; font-size:17px; line-height:1.25; }
+.bcard-body .txt{ color:var(--gray); font-size:13.5px; margin-top:3px; }
+.bcard-body .blk{ margin-top:12px; }
+.bcard-body .cta{ margin-top:14px; font-weight:700; color:var(--gold-soft); font-size:14px; }
+.bcard-body .cta::before{ content:"→ "; color:var(--gold); }
+
+/* tab/dot active states reused; tabs centred in head */
+.hsec .tabs{ margin-top:14px; }
 
 /* ---------- fullscreen reel viewer ---------- */
 .reel-viewer{ position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center; padding:18px;
@@ -450,48 +493,45 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   </div>
 </section>
 
-<!-- SHOWREEL -->
-<section class="cv" style="padding-bottom:40px">
-  <div class="wrap">
-    <div class="eyebrow reveal">Showreel</div>
-    <h1 class="lead reveal d1">So sieht dein Content aus.</h1>
-    <p class="sub reveal d2">Echte Beispiele aus unseren Reel-Produktionen – fertig für Instagram, TikTok &amp; Co.</p>
+<!-- SHOWREEL (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
+      <div class="eyebrow reveal">Showreel</div>
+      <h1 class="lead reveal d1">So sieht dein Content aus.</h1>
+    </div>
+    <div class="hsec-viewport">
+      <div class="hsec-track" id="reelRow">
+        <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-1.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-1.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Reel-Produktion</div></div>
+        <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-2.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-2.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Hook &amp; Schnitt</div></div>
+        <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-3.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-3.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Story-Reel</div></div>
+        <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/reel-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Promo-Clip</div></div>
+        <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Brand-Film</div></div>
+      </div>
+    </div>
+    <div class="hsec-foot"><div class="hsec-prog">runterscrollen ⇒ seitlich · tippen zum Abspielen</div></div>
   </div>
-  <div class="reel-row reveal d2" id="reelRow">
-    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-1.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-1.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Reel-Produktion</div></div>
-    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-2.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-2.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Hook &amp; Schnitt</div></div>
-    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-3.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-3.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Story-Reel</div></div>
-    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/reel-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Promo-Clip</div></div>
-    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Brand-Film</div></div>
-  </div>
-  <p class="reel-hint reveal" style="text-align:center;color:var(--gray);font-size:12.5px;margin-top:6px">Tippen zum Abspielen · wischen für mehr ›</p>
 </section>
 
-<!-- BRANCHEN -->
-<section class="cv">
-  <div class="wrap">
-    <div class="eyebrow reveal">Branchen</div>
-    <h1 class="lead reveal d1">Content, der zu deinem Betrieb passt.</h1>
-    <div class="tabs reveal d2" id="tabs">
-      <button class="tab active" data-b="0">Friseure</button>
-      <button class="tab" data-b="1">Restaurants</button>
-      <button class="tab" data-b="2">Handwerker</button>
-      <button class="tab" data-b="3">Kosmetikstudios</button>
-      <button class="tab" data-b="4">Fahrschulen</button>
-      <button class="tab" data-b="5">Fitnessstudios</button>
+<!-- BRANCHEN (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
+      <div class="eyebrow reveal">Branchen</div>
+      <h1 class="lead reveal d1">Content, der zu deinem Betrieb passt.</h1>
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-b="0">Friseure</button>
+        <button class="tab" data-b="1">Restaurants</button>
+        <button class="tab" data-b="2">Handwerker</button>
+        <button class="tab" data-b="3">Kosmetikstudios</button>
+        <button class="tab" data-b="4">Fahrschulen</button>
+        <button class="tab" data-b="5">Fitnessstudios</button>
+      </div>
     </div>
-    <div class="bvisual-wrap reveal d2">
-      <div class="bgallery" id="bGallery"></div>
-      <div class="swipe-tag" id="bSwipeTag">‹ wischen ›</div>
-      <div class="bdots" id="bDots"></div>
+    <div class="hsec-viewport">
+      <div class="hsec-track" id="bGallery"></div>
     </div>
-    <div class="bcontent reveal d2">
-      <div class="label">Reel-Idee</div>
-      <div class="reel" id="bReel"></div>
-      <div class="block"><div class="label">Caption</div><div class="txt" id="bCap"></div></div>
-      <div class="block"><div class="label">Google-Beitrag</div><div class="txt" id="bGoogle"></div></div>
-      <div class="cta" id="bCta"></div>
-    </div>
+    <div class="hsec-foot"><div class="bdots" id="bDots"></div></div>
   </div>
 </section>
 
@@ -638,7 +678,6 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   <div class="wrap">
     <div class="eyebrow reveal">Bewertungen</div>
     <h1 class="lead reveal d1">Betriebe, die nicht mehr planlos posten.</h1>
-    <div class="banner reveal d2"><img loading="lazy" data-par="38" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222127_c2eb04f0-ec8c-448d-8c0e-22dde767f339.png" alt=""><div class="banner-ov"></div><span class="banner-cap">★★★★★ · 4,9 / 5</span></div>
     <div class="reviews">
       <div class="review reveal"><div class="stars">★★★★★</div><p>„Ich musste vorher jeden Post selbst überlegen. Jetzt bekomme ich jeden Monat einen klaren Plan und kann einfach arbeiten.“</p><div class="who"><span class="ava">S</span>Sarah M. · Friseursalon</div></div>
       <div class="review reveal d1"><div class="stars">★★★★★</div><p>„Unsere Seite wirkt viel aktiver und professioneller. Man merkt sofort, dass endlich eine Linie drin ist.“</p><div class="who"><span class="ava">M</span>Marco L. · Restaurant</div></div>
@@ -800,51 +839,89 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
      google:"Probetraining gratis – komm vorbei und finde deinen Einstieg, der wirklich passt.",
      cta:"Jetzt Probetraining sichern", metric:"Mehr Motivation"}
   ];
-  var bReel=document.getElementById("bReel"), bCap=document.getElementById("bCap"),
-      bGoogle=document.getElementById("bGoogle"), bCta=document.getElementById("bCta");
   var tabsWrap=document.getElementById("tabs");
   var tabs=document.querySelectorAll("#tabs .tab");
   var gallery=document.getElementById("bGallery");
   var dotsWrap=document.getElementById("bDots");
-  var swipeTag=document.getElementById("bSwipeTag");
-  var slides=[], dots=[];
+  var bCards=[], bdots=[];
 
-  // build the swipeable example-image gallery from the industry data
+  // build self-contained branche cards (image + idea + caption + CTA)
   BR.forEach(function(d,i){
-    var s=document.createElement("div"); s.className="bslide";
-    var img=document.createElement("img"); img.loading="lazy"; img.alt=""; img.src=d.img;
-    var sc=document.createElement("div"); sc.className="scrim";
-    var m=document.createElement("div"); m.className="metric"; m.textContent=d.metric;
-    s.appendChild(img); s.appendChild(sc); s.appendChild(m);
-    gallery.appendChild(s); slides.push(s);
-    var dot=document.createElement("span"); dotsWrap.appendChild(dot); dots.push(dot);
+    var c=document.createElement("div"); c.className="bcard";
+    c.innerHTML =
+      '<div class="bcard-media"><img loading="lazy" alt="" src="'+d.img+'"><div class="scrim"></div><div class="metric">'+d.metric+'</div></div>'+
+      '<div class="bcard-body"><div class="label">Reel-Idee</div><div class="reel">'+d.reel+'</div>'+
+      '<div class="blk"><div class="label">Caption</div><div class="txt">'+d.cap+'</div></div>'+
+      '<div class="cta">'+d.cta+'</div></div>';
+    gallery.appendChild(c); bCards.push(c);
+    var dot=document.createElement("span"); dotsWrap.appendChild(dot); bdots.push(dot);
   });
-
-  var current=-1;
-  function setBranche(i, doScroll){
-    var d=BR[i]; if(!d) return;
-    current=i;
-    bReel.textContent=d.reel; bCap.textContent=d.cap; bGoogle.textContent=d.google; bCta.textContent=d.cta;
+  function setBrancheActive(i){
     tabs.forEach(function(x){ x.classList.toggle("active", (+x.dataset.b)===i); });
-    dots.forEach(function(x,k){ x.classList.toggle("on", k===i); });
-    slides.forEach(function(x,k){ x.classList.toggle("active", k===i); });
-    var at=tabs[i];                                        // keep the active tab centred
-    if(at && tabsWrap.scrollTo){ tabsWrap.scrollTo({ left: at.offsetLeft - tabsWrap.clientWidth/2 + at.clientWidth/2, behavior:"smooth" }); }
-    if(doScroll && slides[i] && slides[i].scrollIntoView){ slides[i].scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" }); }
+    bdots.forEach(function(x,k){ x.classList.toggle("on", k===i); });
+    bCards.forEach(function(x,k){ x.classList.toggle("active", k===i); });
+    var at=tabs[i]; if(at && tabsWrap.scrollTo){ tabsWrap.scrollTo({ left: at.offsetLeft - tabsWrap.clientWidth/2 + at.clientWidth/2, behavior:"smooth" }); }
   }
+  setBrancheActive(0);
 
-  // swiping the gallery updates everything (centred slide = active industry)
-  if("IntersectionObserver" in window){
-    var galObs=new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ if(en.isIntersecting){ var idx=slides.indexOf(en.target); if(idx>-1 && idx!==current) setBranche(idx,false); } });
-    }, { root:gallery, rootMargin:"0px -45% 0px -45%", threshold:0 });
-    slides.forEach(function(s){ galObs.observe(s); });
+  /* ============================================================================
+     PINNED HORIZONTAL ENGINE — scrolling down drives sideways travel through a
+     section, then releases to the next section. (one transform per section/frame)
+     ========================================================================== */
+  var hSecs = [];
+  function layoutHsec(){
+    for(var i=0;i<hSecs.length;i++){
+      var o=hSecs[i];
+      o.dist = Math.max(0, o.track.scrollWidth - o.vpt.clientWidth);
+      o.sec.style.height = (window.innerHeight + o.dist) + "px";
+    }
   }
-  // tapping a tab scrolls the gallery to that example
-  tabs.forEach(function(t){ t.addEventListener("click", function(){ setBranche(+t.dataset.b, true); }); });
-  // hide the "swipe" hint once the user has swiped once
-  if(gallery && swipeTag){ gallery.addEventListener("scroll", function(){ swipeTag.style.opacity="0"; }, { passive:true, once:true }); }
-  setBranche(0,false);
+  function updateHsec(){
+    var vh = window.innerHeight;
+    for(var i=0;i<hSecs.length;i++){
+      var o=hSecs[i];
+      var rect = o.sec.getBoundingClientRect();
+      var range = o.sec.offsetHeight - vh;
+      var p = range>0 ? Math.min(1, Math.max(0, (-rect.top)/range)) : 0;
+      o.track.style.transform = "translate3d(" + (-(p*o.dist)).toFixed(1) + "px,0,0)";
+      if(o.onActive && rect.top < vh && rect.bottom > 0){
+        var centerX = o.vpt.clientWidth/2, best=0, bd=1e9;
+        for(var k=0;k<o.items.length;k++){
+          var it=o.items[k], ic = it.offsetLeft + it.offsetWidth/2 - (p*o.dist);
+          var d=Math.abs(ic-centerX); if(d<bd){ bd=d; best=k; }
+        }
+        if(best!==o.active){ o.active=best; o.onActive(best); }
+      }
+    }
+  }
+  (function(){
+    if(reduce){ return; }                                    // reduced-motion: stay native horizontal scroll
+    document.body.classList.add("pin");
+    document.querySelectorAll("[data-hsec]").forEach(function(sec){
+      var vpt=sec.querySelector(".hsec-viewport"), track=sec.querySelector(".hsec-track");
+      if(!track) return;
+      var onActive=null;
+      if(track.id==="reelRow"){ onActive=function(i){ for(var k=0;k<track.children.length;k++) track.children[k].classList.toggle("active", k===i); }; }
+      else if(track.id==="bGallery"){ onActive=function(i){ setBrancheActive(i); }; }
+      hSecs.push({ sec:sec, vpt:vpt, track:track, items:track.children, dist:0, active:-1, onActive:onActive });
+    });
+    layoutHsec();
+    window.addEventListener("resize", function(){ layoutHsec(); updateHsec(); });
+    window.addEventListener("load", function(){ layoutHsec(); updateHsec(); });
+  })();
+  // branche tabs jump: scroll the page so the chosen industry card centres
+  var brancheSec=null; for(var hi=0;hi<hSecs.length;hi++){ if(hSecs[hi].track.id==="bGallery") brancheSec=hSecs[hi]; }
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){
+      var i=+t.dataset.b;
+      if(brancheSec && brancheSec.dist>0){
+        var o=brancheSec, it=o.items[i];
+        var pTarget=Math.min(1, Math.max(0, (it.offsetLeft + it.offsetWidth/2 - o.vpt.clientWidth/2)/o.dist));
+        var absTop=o.sec.getBoundingClientRect().top + (window.scrollY||window.pageYOffset);
+        window.scrollTo({ top: absTop + pTarget*(o.sec.offsetHeight - window.innerHeight), behavior:"smooth" });
+      } else { setBrancheActive(i); var card=gallery.children[i]; if(card) card.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}); }
+    });
+  });
 
   /* ---- scroll progress bar + sticky dock + parallax (1 rAF/frame) ---- */
   var progress = document.getElementById("progress");
@@ -871,19 +948,10 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
         pe.style.transform = "translate3d(0," + (prog * (parseFloat(pe.dataset.par)||0) * -1).toFixed(1) + "px,0)";
       }
     }
+    updateHsec();                                            // drive the pinned horizontal sections
   }
   window.addEventListener("scroll", function(){ if(!pTicking){ pTicking = true; requestAnimationFrame(uiFrame); } }, { passive:true });
   uiFrame();
-
-  /* ---- showreel: centred card becomes "active" (scale up) ---- */
-  var reelRow = document.getElementById("reelRow");
-  var reelCards = document.querySelectorAll(".reel-card");
-  if(reelRow && "IntersectionObserver" in window){
-    var co = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ en.target.classList.toggle("active", en.isIntersecting); });
-    }, { root:reelRow, rootMargin:"0px -42% 0px -42%", threshold:0 });
-    reelCards.forEach(function(c){ co.observe(c); });
-  } else if(reelCards[0]){ reelCards[0].classList.add("active"); }
 
   /* ---- pricing carousel: dots + centred-card highlight ---- */
   var plansEl = document.getElementById("plans");
