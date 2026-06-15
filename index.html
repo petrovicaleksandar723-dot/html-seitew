@@ -530,7 +530,18 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .hstat b{ transition:transform .4s var(--ease), color .3s; }
 .hstat:hover b{ transform:scale(1.12); color:var(--orange); }
 .svc .ic{ width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-  background:rgba(201,162,90,.16); color:var(--orange); font-size:24px; margin-bottom:18px; }
+  background:rgba(201,162,90,.16); color:var(--orange); font-size:24px; margin-bottom:18px; position:relative; isolation:isolate;
+  animation:icGlow 3.6s var(--ease) infinite; }
+.svc:nth-child(2) .ic{ animation-delay:.4s; } .svc:nth-child(3) .ic{ animation-delay:.8s; }
+.svc:nth-child(4) .ic{ animation-delay:1.2s; } .svc:nth-child(5) .ic{ animation-delay:1.6s; }
+/* glow pulse + inner symbol shimmer (no transform -> hover rotate still works) */
+@keyframes icGlow{ 0%,100%{ box-shadow:0 0 0 rgba(201,162,90,0); background:rgba(201,162,90,.16); }
+  50%{ box-shadow:0 0 22px rgba(201,162,90,.45); background:rgba(201,162,90,.24); } }
+.svc .ic::after{ content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent, rgba(232,210,160,.5), transparent 40%);
+  opacity:0; transition:opacity .4s var(--ease); animation:icSpin 5s linear infinite; }
+.svc:hover .ic::after{ opacity:.9; }
+@keyframes icSpin{ to{ transform:rotate(360deg); } }
 .svc h3{ font-size:clamp(22px,2.1vw,30px); font-weight:800; margin-bottom:11px; line-height:1.08; letter-spacing:-.03em;
   overflow-wrap:anywhere; word-break:normal; hyphens:auto; max-width:100%; }
 .svc p{ font-size:clamp(16px,1.35vw,19px); color:#dde4ef; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
@@ -813,6 +824,13 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .brandbar .bl{ width:26px; height:26px; color:#fff; }
 .progress{ position:fixed; left:0; top:0; height:3px; z-index:31; width:0%;
   background:linear-gradient(90deg,var(--orange),var(--orange-soft)); box-shadow:0 0 12px var(--orange-glow); }
+
+/* raytracing-style key light that follows the cursor across the whole scene */
+.ray-light{ position:absolute; inset:0; z-index:20; pointer-events:none; mix-blend-mode:screen;
+  background:
+    radial-gradient(560px 560px at var(--light-x,50%) var(--light-y,40%), rgba(201,162,90,.13), transparent 60%),
+    radial-gradient(280px 280px at var(--light-x,50%) var(--light-y,40%), rgba(255,240,210,.1), transparent 64%);
+  transition:background .1s linear; will-change:background; }
 
 /* ---- special animated mouse cursor ------------------------------------- */
 .cursor-ring,.cursor-dot{ position:fixed; top:0; left:0; z-index:130; pointer-events:none;
@@ -1300,6 +1318,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   </div><!-- /rig -->
 
   <!-- LAYER 7: fixed UI -->
+  <div class="ray-light" id="rayLight" aria-hidden="true"></div>
   <div class="brandbar"><svg class="bl"><use href="#cl-mark"/></svg><span>CLEANLINES&nbsp;STUDIOS</span></div>
   <div class="scene-dots" id="dots"></div>
 </div><!-- /stage -->
@@ -1426,12 +1445,12 @@ body.cursor-on .cursor-trail{ opacity:1; }
      cap:"Deine Kunden buchen nicht nur eine Behandlung. Sie buchen ein Gefühl von Pflege, Ruhe und Qualität.",
      google:"Gönn dir eine Auszeit – buche jetzt deine Wohlfühl-Behandlung bei uns.",
      cta:"Jetzt Behandlung buchen", metric:"Mehr Wohlgefühl", glow:"rgba(206,108,150,.5)"},
-    {img:CDN+"hf_20260614_121515_b11ef0c8-ad42-440a-ad08-990a9f74b879.png",
+    {img:CDN+"hf_20260615_003121_1f780c2f-d658-48e5-829c-32dcce3f1e8c.png",
      reel:"3 Dinge, die jeder Fahrschüler vor der Prüfung wissen sollte",
      cap:"Nimm deinen Schülern die Angst und zeig, dass deine Fahrschule verständlich, modern und nahbar ist.",
      google:"Neuer Kurs startet bald – melde dich jetzt an und starte sicher durch.",
      cta:"Jetzt zum Kurs anmelden", metric:"Mehr Anmeldungen", glow:"rgba(60,170,170,.5)"},
-    {img:CDN+"hf_20260614_121516_eb1db453-247a-4554-b579-1f2a72da9cef.png",
+    {img:CDN+"hf_20260615_003122_2462d848-1d79-4383-807c-62e8689a9a0c.png",
      reel:"Ein einfaches Workout, das jeder sofort ausprobieren kann",
      cap:"Keine Ausreden. Keine komplizierten Pläne. Nur ein klarer Start in ein stärkeres Ich.",
      google:"Probetraining gratis – komm vorbei und finde deinen Einstieg, der wirklich passt.",
@@ -1704,19 +1723,21 @@ body.cursor-on .cursor-trail{ opacity:1; }
     var introK = openK;
     // ease-out so the device RUSHES in then decelerates elegantly into place
     var ek = 1 - Math.pow(1-introK, 2.6);
-    // GROWS noticeably wider + bigger as you start to zoom in, then settles
-    // perfectly straight at native scale(1), near full-bleed
     var startScale = window.innerWidth<780 ? 0.82 : 0.78;
     var scale = lerp(startScale,1.0,ek);
-    var tiltX = lerp(9, 0, ek);
-    var tiltY = lerp(-6, 0, ek);
-    var tiltZ = lerp(-3, 0, ek);
-    // gentle parallax only — no vertical offset, stays centered
-    var tx = mx*lerp(12,5,ek), ty = my*lerp(9,4,ek);
+    var f = 1-ek;                                  // intro strength: 1 at start -> 0 settled
+    var swayT = Date.now();
+    var sway = Math.sin(swayT*0.0007), sway2 = Math.cos(swayT*0.0006);
+    // UNREAL-ENGINE-STYLE 3D at the start: strong mouse "look-around" + slow
+    // cinematic breathing sway, both fading to a flat, razor-sharp rest pose.
+    var tiltX = lerp(10,0,ek) + (my*7 + sway*1.3)*f;
+    var tiltY = lerp(-7,0,ek) + (-mx*9 + sway2*1.7)*f;
+    var tiltZ = lerp(-3.5,0,ek) + sway*0.9*f;
+    var tx = mx*lerp(16,5,ek), ty = my*lerp(12,4,ek);
     if(introK<0.992){
       rig.style.transform=
         "translate("+tx.toFixed(2)+"px,"+ty.toFixed(2)+"px) "+
-        "perspective(1700px) "+
+        "perspective(1500px) "+
         "rotateX("+tiltX.toFixed(2)+"deg) "+
         "rotateY("+tiltY.toFixed(2)+"deg) "+
         "rotateZ("+tiltZ.toFixed(2)+"deg) "+
