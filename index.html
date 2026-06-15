@@ -92,11 +92,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 /* animated cinematic god-rays behind the device (revealed as the veil lifts) */
 .rays{
-  position:absolute; inset:-40%; z-index:0; pointer-events:none; opacity:.16;
-  background:repeating-conic-gradient(from 0deg at 50% 36%,
-    rgba(201,162,90,.16) 0deg 3deg, transparent 3deg 15deg);
-  mix-blend-mode:screen; filter:blur(10px);
-  animation:raysSpin 90s linear infinite; will-change:transform;
+  position:absolute; inset:-40%; z-index:0; pointer-events:none; opacity:.26;
+  background:repeating-conic-gradient(from 0deg at 50% 34%,
+    rgba(201,162,90,.22) 0deg 2.4deg, transparent 2.4deg 13deg);
+  mix-blend-mode:screen; filter:blur(9px);
+  animation:raysSpin 80s linear infinite; will-change:transform;
 }
 @keyframes raysSpin{ to{ transform:rotate(360deg); } }
 /* optional real photo overlay (background.jpg) */
@@ -122,7 +122,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 /* soft floating bokeh / light leaks */
 .black-veil{ position:absolute; inset:0; background:#000; opacity:1; pointer-events:none; will-change:opacity; }
-.orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.45; pointer-events:none; will-change:transform; }
+.orb{ position:absolute; border-radius:50%; filter:blur(64px); opacity:.6; pointer-events:none; will-change:transform;
+  animation:orbPulse 9s var(--ease) infinite; }
+@keyframes orbPulse{ 0%,100%{ opacity:.5; } 50%{ opacity:.72; } }
 .particles{ position:absolute; inset:0; pointer-events:none; }
 .dust{ position:absolute; width:3px; height:3px; border-radius:50%;
   background:rgba(255,200,150,.7); box-shadow:0 0 8px rgba(255,160,90,.8); will-change:transform,opacity; }
@@ -819,7 +821,25 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   box-shadow:0 0 30px rgba(201,162,90,.55), inset 0 0 18px rgba(201,162,90,.3); }
 .cursor-ring.click{ width:22px; height:22px; margin:-11px 0 0 -11px; }
 body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
-@media (hover:none),(pointer:coarse){ .cursor-ring,.cursor-dot{ display:none !important; } }
+/* up/down chevrons inside the ring — only shown while scrolling */
+.cursor-ring::before,.cursor-ring::after{ content:""; position:absolute; left:50%; width:7px; height:7px;
+  opacity:0; border-left:2px solid var(--orange-soft); border-top:2px solid var(--orange-soft);
+  transition:opacity .25s ease; }
+.cursor-ring::before{ top:8px;    transform:translateX(-50%) rotate(45deg); }    /* ▲ */
+.cursor-ring::after { bottom:8px; transform:translateX(-50%) rotate(225deg); }  /* ▼ */
+/* NEW MOUSE WHILE SCROLLING: morph into a glowing scroll capsule + pulse */
+body.scrolling .cursor-ring{ width:34px; height:60px; margin:-30px 0 0 -17px; border-radius:20px;
+  border-color:rgba(232,210,160,.95); animation:scrollPulse 1s var(--ease) infinite; }
+body.scrolling .cursor-ring::before,body.scrolling .cursor-ring::after{ opacity:1; animation:chevBob 1s var(--ease) infinite; }
+@keyframes scrollPulse{ 0%,100%{ box-shadow:0 0 18px rgba(201,162,90,.5), inset 0 0 14px rgba(201,162,90,.28); }
+  50%{ box-shadow:0 0 36px rgba(201,162,90,.8), inset 0 0 20px rgba(201,162,90,.4); } }
+@keyframes chevBob{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+/* comet trail dots (created in JS) */
+.cursor-trail{ position:fixed; top:0; left:0; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
+  border-radius:50%; background:radial-gradient(circle,rgba(232,210,160,.8),rgba(201,162,90,.2));
+  pointer-events:none; z-index:129; mix-blend-mode:screen; filter:blur(1px); opacity:0; will-change:transform,opacity; }
+body.cursor-on .cursor-trail{ opacity:1; }
+@media (hover:none),(pointer:coarse){ .cursor-ring,.cursor-dot,.cursor-trail{ display:none !important; } }
 
 /* ---- Premium intro loader ---------------------------------------------- */
 .loader{ position:fixed; inset:0; z-index:100; display:flex; flex-direction:column;
@@ -1350,9 +1370,9 @@ body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
   var particles=document.getElementById("particles");
   var dust=[];
   if(!reduceMotion){
-    for(var p=0;p<26;p++){
+    for(var p=0;p<46;p++){
       var d=document.createElement("span"); d.className="dust";
-      var s=Math.random()*2+1;
+      var s=Math.random()*2.4+1;
       d.style.left=(Math.random()*100)+"%"; d.style.top=(Math.random()*100)+"%";
       d.style.width=d.style.height=s+"px"; d.style.opacity=(Math.random()*.5+.2);
       particles.appendChild(d);
@@ -1489,8 +1509,9 @@ body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
   var bgvids=document.querySelectorAll(".bgvid");
   var heroPhoneVid=document.querySelector("#heroPhone video");
   if(heroPhoneVid){ heroPhoneVid.addEventListener("loadedmetadata",function(){ heroPhoneVid.playbackRate=0.7; }); try{heroPhoneVid.playbackRate=0.7;}catch(e){} }
-  // varied background reels across the 11 scenes (launcher 0 … final CTA 10)
-  var vidMap=["reel3","reel3","reel1","reel4","reel2","reel3","reel4","reel1","reel2","reel4","final"];
+  // fully alternating reels — start page (0) has its own, hero (1) a different
+  // one, no two neighbours share a video for maximum variety
+  var vidMap=["reel3","reel1","reel2","reel4","final","reel1","reel2","reel4","reel1","reel2","final"];
   var curVidKey=null;
   function setSceneVideo(idx){
     var key=vidMap[idx]||"final";
@@ -1586,6 +1607,9 @@ body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
     if(!ring||!dot) return;
     var rx=window.innerWidth/2, ry=window.innerHeight/2, tx=rx, ty=ry, started=false;
     var HOT="a,button,.tab,.svc,.plan,.review,.faq-item,.bv-badge,[data-goto],[data-b]";
+    // comet trail
+    var trail=[]; for(var ti=0;ti<7;ti++){ var te=document.createElement("div"); te.className="cursor-trail";
+      document.body.appendChild(te); trail.push({el:te,x:rx,y:ry}); }
     window.addEventListener("mousemove",function(e){
       tx=e.clientX; ty=e.clientY;
       dot.style.transform="translate("+tx+"px,"+ty+"px)";
@@ -1597,9 +1621,25 @@ body.cursor-on .cursor-ring,body.cursor-on .cursor-dot{ opacity:1; }
     window.addEventListener("mouseup",  function(){ ring.classList.remove("click"); },{passive:true});
     window.addEventListener("mouseleave",function(){ document.body.classList.remove("cursor-on"); },{passive:true});
     window.addEventListener("mouseenter",function(){ if(started) document.body.classList.add("cursor-on"); },{passive:true});
-    (function loop(){ rx+=(tx-rx)*0.2; ry+=(ty-ry)*0.2;
+    // NEW MOUSE WHILE SCROLLING: toggle the scroll-capsule cursor state
+    var scrollTO;
+    window.addEventListener("scroll",function(){
+      document.body.classList.add("scrolling");
+      clearTimeout(scrollTO); scrollTO=setTimeout(function(){ document.body.classList.remove("scrolling"); },480);
+    },{passive:true});
+    (function loop(){
+      rx+=(tx-rx)*0.2; ry+=(ty-ry)*0.2;
       ring.style.transform="translate("+rx.toFixed(2)+"px,"+ry.toFixed(2)+"px)";
-      requestAnimationFrame(loop); })();
+      var px=tx, py=ty;                        // comet head = real cursor
+      for(var i=0;i<trail.length;i++){ var tp=trail[i];
+        tp.x+=(px-tp.x)*0.38; tp.y+=(py-tp.y)*0.38;
+        var sc=1-i/(trail.length+1);
+        tp.el.style.transform="translate("+tp.x.toFixed(2)+"px,"+tp.y.toFixed(2)+"px) scale("+sc.toFixed(2)+")";
+        tp.el.style.opacity=started?(sc*0.5).toFixed(2):0;
+        px=tp.x; py=tp.y;
+      }
+      requestAnimationFrame(loop);
+    })();
   })();
 
   /* ---- magnetic primary buttons (gently pull toward the cursor) ---------- */
