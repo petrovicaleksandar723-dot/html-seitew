@@ -67,7 +67,7 @@ a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 
 /* Tall scroll track — drives the cinematic timeline ------------------------ */
-.scroll-track{ height:1180vh; position:relative; z-index:1; }
+.scroll-track{ height:880vh; position:relative; z-index:1; }
 
 /* ============================================================================
    STAGE — fixed full-viewport cinematic frame (never scrolls away)
@@ -560,6 +560,9 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 #s7 .svc:nth-child(2) .ic{ --ic:#ecd49a; --icbg:rgba(201,162,90,.22); --icg:rgba(201,162,90,.55); }
 #s7 .svc:nth-child(3) .ic{ --ic:#ff96b0; --icbg:rgba(240,90,140,.22);  --icg:rgba(240,90,140,.5); }
 #s7 .svc:nth-child(4) .ic{ --ic:#7ee0c0; --icbg:rgba(60,205,170,.22);  --icg:rgba(60,205,170,.5); }
+/* crisp SVG symbol graphics inside the icon chips */
+.svc .ic svg{ width:27px; height:27px; display:block; overflow:visible; }
+.svc:hover .ic svg{ filter:drop-shadow(0 0 8px var(--icg,var(--orange-glow))); }
 .svc h3{ font-size:clamp(22px,2.1vw,30px); font-weight:800; margin-bottom:11px; line-height:1.08; letter-spacing:-.03em;
   overflow-wrap:anywhere; word-break:normal; hyphens:auto; max-width:100%; }
 .svc p{ font-size:clamp(16px,1.35vw,19px); color:#dde4ef; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
@@ -660,8 +663,19 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .ba h4{ font-size:clamp(13px,1.9vmin,17px); letter-spacing:.16em; text-transform:uppercase; margin-bottom:18px; font-weight:800; }
 .ba .before h4{ color:#ff6b6b; } .ba .after h4{ color:var(--lime); }
 .ba li{ list-style:none; font-size:clamp(15px,1.9vw,20px); padding:11px 0 11px 34px; position:relative; color:#e8edf4; }
-.ba .before li::before{ content:"✕"; position:absolute; left:0; color:#ff6b6b; font-weight:800; }
-.ba .after li::before{ content:"✓"; position:absolute; left:0; color:var(--lime); font-weight:800; }
+.ba .before li::before{ content:"✕"; position:absolute; left:0; top:11px; width:20px; height:20px; line-height:20px; text-align:center;
+  color:#ff6b6b; font-weight:800; border-radius:50%; background:rgba(255,90,90,.12); font-size:12px; margin-top:0; }
+.ba .after li::before{ content:"✓"; position:absolute; left:0; top:11px; width:20px; height:20px; line-height:20px; text-align:center;
+  color:#0e0a05; font-weight:800; border-radius:50%; background:linear-gradient(135deg,var(--orange),#e8d2a0);
+  font-size:12px; box-shadow:0 0 12px rgba(201,162,90,.5); }
+.ba li{ padding-left:32px; }
+.scene.show .ba .after li::before{ animation:chkPop .5s var(--ease) both; }
+.scene.show .ba .after li:nth-child(2)::before{ animation-delay:.45s; }
+.scene.show .ba .after li:nth-child(3)::before{ animation-delay:.55s; }
+.scene.show .ba .after li:nth-child(4)::before{ animation-delay:.65s; }
+.scene.show .ba .after li:nth-child(5)::before{ animation-delay:.75s; }
+.scene.show .ba .after li:nth-child(6)::before{ animation-delay:.85s; }
+@keyframes chkPop{ 0%{ transform:scale(0); } 60%{ transform:scale(1.25); } 100%{ transform:scale(1); } }
 
 /* ============ SCENE 6: PREMIUM PRICING ================================== */
 /* darker, crisp backdrop so white text stays razor sharp over the video */
@@ -804,7 +818,12 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   background:radial-gradient(220px 220px at var(--mx,50%) var(--my,0%), rgba(201,162,90,.15), transparent 60%); }
 .review:hover::after{ opacity:1; }
 .review:hover{ border-color:rgba(201,162,90,.42); box-shadow:0 38px 76px rgba(0,0,0,.55),0 0 54px rgba(201,162,90,.2), inset 0 1px 0 rgba(255,255,255,.1); }
-.review .stars{ color:#ffc24d; font-size:clamp(15px,1.9vmin,20px); letter-spacing:3px; margin-bottom:12px; }
+.review .stars{ color:#ffc24d; font-size:clamp(15px,1.9vmin,20px); letter-spacing:3px; margin-bottom:12px;
+  animation:starTwinkle 3.6s var(--ease) infinite; }
+.review:nth-child(2) .stars{ animation-delay:.5s; } .review:nth-child(3) .stars{ animation-delay:1s; }
+.review:nth-child(4) .stars{ animation-delay:1.5s; }
+@keyframes starTwinkle{ 0%,100%{ text-shadow:0 0 0 rgba(255,194,77,0); }
+  50%{ text-shadow:0 0 14px rgba(255,194,77,.75); } }
 .review p{ font-size:clamp(14.5px,1.9vmin,19px); line-height:1.55; color:#eef2f8; }
 .rev-author{ display:flex; align-items:center; gap:10px; margin-top:18px; font-size:clamp(12px,1.5vmin,14px); font-weight:700; color:#aeb7c4; }
 .rev-ava{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -1075,11 +1094,11 @@ body.cursor-on .cursor-trail{ opacity:1; }
           <div class="eyebrow">Leistungen</div>
           <h1 class="lead">Alles vorbereitet.<br>Du musst nur noch posten.</h1>
           <div class="svc-deck" id="svcDeck">
-            <div class="svc active"><div class="ic">▶</div><h3>Reel-Konzepte</h3><p>Starke Ideen mit Hook, Ablauf und CTA – damit deine Reels nicht einfach nur schön aussehen, sondern Aufmerksamkeit bringen.</p></div>
-            <div class="svc"><div class="ic">✎</div><h3>Captions</h3><p>Texte, die nicht nach Vorlage klingen, sondern zu deinem Betrieb passen und deine Kunden direkt ansprechen.</p></div>
-            <div class="svc"><div class="ic">◆</div><h3>Google-Beiträge</h3><p>Regelmäßige Beiträge für dein Google-Profil, damit dein Betrieb aktiver, sichtbarer und professioneller wirkt.</p></div>
-            <div class="svc"><div class="ic">★</div><h3>Bewertungsantworten</h3><p>Freundliche, professionelle Antworten auf Kundenbewertungen – ohne dass du jedes Mal überlegen musst, was du schreiben sollst.</p></div>
-            <div class="svc"><div class="ic">▦</div><h3>Monatsplan</h3><p>Ein klarer Content-Plan für den ganzen Monat, damit du nicht jeden Tag neu überlegen musst, was online gehen soll.</p></div>
+            <div class="svc active"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="4.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div><h3>Reel-Konzepte</h3><p>Starke Ideen mit Hook, Ablauf und CTA – damit deine Reels nicht einfach nur schön aussehen, sondern Aufmerksamkeit bringen.</p></div>
+            <div class="svc"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg></div><h3>Captions</h3><p>Texte, die nicht nach Vorlage klingen, sondern zu deinem Betrieb passen und deine Kunden direkt ansprechen.</p></div>
+            <div class="svc"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg></div><h3>Google-Beiträge</h3><p>Regelmäßige Beiträge für dein Google-Profil, damit dein Betrieb aktiver, sichtbarer und professioneller wirkt.</p></div>
+            <div class="svc"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l2.5 5 5.5.8-4 3.9.95 5.5L12 16.2 7.05 18.8 8 13.3l-4-3.9 5.5-.8z"/></svg></div><h3>Bewertungsantworten</h3><p>Freundliche, professionelle Antworten auf Kundenbewertungen – ohne dass du jedes Mal überlegen musst, was du schreiben sollst.</p></div>
+            <div class="svc"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M7.5 13.5h4M7.5 17h7"/></svg></div><h3>Monatsplan</h3><p>Ein klarer Content-Plan für den ganzen Monat, damit du nicht jeden Tag neu überlegen musst, was online gehen soll.</p></div>
           </div>
         </section>
 
@@ -1233,25 +1252,25 @@ body.cursor-on .cursor-trail{ opacity:1; }
           <p class="subline">Für einzelne Projekte bekommst du klare Festpreise, saubere Umsetzung und ein Ergebnis, das professionell wirkt.</p>
           <div class="svc-deck oneoff">
             <div class="svc">
-              <div class="ic">🌐</div>
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9.5h18"/><circle cx="6.5" cy="7" r=".7" fill="currentColor" stroke="none"/><circle cx="9" cy="7" r=".7" fill="currentColor" stroke="none"/></svg></div>
               <h3>Website-Design</h3>
               <div class="price-tag">ab 1.490€</div>
               <p>Eine moderne Website, die auf dem Handy stark aussieht, Vertrauen schafft und Kunden zur Anfrage bringt.</p>
             </div>
             <div class="svc">
-              <div class="ic">✦</div>
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5l1.7 4 4 1.7-4 1.7L11 15l-1.7-4-4-1.7 4-1.7z" fill="currentColor" stroke="none"/><path d="M17.5 14l.9 2 2 .9-2 .9-.9 2-.9-2-2-.9 2-.9z" fill="currentColor" stroke="none"/></svg></div>
               <h3>Logo &amp; Branding</h3>
               <div class="price-tag">ab 590€</div>
               <p>Ein sauberer Markenauftritt mit Logo, Farben und Schriften, damit dein Betrieb hochwertiger und einheitlicher wirkt.</p>
             </div>
             <div class="svc">
-              <div class="ic">▶</div>
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
               <h3>Reel-Produktion</h3>
               <div class="price-tag">ab 290€ / Reel</div>
               <p>Fertig geschnittene Reels mit Hook, Untertiteln, Musik und klarer Botschaft – bereit zum Veröffentlichen.</p>
             </div>
             <div class="svc">
-              <div class="ic">◆</div>
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="12" r="2.5"/><circle cx="17" cy="6.5" r="2.5"/><circle cx="17" cy="17.5" r="2.5"/><path d="M8.7 10.8l6-3.2M8.7 13.2l6 3.2"/></svg></div>
               <h3>Social-Media-Setup</h3>
               <div class="price-tag">ab 390€</div>
               <p>Wir optimieren dein Profil, deine Bio, Highlights und deinen ersten Content-Aufbau für einen starken Start.</p>
@@ -1726,8 +1745,9 @@ body.cursor-on .cursor-trail{ opacity:1; }
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    curScroll += (scrollP-curScroll)*0.07;
-    mx += (tmx-mx)*0.05; my += (tmy-my)*0.05;
+    // lighter, more responsive glide (higher factor = less drag/lag)
+    curScroll += (scrollP-curScroll)*0.11;
+    mx += (tmx-mx)*0.06; my += (tmy-my)*0.06;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
     var openK = ss(clamp(pos,0,1));      // 0 = closed launcher, 1 = app fully open
