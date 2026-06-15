@@ -131,13 +131,23 @@ header{
   transition:all .25s var(--ease);
 }
 .tab.active{ background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206; border-color:transparent; font-weight:700; }
-.bvisual{ position:relative; border-radius:20px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/11; background:var(--card); margin-top:6px; }
-.bvisual img{ width:100%; height:100%; object-fit:cover; transition:opacity .4s ease; }
-.bvisual .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.85), rgba(7,7,10,.05) 55%); }
-.bvisual .metric{
-  position:absolute; left:14px; bottom:14px; font-size:13px; font-weight:700; color:#fff;
-  padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.2);
-}
+.bvisual-wrap{ position:relative; margin-top:8px; }
+.bgallery{ display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; border-radius:20px; }
+.bgallery::-webkit-scrollbar{ display:none; }
+.bslide{ position:relative; flex:0 0 100%; scroll-snap-align:center; border-radius:20px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/11; background:var(--card); }
+.bslide img{ width:100%; height:100%; object-fit:cover; transform:scale(1.01); transition:transform 1.1s var(--ease); }
+.bslide.active img{ transform:scale(1.09); }                 /* slow ken-burns on the focused image */
+.bslide .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.88), rgba(7,7,10,.05) 58%); }
+.bslide .metric{
+  position:absolute; left:14px; bottom:14px; font-size:13px; font-weight:700; color:#fff; transform:translateY(8px); opacity:0;
+  padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.5); border:1px solid rgba(201,162,90,.35); transition:transform .5s var(--ease), opacity .5s; }
+.bslide.active .metric{ transform:none; opacity:1; }
+.swipe-tag{ position:absolute; top:12px; right:12px; z-index:3; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-soft);
+  background:rgba(0,0,0,.5); border:1px solid rgba(201,162,90,.35); padding:6px 12px; border-radius:999px; pointer-events:none; animation:nudge 2.4s var(--ease) infinite; }
+@keyframes nudge{ 0%,100%{ transform:translateX(0) } 50%{ transform:translateX(4px) } }
+.bdots{ display:flex; justify-content:center; gap:7px; margin-top:14px; }
+.bdots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); transition:width .3s var(--ease), background .3s; }
+.bdots span.on{ background:var(--gold); width:22px; border-radius:4px; }
 .bcontent{ background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:18px; padding:20px; margin-top:14px; }
 .bcontent .label{ font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
 .bcontent .reel{ font-family:var(--display); font-weight:700; font-size:18px; line-height:1.25; }
@@ -191,6 +201,11 @@ header{
 .hero .lead .gold{ background:linear-gradient(100deg,var(--gold) 18%,#fff4da 50%,var(--gold) 82%); background-size:220% auto;
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:shine 4.5s linear infinite; }
 @keyframes shine{ to{ background-position:220% center } }
+/* gentle light sweep across primary buttons */
+.btn-primary,.dock-btn{ position:relative; overflow:hidden; }
+.btn-primary::after,.dock-btn::after{ content:""; position:absolute; top:0; left:-150%; width:55%; height:100%; transform:skewX(-20deg);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent); animation:sweep 5s ease-in-out infinite; pointer-events:none; }
+@keyframes sweep{ 0%,12%{ left:-150% } 32%,100%{ left:170% } }
 
 /* ---------- editorial (cream) ---------- */
 .cream{ background:linear-gradient(165deg,#faf6ec,#ece3d0); color:#1c1812; border-radius:28px; margin:8px 14px; padding:48px 24px; }
@@ -304,6 +319,9 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 
 /* ---------- reveal animation (cheap: opacity+transform only) ---------- */
 .reveal{ opacity:0; transform:translateY(28px) scale(.985); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
+.reveal.from-l{ transform:translateX(-36px); }
+.reveal.from-r{ transform:translateX(36px); }
+.reveal.from-s{ transform:scale(.9); }
 .reveal.in{ opacity:1; transform:none; }
 .d1{ transition-delay:.06s } .d2{ transition-delay:.12s } .d3{ transition-delay:.18s } .d4{ transition-delay:.24s }
 
@@ -313,7 +331,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 @media (prefers-reduced-motion:reduce){
   *{ scroll-behavior:auto !important; }
   .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
-  .phone .live b,.intro-launcher .app-icon,.scroll-hint .mouse::after,.aura,.hero .lead .gold{ animation:none !important; }
+  .phone .live b,.intro-launcher .app-icon,.scroll-hint .mouse::after,.aura,.hero .lead .gold,
+  .btn-primary::after,.dock-btn::after,.swipe-tag,.bslide.active img{ animation:none !important; }
   .hero .lead .gold{ -webkit-text-fill-color:var(--gold); color:var(--gold); }
   .intro{ height:100vh; }
 }
@@ -446,10 +465,10 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       <button class="tab" data-b="4">Fahrschulen</button>
       <button class="tab" data-b="5">Fitnessstudios</button>
     </div>
-    <div class="bvisual reveal d2">
-      <img id="bImg" alt="" loading="lazy">
-      <div class="scrim"></div>
-      <div class="metric" id="bMetric">Mehr Sichtbarkeit</div>
+    <div class="bvisual-wrap reveal d2">
+      <div class="bgallery" id="bGallery"></div>
+      <div class="swipe-tag" id="bSwipeTag">‹ wischen ›</div>
+      <div class="bdots" id="bDots"></div>
     </div>
     <div class="bcontent reveal d2">
       <div class="label">Reel-Idee</div>
@@ -483,7 +502,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     <div class="eyebrow reveal">Vorher / Nachher</div>
     <h1 class="lead reveal d1">Von „wir müssten mal posten“ zu einem klaren System.</h1>
     <div class="ba">
-      <div class="col before reveal">
+      <div class="col before reveal from-l">
         <h4>Vorher</h4>
         <ul>
           <li>Jeden Tag überlegen, was man posten könnte</li>
@@ -494,7 +513,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
           <li>Social Media bleibt immer liegen</li>
         </ul>
       </div>
-      <div class="col after reveal d1">
+      <div class="col after reveal from-r d1">
         <h4>Nachher</h4>
         <ul>
           <li>Ein fertiger Monatsplan im Voraus</li>
@@ -515,7 +534,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     <div class="eyebrow reveal">Monatspakete</div>
     <h1 class="lead reveal d1">Wähle, wie sichtbar dein Betrieb werden soll.</h1>
     <div class="plans">
-      <article class="plan reveal">
+      <article class="plan reveal from-s">
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 5L19 11l-5.3 1.8L12 18l-1.7-5.2L5 11l5.3-2z" fill="currentColor" stroke="none"/></svg></div>
         <div class="pname">Starter</div>
         <div class="price"><b>250€</b><span>/Monat</span></div>
@@ -528,7 +547,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
         </ul>
         <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Starter%20Paket">Starter anfragen</a>
       </article>
-      <article class="plan feat reveal">
+      <article class="plan feat reveal from-s">
         <span class="badge">Beliebt</span>
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 6-6.5"/><path d="M14.5 7.5H19V12"/></svg></div>
         <div class="pname">Wachstum</div>
@@ -543,7 +562,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
         </ul>
         <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Wachstum%20Paket">Wachstum anfragen</a>
       </article>
-      <article class="plan reveal">
+      <article class="plan reveal from-s">
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5h16l1-9-5 3.5L12 5.5 8 12 3 8.5z" fill="currentColor" stroke="none"/><path d="M4 20h16"/></svg></div>
         <div class="pname">Premium</div>
         <div class="price"><b>890€</b><span>/Monat</span></div>
@@ -680,17 +699,17 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       var y = window.scrollY || window.pageYOffset;
       if(y > range + window.innerHeight) return;            // fully past intro → stop touching it
       var p = Math.min(1, Math.max(0, y / range));           // 0 → 1 across the intro
-      var z = 1 + p * p * 5;                                 // ease-in zoom into the phone
+      var z = 1 + p * p * 3.2;                                // zoom until the screen fills the viewport (~4x)
       introPhone.style.transform = "translateZ(0) scale(" + z.toFixed(3) + ")";
-      introLauncher.style.opacity = Math.max(0, 1 - p * 2.2).toFixed(3);
-      // fade the (heavy) video out EARLY so it is gone before the layer gets big
+      introLauncher.style.opacity = Math.max(0, 1 - p * 2.4).toFixed(3);
+      // keep the video PLAYING & visible the whole way in (brightens) so there is no black gap
       if(introScreenVid){
-        introScreenVid.style.opacity = Math.max(0, 0.5 * (1 - p / 0.4)).toFixed(3);
-        if(p > 0.45){ if(!introScreenVid.paused) introScreenVid.pause(); }
-        else { if(introScreenVid.paused) introScreenVid.play().catch(function(){}); }
+        introScreenVid.style.opacity = (0.55 + 0.4 * Math.min(1, p / 0.5)).toFixed(3);
+        if(p < 0.94){ if(introScreenVid.paused) introScreenVid.play().catch(function(){}); }
+        else { if(!introScreenVid.paused) introScreenVid.pause(); }
       }
-      introStage.style.opacity = (p > 0.78 ? Math.max(0, 1 - (p - 0.78) / 0.22) : 1).toFixed(3);
-      header.classList.toggle("show", p > 0.5);
+      introStage.style.opacity = (p > 0.85 ? Math.max(0, 1 - (p - 0.85) / 0.15) : 1).toFixed(3);
+      header.classList.toggle("show", p > 0.55);
     }
     function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } }
     window.addEventListener("scroll", onScroll, { passive:true });
@@ -762,28 +781,51 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
      google:"Probetraining gratis – komm vorbei und finde deinen Einstieg, der wirklich passt.",
      cta:"Jetzt Probetraining sichern", metric:"Mehr Motivation"}
   ];
-  var bImg=document.getElementById("bImg"), bReel=document.getElementById("bReel"),
-      bCap=document.getElementById("bCap"), bGoogle=document.getElementById("bGoogle"),
-      bCta=document.getElementById("bCta"), bMetric=document.getElementById("bMetric");
-  function setBranche(i){
-    var d=BR[i];
-    bImg.style.opacity="0";
-    var pre=new Image();
-    pre.onload=function(){ bImg.src=d.img; bImg.style.opacity="1"; };
-    pre.src=d.img;
-    if(bImg.src){ } else { bImg.src=d.img; bImg.style.opacity="1"; }
-    bReel.textContent=d.reel; bCap.textContent=d.cap;
-    bGoogle.textContent=d.google; bCta.textContent=d.cta; bMetric.textContent=d.metric;
-  }
+  var bReel=document.getElementById("bReel"), bCap=document.getElementById("bCap"),
+      bGoogle=document.getElementById("bGoogle"), bCta=document.getElementById("bCta");
+  var tabsWrap=document.getElementById("tabs");
   var tabs=document.querySelectorAll("#tabs .tab");
-  tabs.forEach(function(t){
-    t.addEventListener("click", function(){
-      tabs.forEach(function(x){ x.classList.remove("active"); });
-      t.classList.add("active");
-      setBranche(+t.dataset.b);
-    });
+  var gallery=document.getElementById("bGallery");
+  var dotsWrap=document.getElementById("bDots");
+  var swipeTag=document.getElementById("bSwipeTag");
+  var slides=[], dots=[];
+
+  // build the swipeable example-image gallery from the industry data
+  BR.forEach(function(d,i){
+    var s=document.createElement("div"); s.className="bslide";
+    var img=document.createElement("img"); img.loading="lazy"; img.alt=""; img.src=d.img;
+    var sc=document.createElement("div"); sc.className="scrim";
+    var m=document.createElement("div"); m.className="metric"; m.textContent=d.metric;
+    s.appendChild(img); s.appendChild(sc); s.appendChild(m);
+    gallery.appendChild(s); slides.push(s);
+    var dot=document.createElement("span"); dotsWrap.appendChild(dot); dots.push(dot);
   });
-  setBranche(0);
+
+  var current=-1;
+  function setBranche(i, doScroll){
+    var d=BR[i]; if(!d) return;
+    current=i;
+    bReel.textContent=d.reel; bCap.textContent=d.cap; bGoogle.textContent=d.google; bCta.textContent=d.cta;
+    tabs.forEach(function(x){ x.classList.toggle("active", (+x.dataset.b)===i); });
+    dots.forEach(function(x,k){ x.classList.toggle("on", k===i); });
+    slides.forEach(function(x,k){ x.classList.toggle("active", k===i); });
+    var at=tabs[i];                                        // keep the active tab centred
+    if(at && tabsWrap.scrollTo){ tabsWrap.scrollTo({ left: at.offsetLeft - tabsWrap.clientWidth/2 + at.clientWidth/2, behavior:"smooth" }); }
+    if(doScroll && slides[i] && slides[i].scrollIntoView){ slides[i].scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" }); }
+  }
+
+  // swiping the gallery updates everything (centred slide = active industry)
+  if("IntersectionObserver" in window){
+    var galObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ var idx=slides.indexOf(en.target); if(idx>-1 && idx!==current) setBranche(idx,false); } });
+    }, { root:gallery, rootMargin:"0px -45% 0px -45%", threshold:0 });
+    slides.forEach(function(s){ galObs.observe(s); });
+  }
+  // tapping a tab scrolls the gallery to that example
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ setBranche(+t.dataset.b, true); }); });
+  // hide the "swipe" hint once the user has swiped once
+  if(gallery && swipeTag){ gallery.addEventListener("scroll", function(){ swipeTag.style.opacity="0"; }, { passive:true, once:true }); }
+  setBranche(0,false);
 
   /* ---- scroll progress bar + app-like sticky CTA dock (1 rAF/frame) ---- */
   var progress = document.getElementById("progress");
