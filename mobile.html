@@ -201,7 +201,7 @@ body.pin .hsec-head .tabs{ pointer-events:auto; }
 /* focus visuals are now driven per-frame by JS (dynamic per-section effects);
    CSS only keeps the glow + sheen which are class-based */
 body.pin .hsec-track > *{ position:relative; transition:box-shadow .5s var(--ease); backface-visibility:hidden; }
-body.pin .card.active,body.pin .review.active,body.pin .col.active,body.pin .bcard.active,body.pin .hmedia.active{
+body.pin .card.active,body.pin .review.active,body.pin .col.active,body.pin .bcard.active,body.pin .hmedia.active,body.pin .plan.active{
   box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 46px rgba(201,162,90,.18); }
 a.card{ cursor:pointer; -webkit-tap-highlight-color:transparent; }
 /* gold sheen sweeps across a card the moment it becomes the focused one */
@@ -232,6 +232,18 @@ body.pin .hsec-track > .active::after{ content:""; position:absolute; inset:0; b
 .hsec-track > .card{ flex:0 0 78vw; max-width:360px; }
 .hsec-track > .review{ flex:0 0 80vw; max-width:400px; }
 .hsec-track > .col{ flex:0 0 84vw; max-width:420px; }
+/* pricing plans inside the track — compact so the card fits the centred screen */
+.hsec-track > .plan{ flex:0 0 82vw; max-width:340px; padding:20px 18px; }
+.hsec-track > .plan .pic{ width:40px; height:40px; border-radius:11px; margin-bottom:10px; }
+.hsec-track > .plan .pic svg{ width:22px; height:22px; }
+.hsec-track > .plan .pname{ font-size:18px; }
+.hsec-track > .plan .price{ margin:4px 0 8px; }
+.hsec-track > .plan .price b{ font-size:30px; }
+.hsec-track > .plan .pdesc{ font-size:12.5px; }
+.hsec-track > .plan ul{ margin:12px 0; gap:8px; }
+.hsec-track > .plan li{ font-size:12.8px; }
+.hsec-track > .plan li svg{ width:18px; height:18px; }
+.hsec-track > .plan .pcta{ padding:12px; }
 .hmedia{ position:relative; flex:0 0 84vw; max-width:440px; aspect-ratio:16/11; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--card); }
 .hmedia img{ width:100%; height:100%; object-fit:cover; }
 .hmedia .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.7), transparent 60%); }
@@ -613,60 +625,58 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="cv" id="pakete">
-  <div class="wrap">
-    <div class="eyebrow reveal">Monatspakete</div>
-    <h1 class="lead reveal d1">Wähle, wie sichtbar dein Betrieb werden soll.</h1>
-    <p class="reveal d2" style="text-align:center;color:var(--gray);font-size:12.5px;margin:-6px 0 0">‹ wischen für alle Pakete ›</p>
-    <div class="plans" id="plans">
-      <article class="plan reveal from-s">
+<!-- PRICING (pinned horizontal) -->
+<section class="hsec" data-hsec data-fx="depth" id="pakete">
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
+      <div class="eyebrow reveal">Monatspakete</div>
+      <h1 class="lead reveal d1">Wähle dein Paket.</h1>
+    </div>
+    <div class="hsec-viewport"><div class="hsec-track" id="plans">
+      <article class="plan">
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 5L19 11l-5.3 1.8L12 18l-1.7-5.2L5 11l5.3-2z" fill="currentColor" stroke="none"/></svg></div>
         <div class="pname">Starter</div>
         <div class="price"><b>250€</b><span>/Monat</span></div>
-        <p class="pdesc">Der einfache Einstieg für Betriebe, die endlich regelmäßig sichtbar sein wollen.</p>
+        <p class="pdesc">Der einfache Einstieg, um endlich regelmäßig sichtbar zu sein.</p>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Reel-Konzepte pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Reel-Konzepte / Monat</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>12 fertige Captions</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>4 Google-Beiträge</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>1 klarer Monatsplan</li>
         </ul>
-        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Starter%20Paket">Starter anfragen</a>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Starter%20Paket%20Anfrage">Starter anfragen</a>
       </article>
-      <article class="plan feat reveal from-s">
+      <article class="plan feat">
         <span class="badge">Beliebt</span>
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 6-6.5"/><path d="M14.5 7.5H19V12"/></svg></div>
         <div class="pname">Wachstum</div>
         <div class="price"><b>490€</b><span>/Monat</span></div>
-        <p class="pdesc">Für Betriebe, die mehr posten, professioneller wirken und mehr Anfragen bekommen wollen.</p>
+        <p class="pdesc">Mehr posten, professioneller wirken, mehr Anfragen bekommen.</p>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>16 Reel-Konzepte pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>16 Reel-Konzepte / Monat</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>30 fertige Captions</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Google-Beiträge</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Bewertungsantworten</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Monatsplan + Strategie-Call</li>
         </ul>
-        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Wachstum%20Paket">Wachstum anfragen</a>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Wachstum%20Paket%20Anfrage">Wachstum anfragen</a>
       </article>
-      <article class="plan reveal from-s">
+      <article class="plan">
         <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5h16l1-9-5 3.5L12 5.5 8 12 3 8.5z" fill="currentColor" stroke="none"/><path d="M4 20h16"/></svg></div>
         <div class="pname">Premium</div>
         <div class="price"><b>890€</b><span>/Monat</span></div>
-        <p class="pdesc">Für Betriebe, die ihren Content komplett auslagern und dauerhaft präsent sein wollen.</p>
+        <p class="pdesc">Content komplett auslagern und dauerhaft präsent sein.</p>
         <ul>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Unbegrenzte Reel-Konzepte</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>60+ Captions pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>60+ Captions / Monat</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Tägliche Google-Beiträge</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Persönlicher Ansprechpartner</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Priorisierter Support</li>
         </ul>
-        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Premium%20Paket">Premium anfragen</a>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Premium%20Paket%20Anfrage">Premium anfragen</a>
       </article>
-    </div>
-    <div class="bdots" id="planDots" style="margin-top:16px"></div>
-    <div class="paynote reveal">🔒 Sichere Zahlung · monatlich kündbar · keine Einrichtungsgebühr
-      <div class="pays"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>Klarna</span><span>SEPA</span><span>Apple&nbsp;Pay</span></div>
-    </div>
+    </div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div><div class="hsec-prog" style="margin-top:8px">🔒 monatlich kündbar · keine Einrichtungsgebühr</div></div>
   </div>
 </section>
 
@@ -882,7 +892,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   var dotsWrap=document.getElementById("bDots");
   var bCards=[], bdots=[];
 
-  // build self-contained branche cards (image + idea + caption + CTA)
+  // build self-contained branche cards (image + idea + caption + CTA) — clickable
+  var BNAMES=["Friseure","Restaurants","Handwerker","Kosmetikstudios","Fahrschulen","Fitnessstudios"];
   BR.forEach(function(d,i){
     var c=document.createElement("div"); c.className="bcard";
     c.innerHTML =
@@ -890,6 +901,10 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       '<div class="bcard-body"><div class="label">Reel-Idee</div><div class="reel">'+d.reel+'</div>'+
       '<div class="blk"><div class="label">Caption</div><div class="txt">'+d.cap+'</div></div>'+
       '<div class="cta">'+d.cta+'</div></div>';
+    c.style.cursor="pointer"; c.setAttribute("role","button"); c.setAttribute("tabindex","0");
+    var mail=function(){ window.location.href="mailto:cleanlinesstudio@example.com?subject="+encodeURIComponent((BNAMES[i]||"Branche")+" – Content-Anfrage"); };
+    c.addEventListener("click", mail);
+    c.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); mail(); } });
     gallery.appendChild(c); bCards.push(c);
     var dot=document.createElement("span"); dotsWrap.appendChild(dot); bdots.push(dot);
   });
@@ -1014,25 +1029,6 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     c.addEventListener("click", go);
     c.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
   });
-
-  /* ---- pricing carousel: dots + centred-card highlight ---- */
-  var plansEl = document.getElementById("plans");
-  var planDots = document.getElementById("planDots");
-  if(plansEl && planDots){
-    var planCards = plansEl.querySelectorAll(".plan");
-    planCards.forEach(function(){ planDots.appendChild(document.createElement("span")); });
-    var pdots = planDots.querySelectorAll("span");
-    function setPlan(i){
-      for(var k=0;k<planCards.length;k++){ planCards[k].classList.toggle("active", k===i); pdots[k].classList.toggle("on", k===i); }
-    }
-    if("IntersectionObserver" in window){
-      var plo = new IntersectionObserver(function(es){
-        es.forEach(function(en){ if(en.isIntersecting){ var idx=[].indexOf.call(planCards, en.target); if(idx>-1) setPlan(idx); } });
-      }, { root:plansEl, rootMargin:"0px -45% 0px -45%", threshold:0 });
-      planCards.forEach(function(c){ plo.observe(c); });
-    }
-    setPlan(0);
-  }
 
   /* ---- tap a reel → immersive fullscreen player ---- */
   var viewer = document.getElementById("reelViewer");
