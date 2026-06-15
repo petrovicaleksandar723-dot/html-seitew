@@ -160,8 +160,6 @@ header{
 .reel-row{ display:flex; gap:14px; overflow-x:auto; padding:26px 38vw 14px; margin:0 -20px; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .reel-row::-webkit-scrollbar{ display:none; }
 .reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; transition:opacity .45s var(--ease); }
-body.pin .reel-card{ opacity:.42; }
-body.pin .reel-card.active{ opacity:1; }
 .reel-card .phone{ width:200px; margin:0; padding:6px; display:block; cursor:pointer; transition:transform .45s var(--ease); }
 .reel-card.active .phone{ transform:scale(1.07); box-shadow:0 30px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(201,162,90,.25), 0 0 50px rgba(201,162,90,.18); }
 .reel-card .phone:active{ transform:scale(.97); }
@@ -191,13 +189,16 @@ body.pin .reel-card.active{ opacity:1; }
 body.pin .hsec-pin{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; }
 body.pin .hsec-viewport{ flex:1 1 auto; min-height:0; overflow:hidden; scroll-snap-type:none; }
 body.pin .hsec-track{ will-change:transform; }
+/* generic focus effect: the centred item is bright, the rest gently dim */
+body.pin .hsec-track > *{ opacity:.5; transition:opacity .5s var(--ease), transform .5s var(--ease); }
+body.pin .hsec-track > .active{ opacity:1; }
 
 /* branche cards (self-contained: image + idea + caption + cta) */
 .bcard{ flex:0 0 84vw; max-width:440px; border-radius:20px; overflow:hidden; border:1px solid var(--line);
-  background:linear-gradient(165deg,var(--card),var(--bg2)); transition:opacity .45s var(--ease), transform .45s var(--ease); }
-body.pin .bcard{ opacity:.5; transform:scale(.96); }
+  background:linear-gradient(165deg,var(--card),var(--bg2)); transition:opacity .5s var(--ease), transform .5s var(--ease); }
+body.pin .bcard{ transform:scale(.96); }
 .bcard.active{ border-color:rgba(201,162,90,.3); }
-body.pin .bcard.active{ opacity:1; transform:scale(1); }
+body.pin .bcard.active{ transform:scale(1); }
 .bcard-media{ position:relative; aspect-ratio:16/9; overflow:hidden; }
 .bcard-media img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); transition:transform 1.1s var(--ease); }
 .bcard.active .bcard-media img{ transform:scale(1.09); }
@@ -210,6 +211,14 @@ body.pin .bcard.active{ opacity:1; transform:scale(1); }
 .bcard-body .blk{ margin-top:12px; }
 .bcard-body .cta{ margin-top:14px; font-weight:700; color:var(--gold-soft); font-size:14px; }
 .bcard-body .cta::before{ content:"→ "; color:var(--gold); }
+
+/* item sizing inside horizontal tracks */
+.hsec-track > .card{ flex:0 0 78vw; max-width:360px; }
+.hsec-track > .review{ flex:0 0 80vw; max-width:400px; }
+.hsec-track > .col{ flex:0 0 84vw; max-width:420px; }
+.hmedia{ position:relative; flex:0 0 84vw; max-width:440px; aspect-ratio:16/11; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--card); }
+.hmedia img{ width:100%; height:100%; object-fit:cover; }
+.hmedia .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.7), transparent 60%); }
 
 /* tab/dot active states reused; tabs centred in head */
 .hsec .tabs{ margin-top:14px; }
@@ -259,16 +268,15 @@ body.pin .bcard.active{ opacity:1; transform:scale(1); }
 .pill svg{ width:22px; height:22px; color:#a07c33; flex:0 0 auto; }
 
 /* ---------- before / after ---------- */
-.ba{ display:flex; flex-direction:column; gap:14px; margin-top:24px; }
-.ba .col{ border-radius:18px; padding:20px; border:1px solid var(--line); }
-.ba .before{ background:linear-gradient(165deg,#1a1418,#120e11); }
-.ba .after{ background:linear-gradient(165deg,#101a14,#0b130e); border-color:rgba(120,190,140,.25); }
-.ba h4{ font-family:var(--display); font-size:14px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
-.ba .before h4{ color:#d98a8a; } .ba .after h4{ color:#7fcf9b; }
-.ba ul{ list-style:none; display:flex; flex-direction:column; gap:11px; }
-.ba li{ font-size:14.5px; color:#d7d3cc; padding-left:26px; position:relative; }
-.ba .before li::before{ content:"✕"; position:absolute; left:0; color:#d98a8a; font-weight:800; }
-.ba .after li::before{ content:"✓"; position:absolute; left:0; color:#7fcf9b; font-weight:800; }
+.col{ border-radius:18px; padding:22px; border:1px solid var(--line); }
+.col.before{ background:linear-gradient(165deg,#1a1418,#120e11); }
+.col.after{ background:linear-gradient(165deg,#101a14,#0b130e); border-color:rgba(120,190,140,.25); }
+.col h4{ font-family:var(--display); font-size:14px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
+.col.before h4{ color:#d98a8a; } .col.after h4{ color:#7fcf9b; }
+.col ul{ list-style:none; display:flex; flex-direction:column; gap:11px; }
+.col li{ font-size:14.5px; color:#d7d3cc; padding-left:26px; position:relative; }
+.col.before li::before{ content:"✕"; position:absolute; left:0; color:#d98a8a; font-weight:800; }
+.col.after li::before{ content:"✓"; position:absolute; left:0; color:#7fcf9b; font-weight:800; }
 
 /* ---------- pricing ---------- */
 .plans{ display:flex; flex-direction:row; gap:14px; margin:28px -20px 0; padding:14px 20px 8px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
@@ -462,34 +470,37 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   </div>
 </section>
 
-<!-- LEISTUNGEN -->
-<section class="cv">
-  <div class="wrap">
+<!-- LEISTUNGEN (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
     <div class="eyebrow reveal">Leistungen</div>
-    <h1 class="lead reveal d1">Alles vorbereitet.<br>Du musst nur noch posten.</h1>
-    <div class="banner reveal d2"><img loading="lazy" data-par="38" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png" alt=""><div class="banner-ov"></div><span class="banner-cap">Dein Content – fertig vorbereitet</span></div>
-    <div class="grid">
-      <div class="card reveal">
+    <h1 class="lead reveal d1">Alles vorbereitet. Du musst nur noch posten.</h1>
+    </div>
+    <div class="hsec-viewport"><div class="hsec-track">
+      <div class="hmedia"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png" alt=""><div class="scrim"></div><span class="banner-cap">Dein Content – fertig vorbereitet</span></div>
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="4.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
         <h3>Reel-Konzepte</h3><p>Starke Ideen mit Hook, Ablauf und CTA – damit deine Reels nicht einfach nur schön aussehen, sondern Aufmerksamkeit bringen.</p>
       </div>
-      <div class="card reveal d1">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg></div>
         <h3>Captions</h3><p>Texte, die nicht nach Vorlage klingen, sondern zu deinem Betrieb passen und deine Kunden direkt ansprechen.</p>
       </div>
-      <div class="card reveal d2">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg></div>
         <h3>Google-Beiträge</h3><p>Regelmäßige Beiträge für dein Google-Profil, damit dein Betrieb aktiver, sichtbarer und professioneller wirkt.</p>
       </div>
-      <div class="card reveal">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l2.5 5 5.5.8-4 3.9.95 5.5L12 16.2 7.05 18.8 8 13.3l-4-3.9 5.5-.8z"/></svg></div>
         <h3>Bewertungsantworten</h3><p>Freundliche, professionelle Antworten auf Kundenbewertungen – ohne dass du jedes Mal überlegen musst, was du schreiben sollst.</p>
       </div>
-      <div class="card reveal d1">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M7.5 13.5h4M7.5 17h7"/></svg></div>
         <h3>Monatsplan</h3><p>Ein klarer Content-Plan für den ganzen Monat, damit du nicht jeden Tag neu überlegen musst, was online gehen soll.</p>
       </div>
-    </div>
+    </div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div></div>
   </div>
 </section>
 
@@ -509,7 +520,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
         <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Brand-Film</div></div>
       </div>
     </div>
-    <div class="hsec-foot"><div class="hsec-prog">runterscrollen ⇒ seitlich · tippen zum Abspielen</div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div><div class="hsec-prog" style="margin-top:8px">tippen zum Abspielen</div></div>
   </div>
 </section>
 
@@ -551,13 +562,15 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   </div>
 </section>
 
-<!-- BEFORE / AFTER -->
-<section class="cv">
-  <div class="wrap">
+<!-- BEFORE / AFTER (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
     <div class="eyebrow reveal">Vorher / Nachher</div>
     <h1 class="lead reveal d1">Von „wir müssten mal posten“ zu einem klaren System.</h1>
-    <div class="ba">
-      <div class="col before reveal from-l">
+    </div>
+    <div class="hsec-viewport"><div class="hsec-track">
+      <div class="col before">
         <h4>Vorher</h4>
         <ul>
           <li>Jeden Tag überlegen, was man posten könnte</li>
@@ -568,7 +581,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
           <li>Social Media bleibt immer liegen</li>
         </ul>
       </div>
-      <div class="col after reveal from-r d1">
+      <div class="col after">
         <h4>Nachher</h4>
         <ul>
           <li>Ein fertiger Monatsplan im Voraus</li>
@@ -579,7 +592,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
           <li>Du sparst Zeit und wirkst aktiver</li>
         </ul>
       </div>
-    </div>
+    </div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div></div>
   </div>
 </section>
 
@@ -640,51 +654,58 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   </div>
 </section>
 
-<!-- EINZELAUFTRÄGE -->
-<section class="cv">
-  <div class="wrap">
-    <div class="eyebrow reveal">Einzelaufträge</div>
-    <h1 class="lead reveal d1">Du brauchst mehr als Content?</h1>
-    <p class="sub reveal d2">Für einzelne Projekte bekommst du klare Festpreise, saubere Umsetzung und ein Ergebnis, das professionell wirkt.</p>
-    <div class="banner reveal d2"><img loading="lazy" data-par="38" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png" alt=""><div class="banner-ov"></div><span class="banner-cap">Websites, Branding &amp; Reels</span></div>
-    <div class="grid">
-      <div class="card reveal">
+<!-- EINZELAUFTRÄGE (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
+      <div class="eyebrow reveal">Einzelaufträge</div>
+      <h1 class="lead reveal d1">Du brauchst mehr als Content?</h1>
+    </div>
+    <div class="hsec-viewport"><div class="hsec-track">
+      <div class="hmedia"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png" alt=""><div class="scrim"></div><span class="banner-cap">Websites, Branding &amp; Reels</span></div>
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9.5h18"/></svg></div>
         <h3>Website-Design</h3><span class="tag">ab 1.490€</span>
         <p>Eine moderne Website, die auf dem Handy stark aussieht, Vertrauen schafft und Kunden zur Anfrage bringt.</p>
       </div>
-      <div class="card reveal d1">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5l1.7 4 4 1.7-4 1.7L11 15l-1.7-4-4-1.7 4-1.7z" fill="currentColor" stroke="none"/></svg></div>
         <h3>Logo &amp; Branding</h3><span class="tag">ab 590€</span>
         <p>Ein sauberer Markenauftritt mit Logo, Farben und Schriften, damit dein Betrieb hochwertiger wirkt.</p>
       </div>
-      <div class="card reveal">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
         <h3>Reel-Produktion</h3><span class="tag">ab 290€ / Reel</span>
         <p>Fertig geschnittene Reels mit Hook, Untertiteln, Musik und klarer Botschaft – bereit zum Veröffentlichen.</p>
       </div>
-      <div class="card reveal d1">
+      <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="12" r="2.5"/><circle cx="17" cy="6.5" r="2.5"/><circle cx="17" cy="17.5" r="2.5"/><path d="M8.7 10.8l6-3.2M8.7 13.2l6 3.2"/></svg></div>
         <h3>Social-Media-Setup</h3><span class="tag">ab 390€</span>
         <p>Wir optimieren dein Profil, deine Bio, Highlights und deinen ersten Content-Aufbau für einen starken Start.</p>
       </div>
-    </div>
-    <div class="btns reveal"><a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Einzelauftrag%20Anfrage">Projekt anfragen</a></div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px">
+        <h3>Projekt im Kopf?</h3><p>Sag uns, was du brauchst – wir melden uns mit einem klaren Festpreis.</p>
+        <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Einzelauftrag%20Anfrage" style="width:100%">Projekt anfragen</a>
+      </div>
+    </div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div></div>
   </div>
 </section>
 
-<!-- REVIEWS -->
-<section class="cv">
-  <div class="wrap">
-    <div class="eyebrow reveal">Bewertungen</div>
-    <h1 class="lead reveal d1">Betriebe, die nicht mehr planlos posten.</h1>
-    <div class="reviews">
-      <div class="review reveal"><div class="stars">★★★★★</div><p>„Ich musste vorher jeden Post selbst überlegen. Jetzt bekomme ich jeden Monat einen klaren Plan und kann einfach arbeiten.“</p><div class="who"><span class="ava">S</span>Sarah M. · Friseursalon</div></div>
-      <div class="review reveal d1"><div class="stars">★★★★★</div><p>„Unsere Seite wirkt viel aktiver und professioneller. Man merkt sofort, dass endlich eine Linie drin ist.“</p><div class="who"><span class="ava">M</span>Marco L. · Restaurant</div></div>
-      <div class="review reveal"><div class="stars">★★★★★</div><p>„Die Texte klingen nicht künstlich, sondern wirklich nach unserem Betrieb. Genau das war mir wichtig.“</p><div class="who"><span class="ava">D</span>Daniel K. · Handwerksbetrieb</div></div>
-      <div class="review reveal d1"><div class="stars">★★★★★</div><p>„Endlich jemand, der versteht, dass lokale Betriebe keine Zeit für ständiges Content-Grübeln haben.“</p><div class="who"><span class="ava">L</span>Lena R. · Kosmetikstudio</div></div>
+<!-- REVIEWS (pinned horizontal) -->
+<section class="hsec" data-hsec>
+  <div class="hsec-pin">
+    <div class="hsec-head wrap">
+      <div class="eyebrow reveal">Bewertungen</div>
+      <h1 class="lead reveal d1">Betriebe, die nicht mehr planlos posten.</h1>
     </div>
-    <div class="rev-trust reveal"><b>4,9 / 5</b> · über 120 unterstützte Betriebe</div>
+    <div class="hsec-viewport"><div class="hsec-track">
+      <div class="review"><div class="stars">★★★★★</div><p>„Ich musste vorher jeden Post selbst überlegen. Jetzt bekomme ich jeden Monat einen klaren Plan und kann einfach arbeiten.“</p><div class="who"><span class="ava">S</span>Sarah M. · Friseursalon</div></div>
+      <div class="review"><div class="stars">★★★★★</div><p>„Unsere Seite wirkt viel aktiver und professioneller. Man merkt sofort, dass endlich eine Linie drin ist.“</p><div class="who"><span class="ava">M</span>Marco L. · Restaurant</div></div>
+      <div class="review"><div class="stars">★★★★★</div><p>„Die Texte klingen nicht künstlich, sondern wirklich nach unserem Betrieb. Genau das war mir wichtig.“</p><div class="who"><span class="ava">D</span>Daniel K. · Handwerksbetrieb</div></div>
+      <div class="review"><div class="stars">★★★★★</div><p>„Endlich jemand, der versteht, dass lokale Betriebe keine Zeit für ständiges Content-Grübeln haben.“</p><div class="who"><span class="ava">L</span>Lena R. · Kosmetikstudio</div></div>
+    </div></div>
+    <div class="hsec-foot"><div class="bdots" data-dots></div><div class="rev-trust" style="margin-top:10px"><b>4,9 / 5</b> · über 120 Betriebe</div></div>
   </div>
 </section>
 
@@ -900,10 +921,17 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     document.querySelectorAll("[data-hsec]").forEach(function(sec){
       var vpt=sec.querySelector(".hsec-viewport"), track=sec.querySelector(".hsec-track");
       if(!track) return;
-      var onActive=null;
-      if(track.id==="reelRow"){ onActive=function(i){ for(var k=0;k<track.children.length;k++) track.children[k].classList.toggle("active", k===i); }; }
-      else if(track.id==="bGallery"){ onActive=function(i){ setBrancheActive(i); }; }
-      hSecs.push({ sec:sec, vpt:vpt, track:track, items:track.children, dist:0, active:-1, onActive:onActive });
+      var items=track.children;
+      var dotsBox=sec.querySelector("[data-dots]"), dots=[];
+      if(dotsBox && !dotsBox.children.length){ for(var n=0;n<items.length;n++){ dotsBox.appendChild(document.createElement("span")); } }
+      if(dotsBox) dots=dotsBox.querySelectorAll("span");
+      var isBranche = track.id==="bGallery";
+      var onActive=function(i){
+        for(var k=0;k<items.length;k++) items[k].classList.toggle("active", k===i);
+        for(var d=0;d<dots.length;d++) dots[d].classList.toggle("on", d===i);
+        if(isBranche) setBrancheActive(i);
+      };
+      hSecs.push({ sec:sec, vpt:vpt, track:track, items:items, dist:0, active:-1, onActive:onActive });
     });
     layoutHsec();
     window.addEventListener("resize", function(){ layoutHsec(); updateHsec(); });
