@@ -189,11 +189,12 @@ header{
 body.pin .hsec-pin{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; }
 body.pin .hsec-viewport{ flex:1 1 auto; min-height:0; overflow:hidden; scroll-snap-type:none; }
 body.pin .hsec-track{ will-change:transform; }
-/* generic focus effect: centred item pops + glows, the rest gently recede */
-body.pin .hsec-track > *{ opacity:.42; transform:scale(.9); transition:opacity .55s var(--ease), transform .55s var(--ease), box-shadow .55s var(--ease); }
-body.pin .hsec-track > .active{ opacity:1; transform:scale(1); }
+/* focus visuals are now driven per-frame by JS (dynamic per-section effects);
+   CSS only keeps the glow + sheen which are class-based */
+body.pin .hsec-track > *{ position:relative; transition:box-shadow .5s var(--ease); backface-visibility:hidden; }
 body.pin .card.active,body.pin .review.active,body.pin .col.active,body.pin .bcard.active,body.pin .hmedia.active{
   box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 46px rgba(201,162,90,.18); }
+a.card{ cursor:pointer; -webkit-tap-highlight-color:transparent; }
 /* gold sheen sweeps across a card the moment it becomes the focused one */
 body.pin .hsec-track > *{ position:relative; }
 body.pin .hsec-track > .active::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:5;
@@ -477,7 +478,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- LEISTUNGEN (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="cover">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
     <div class="eyebrow reveal">Leistungen</div>
@@ -511,7 +512,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- SHOWREEL (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="depth">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
       <div class="eyebrow reveal">Showreel</div>
@@ -531,7 +532,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- BRANCHEN (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="cover">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
       <div class="eyebrow reveal">Branchen</div>
@@ -569,7 +570,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- BEFORE / AFTER (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="tilt">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
     <div class="eyebrow reveal">Vorher / Nachher</div>
@@ -661,7 +662,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- EINZELAUFTRÄGE (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="cover">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
       <div class="eyebrow reveal">Einzelaufträge</div>
@@ -699,7 +700,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 </section>
 
 <!-- REVIEWS (pinned horizontal) -->
-<section class="hsec" data-hsec>
+<section class="hsec" data-hsec data-fx="fade">
   <div class="hsec-pin">
     <div class="hsec-head wrap">
       <div class="eyebrow reveal">Bewertungen</div>
@@ -913,26 +914,42 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
         for(var d=0;d<dots.length;d++) dots[d].classList.toggle("on", d===i);
         if(isBranche) setBrancheActive(i);
       };
-      hSecs.push({ sec:sec, vpt:vpt, track:track, items:items, dist:0, top:0, range:0, vw:0, mid:[], active:-1, onActive:onActive });
+      hSecs.push({ sec:sec, vpt:vpt, track:track, items:items, fx:(sec.dataset.fx||"depth"), dist:0, top:0, range:0, vw:0, mid:[], active:-1, onActive:onActive });
     });
   })();
   function measureHsec(){
     var vh=window.innerHeight;
-    for(var i=0;i<hSecs.length;i++){ var o=hSecs[i]; o.dist=Math.max(0, o.track.scrollWidth - o.vpt.clientWidth); o.sec.style.height=(vh+o.dist)+"px"; }
+    // centre the first & last item by padding the track, then measure travel distance
+    for(var i=0;i<hSecs.length;i++){ var o=hSecs[i]; var vw=o.vpt.clientWidth; o.vw=vw;
+      var fw=o.items[0]?o.items[0].offsetWidth:0, lw=o.items.length?o.items[o.items.length-1].offsetWidth:0;
+      o.track.style.paddingLeft=Math.max(16,(vw-fw)/2)+"px";
+      o.track.style.paddingRight=Math.max(16,(vw-lw)/2)+"px";
+    }
+    for(var a=0;a<hSecs.length;a++){ var s=hSecs[a]; s.dist=Math.max(0, s.track.scrollWidth - s.vw); s.sec.style.height=(vh+s.dist)+"px"; }
     var sy=window.scrollY||window.pageYOffset;
     for(var j=0;j<hSecs.length;j++){ var q=hSecs[j];
-      q.top=q.sec.getBoundingClientRect().top + sy; q.range=q.sec.offsetHeight - vh; q.vw=q.vpt.clientWidth;
+      q.top=q.sec.getBoundingClientRect().top + sy; q.range=q.sec.offsetHeight - vh;
       q.mid=[]; for(var k=0;k<q.items.length;k++) q.mid.push(q.items[k].offsetLeft + q.items[k].offsetWidth/2);
     }
+  }
+  function applyFx(el, off, fx){
+    var a=off<0?-off:off; if(a>1)a=1; var op, tr;
+    if(fx==="cover"){ var ry=off*-30; if(ry>30)ry=30; else if(ry<-30)ry=-30; tr="perspective(1100px) rotateY("+ry.toFixed(2)+"deg) scale("+(1-a*0.18).toFixed(3)+")"; op=1-a*0.6; }
+    else if(fx==="tilt"){ tr="rotate("+(off*6).toFixed(2)+"deg) scale("+(1-a*0.16).toFixed(3)+")"; op=1-a*0.6; }
+    else if(fx==="fade"){ tr="scale("+(1-a*0.1).toFixed(3)+")"; op=1-a*0.8; }
+    else { tr="translateY("+(a*12).toFixed(1)+"px) scale("+(1-a*0.3).toFixed(3)+")"; op=1-a*0.62; } // depth
+    el.style.transform=tr; el.style.opacity=op.toFixed(3);
   }
   function renderHsec(y, vh){
     for(var i=0;i<hSecs.length;i++){ var o=hSecs[i];
       var p = o.range>0 ? (y-o.top)/o.range : 0; if(p<0)p=0; else if(p>1)p=1;
       var tx = p*o.dist;
       o.track.style.transform = "translate3d(" + (-tx).toFixed(1) + "px,0,0)";
-      if(o.onActive && y+vh>o.top && y<o.top+o.range+vh){
+      if(y+vh>o.top && y<o.top+o.range+vh){              // section in view -> animate its items
         var c=o.vw/2, best=0, bd=1e9;
-        for(var k=0;k<o.mid.length;k++){ var d=Math.abs(o.mid[k]-tx-c); if(d<bd){bd=d;best=k;} }
+        for(var k=0;k<o.mid.length;k++){ var center=o.mid[k]-tx, off=(center-c)/o.vw;
+          applyFx(o.items[k], off, o.fx);
+          var ad=center-c; if(ad<0)ad=-ad; if(ad<bd){bd=ad;best=k;} }
         if(best!==o.active){ o.active=best; o.onActive(best); }
       }
     }
@@ -969,6 +986,16 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   window.addEventListener("load", function(){ measureHsec(); kick(); });
   measureHsec();
   renderHsec(window.scrollY||window.pageYOffset||0, window.innerHeight);
+
+  /* ---- make the service / Leistungen cards clickable (open a mail enquiry) ---- */
+  document.querySelectorAll(".hsec-track .card").forEach(function(c){
+    if(c.querySelector("a,button")) return;                // skip cards with their own action
+    c.style.cursor="pointer"; c.setAttribute("role","button"); c.setAttribute("tabindex","0");
+    var h=c.querySelector("h3"), subj=h?h.textContent.trim():"Anfrage";
+    var go=function(){ window.location.href="mailto:cleanlinesstudio@example.com?subject="+encodeURIComponent(subj+" – Anfrage"); };
+    c.addEventListener("click", go);
+    c.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+  });
 
   /* ---- pricing carousel: dots + centred-card highlight ---- */
   var plansEl = document.getElementById("plans");
