@@ -147,11 +147,50 @@ header{
 .bcontent .cta::before{ content:"→ "; color:var(--gold); }
 
 /* ---------- showreel ---------- */
-.reel-row{ display:flex; gap:16px; overflow-x:auto; padding:24px 20px 10px; margin:0 -20px; scroll-snap-type:x mandatory; scrollbar-width:none; }
+.reel-row{ display:flex; gap:14px; overflow-x:auto; padding:26px 38vw 14px; margin:0 -20px; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .reel-row::-webkit-scrollbar{ display:none; }
-.reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; }
-.reel-card .phone{ width:200px; margin:0; }
-.reel-card .cap{ font-size:12.5px; color:var(--gray); margin-top:10px; }
+.reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; opacity:.42; transition:opacity .45s var(--ease); }
+.reel-card.active{ opacity:1; }
+.reel-card .phone{ width:200px; margin:0; padding:6px; display:block; cursor:pointer; transition:transform .45s var(--ease); }
+.reel-card.active .phone{ transform:scale(1.07); box-shadow:0 30px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(201,162,90,.25), 0 0 50px rgba(201,162,90,.18); }
+.reel-card .phone:active{ transform:scale(.97); }
+.reel-card .cap{ font-size:12.5px; color:var(--gray); margin-top:12px; font-weight:600; letter-spacing:.02em; }
+.reel-card.active .cap{ color:var(--gold-soft); }
+.reel-tap{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:18px; color:#1a1206; padding-left:3px; z-index:4;
+  background:linear-gradient(135deg,var(--gold),var(--gold-soft)); box-shadow:0 8px 22px rgba(0,0,0,.45); opacity:0; transition:opacity .35s, transform .35s var(--ease); }
+.reel-card.active .reel-tap{ opacity:.95; }
+
+/* ---------- fullscreen reel viewer ---------- */
+.reel-viewer{ position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center; padding:18px;
+  background:rgba(4,4,6,.94); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  opacity:0; pointer-events:none; transition:opacity .35s ease; }
+.reel-viewer.open{ opacity:1; pointer-events:auto; }
+.reel-viewer video{ max-width:100%; max-height:84vh; width:auto; border-radius:22px; background:#000; box-shadow:0 30px 80px rgba(0,0,0,.7); }
+.rv-close{ position:absolute; top:16px; right:16px; width:44px; height:44px; border-radius:50%; font-size:19px; color:#fff;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; }
+
+/* ---------- scroll progress + ambient aura + sticky dock ---------- */
+.progress{ position:fixed; top:0; left:0; height:3px; width:100%; transform:scaleX(0); transform-origin:0 50%; z-index:70;
+  background:linear-gradient(90deg,var(--gold),var(--gold-soft)); box-shadow:0 0 10px rgba(201,162,90,.5); will-change:transform; }
+.aura{ position:fixed; z-index:-1; top:-12%; left:50%; width:86vw; height:86vw; margin-left:-43vw; pointer-events:none;
+  background:radial-gradient(circle, rgba(201,162,90,.13), transparent 62%); animation:drift 18s ease-in-out infinite; will-change:transform; }
+@keyframes drift{ 0%,100%{ transform:translate(-13%,-5%) } 50%{ transform:translate(13%,9%) } }
+.dock{ position:fixed; left:12px; right:12px; bottom:12px; z-index:60; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 10px 10px 18px; border-radius:16px; background:rgba(14,14,18,.85); border:1px solid rgba(201,162,90,.32);
+  box-shadow:0 16px 36px rgba(0,0,0,.5); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  transform:translateY(150%); opacity:0; transition:transform .5s var(--ease), opacity .4s ease; }
+.dock.show{ transform:none; opacity:1; }
+.dock-txt{ font-size:13.5px; font-weight:600; color:var(--ink); }
+.dock-btn{ flex:0 0 auto; font-size:14px; font-weight:800; padding:12px 22px; border-radius:11px; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206; }
+.dock-btn:active{ transform:scale(.96); }
+
+/* press feedback + animated gold word */
+.card,.plan,.review,.pill,.tab{ transition:transform .25s var(--ease), border-color .3s, background .3s, opacity .7s var(--ease); }
+.card:active,.plan:active,.review:active{ transform:scale(.986); }
+.hero .lead .gold{ background:linear-gradient(100deg,var(--gold) 18%,#fff4da 50%,var(--gold) 82%); background-size:220% auto;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:shine 4.5s linear infinite; }
+@keyframes shine{ to{ background-position:220% center } }
 
 /* ---------- editorial (cream) ---------- */
 .cream{ background:linear-gradient(165deg,#faf6ec,#ece3d0); color:#1c1812; border-radius:28px; margin:8px 14px; padding:48px 24px; }
@@ -264,7 +303,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 @keyframes wheel{ 0%{opacity:0; transform:translate(-50%,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,12px)} }
 
 /* ---------- reveal animation (cheap: opacity+transform only) ---------- */
-.reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
+.reveal{ opacity:0; transform:translateY(28px) scale(.985); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
 .reveal.in{ opacity:1; transform:none; }
 .d1{ transition-delay:.06s } .d2{ transition-delay:.12s } .d3{ transition-delay:.18s } .d4{ transition-delay:.24s }
 
@@ -274,12 +313,18 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 @media (prefers-reduced-motion:reduce){
   *{ scroll-behavior:auto !important; }
   .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
-  .phone .live b,.intro-launcher .app-icon,.scroll-hint .mouse::after{ animation:none !important; }
+  .phone .live b,.intro-launcher .app-icon,.scroll-hint .mouse::after,.aura,.hero .lead .gold{ animation:none !important; }
+  .hero .lead .gold{ -webkit-text-fill-color:var(--gold); color:var(--gold); }
   .intro{ height:100vh; }
 }
 </style>
 </head>
 <body>
+
+<!-- scroll progress bar -->
+<div class="progress" id="progress" aria-hidden="true"></div>
+<!-- ambient drifting glow (single GPU layer) -->
+<div class="aura" id="aura" aria-hidden="true"></div>
 
 <!-- logo symbol -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -334,9 +379,9 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       <span>Keine Mindestlaufzeit</span><span>Monatlich kündbar</span><span>Antwort in 24 Std.</span>
     </div>
     <div class="stats reveal d3">
-      <div class="stat"><b>120+</b><span>Betriebe unterstützt</span></div>
-      <div class="stat"><b>4,9★</b><span>Kundenzufriedenheit</span></div>
-      <div class="stat"><b>30+</b><span>Ideen pro Monat</span></div>
+      <div class="stat"><b data-to="120" data-suf="+">0+</b><span>Betriebe unterstützt</span></div>
+      <div class="stat"><b data-to="4,9" data-suf="★">0★</b><span>Kundenzufriedenheit</span></div>
+      <div class="stat"><b data-to="30" data-suf="+">0+</b><span>Ideen pro Monat</span></div>
     </div>
   </div>
 </section>
@@ -378,13 +423,14 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     <h1 class="lead reveal d1">So sieht dein Content aus.</h1>
     <p class="sub reveal d2">Echte Beispiele aus unseren Reel-Produktionen – fertig für Instagram, TikTok &amp; Co.</p>
   </div>
-  <div class="reel-row reveal d2">
-    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-1.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Reel-Produktion</div></div>
-    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-2.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Hook &amp; Schnitt</div></div>
-    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-3.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Story-Reel</div></div>
-    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Promo-Clip</div></div>
-    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/final.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Brand-Film</div></div>
+  <div class="reel-row reveal d2" id="reelRow">
+    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-1.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-1.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Reel-Produktion</div></div>
+    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-2.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-2.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Hook &amp; Schnitt</div></div>
+    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-3.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-3.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Story-Reel</div></div>
+    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/reel-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Promo-Clip</div></div>
+    <div class="reel-card"><button class="phone reel-open" data-src="assets/videos/show-4.mp4" aria-label="Reel im Vollbild abspielen"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Brand-Film</div></div>
   </div>
+  <p class="reel-hint reveal" style="text-align:center;color:var(--gray);font-size:12.5px;margin-top:6px">Tippen zum Abspielen · wischen für mehr ›</p>
 </section>
 
 <!-- BRANCHEN -->
@@ -600,6 +646,18 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   <a class="dl" href="index.html?web=1">Desktop-Version ansehen →</a>
 </footer>
 
+<!-- app-like sticky CTA bar (appears after the hero) -->
+<div class="dock" id="dock">
+  <span class="dock-txt">Kostenlose Content-Preview</span>
+  <a class="dock-btn" href="mailto:cleanlinesstudio@example.com">Sichern</a>
+</div>
+
+<!-- immersive fullscreen reel viewer -->
+<div class="reel-viewer" id="reelViewer" aria-hidden="true">
+  <button class="rv-close" id="rvClose" aria-label="Schließen">✕</button>
+  <video id="rvVideo" playsinline loop></video>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -726,6 +784,86 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     });
   });
   setBranche(0);
+
+  /* ---- scroll progress bar + app-like sticky CTA dock (1 rAF/frame) ---- */
+  var progress = document.getElementById("progress");
+  var dock = document.getElementById("dock");
+  var docEl = document.documentElement;
+  var pTicking = false;
+  function uiFrame(){
+    pTicking = false;
+    var y = window.scrollY || window.pageYOffset;
+    var max = (docEl.scrollHeight - window.innerHeight) || 1;
+    var ratio = Math.min(1, Math.max(0, y / max));
+    if(progress) progress.style.transform = "scaleX(" + ratio.toFixed(4) + ")";
+    if(dock){
+      var show = y > window.innerHeight * 1.6 && ratio < 0.93;   // after hero, hidden near the very bottom
+      dock.classList.toggle("show", show);
+    }
+  }
+  window.addEventListener("scroll", function(){ if(!pTicking){ pTicking = true; requestAnimationFrame(uiFrame); } }, { passive:true });
+  uiFrame();
+
+  /* ---- showreel: centred card becomes "active" (scale up) ---- */
+  var reelRow = document.getElementById("reelRow");
+  var reelCards = document.querySelectorAll(".reel-card");
+  if(reelRow && "IntersectionObserver" in window){
+    var co = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ en.target.classList.toggle("active", en.isIntersecting); });
+    }, { root:reelRow, rootMargin:"0px -42% 0px -42%", threshold:0 });
+    reelCards.forEach(function(c){ co.observe(c); });
+  } else if(reelCards[0]){ reelCards[0].classList.add("active"); }
+
+  /* ---- tap a reel → immersive fullscreen player ---- */
+  var viewer = document.getElementById("reelViewer");
+  var rvVideo = document.getElementById("rvVideo");
+  var rvClose = document.getElementById("rvClose");
+  function openReel(src){
+    if(!viewer || !rvVideo) return;
+    rvVideo.src = src; rvVideo.muted = false; rvVideo.currentTime = 0;
+    viewer.classList.add("open"); viewer.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    var pl = rvVideo.play(); if(pl && pl.catch) pl.catch(function(){ rvVideo.muted = true; rvVideo.play().catch(function(){}); });
+  }
+  function closeReel(){
+    if(!viewer) return;
+    viewer.classList.remove("open"); viewer.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    try{ rvVideo.pause(); rvVideo.removeAttribute("src"); rvVideo.load(); }catch(e){}
+  }
+  document.querySelectorAll(".reel-open").forEach(function(btn){
+    btn.addEventListener("click", function(){ openReel(btn.dataset.src); });
+  });
+  if(rvClose) rvClose.addEventListener("click", closeReel);
+  if(viewer) viewer.addEventListener("click", function(e){ if(e.target === viewer) closeReel(); });
+  window.addEventListener("keydown", function(e){ if(e.key === "Escape") closeReel(); });
+
+  /* ---- count-up stats when the hero stats reveal ---- */
+  function countUp(el){
+    var raw = el.getAttribute("data-to"); var target = parseFloat(raw.replace(",", "."));
+    var dec = (raw.indexOf(",") > -1) ? 1 : 0; var suf = el.getAttribute("data-suf") || "";
+    var dur = 1300, t0 = null;
+    function step(ts){
+      if(!t0) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur);
+      var e = 1 - Math.pow(1 - k, 3);                       // easeOutCubic
+      var val = target * e;
+      el.textContent = (dec ? val.toFixed(1).replace(".", ",") : Math.round(val)) + suf;
+      if(k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var counters = document.querySelectorAll("[data-to]");
+  if(counters.length){
+    if(reduce || !("IntersectionObserver" in window)){
+      counters.forEach(function(c){ var r=c.getAttribute("data-to"); c.textContent = r + (c.getAttribute("data-suf")||""); });
+    } else {
+      var no = new IntersectionObserver(function(es){
+        es.forEach(function(en){ if(en.isIntersecting){ countUp(en.target); no.unobserve(en.target); } });
+      }, { threshold:0.6 });
+      counters.forEach(function(c){ no.observe(c); });
+    }
+  }
 })();
 </script>
 </body>
