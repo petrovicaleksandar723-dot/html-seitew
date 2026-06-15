@@ -358,6 +358,26 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .subline{ max-width:44ch; font-size:clamp(15px,2.15vmin,21px); line-height:1.55; color:#eef2f8; margin-top:clamp(16px,2vmin,24px);
   font-weight:450; text-shadow:none; }
 .scene-bg-cream .subline{ color:#5a5345; text-shadow:none; }
+/* editorial "Kein Content-Stress" moment: animated premium pills + shine */
+.ed-pills{ display:flex; gap:13px; flex-wrap:wrap; justify-content:center; margin-top:30px; position:relative; z-index:2; }
+.ed-pills span{ display:inline-flex; align-items:center; gap:10px; padding:13px 22px; border-radius:100px;
+  background:rgba(255,255,255,.66); border:1px solid rgba(201,162,90,.45); color:#2a2113; font-weight:700;
+  font-size:clamp(13px,1.7vmin,16px); box-shadow:0 14px 34px rgba(120,90,30,.14);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  opacity:0; transform:translateY(20px); }
+.scene.show .ed-pills span{ opacity:1; transform:none; transition:opacity .6s var(--ease), transform .6s var(--ease); }
+.scene.show .ed-pills span:nth-child(1){ transition-delay:.35s; }
+.scene.show .ed-pills span:nth-child(2){ transition-delay:.48s; }
+.scene.show .ed-pills span:nth-child(3){ transition-delay:.61s; }
+.ed-pills span svg{ width:19px; height:19px; color:#b8923f; animation:icBob 3.4s ease-in-out infinite; }
+.ed-pills span:nth-child(2) svg{ animation-delay:.5s; } .ed-pills span:nth-child(3) svg{ animation-delay:1s; }
+.ed-pills span:hover{ transform:translateY(-4px); box-shadow:0 20px 44px rgba(120,90,30,.2); border-color:rgba(201,162,90,.7); }
+/* slow diagonal sheen sweeping across the light section */
+.ed-shine{ position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.ed-shine::before{ content:""; position:absolute; top:-30%; left:-40%; width:50%; height:160%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); transform:rotate(16deg);
+  animation:edSheen 7s var(--ease) infinite; }
+@keyframes edSheen{ 0%{ left:-40%; opacity:0; } 15%{ opacity:.8; } 50%{ left:130%; opacity:0; } 100%{ left:130%; opacity:0; } }
 
 /* premium buttons */
 .btns{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:26px; }
@@ -743,16 +763,25 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   0%,100%{ box-shadow:0 42px 92px rgba(0,0,0,.6), 0 0 72px rgba(201,162,90,.3), inset 0 1px 0 rgba(232,210,160,.18); }
   50%{ box-shadow:0 46px 100px rgba(0,0,0,.62), 0 0 120px rgba(201,162,90,.52), inset 0 1px 0 rgba(232,210,160,.24); } }
 
-/* tier icon chips */
-.plan-ic{ width:48px; height:48px; margin:2px auto 14px; border-radius:14px;
-  display:flex; align-items:center; justify-content:center; position:relative;
-  background:rgba(201,162,90,.16); color:var(--orange); --icg:rgba(201,162,90,.5);
-  animation:icGlow 3.4s var(--ease) infinite; }
-.plan-ic svg{ width:25px; height:25px; }
+/* tier icon chips — immersive, shining, animated */
+.plan-ic{ width:54px; height:54px; margin:2px auto 16px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center; position:relative; isolation:isolate;
+  background:rgba(201,162,90,.18); color:var(--orange); --icg:rgba(201,162,90,.6);
+  box-shadow:0 8px 26px rgba(201,162,90,.28);
+  animation:icGlow 3.2s var(--ease) infinite; }
+.plan-ic svg{ width:27px; height:27px; position:relative; z-index:2; }
+/* spinning conic light halo behind the chip */
+.plan-ic::before{ content:""; position:absolute; inset:-4px; border-radius:18px; z-index:0; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent, rgba(232,210,160,.85), transparent 30%, transparent 60%, rgba(232,210,160,.55), transparent);
+  filter:blur(3px); opacity:.85; animation:icSpin 4.5s linear infinite; }
+/* glossy top highlight */
+.plan-ic::after{ content:""; position:absolute; inset:0; border-radius:inherit; z-index:1; pointer-events:none;
+  background:linear-gradient(140deg, rgba(255,255,255,.4), transparent 46%); }
 .plan:nth-child(2) .plan-ic{ animation-delay:.5s; } .plan:nth-child(3) .plan-ic{ animation-delay:1s; }
 .plan.feature .plan-ic{ background:linear-gradient(135deg,var(--orange),#e8d2a0); color:#1a1206;
-  box-shadow:0 8px 22px var(--orange-glow); }
-.plan:hover .plan-ic{ transform:rotate(-6deg) scale(1.1); transition:transform .4s var(--ease); }
+  box-shadow:0 12px 32px var(--orange-glow); }
+.plan.feature .plan-ic::before{ opacity:1; }
+.plan:hover .plan-ic{ transform:rotate(-6deg) scale(1.12); transition:transform .4s var(--ease); }
 
 /* premium light-stage behind the pricing cards */
 #s6 .price-deck{ position:relative; }
@@ -1183,9 +1212,15 @@ body.cursor-on .cursor-trail{ opacity:1; }
 
         <!-- ===== SCENE 4 — EDITORIAL MOMENT ===== -->
         <section class="scene scene-bg-cream" id="s4">
+          <div class="ed-shine" aria-hidden="true"></div>
           <div class="eyebrow dark">Kein Content-Stress mehr</div>
           <h1 class="lead">Du führst deinen Betrieb.<br>Wir kümmern uns um deinen Content.</h1>
           <p class="subline">Du bekommst jeden Monat fertige Ideen, Texte und Beiträge, die wirklich zu deinem Geschäft passen – ohne leere Phrasen, ohne Copy-Paste-Gefühl, ohne Zeitverschwendung.</p>
+          <div class="ed-pills">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.5.8.5 1.6h6c0-.8 0-1.2.5-1.6A6 6 0 0 0 12 3z" fill="currentColor" stroke="none"/></svg>Fertige Ideen</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>Fertige Texte</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M8 14l2.2 2.2L16 11"/></svg>Klarer Monatsplan</span>
+          </div>
         </section>
 
         <!-- ===== SCENE 5 — BEFORE / AFTER ===== -->
@@ -1636,7 +1671,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   /* ---- fullscreen background videos: per-scene, only active plays -------- */
   var bgvids=document.querySelectorAll(".bgvid");
   var heroPhoneVid=document.querySelector("#heroPhone video");
-  if(heroPhoneVid){ heroPhoneVid.addEventListener("loadedmetadata",function(){ heroPhoneVid.playbackRate=0.7; }); try{heroPhoneVid.playbackRate=0.7;}catch(e){} }
+  if(heroPhoneVid){ heroPhoneVid.addEventListener("loadedmetadata",function(){ heroPhoneVid.playbackRate=1.0; }); try{heroPhoneVid.playbackRate=1.0;}catch(e){} }
   // fully alternating reels — start page (0) has its own, hero (1) a different
   // one, no two neighbours share a video for maximum variety
   var vidMap=["reel3","reel1","reel2","reel4","final","reel1","reel2","reel4","reel1","reel2","final"];
@@ -1646,7 +1681,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
     if(key===curVidKey) return;
     curVidKey=key;
     bgvids.forEach(function(v){
-      if(v.dataset.key===key){ v.classList.add("on"); try{v.playbackRate=0.6;}catch(e){} var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
+      if(v.dataset.key===key){ v.classList.add("on"); try{v.playbackRate=1.0;}catch(e){} var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
       else{ v.classList.remove("on"); try{ v.pause(); }catch(e){} }
     });
   }
