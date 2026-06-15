@@ -563,6 +563,12 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 /* crisp SVG symbol graphics inside the icon chips */
 .svc .ic svg{ width:27px; height:27px; display:block; overflow:visible; }
 .svc:hover .ic svg{ filter:drop-shadow(0 0 8px var(--icg,var(--orange-glow))); }
+/* the symbols themselves gently bob/rotate so every icon feels alive */
+.svc .ic svg,.plan-ic svg{ animation:icBob 3.6s ease-in-out infinite; transform-origin:50% 50%; }
+.svc:nth-child(2) .ic svg{ animation-delay:.5s; } .svc:nth-child(3) .ic svg{ animation-delay:1s; }
+.svc:nth-child(4) .ic svg{ animation-delay:1.5s; } .svc:nth-child(5) .ic svg{ animation-delay:2s; }
+.plan:nth-child(2) .plan-ic svg{ animation-delay:.6s; } .plan:nth-child(3) .plan-ic svg{ animation-delay:1.2s; }
+@keyframes icBob{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-3px) rotate(-4deg); } }
 .svc h3{ font-size:clamp(22px,2.1vw,30px); font-weight:800; margin-bottom:11px; line-height:1.08; letter-spacing:-.03em;
   overflow-wrap:anywhere; word-break:normal; hyphens:auto; max-width:100%; }
 .svc p{ font-size:clamp(16px,1.35vw,19px); color:#dde4ef; line-height:1.48; max-width:100%; overflow-wrap:anywhere; }
@@ -582,7 +588,13 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   margin:clamp(16px,2.4vh,28px) auto 0; align-items:stretch; text-align:left;
 }
 .branche-tabs{ display:flex; flex-direction:column; gap:9px; }
-.branche-tabs .tab{ width:100%; text-align:left; }
+.branche-tabs .tab{ width:100%; text-align:left; display:flex; align-items:center; gap:11px; }
+.branche-tabs .tab svg{ width:20px; height:20px; flex:none; transition:transform .4s var(--ease), filter .3s; }
+.branche-tabs .tab:hover svg{ transform:scale(1.18) rotate(-7deg); }
+.branche-tabs .tab.active svg{ animation:icBob 3s ease-in-out infinite; }
+.branche-tabs .tab.active{ animation:tabPulse 2.8s var(--ease) infinite; }
+@keyframes tabPulse{ 0%,100%{ box-shadow:0 10px 26px var(--orange-glow); }
+  50%{ box-shadow:0 10px 36px var(--orange-glow), 0 0 0 4px rgba(201,162,90,.16); } }
 
 /* center: large cinematic image card with floating badges + per-industry glow */
 .branche-visual{ position:relative; isolation:isolate; border-radius:22px; overflow:hidden;
@@ -613,7 +625,7 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   padding:9px 16px; border-radius:100px; font-family:var(--font-display); font-weight:800;
   font-size:clamp(11px,1.4vmin,15px); letter-spacing:.01em; color:#1a1206;
   background:linear-gradient(135deg,var(--orange),#e8d2a0);
-  box-shadow:0 12px 28px var(--orange-glow); }
+  box-shadow:0 12px 28px var(--orange-glow); animation:badgePulse 2.8s var(--ease) infinite; }
 
 /* right: generated content preview with staggered reveal */
 .branche-content{ position:relative; isolation:isolate; display:flex; flex-direction:column; gap:13px;
@@ -1132,12 +1144,12 @@ body.cursor-on .cursor-trail{ opacity:1; }
           <div class="branche-stage">
             <!-- left: industry tabs -->
             <div class="branche-tabs" id="tabs">
-              <button class="tab active" data-b="0">Friseure</button>
-              <button class="tab" data-b="1">Restaurants</button>
-              <button class="tab" data-b="2">Handwerker</button>
-              <button class="tab" data-b="3">Kosmetikstudios</button>
-              <button class="tab" data-b="4">Fahrschulen</button>
-              <button class="tab" data-b="5">Fitnessstudios</button>
+              <button class="tab active" data-b="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 7.6L20 18M8 16.4L20 6"/></svg>Friseure</button>
+              <button class="tab" data-b="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6.5M9.6 3v6.5M8.3 9.5V21M7 9.5h2.6"/><path d="M16.5 3c-1.6 1-2.3 3-2.3 5.2 0 1.8.8 2.9 2.3 3.3V21"/></svg>Restaurants</button>
+              <button class="tab" data-b="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a3.6 3.6 0 0 0-4.9 4.4l-5.5 5.5a1.6 1.6 0 0 0 2.2 2.2l5.5-5.5a3.6 3.6 0 0 0 4.4-4.9l-2.3 2.3-1.9-1.9z" fill="currentColor" stroke="none"/></svg>Handwerker</button>
+              <button class="tab" data-b="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6z" fill="currentColor" stroke="none"/></svg>Kosmetikstudios</button>
+              <button class="tab" data-b="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.4"/><path d="M12 14.4V20.5M9.7 11.2L4.2 8.6M14.3 11.2L19.8 8.6"/></svg>Fahrschulen</button>
+              <button class="tab" data-b="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6M7 6.5v11M17 6.5v11M20 9v6M7 12h10"/></svg>Fitnessstudios</button>
             </div>
             <!-- center: cinematic visual with floating badges + per-industry glow -->
             <div class="branche-visual" id="brancheVisual">
