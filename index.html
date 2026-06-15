@@ -1029,6 +1029,28 @@ body.cursor-on .cursor-trail{ opacity:1; }
   .scene-bg-split::after,.scene-bg-cream::before{ animation:none !important; }
   *{ scroll-behavior:auto !important; }
 }
+
+/* ============================================================================
+   PERFORMANCE MODE — phones / touch devices: drop the GPU-heavy continuous
+   effects (conic gradients, animated shadows, big blurs, full-screen blend
+   layers) so the page stays buttery and never hangs. Cheap transform/opacity
+   reveals + the active video are kept.
+   ========================================================================== */
+@media (max-width:820px), (pointer:coarse){
+  .rays,.ray-light,.ed-shine,.screen::after,.glass::before{ display:none !important; }
+  .orb{ animation:none !important; filter:blur(80px); }
+  .svc .ic,.plan-ic,.plan.feature .plan-card,.bv-metric,.plan-badge,
+  .tab.active,.btn-primary,.review .stars,.app-icon,
+  #s6 .price-deck::before{ animation:none !important; }
+  .svc .ic::after,.plan-ic::before,.plan-ic::after{ display:none !important; }
+  .svc .ic svg,.plan-ic svg,.ed-pills span svg{ animation:none !important; }
+  .svc::before,.review::before,.branche-content::before,
+  .plan-card::before,.ba .col::before{ animation:none !important; }
+  /* lighten/disable expensive backdrop blurs on mobile */
+  .plan-card,.branche-content,.bv-badge,.ed-pills span{
+    -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  .bgvid{ will-change:auto; }
+}
 </style>
 </head>
 <body>
@@ -1087,11 +1109,11 @@ body.cursor-on .cursor-trail{ opacity:1; }
 
         <!-- Fullscreen background videos (only the active one plays) -->
         <div class="bgvids" id="bgvids">
-          <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="reel3" src="assets/videos/reel-3.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="reel4" src="assets/videos/reel-4.mp4" muted loop playsinline preload="auto"></video>
-          <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="auto"></video>
+          <video class="bgvid" data-key="reel1" src="assets/videos/reel-1.mp4" muted loop playsinline preload="metadata"></video>
+          <video class="bgvid" data-key="reel2" src="assets/videos/reel-2.mp4" muted loop playsinline preload="metadata"></video>
+          <video class="bgvid" data-key="reel3" src="assets/videos/reel-3.mp4" muted loop playsinline preload="metadata"></video>
+          <video class="bgvid" data-key="reel4" src="assets/videos/reel-4.mp4" muted loop playsinline preload="metadata"></video>
+          <video class="bgvid" data-key="final" src="assets/videos/final.mp4"  muted loop playsinline preload="metadata"></video>
           <div class="bgvid-scrim"></div>
         </div>
 
@@ -1532,8 +1554,10 @@ body.cursor-on .cursor-trail{ opacity:1; }
   /* ---- particles -------------------------------------------------------- */
   var particles=document.getElementById("particles");
   var dust=[];
+  var isTouch=window.matchMedia("(pointer:coarse)").matches || window.innerWidth<820;
   if(!reduceMotion){
-    for(var p=0;p<46;p++){
+    var DUSTN=isTouch?14:46;
+    for(var p=0;p<DUSTN;p++){
       var d=document.createElement("span"); d.className="dust";
       var s=Math.random()*2.4+1;
       d.style.left=(Math.random()*100)+"%"; d.style.top=(Math.random()*100)+"%";
