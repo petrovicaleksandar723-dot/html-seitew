@@ -1,1 +1,4 @@
 .mcp.json
+
+# build artifacts (generated deploy bundles)
+*.zip
