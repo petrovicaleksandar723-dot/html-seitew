@@ -141,11 +141,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .tablet{
   position:relative;
-  /* ultra-wide, near-fullscreen premium device — centred by the flex rig,
+  /* ultra-wide, full-bleed premium device — centred by the flex rig,
      settles straight at scale(1) for razor-sharp text */
-  width:min(100vw,2400px);
-  height:min(97vh,1340px);
-  border-radius:30px;
+  width:min(100vw,2600px);
+  height:min(99vh,1480px);
+  border-radius:28px;
   /* black anodized aluminium bezel with brushed metal sheen */
   background:
     linear-gradient(150deg,#41464e 0%,#1a1f26 16%,#0a0d12 50%,#1a1f26 84%,#4a4f57 100%);
@@ -367,11 +367,19 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s;
 }
 .btn-primary{ background:linear-gradient(135deg,var(--orange),#e8d2a0); color:#1a0c00;
-  box-shadow:0 12px 30px var(--orange-glow), 0 1px 0 rgba(255,255,255,.4) inset; }
+  box-shadow:0 12px 30px var(--orange-glow), 0 1px 0 rgba(255,255,255,.4) inset;
+  animation:ctaGlow 3s var(--ease) infinite; }
+@keyframes ctaGlow{ 0%,100%{ box-shadow:0 12px 30px var(--orange-glow), 0 1px 0 rgba(255,255,255,.4) inset; }
+  50%{ box-shadow:0 18px 48px var(--orange-glow), 0 0 0 4px rgba(201,162,90,.14), 0 1px 0 rgba(255,255,255,.4) inset; } }
 .btn-primary:hover{ transform:translateY(-3px) scale(1.03); box-shadow:0 20px 46px var(--orange-glow); }
 .btn-ghost{ background:rgba(22,28,40,.72); color:#fff; border:1px solid rgba(255,255,255,.2); }
 .btn-ghost:hover{ transform:translateY(-3px); background:rgba(255,255,255,.12); }
 .scene-bg-cream .btn-ghost{ color:#1a1712; border-color:rgba(0,0,0,.16); background:rgba(0,0,0,.04); }
+/* conversion trust row under key CTAs */
+.cta-trust{ margin-top:22px; display:flex; flex-wrap:wrap; gap:10px 20px; justify-content:center;
+  font-size:clamp(12px,1.5vmin,15px); color:#d6dde8; font-weight:600; }
+.cta-trust span{ display:inline-flex; align-items:center; gap:7px; white-space:nowrap; }
+.cta-trust span::before{ content:"✓"; color:var(--orange); font-weight:800; }
 
 /* ---- SCENE 0: APP LAUNCHER --------------------------------------------- */
 #s0{ z-index:40; background:radial-gradient(120% 100% at 50% 46%, rgba(4,7,12,.26) 0%, rgba(4,7,12,.62) 100%); }
@@ -866,11 +874,15 @@ body.cursor-on .cursor-trail{ opacity:1; }
    RESPONSIVE
    ========================================================================== */
 @media (max-width:780px){
-  .tablet{ width:99vw; height:93vh; border-radius:26px; }
-  .screen{ border-radius:18px; } .glass{ border-radius:18px; }
-  /* first page: let the background reel show through clearly on phones */
-  #s0{ background:radial-gradient(120% 100% at 50% 50%, rgba(4,7,12,.12) 0%, rgba(4,7,12,.46) 100%); }
-  .bgvid{ filter:contrast(1.16) saturate(1.32) brightness(1.1); }
+  .tablet{ width:100vw; height:96vh; border-radius:22px; }
+  .screen{ border-radius:16px; } .glass{ border-radius:16px; }
+  /* first page: reel runs fully opaque/clear behind the logo on phones */
+  #s0{ background:radial-gradient(130% 110% at 50% 52%, rgba(4,7,12,0) 0%, rgba(4,7,12,.34) 100%); }
+  .bgvid{ filter:contrast(1.18) saturate(1.4) brightness(1.16); opacity:1; }
+  /* lighter video scrim so the reel stays vivid and covering */
+  .bgvid-scrim{ background:
+    radial-gradient(130% 110% at 50% 46%, transparent 52%, rgba(0,0,0,.34) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.06) 42%, rgba(0,0,0,.32)); }
   .svc-deck{ gap:8px; } .svc{ width:44%; }
   .ba{ flex-direction:column; }
   .minis .mini{ font-size:10px; padding:6px 10px; }
@@ -878,7 +890,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   .scene-dots{ right:12px; }
 }
 @media (max-width:480px){
-  .tablet{ width:99vw; height:90vh; }
+  .tablet{ width:100vw; height:94vh; }
   h1.lead{ font-size:34px; }
   .svc{ width:46%; }
 }
@@ -990,6 +1002,11 @@ body.cursor-on .cursor-trail{ opacity:1; }
               <div class="btns">
                 <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Content-Preview sichern</a>
                 <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
+              </div>
+              <div class="cta-trust" style="justify-content:flex-start">
+                <span>Keine Mindestlaufzeit</span>
+                <span>Monatlich kündbar</span>
+                <span>Antwort innerhalb 24 Std.</span>
               </div>
               <div class="hero-stats">
                 <div class="hstat"><b>120+</b><span>Betriebe unterstützt</span></div>
@@ -1267,6 +1284,12 @@ body.cursor-on .cursor-trail{ opacity:1; }
           <div class="btns">
             <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Content-Preview sichern</a>
             <button class="btn btn-ghost" data-goto="6">Pakete ansehen</button>
+          </div>
+          <div class="cta-trust">
+            <span>Kostenlose Content-Preview</span>
+            <span>Keine Mindestlaufzeit</span>
+            <span>Monatlich kündbar</span>
+            <span>Persönliche Beratung</span>
           </div>
         </section>
 
@@ -1658,7 +1681,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   /* ---- main render loop ------------------------------------------------- */
   function render(){
     // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    curScroll += (scrollP-curScroll)*0.058;
+    curScroll += (scrollP-curScroll)*0.07;
     mx += (tmx-mx)*0.05; my += (tmy-my)*0.05;
 
     var pos = curScroll*LAST;            // continuous scene position 0..7
@@ -1680,10 +1703,10 @@ body.cursor-on .cursor-trail{ opacity:1; }
            Only the outer rig is transformed during the intro — never the text. */
     var introK = openK;
     // ease-out so the device RUSHES in then decelerates elegantly into place
-    var ek = 1 - Math.pow(1-introK, 2.4);
-    // GROWS as you scroll in: starts a touch smaller + angled, then zooms to
-    // near-fullscreen and settles perfectly straight at native scale(1)
-    var startScale = window.innerWidth<780 ? 0.88 : 0.84;
+    var ek = 1 - Math.pow(1-introK, 2.6);
+    // GROWS noticeably wider + bigger as you start to zoom in, then settles
+    // perfectly straight at native scale(1), near full-bleed
+    var startScale = window.innerWidth<780 ? 0.82 : 0.78;
     var scale = lerp(startScale,1.0,ek);
     var tiltX = lerp(9, 0, ek);
     var tiltY = lerp(-6, 0, ek);
