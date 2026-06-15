@@ -19,10 +19,10 @@
   --ease:cubic-bezier(.16,1,.3,1);
 }
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; overflow-x:clip; }
 body{
   font-family:var(--font); background:var(--bg); color:var(--ink);
-  line-height:1.55; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  line-height:1.55; overflow-x:clip; -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
 img,video{ display:block; max-width:100%; }
@@ -185,10 +185,16 @@ header{
 .hsec-prog{ text-align:center; color:var(--gray); font-size:12px; font-weight:600; letter-spacing:.04em; }
 .bcard,.hsec-track .reel-card,.hsec-track .plan{ scroll-snap-align:center; }
 
-/* JS-enabled PIN mode: sticky stage + transform-driven track */
-body.pin .hsec-pin{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; }
-body.pin .hsec-viewport{ flex:1 1 auto; min-height:0; overflow:hidden; scroll-snap-type:none; }
+/* JS-enabled PIN mode: sticky stage; content is centred in the FULL screen,
+   heading + dots float as top/bottom overlays -> structured & balanced */
+body.pin .hsec-pin{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; display:block; }
+body.pin .hsec-viewport{ position:absolute; inset:0; align-items:center; overflow:hidden; scroll-snap-type:none; }
+body.pin .hsec-head{ position:absolute; top:0; left:0; right:0; z-index:4; padding-top:66px; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(7,7,10,.94) 52%, rgba(7,7,10,0)); }
+body.pin .hsec-foot{ position:absolute; left:0; right:0; bottom:0; z-index:4; pointer-events:none;
+  background:linear-gradient(to top, rgba(7,7,10,.92) 48%, rgba(7,7,10,0)); }
 body.pin .hsec-track{ will-change:transform; }
+body.pin .hsec-head .tabs{ pointer-events:auto; }
 /* focus visuals are now driven per-frame by JS (dynamic per-section effects);
    CSS only keeps the glow + sheen which are class-based */
 body.pin .hsec-track > *{ position:relative; transition:box-shadow .5s var(--ease); backface-visibility:hidden; }
@@ -976,6 +982,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     var max=(docEl.scrollHeight - vh)||1, ratio=y/max; if(ratio<0)ratio=0; else if(ratio>1)ratio=1;
     if(progress) progress.style.transform="scaleX("+ratio.toFixed(4)+")";
     if(dock) dock.classList.toggle("show", y>vh*1.6 && ratio<0.93);
+    if(header && y>vh*1.9) header.classList.add("show");     // safety: reveal header once past the intro
     renderHsec(y, vh);
     if(y!==lastY){ lastY=y; idle=0; } else { idle++; }
     if(idle<12){ requestAnimationFrame(frame); } else { rafOn=false; }
