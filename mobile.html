@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07070a">
+<title>CleanLines Studio — Content für lokale Betriebe</title>
+<meta name="description" content="Jeden Monat fertige Reel-Ideen, Captions, Google-Beiträge und ein klarer Content-Plan – passend zu deinem Betrieb.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a; --bg2:#0c0c10; --card:#131318; --card2:#17171c;
+  --gold:#c9a25a; --gold-soft:#e8d2a0; --cream:#f5f1e8;
+  --ink:#f4f1ea; --gray:#aeb4c0; --line:rgba(255,255,255,.10);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:"Sora","Inter",sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  font-family:var(--font); background:var(--bg); color:var(--ink);
+  line-height:1.55; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img,video{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; cursor:pointer; border:none; background:none; }
+
+/* subtle fixed backdrop glow — static, cheap */
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(60% 40% at 50% -5%, rgba(201,162,90,.16), transparent 70%),
+    radial-gradient(50% 35% at 100% 100%, rgba(201,162,90,.07), transparent 70%),
+    var(--bg);
+}
+
+/* ---------- layout helpers ---------- */
+section{ padding:64px 20px; position:relative; }
+.wrap{ width:100%; max-width:560px; margin:0 auto; }
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--gold);
+  padding:7px 14px; border:1px solid rgba(201,162,90,.34); border-radius:999px;
+  background:rgba(201,162,90,.07); margin-bottom:18px;
+}
+.eyebrow.dark{ color:#8a6d2e; border-color:rgba(138,109,46,.4); background:rgba(138,109,46,.08); }
+h1,h2,h3{ font-family:var(--display); line-height:1.12; letter-spacing:-.02em; }
+.lead{ font-size:clamp(27px,8vw,40px); font-weight:800; }
+.sub{ color:var(--gray); font-size:clamp(15px,4.2vw,17px); margin-top:16px; }
+.gold{ color:var(--gold); }
+
+/* ---------- header ---------- */
+header{
+  position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; background:rgba(7,7,10,.78); border-bottom:1px solid var(--line);
+  backdrop-filter:saturate(140%) blur(10px); -webkit-backdrop-filter:saturate(140%) blur(10px);
+}
+.brand{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:16px; }
+.brand .mk{ width:30px; height:30px; color:var(--gold); }
+.brand b{ font-weight:800; } .brand span{ color:var(--gray); font-weight:600; font-size:13px; }
+.hbtn{
+  font-size:13px; font-weight:700; padding:9px 15px; border-radius:999px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206;
+}
+
+/* ---------- hero ---------- */
+.hero{ padding-top:42px; text-align:center; }
+.hero .lead{ margin-top:4px; }
+.btns{ display:flex; flex-direction:column; gap:12px; margin-top:26px; }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; text-align:center;
+  font-weight:700; font-size:15.5px; padding:16px 22px; border-radius:14px; transition:transform .25s var(--ease);
+}
+.btn:active{ transform:scale(.97); }
+.btn-primary{ background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206; box-shadow:0 14px 30px rgba(201,162,90,.28); }
+.btn-ghost{ border:1px solid rgba(255,255,255,.22); color:var(--ink); background:rgba(255,255,255,.03); }
+.btn-dark{ background:#13110c; color:var(--gold-soft); border:1px solid rgba(201,162,90,.4); }
+.chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:20px; }
+.chips span{ font-size:12.5px; color:var(--gray); padding:7px 13px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.02); }
+.chips span::before{ content:"✓ "; color:var(--gold); font-weight:800; }
+
+.phone{
+  position:relative; width:min(270px,70vw); aspect-ratio:9/19; margin:30px auto 0;
+  border-radius:34px; background:#000; border:1px solid rgba(255,255,255,.16);
+  padding:7px; box-shadow:0 30px 70px rgba(0,0,0,.65), 0 0 0 1px rgba(201,162,90,.12);
+}
+.phone video{ width:100%; height:100%; object-fit:cover; border-radius:27px; background:#0a0a0c; }
+.phone .notch{ position:absolute; top:7px; left:50%; transform:translateX(-50%); width:32%; height:16px; background:#000; border-radius:0 0 12px 12px; z-index:2; }
+.phone .live{
+  position:absolute; top:16px; right:16px; z-index:3; display:flex; align-items:center; gap:6px;
+  font-size:10.5px; font-weight:800; letter-spacing:.1em; color:#fff;
+  background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.25); padding:5px 10px; border-radius:999px;
+}
+.phone .live b{ width:7px; height:7px; border-radius:50%; background:#ff5a5a; box-shadow:0 0 8px #ff5a5a; animation:blink 1.6s infinite; }
+@keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.stats{ display:flex; gap:10px; margin-top:30px; }
+.stat{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 8px; text-align:center; }
+.stat b{ display:block; font-family:var(--display); font-size:clamp(20px,6vw,26px); font-weight:800; color:var(--gold-soft); }
+.stat span{ font-size:11.5px; color:var(--gray); line-height:1.3; display:block; margin-top:4px; }
+
+/* ---------- services / cards ---------- */
+.grid{ display:flex; flex-direction:column; gap:14px; margin-top:26px; }
+.card{
+  background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line);
+  border-radius:18px; padding:20px; position:relative; overflow:hidden;
+}
+.card .ic{
+  width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+  background:rgba(201,162,90,.12); border:1px solid rgba(201,162,90,.3); color:var(--gold-soft); margin-bottom:14px;
+}
+.card .ic svg{ width:24px; height:24px; }
+.card h3{ font-size:18px; font-weight:700; margin-bottom:7px; }
+.card p{ color:var(--gray); font-size:14.5px; }
+.card .tag{
+  display:inline-block; margin:10px 0 4px; font-family:var(--display); font-weight:800;
+  font-size:15px; color:var(--gold); padding:4px 12px; border-radius:999px; background:rgba(201,162,90,.1);
+  border:1px solid rgba(201,162,90,.28);
+}
+
+/* ---------- branchen ---------- */
+.tabs{ display:flex; gap:9px; overflow-x:auto; padding:4px 2px 12px; margin-top:22px; scrollbar-width:none; -ms-overflow-style:none; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab{
+  flex:0 0 auto; font-size:14px; font-weight:600; padding:10px 16px; border-radius:999px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03); color:var(--gray); white-space:nowrap;
+  transition:all .25s var(--ease);
+}
+.tab.active{ background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206; border-color:transparent; font-weight:700; }
+.bvisual{ position:relative; border-radius:20px; overflow:hidden; border:1px solid var(--line); aspect-ratio:16/11; background:var(--card); margin-top:6px; }
+.bvisual img{ width:100%; height:100%; object-fit:cover; transition:opacity .4s ease; }
+.bvisual .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.85), rgba(7,7,10,.05) 55%); }
+.bvisual .metric{
+  position:absolute; left:14px; bottom:14px; font-size:13px; font-weight:700; color:#fff;
+  padding:8px 14px; border-radius:999px; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.2);
+}
+.bcontent{ background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:18px; padding:20px; margin-top:14px; }
+.bcontent .label{ font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.bcontent .reel{ font-family:var(--display); font-weight:700; font-size:18px; line-height:1.25; }
+.bcontent .block{ margin-top:16px; }
+.bcontent .txt{ color:var(--gray); font-size:14.5px; }
+.bcontent .cta{ margin-top:18px; font-weight:700; color:var(--gold-soft); font-size:15px; }
+.bcontent .cta::before{ content:"→ "; color:var(--gold); }
+
+/* ---------- showreel ---------- */
+.reel-row{ display:flex; gap:16px; overflow-x:auto; padding:24px 20px 10px; margin:0 -20px; scroll-snap-type:x mandatory; scrollbar-width:none; }
+.reel-row::-webkit-scrollbar{ display:none; }
+.reel-card{ flex:0 0 auto; scroll-snap-align:center; text-align:center; }
+.reel-card .phone{ width:200px; margin:0; }
+.reel-card .cap{ font-size:12.5px; color:var(--gray); margin-top:10px; }
+
+/* ---------- editorial (cream) ---------- */
+.cream{ background:linear-gradient(165deg,#faf6ec,#ece3d0); color:#1c1812; border-radius:28px; margin:8px 14px; padding:48px 24px; }
+.cream .lead{ color:#171307; }
+.cream .sub{ color:#5c513b; }
+.pills{ display:flex; flex-direction:column; gap:10px; margin-top:24px; }
+.pill{ display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.55); border:1px solid rgba(138,109,46,.25); border-radius:14px; padding:14px 16px; font-weight:600; color:#2a2110; }
+.pill svg{ width:22px; height:22px; color:#a07c33; flex:0 0 auto; }
+
+/* ---------- before / after ---------- */
+.ba{ display:flex; flex-direction:column; gap:14px; margin-top:24px; }
+.ba .col{ border-radius:18px; padding:20px; border:1px solid var(--line); }
+.ba .before{ background:linear-gradient(165deg,#1a1418,#120e11); }
+.ba .after{ background:linear-gradient(165deg,#101a14,#0b130e); border-color:rgba(120,190,140,.25); }
+.ba h4{ font-family:var(--display); font-size:14px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
+.ba .before h4{ color:#d98a8a; } .ba .after h4{ color:#7fcf9b; }
+.ba ul{ list-style:none; display:flex; flex-direction:column; gap:11px; }
+.ba li{ font-size:14.5px; color:#d7d3cc; padding-left:26px; position:relative; }
+.ba .before li::before{ content:"✕"; position:absolute; left:0; color:#d98a8a; font-weight:800; }
+.ba .after li::before{ content:"✓"; position:absolute; left:0; color:#7fcf9b; font-weight:800; }
+
+/* ---------- pricing ---------- */
+.plans{ display:flex; flex-direction:column; gap:16px; margin-top:26px; }
+.plan{
+  background:linear-gradient(170deg,var(--card),var(--bg2)); border:1px solid var(--line);
+  border-radius:22px; padding:24px; position:relative;
+}
+.plan.feat{ border-color:rgba(201,162,90,.5); box-shadow:0 20px 50px rgba(201,162,90,.14); }
+.plan .badge{ position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#1a1206; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); padding:6px 16px; border-radius:999px; }
+.plan .pic{ width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:rgba(201,162,90,.12); border:1px solid rgba(201,162,90,.3); color:var(--gold-soft); margin-bottom:14px; }
+.plan .pic svg{ width:25px; height:25px; }
+.plan .pname{ font-family:var(--display); font-weight:700; font-size:20px; }
+.plan .price{ display:flex; align-items:baseline; gap:6px; margin:6px 0 12px; }
+.plan .price b{ font-family:var(--display); font-size:38px; font-weight:800; color:var(--gold-soft); }
+.plan .price span{ color:var(--gray); font-size:14px; }
+.plan .pdesc{ color:var(--gray); font-size:14px; }
+.plan ul{ list-style:none; margin:18px 0; display:flex; flex-direction:column; gap:11px; }
+.plan li{ display:flex; align-items:flex-start; gap:10px; font-size:14.5px; }
+.plan li svg{ width:20px; height:20px; flex:0 0 auto; color:var(--gold); margin-top:1px; }
+.plan .pcta{ width:100%; text-align:center; font-weight:700; padding:14px; border-radius:13px; border:1px solid rgba(201,162,90,.4); background:rgba(201,162,90,.08); color:var(--gold-soft); transition:transform .2s var(--ease); }
+.plan.feat .pcta{ background:linear-gradient(135deg,var(--gold),var(--gold-soft)); color:#1a1206; border-color:transparent; }
+.plan .pcta:active{ transform:scale(.97); }
+.paynote{ text-align:center; color:var(--gray); font-size:12.5px; margin-top:22px; line-height:1.7; }
+.pays{ display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-top:12px; }
+.pays span{ font-size:11px; font-weight:700; color:var(--gray); padding:5px 11px; border:1px solid var(--line); border-radius:7px; background:rgba(255,255,255,.03); }
+
+/* ---------- reviews ---------- */
+.reviews{ display:flex; flex-direction:column; gap:14px; margin-top:26px; }
+.review{ background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:18px; padding:20px; }
+.review .stars{ color:var(--gold); letter-spacing:3px; font-size:15px; }
+.review p{ font-size:15px; margin:10px 0 14px; color:#e7e3da; }
+.review .who{ display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--gray); font-weight:600; }
+.review .ava{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#1a1206; background:linear-gradient(135deg,var(--gold),var(--gold-soft)); }
+.rev-trust{ text-align:center; margin-top:22px; color:var(--gray); font-size:14px; }
+.rev-trust b{ color:var(--gold-soft); font-size:18px; font-family:var(--display); }
+
+/* ---------- faq ---------- */
+.faq{ display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+.faq details{ background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:16px; padding:0 18px; overflow:hidden; transition:border-color .3s; }
+.faq details[open]{ border-color:rgba(201,162,90,.4); }
+.faq summary{ list-style:none; cursor:pointer; padding:17px 0; display:flex; align-items:center; justify-content:space-between; gap:14px; font-weight:700; font-size:15.5px; }
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary .pm{ position:relative; width:18px; height:18px; flex:0 0 auto; }
+.faq summary .pm::before,.faq summary .pm::after{ content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--gold); border-radius:2px; }
+.faq summary .pm::before{ width:14px; height:2px; }
+.faq summary .pm::after{ width:2px; height:14px; transition:transform .3s var(--ease); }
+.faq details[open] summary .pm::after{ transform:translate(-50%,-50%) rotate(90deg); opacity:0; }
+.faq p{ color:var(--gray); font-size:14.5px; padding:0 0 18px; }
+
+/* ---------- final CTA ---------- */
+.final{ text-align:center; }
+.final .lead{ font-size:clamp(25px,7.5vw,36px); }
+
+/* ---------- footer ---------- */
+footer{ text-align:center; padding:40px 20px 56px; border-top:1px solid var(--line); color:var(--gray); font-size:13px; }
+footer .brand{ justify-content:center; margin-bottom:14px; }
+footer a.dl{ display:inline-block; margin-top:14px; color:var(--gold-soft); border:1px solid rgba(201,162,90,.35); padding:9px 18px; border-radius:999px; font-size:13px; font-weight:600; }
+
+/* ---------- reveal animation (cheap: opacity+transform only) ---------- */
+.reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .7s var(--ease); will-change:opacity,transform; }
+.reveal.in{ opacity:1; transform:none; }
+.d1{ transition-delay:.06s } .d2{ transition-delay:.12s } .d3{ transition-delay:.18s } .d4{ transition-delay:.24s }
+
+/* content-visibility keeps off-screen sections cheap to render */
+.cv{ content-visibility:auto; contain-intrinsic-size:1px 700px; }
+
+@media (prefers-reduced-motion:reduce){
+  *{ scroll-behavior:auto !important; }
+  .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+  .phone .live b{ animation:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- logo symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="cl-mark" viewBox="0 0 100 100">
+    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="50,6 88.1,28 88.1,72 50,94 11.9,72 11.9,28"/>
+      <polygon points="50,17 78.6,33.5 78.6,66.5 50,83 21.4,66.5 21.4,33.5" opacity=".8"/>
+      <polygon points="50,28 69,39 69,61 50,72 31,61 31,39" opacity=".58"/>
+      <path d="M50,50 L50,6 M50,50 L11.9,72 M50,50 L88.1,72"/>
+    </g>
+  </symbol>
+</svg>
+
+<header>
+  <div class="brand">
+    <svg class="mk"><use href="#cl-mark"/></svg>
+    <span><b>CleanLines</b> Studio</span>
+  </div>
+  <a class="hbtn" href="mailto:cleanlinesstudio@example.com">Preview sichern</a>
+</header>
+
+<!-- HERO -->
+<section class="hero cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Content-Service für lokale Betriebe</div>
+    <h1 class="lead reveal d1">Regelmäßig posten.<br>Ohne selbst ständig<br><span class="gold">Ideen zu suchen.</span></h1>
+    <p class="sub reveal d2">Wir erstellen dir jeden Monat fertige Reel-Ideen, Captions, Google-Beiträge und einen klaren Content-Plan – passend zu deinem Betrieb, deiner Zielgruppe und deinem Stil.</p>
+    <div class="btns reveal d3">
+      <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Content-Preview sichern</a>
+      <a class="btn btn-ghost" href="#pakete">Pakete ansehen</a>
+    </div>
+    <div class="chips reveal d3">
+      <span>Keine Mindestlaufzeit</span><span>Monatlich kündbar</span><span>Antwort in 24 Std.</span>
+    </div>
+    <div class="phone reveal d2">
+      <div class="notch"></div>
+      <span class="live"><b></b>LIVE</span>
+      <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+    </div>
+    <div class="stats reveal d3">
+      <div class="stat"><b>120+</b><span>Betriebe unterstützt</span></div>
+      <div class="stat"><b>4,9★</b><span>Kundenzufriedenheit</span></div>
+      <div class="stat"><b>30+</b><span>Ideen pro Monat</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEISTUNGEN -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Leistungen</div>
+    <h1 class="lead reveal d1">Alles vorbereitet.<br>Du musst nur noch posten.</h1>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="4.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Reel-Konzepte</h3><p>Starke Ideen mit Hook, Ablauf und CTA – damit deine Reels nicht einfach nur schön aussehen, sondern Aufmerksamkeit bringen.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg></div>
+        <h3>Captions</h3><p>Texte, die nicht nach Vorlage klingen, sondern zu deinem Betrieb passen und deine Kunden direkt ansprechen.</p>
+      </div>
+      <div class="card reveal d2">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg></div>
+        <h3>Google-Beiträge</h3><p>Regelmäßige Beiträge für dein Google-Profil, damit dein Betrieb aktiver, sichtbarer und professioneller wirkt.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l2.5 5 5.5.8-4 3.9.95 5.5L12 16.2 7.05 18.8 8 13.3l-4-3.9 5.5-.8z"/></svg></div>
+        <h3>Bewertungsantworten</h3><p>Freundliche, professionelle Antworten auf Kundenbewertungen – ohne dass du jedes Mal überlegen musst, was du schreiben sollst.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M7.5 13.5h4M7.5 17h7"/></svg></div>
+        <h3>Monatsplan</h3><p>Ein klarer Content-Plan für den ganzen Monat, damit du nicht jeden Tag neu überlegen musst, was online gehen soll.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWREEL -->
+<section class="cv" style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="eyebrow reveal">Showreel</div>
+    <h1 class="lead reveal d1">So sieht dein Content aus.</h1>
+    <p class="sub reveal d2">Echte Beispiele aus unseren Reel-Produktionen – fertig für Instagram, TikTok &amp; Co.</p>
+  </div>
+  <div class="reel-row reveal d2">
+    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-1.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Reel-Produktion</div></div>
+    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-2.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Hook &amp; Schnitt</div></div>
+    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-3.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Story-Reel</div></div>
+    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Promo-Clip</div></div>
+    <div class="reel-card"><div class="phone"><div class="notch"></div><video class="lazyreel" data-src="assets/videos/final.mp4" muted loop playsinline preload="none"></video></div><div class="cap">Brand-Film</div></div>
+  </div>
+</section>
+
+<!-- BRANCHEN -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Branchen</div>
+    <h1 class="lead reveal d1">Content, der zu deinem Betrieb passt.</h1>
+    <div class="tabs reveal d2" id="tabs">
+      <button class="tab active" data-b="0">Friseure</button>
+      <button class="tab" data-b="1">Restaurants</button>
+      <button class="tab" data-b="2">Handwerker</button>
+      <button class="tab" data-b="3">Kosmetikstudios</button>
+      <button class="tab" data-b="4">Fahrschulen</button>
+      <button class="tab" data-b="5">Fitnessstudios</button>
+    </div>
+    <div class="bvisual reveal d2">
+      <img id="bImg" alt="" loading="lazy">
+      <div class="scrim"></div>
+      <div class="metric" id="bMetric">Mehr Sichtbarkeit</div>
+    </div>
+    <div class="bcontent reveal d2">
+      <div class="label">Reel-Idee</div>
+      <div class="reel" id="bReel"></div>
+      <div class="block"><div class="label">Caption</div><div class="txt" id="bCap"></div></div>
+      <div class="block"><div class="label">Google-Beitrag</div><div class="txt" id="bGoogle"></div></div>
+      <div class="cta" id="bCta"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL (cream) -->
+<section class="cv" style="padding:24px 6px">
+  <div class="cream">
+    <div class="wrap" style="text-align:center">
+      <div class="eyebrow dark reveal">Kein Content-Stress mehr</div>
+      <h1 class="lead reveal d1">Du führst deinen Betrieb.<br>Wir kümmern uns um deinen Content.</h1>
+      <p class="sub reveal d2">Du bekommst jeden Monat fertige Ideen, Texte und Beiträge, die wirklich zu deinem Geschäft passen – ohne leere Phrasen, ohne Copy-Paste-Gefühl, ohne Zeitverschwendung.</p>
+      <div class="pills" style="text-align:left">
+        <div class="pill reveal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.5.8.5 1.6h6c0-.8 0-1.2.5-1.6A6 6 0 0 0 12 3z" fill="currentColor" stroke="none"/></svg>Fertige Ideen</div>
+        <div class="pill reveal d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg>Fertige Texte</div>
+        <div class="pill reveal d2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M8 14l2.2 2.2L16 11"/></svg>Klarer Monatsplan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Vorher / Nachher</div>
+    <h1 class="lead reveal d1">Von „wir müssten mal posten“ zu einem klaren System.</h1>
+    <div class="ba">
+      <div class="col before reveal">
+        <h4>Vorher</h4>
+        <ul>
+          <li>Jeden Tag überlegen, was man posten könnte</li>
+          <li>Mal aktiv, dann wieder wochenlang nichts</li>
+          <li>Keine klare Linie im Auftritt</li>
+          <li>Texte fühlen sich gezwungen an</li>
+          <li>Wenig Sichtbarkeit, kaum neue Anfragen</li>
+          <li>Social Media bleibt immer liegen</li>
+        </ul>
+      </div>
+      <div class="col after reveal d1">
+        <h4>Nachher</h4>
+        <ul>
+          <li>Ein fertiger Monatsplan im Voraus</li>
+          <li>Regelmäßiger Content ohne Stress</li>
+          <li>Texte, die professionell &amp; natürlich klingen</li>
+          <li>Mehr Vertrauen bei neuen Kunden</li>
+          <li>Einheitlicher Auftritt auf Instagram &amp; Google</li>
+          <li>Du sparst Zeit und wirkst aktiver</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="cv" id="pakete">
+  <div class="wrap">
+    <div class="eyebrow reveal">Monatspakete</div>
+    <h1 class="lead reveal d1">Wähle, wie sichtbar dein Betrieb werden soll.</h1>
+    <div class="plans">
+      <article class="plan reveal">
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 5L19 11l-5.3 1.8L12 18l-1.7-5.2L5 11l5.3-2z" fill="currentColor" stroke="none"/></svg></div>
+        <div class="pname">Starter</div>
+        <div class="price"><b>250€</b><span>/Monat</span></div>
+        <p class="pdesc">Der einfache Einstieg für Betriebe, die endlich regelmäßig sichtbar sein wollen.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Reel-Konzepte pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>12 fertige Captions</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>4 Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>1 klarer Monatsplan</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Starter%20Paket">Starter anfragen</a>
+      </article>
+      <article class="plan feat reveal">
+        <span class="badge">Beliebt</span>
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 6-6.5"/><path d="M14.5 7.5H19V12"/></svg></div>
+        <div class="pname">Wachstum</div>
+        <div class="price"><b>490€</b><span>/Monat</span></div>
+        <p class="pdesc">Für Betriebe, die mehr posten, professioneller wirken und mehr Anfragen bekommen wollen.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>16 Reel-Konzepte pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>30 fertige Captions</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Bewertungsantworten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Monatsplan + Strategie-Call</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Wachstum%20Paket">Wachstum anfragen</a>
+      </article>
+      <article class="plan reveal">
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5h16l1-9-5 3.5L12 5.5 8 12 3 8.5z" fill="currentColor" stroke="none"/><path d="M4 20h16"/></svg></div>
+        <div class="pname">Premium</div>
+        <div class="price"><b>890€</b><span>/Monat</span></div>
+        <p class="pdesc">Für Betriebe, die ihren Content komplett auslagern und dauerhaft präsent sein wollen.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Unbegrenzte Reel-Konzepte</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>60+ Captions pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Tägliche Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Persönlicher Ansprechpartner</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Priorisierter Support</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Premium%20Paket">Premium anfragen</a>
+      </article>
+    </div>
+    <div class="paynote reveal">🔒 Sichere Zahlung · monatlich kündbar · keine Einrichtungsgebühr
+      <div class="pays"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>Klarna</span><span>SEPA</span><span>Apple&nbsp;Pay</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EINZELAUFTRÄGE -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Einzelaufträge</div>
+    <h1 class="lead reveal d1">Du brauchst mehr als Content?</h1>
+    <p class="sub reveal d2">Für einzelne Projekte bekommst du klare Festpreise, saubere Umsetzung und ein Ergebnis, das professionell wirkt.</p>
+    <div class="grid">
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9.5h18"/></svg></div>
+        <h3>Website-Design</h3><span class="tag">ab 1.490€</span>
+        <p>Eine moderne Website, die auf dem Handy stark aussieht, Vertrauen schafft und Kunden zur Anfrage bringt.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5l1.7 4 4 1.7-4 1.7L11 15l-1.7-4-4-1.7 4-1.7z" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Logo &amp; Branding</h3><span class="tag">ab 590€</span>
+        <p>Ein sauberer Markenauftritt mit Logo, Farben und Schriften, damit dein Betrieb hochwertiger wirkt.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Reel-Produktion</h3><span class="tag">ab 290€ / Reel</span>
+        <p>Fertig geschnittene Reels mit Hook, Untertiteln, Musik und klarer Botschaft – bereit zum Veröffentlichen.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="12" r="2.5"/><circle cx="17" cy="6.5" r="2.5"/><circle cx="17" cy="17.5" r="2.5"/><path d="M8.7 10.8l6-3.2M8.7 13.2l6 3.2"/></svg></div>
+        <h3>Social-Media-Setup</h3><span class="tag">ab 390€</span>
+        <p>Wir optimieren dein Profil, deine Bio, Highlights und deinen ersten Content-Aufbau für einen starken Start.</p>
+      </div>
+    </div>
+    <div class="btns reveal"><a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Einzelauftrag%20Anfrage">Projekt anfragen</a></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Bewertungen</div>
+    <h1 class="lead reveal d1">Betriebe, die nicht mehr planlos posten.</h1>
+    <div class="reviews">
+      <div class="review reveal"><div class="stars">★★★★★</div><p>„Ich musste vorher jeden Post selbst überlegen. Jetzt bekomme ich jeden Monat einen klaren Plan und kann einfach arbeiten.“</p><div class="who"><span class="ava">S</span>Sarah M. · Friseursalon</div></div>
+      <div class="review reveal d1"><div class="stars">★★★★★</div><p>„Unsere Seite wirkt viel aktiver und professioneller. Man merkt sofort, dass endlich eine Linie drin ist.“</p><div class="who"><span class="ava">M</span>Marco L. · Restaurant</div></div>
+      <div class="review reveal"><div class="stars">★★★★★</div><p>„Die Texte klingen nicht künstlich, sondern wirklich nach unserem Betrieb. Genau das war mir wichtig.“</p><div class="who"><span class="ava">D</span>Daniel K. · Handwerksbetrieb</div></div>
+      <div class="review reveal d1"><div class="stars">★★★★★</div><p>„Endlich jemand, der versteht, dass lokale Betriebe keine Zeit für ständiges Content-Grübeln haben.“</p><div class="who"><span class="ava">L</span>Lena R. · Kosmetikstudio</div></div>
+    </div>
+    <div class="rev-trust reveal"><b>4,9 / 5</b> · über 120 unterstützte Betriebe</div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">FAQ</div>
+    <h1 class="lead reveal d1">Häufige Fragen.</h1>
+    <div class="faq reveal d1">
+      <details open><summary>Wie schnell bekomme ich meinen ersten Content?<span class="pm"></span></summary><p>Nach dem Start bekommst du innerhalb von 5 Werktagen deinen ersten fertigen Monatsplan mit Ideen, Texten und Beiträgen.</p></details>
+      <details><summary>Muss ich lange Vertragslaufzeiten eingehen?<span class="pm"></span></summary><p>Nein. Alle Pakete sind monatlich kündbar. Du bleibst flexibel und kannst jederzeit entscheiden, wie es weitergeht.</p></details>
+      <details><summary>Funktioniert das auch für meine Branche?<span class="pm"></span></summary><p>Ja. Wir passen die Inhalte an deinen Betrieb an – egal ob Friseur, Restaurant, Handwerk, Kosmetik, Fahrschule, Fitnessstudio oder ein anderer lokaler Service.</p></details>
+      <details><summary>Macht ihr auch fertige Videos?<span class="pm"></span></summary><p>Ja. Die Konzepte und Skripte sind in den Paketen enthalten. Fertig produzierte Reels kannst du zusätzlich als Einzelauftrag buchen.</p></details>
+      <details><summary>Was brauche ich zum Start?<span class="pm"></span></summary><p>Nur ein paar Infos zu deinem Betrieb, deiner Zielgruppe und deinem Angebot. Danach bauen wir daraus deinen Content-Plan.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final cv">
+  <div class="wrap">
+    <div class="eyebrow reveal">Bereit für mehr Sichtbarkeit?</div>
+    <h1 class="lead reveal d1">Dein Betrieb muss nicht jeden Tag online kämpfen. Er braucht ein System, das für dich arbeitet.</h1>
+    <div class="btns reveal d2">
+      <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com">Kostenlose Content-Preview sichern</a>
+      <a class="btn btn-ghost" href="#pakete">Pakete ansehen</a>
+    </div>
+    <div class="chips reveal d2"><span>Kostenlose Preview</span><span>Keine Mindestlaufzeit</span><span>Monatlich kündbar</span><span>Persönliche Beratung</span></div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand"><svg class="mk"><use href="#cl-mark"/></svg><span><b>CleanLines</b> Studio</span></div>
+  Creative Content Hub für lokale Betriebe<br>
+  <a href="mailto:cleanlinesstudio@example.com" style="color:var(--gold-soft)">cleanlinesstudio@example.com</a><br>
+  <a class="dl" href="index.html">Desktop-Version ansehen →</a>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  /* ---- reveal on scroll (opacity/transform only) ---- */
+  var revEls = document.querySelectorAll(".reveal");
+  if(reduce || !("IntersectionObserver" in window)){
+    revEls.forEach(function(e){ e.classList.add("in"); });
+  } else {
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("in"); ro.unobserve(en.target); }
+      });
+    }, { rootMargin:"0px 0px -8% 0px", threshold:0.12 });
+    revEls.forEach(function(e){ ro.observe(e); });
+  }
+
+  /* ---- videos: only the visible ones decode/play ---- */
+  var vids = document.querySelectorAll("video.lazyreel");
+  var vo = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      var v = en.target;
+      if(en.isIntersecting){
+        if(!v.src){ v.src = v.dataset.src; }      // lazy-load source on first view
+        var p = v.play(); if(p && p.catch){ p.catch(function(){}); }
+      } else {
+        v.pause();
+      }
+    });
+  }, { threshold:0.5 });
+  vids.forEach(function(v){ vo.observe(v); });
+
+  /* pause hero video when scrolled away to save battery */
+  var hero = document.querySelector(".hero video");
+  if(hero){
+    var ho = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ hero.play&&hero.play().catch(function(){}); } else { hero.pause(); } });
+    }, { threshold:0.15 });
+    ho.observe(hero);
+  }
+
+  /* ---- Branchen tabs ---- */
+  var CDN="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/";
+  var BR=[
+    {img:CDN+"hf_20260614_121505_3df017d3-688d-4350-9362-5167c2efd165.png",
+     reel:"Aus einem normalen Haarschnitt wird ein Vorher-Nachher-Moment",
+     cap:"Neuer Look, neues Gefühl. Zeig deinen Kunden, was mit dem richtigen Schnitt möglich ist.",
+     google:"Neue Termine frei – sichere dir jetzt deinen Wunschtermin für deinen neuen Look.",
+     cta:"Jetzt Wunschtermin sichern", metric:"Mehr Sichtbarkeit"},
+    {img:CDN+"hf_20260614_121507_0737227a-d299-4c94-bdf2-ff59219631c8.png",
+     reel:"Ein Gericht vom ersten Handgriff bis zum fertigen Teller",
+     cap:"Appetit entsteht nicht durch Zufall. Zeig, was bei dir frisch, ehrlich und besonders ist.",
+     google:"Heute frisch für dich gekocht – reservier dir deinen Tisch fürs Wochenende.",
+     cta:"Jetzt Tisch reservieren", metric:"Mehr Gäste"},
+    {img:CDN+"hf_20260614_121508_62c6e4c1-ec60-419e-b7c9-4a3daf92dc62.png",
+     reel:"Aus Problem wird Lösung – eine Baustelle in 20 Sekunden",
+     cap:"Kunden kaufen Vertrauen. Zeig sauber, wie du arbeitest und warum man dich beauftragen sollte.",
+     google:"Saubere Arbeit, faire Preise – fordere jetzt dein unverbindliches Angebot an.",
+     cta:"Jetzt Angebot anfordern", metric:"Mehr Vertrauen"},
+    {img:CDN+"hf_20260614_121510_e1bfc022-7446-419f-adca-0812f520f80f.png",
+     reel:"Behandlung, Atmosphäre und Ergebnis in einem ruhigen Premium-Clip",
+     cap:"Deine Kunden buchen nicht nur eine Behandlung. Sie buchen ein Gefühl von Pflege, Ruhe und Qualität.",
+     google:"Gönn dir eine Auszeit – buche jetzt deine Wohlfühl-Behandlung bei uns.",
+     cta:"Jetzt Behandlung buchen", metric:"Mehr Wohlgefühl"},
+    {img:CDN+"hf_20260615_003121_1f780c2f-d658-48e5-829c-32dcce3f1e8c.png",
+     reel:"3 Dinge, die jeder Fahrschüler vor der Prüfung wissen sollte",
+     cap:"Nimm deinen Schülern die Angst und zeig, dass deine Fahrschule verständlich, modern und nahbar ist.",
+     google:"Neuer Kurs startet bald – melde dich jetzt an und starte sicher durch.",
+     cta:"Jetzt zum Kurs anmelden", metric:"Mehr Anmeldungen"},
+    {img:CDN+"hf_20260615_003122_2462d848-1d79-4383-807c-62e8689a9a0c.png",
+     reel:"Ein einfaches Workout, das jeder sofort ausprobieren kann",
+     cap:"Keine Ausreden. Keine komplizierten Pläne. Nur ein klarer Start in ein stärkeres Ich.",
+     google:"Probetraining gratis – komm vorbei und finde deinen Einstieg, der wirklich passt.",
+     cta:"Jetzt Probetraining sichern", metric:"Mehr Motivation"}
+  ];
+  var bImg=document.getElementById("bImg"), bReel=document.getElementById("bReel"),
+      bCap=document.getElementById("bCap"), bGoogle=document.getElementById("bGoogle"),
+      bCta=document.getElementById("bCta"), bMetric=document.getElementById("bMetric");
+  function setBranche(i){
+    var d=BR[i];
+    bImg.style.opacity="0";
+    var pre=new Image();
+    pre.onload=function(){ bImg.src=d.img; bImg.style.opacity="1"; };
+    pre.src=d.img;
+    if(bImg.src){ } else { bImg.src=d.img; bImg.style.opacity="1"; }
+    bReel.textContent=d.reel; bCap.textContent=d.cap;
+    bGoogle.textContent=d.google; bCta.textContent=d.cta; bMetric.textContent=d.metric;
+  }
+  var tabs=document.querySelectorAll("#tabs .tab");
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){
+      tabs.forEach(function(x){ x.classList.remove("active"); });
+      t.classList.add("active");
+      setBranche(+t.dataset.b);
+    });
+  });
+  setBranche(0);
+})();
+</script>
+</body>
+</html>
