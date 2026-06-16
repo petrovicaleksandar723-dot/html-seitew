@@ -2,12 +2,802 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cleanlines Studio</title>
-<meta http-equiv="refresh" content="0; url=index.html">
-<link rel="canonical" href="index.html">
-<script>location.replace("index.html"+location.hash);</script>
-<style>html,body{background:#07070a;color:#c9a25a;font-family:system-ui,sans-serif;height:100%;margin:0;display:grid;place-items:center}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07070a">
+<title>Cleanlines Studio — Content für Unternehmen & lokale Betriebe</title>
+<meta name="description" content="Cleanlines Studio erstellt Content-Ideen, Captions, Google-Beiträge und klare Monatspläne für Unternehmen, die online professioneller auftreten wollen. Starte mit einer kostenlosen Content-Preview.">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0a0c'/%3E%3Cg fill='none' stroke='%23c9a25a' stroke-width='5' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpolygon points='50,14 82,32 82,68 50,86 18,68 18,32'/%3E%3Cpath d='M50,50 50,14 M50,50 18,68 M50,50 82,68'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cleanlines Studio — Content für Unternehmen & lokale Betriebe">
+<meta property="og:description" content="Professioneller Content für jedes Unternehmen: Reel-Ideen, Captions, Google-Beiträge und klare Monatspläne – ohne dass du selbst planen musst.">
+<meta property="og:image" content="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a; --bg2:#0c0c11; --card:#131318; --card2:#17171d;
+  --gold:#c9a25a; --gold-2:#e8d2a0; --gold-3:#fff4da; --cream:#f5f1e8;
+  --ink:#f4f1ea; --gray:#aeb4c0; --dim:#7c818c; --line:rgba(255,255,255,.10);
+  --line-2:rgba(201,162,90,.30);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:"Sora","Inter",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-2:cubic-bezier(.16,1,.3,1);
+  --r:20px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; scroll-padding-top:84px; }
+body{ font-family:var(--font); background:var(--bg); color:var(--ink); line-height:1.6;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+img,video{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; cursor:pointer; border:none; background:none; }
+::selection{ background:rgba(201,162,90,.3); color:#fff; }
+
+/* ---------- animated aurora background (cheap, GPU) ---------- */
+.bg-aurora{ position:fixed; inset:-20%; z-index:-3; pointer-events:none; filter:blur(60px); opacity:.55;
+  background:
+    radial-gradient(38% 32% at 22% 18%, rgba(201,162,90,.30), transparent 60%),
+    radial-gradient(36% 30% at 82% 30%, rgba(120,90,200,.16), transparent 60%),
+    radial-gradient(45% 40% at 60% 92%, rgba(201,162,90,.14), transparent 62%);
+  animation:aurora 22s ease-in-out infinite alternate; will-change:transform; }
+@keyframes aurora{ 0%{ transform:translate3d(-3%,-2%,0) scale(1); } 50%{ transform:translate3d(4%,3%,0) scale(1.08); } 100%{ transform:translate3d(-2%,4%,0) scale(1.02); } }
+.bg-base{ position:fixed; inset:0; z-index:-4; background:
+  radial-gradient(120% 80% at 50% -10%, rgba(201,162,90,.10), transparent 60%), var(--bg); pointer-events:none; }
+.bg-grid{ position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:64px 64px; mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 80%); }
+/* cursor glow (desktop) */
+.cursor-glow{ position:fixed; top:0; left:0; width:480px; height:480px; margin:-240px 0 0 -240px; z-index:-1;
+  border-radius:50%; pointer-events:none; opacity:0; transition:opacity .5s ease;
+  background:radial-gradient(circle, rgba(201,162,90,.10), transparent 65%); will-change:transform; }
+
+/* ---------- scroll progress ---------- */
+.progress{ position:fixed; top:0; left:0; height:3px; width:100%; transform:scaleX(0); transform-origin:0 50%; z-index:120;
+  background:linear-gradient(90deg,var(--gold),var(--gold-2)); box-shadow:0 0 14px rgba(201,162,90,.6); will-change:transform; }
+
+/* ---------- layout ---------- */
+.wrap{ width:100%; max-width:1180px; margin:0 auto; padding:0 22px; }
+section{ position:relative; padding:clamp(64px,11vw,130px) 0; }
+.eyebrow{ display:inline-flex; align-items:center; gap:9px; font-size:12px; font-weight:700; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--gold); padding:8px 16px; border:1px solid var(--line-2); border-radius:999px;
+  background:rgba(201,162,90,.07); margin-bottom:20px; }
+.eyebrow::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold); }
+h1,h2,h3{ font-family:var(--display); line-height:1.08; letter-spacing:-.02em; font-weight:800; }
+.h-xl{ font-size:clamp(34px,7vw,76px); }
+.h-lg{ font-size:clamp(28px,5.4vw,52px); }
+.lead-sub{ color:var(--gray); font-size:clamp(16px,2.3vw,20px); max-width:60ch; margin-top:18px; }
+.gold{ color:var(--gold); }
+.center{ text-align:center; } .center .lead-sub{ margin-left:auto; margin-right:auto; }
+.sec-head{ max-width:760px; margin:0 auto clamp(36px,5vw,60px); }
+
+/* ---------- buttons ---------- */
+.btns{ display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; }
+.center .btns{ justify-content:center; }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:9px; font-weight:700; font-size:15.5px;
+  padding:15px 26px; border-radius:14px; transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .3s;
+  will-change:transform; position:relative; overflow:hidden; }
+.btn:active{ transform:scale(.96); }
+.btn-primary{ background:linear-gradient(135deg,var(--gold),var(--gold-2)); color:#1a1206; box-shadow:0 14px 34px rgba(201,162,90,.32); }
+.btn-primary:hover{ box-shadow:0 18px 46px rgba(201,162,90,.45); }
+.btn-primary::after{ content:""; position:absolute; top:0; left:-130%; width:55%; height:100%; transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent); animation:sweep 5s ease-in-out infinite; }
+@keyframes sweep{ 0%,16%{ left:-130%; } 40%,100%{ left:170%; } }
+.btn-ghost{ border:1px solid rgba(255,255,255,.2); color:var(--ink); background:rgba(255,255,255,.03); }
+.btn-ghost:hover{ border-color:var(--gold); color:#fff; }
+.btn-wa{ background:linear-gradient(135deg,#25d366,#1da851); color:#04210f; box-shadow:0 14px 34px rgba(37,211,102,.26); }
+
+/* ---------- header ---------- */
+header{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding:14px clamp(16px,3vw,30px); transition:background .4s, backdrop-filter .4s, transform .45s var(--ease), border-color .4s;
+  border-bottom:1px solid transparent; }
+header.solid{ background:rgba(8,8,11,.72); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-bottom-color:var(--line); }
+header.hide{ transform:translateY(-110%); }
+.brand{ display:flex; align-items:center; gap:11px; font-family:var(--display); font-weight:800; font-size:17px; }
+.brand .mk{ width:30px; height:30px; color:var(--gold); flex:0 0 auto; }
+.brand span{ color:var(--gray); font-weight:600; }
+.nav{ display:none; gap:6px; }
+.nav a{ font-size:14px; font-weight:600; color:var(--gray); padding:9px 13px; border-radius:10px; position:relative; transition:color .3s; }
+.nav a:hover,.nav a.active{ color:var(--ink); }
+.nav a.active::after{ content:""; position:absolute; left:13px; right:13px; bottom:4px; height:2px; border-radius:2px; background:linear-gradient(90deg,var(--gold),var(--gold-2)); }
+.head-cta{ display:none; }
+.burger{ width:44px; height:44px; display:grid; place-items:center; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.03); }
+.burger span{ display:block; width:20px; height:2px; background:var(--ink); border-radius:2px; position:relative; transition:transform .3s, opacity .3s; }
+.burger span::before,.burger span::after{ content:""; position:absolute; left:0; width:20px; height:2px; background:var(--ink); border-radius:2px; transition:transform .3s; }
+.burger span::before{ top:-6px; } .burger span::after{ top:6px; }
+body.menu .burger span{ background:transparent; }
+body.menu .burger span::before{ transform:translateY(6px) rotate(45deg); }
+body.menu .burger span::after{ transform:translateY(-6px) rotate(-45deg); }
+.mobile-nav{ position:fixed; inset:0; z-index:95; background:rgba(7,7,10,.97); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; opacity:0; pointer-events:none; transition:opacity .4s var(--ease); }
+body.menu .mobile-nav{ opacity:1; pointer-events:auto; }
+.mobile-nav a{ font-family:var(--display); font-weight:700; font-size:26px; padding:12px; color:var(--gray); transition:color .3s, transform .3s; }
+.mobile-nav a:active{ color:var(--gold); transform:scale(.96); }
+.mobile-nav .btn{ margin-top:18px; font-size:17px; }
+
+/* ---------- reveal ---------- */
+.reveal{ opacity:0; transform:translateY(46px); transition:opacity .8s var(--ease), transform .9s var(--ease); will-change:opacity,transform; }
+.reveal.in{ opacity:1; transform:none; }
+.reveal.r-l{ transform:translateX(-54px); } .reveal.r-r{ transform:translateX(54px); }
+.reveal.r-s{ transform:scale(.9); }
+.reveal.in{ will-change:auto; }
+[data-stagger]>*{ opacity:0; transform:translateY(40px); transition:opacity .7s var(--ease), transform .8s var(--ease); }
+[data-stagger].in>*{ opacity:1; transform:none; }
+[data-stagger].in>*:nth-child(2){ transition-delay:.08s; }
+[data-stagger].in>*:nth-child(3){ transition-delay:.16s; }
+[data-stagger].in>*:nth-child(4){ transition-delay:.24s; }
+[data-stagger].in>*:nth-child(5){ transition-delay:.32s; }
+
+/* ---------- hero ---------- */
+.hero{ min-height:100svh; display:flex; align-items:center; padding-top:120px; padding-bottom:60px; }
+.hero-grid{ display:grid; grid-template-columns:1fr; gap:clamp(34px,5vw,56px); align-items:center; width:100%; }
+.hero h1{ margin-top:6px; }
+.hero .word{ display:inline-block; overflow:hidden; vertical-align:top; }
+.hero .word b{ display:inline-block; font-weight:inherit; transform:translateY(110%); transition:transform .9s var(--ease); }
+.hero.lit .word b{ transform:none; }
+.hero .word:nth-child(2) b{ transition-delay:.05s; } .hero .word:nth-child(3) b{ transition-delay:.1s; }
+.hero .word:nth-child(4) b{ transition-delay:.15s; } .hero .word:nth-child(5) b{ transition-delay:.2s; }
+.hero .word:nth-child(6) b{ transition-delay:.25s; } .hero .word:nth-child(7) b{ transition-delay:.3s; }
+.hero .word:nth-child(8) b{ transition-delay:.35s; } .hero .word:nth-child(9) b{ transition-delay:.4s; }
+.trust{ display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:26px; }
+.trust span{ font-size:12.5px; color:var(--gray); padding:7px 13px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.02); }
+.trust span::before{ content:"✓ "; color:var(--gold); font-weight:800; }
+.hero-visual{ position:relative; display:flex; justify-content:center; }
+.phone{ position:relative; width:min(290px,76vw); aspect-ratio:9/19; border-radius:38px; background:#000;
+  border:1px solid rgba(255,255,255,.16); padding:8px; box-shadow:0 40px 90px rgba(0,0,0,.7),0 0 0 1px rgba(201,162,90,.16),0 0 70px rgba(201,162,90,.2);
+  will-change:transform; }
+.phone::after{ content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%); width:34%; height:17px; background:#000; border-radius:0 0 13px 13px; z-index:3; }
+.phone video,.phone img{ width:100%; height:100%; object-fit:cover; border-radius:30px; background:#0a0a0c; }
+.phone .live{ position:absolute; top:18px; right:16px; z-index:4; display:flex; align-items:center; gap:6px; font-size:10.5px;
+  font-weight:800; letter-spacing:.1em; color:#fff; background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.25); padding:5px 10px; border-radius:999px; }
+.phone .live b{ width:7px; height:7px; border-radius:50%; background:#ff5a5a; box-shadow:0 0 8px #ff5a5a; animation:blink 1.6s infinite; }
+@keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+.float-chip{ position:absolute; z-index:5; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700;
+  padding:10px 14px; border-radius:13px; background:rgba(18,18,24,.82); border:1px solid var(--line-2); color:var(--ink);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:0 14px 34px rgba(0,0,0,.5); will-change:transform; }
+.float-chip i{ color:var(--gold); font-style:normal; }
+.fc-1{ top:8%; left:-6%; animation:floaty 6s var(--ease) infinite; }
+.fc-2{ bottom:18%; right:-8%; animation:floaty 7s var(--ease) -2s infinite; }
+.fc-3{ bottom:4%; left:2%; animation:floaty 8s var(--ease) -4s infinite; }
+@keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-12px); } }
+
+/* ---------- cards / tilt ---------- */
+.grid{ display:grid; gap:clamp(14px,2vw,20px); }
+.g-2{ grid-template-columns:1fr; } .g-3{ grid-template-columns:1fr; } .g-4{ grid-template-columns:1fr; }
+.card{ position:relative; background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line);
+  border-radius:var(--r); padding:clamp(20px,3vw,30px); overflow:hidden; transition:border-color .4s, box-shadow .4s, transform .3s var(--ease); }
+.card:hover{ border-color:var(--line-2); box-shadow:0 26px 60px rgba(0,0,0,.45),0 0 40px rgba(201,162,90,.1); }
+.card .ic{ width:54px; height:54px; border-radius:15px; display:grid; place-items:center; margin-bottom:16px;
+  background:rgba(201,162,90,.13); border:1px solid var(--line-2); color:var(--gold-2); }
+.card .ic svg{ width:26px; height:26px; } .card .ic b{ font-family:var(--display); font-weight:800; font-size:21px; color:var(--gold-2); }
+.card h3{ font-size:19px; margin-bottom:8px; }
+.card p{ color:var(--gray); font-size:14.6px; }
+.card .step-num{ position:absolute; top:18px; right:22px; font-family:var(--display); font-weight:800; font-size:40px; color:rgba(201,162,90,.14); }
+.card.glow-edge::before{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:1px;
+  background:linear-gradient(120deg,transparent,rgba(201,162,90,.5),transparent); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; transition:opacity .4s; }
+.card.glow-edge:hover::before{ opacity:1; }
+.tilt{ transform-style:preserve-3d; }
+
+/* ---------- rails (side-by-side, swipeable) ---------- */
+.rail{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+  padding:6px 22px 18px; margin:0 -22px; scrollbar-width:none; }
+.rail::-webkit-scrollbar{ display:none; }
+.rail>*{ scroll-snap-align:center; flex:0 0 auto; }
+.reel-card{ width:230px; text-align:center; }
+.reel-card .phone{ width:230px; margin:0 auto; cursor:pointer; }
+.reel-card .cap{ margin-top:13px; font-size:13px; font-weight:600; color:var(--gray); }
+.reel-tap{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:54px; height:54px; border-radius:50%; z-index:5;
+  display:grid; place-items:center; font-size:19px; color:#1a1206; padding-left:3px; opacity:.95;
+  background:linear-gradient(135deg,var(--gold),var(--gold-2)); box-shadow:0 10px 26px rgba(0,0,0,.5); }
+.show-card{ width:min(330px,82vw); border-radius:var(--r); overflow:hidden; border:1px solid var(--line); position:relative;
+  background:var(--card); }
+.show-card img{ width:100%; aspect-ratio:4/3; object-fit:cover; transition:transform 1.2s var(--ease); }
+.show-card:hover img{ transform:scale(1.07); }
+.show-card .sc-scrim{ position:absolute; inset:0; background:linear-gradient(to top,rgba(7,7,10,.9),transparent 58%); }
+.show-card .sc-body{ position:absolute; left:0; right:0; bottom:0; padding:18px; text-align:left; }
+.show-card .sc-body .m{ display:inline-block; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-2);
+  background:rgba(0,0,0,.45); border:1px solid var(--line-2); padding:5px 11px; border-radius:999px; margin-bottom:8px; }
+.show-card .sc-body h3{ font-size:18px; }
+
+/* ---------- pills (für wen) ---------- */
+.pills{ display:flex; flex-wrap:wrap; gap:11px; justify-content:center; max-width:880px; margin:0 auto; }
+.pill{ font-size:14px; font-weight:600; color:var(--ink); padding:11px 18px; border-radius:999px; border:1px solid var(--line);
+  background:rgba(255,255,255,.03); transition:transform .3s var(--ease), border-color .3s, background .3s, color .3s; }
+.pill:hover{ transform:translateY(-4px); border-color:var(--gold); background:rgba(201,162,90,.1); color:#fff; }
+
+/* ---------- before / after ---------- */
+.ba{ display:grid; grid-template-columns:1fr; gap:18px; }
+.col{ border-radius:var(--r); padding:clamp(22px,3vw,32px); border:1px solid var(--line); }
+.col.before{ background:linear-gradient(165deg,#1a1418,#120e11); }
+.col.after{ background:linear-gradient(165deg,#101a14,#0b130e); border-color:rgba(120,190,140,.28); }
+.col h4{ font-family:var(--display); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:16px; }
+.col.before h4{ color:#e09a9a; } .col.after h4{ color:#86d6a2; }
+.col ul{ list-style:none; display:flex; flex-direction:column; gap:13px; }
+.col li{ font-size:15px; color:#d7d3cc; padding-left:30px; position:relative; }
+.col.before li::before{ content:"✕"; position:absolute; left:0; color:#e09a9a; font-weight:800; }
+.col.after li::before{ content:"✓"; position:absolute; left:0; color:#86d6a2; font-weight:800; }
+
+/* ---------- preview highlight ---------- */
+.preview-box{ background:linear-gradient(165deg,rgba(201,162,90,.1),rgba(20,17,11,.6)); border:1px solid var(--line-2);
+  border-radius:26px; padding:clamp(28px,4vw,46px); }
+.prev-list{ display:grid; grid-template-columns:1fr; gap:13px; margin-top:24px; text-align:left; }
+.prev-list li{ list-style:none; display:flex; gap:13px; align-items:flex-start; font-size:15.5px; color:var(--ink); }
+.prev-list svg{ width:24px; height:24px; flex:0 0 auto; color:var(--gold); margin-top:1px; }
+
+/* ---------- pricing ---------- */
+.plans{ display:grid; grid-template-columns:1fr; gap:18px; }
+.plan{ position:relative; background:linear-gradient(170deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:24px;
+  padding:clamp(24px,3vw,32px); transition:border-color .4s, box-shadow .4s, transform .3s var(--ease); }
+.plan:hover{ transform:translateY(-6px); border-color:var(--line-2); box-shadow:0 30px 70px rgba(0,0,0,.5); }
+.plan.feat{ border-color:rgba(201,162,90,.5); box-shadow:0 24px 60px rgba(201,162,90,.16); }
+.plan .badge{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:12px; font-weight:800; letter-spacing:.08em;
+  text-transform:uppercase; color:#1a1206; background:linear-gradient(135deg,var(--gold),var(--gold-2)); padding:6px 17px; border-radius:999px; }
+.plan .pic{ width:50px; height:50px; border-radius:14px; display:grid; place-items:center; background:rgba(201,162,90,.13); border:1px solid var(--line-2); color:var(--gold-2); margin-bottom:14px; }
+.plan .pic svg{ width:25px; height:25px; }
+.plan .pname{ font-family:var(--display); font-weight:700; font-size:22px; }
+.plan .price{ display:flex; align-items:baseline; gap:6px; margin:8px 0 12px; }
+.plan .price b{ font-family:var(--display); font-size:40px; font-weight:800; color:var(--gold-2); }
+.plan .price span{ color:var(--gray); font-size:14px; }
+.plan .pdesc{ color:var(--gray); font-size:14.5px; min-height:44px; }
+.plan ul{ list-style:none; margin:18px 0 22px; display:flex; flex-direction:column; gap:12px; }
+.plan li{ display:flex; gap:11px; align-items:flex-start; font-size:14.6px; }
+.plan li svg{ width:20px; height:20px; flex:0 0 auto; color:var(--gold); margin-top:1px; }
+.plan .pcta{ width:100%; text-align:center; font-weight:700; padding:14px; border-radius:13px; border:1px solid var(--line-2);
+  background:rgba(201,162,90,.08); color:var(--gold-2); transition:transform .25s var(--ease), background .3s; }
+.plan.feat .pcta{ background:linear-gradient(135deg,var(--gold),var(--gold-2)); color:#1a1206; border-color:transparent; }
+.plan .pcta:active{ transform:scale(.97); }
+.paynote{ text-align:center; color:var(--gray); font-size:13.5px; margin-top:26px; line-height:1.7; max-width:680px; margin-left:auto; margin-right:auto; }
+
+/* ---------- faq ---------- */
+.faq{ max-width:820px; margin:0 auto; display:flex; flex-direction:column; gap:13px; }
+.faq details{ background:linear-gradient(165deg,var(--card),var(--bg2)); border:1px solid var(--line); border-radius:16px; padding:0 20px; transition:border-color .3s; }
+.faq details[open]{ border-color:var(--line-2); }
+.faq summary{ list-style:none; cursor:pointer; padding:19px 0; display:flex; align-items:center; justify-content:space-between; gap:16px; font-weight:700; font-size:16px; }
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary .pm{ position:relative; width:18px; height:18px; flex:0 0 auto; }
+.faq summary .pm::before,.faq summary .pm::after{ content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--gold); border-radius:2px; }
+.faq summary .pm::before{ width:14px; height:2px; } .faq summary .pm::after{ width:2px; height:14px; transition:transform .3s var(--ease), opacity .3s; }
+.faq details[open] summary .pm::after{ transform:translate(-50%,-50%) rotate(90deg); opacity:0; }
+.faq p{ color:var(--gray); font-size:15px; padding:0 0 20px; }
+
+/* ---------- final CTA ---------- */
+.final{ text-align:center; }
+.final .preview-box{ max-width:760px; margin:0 auto; }
+.cta-ad{ width:min(250px,64vw); aspect-ratio:9/16; margin:0 auto 8px; border-radius:28px; overflow:hidden; position:relative;
+  border:1px solid var(--line-2); box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 54px rgba(201,162,90,.2); background:#000; cursor:pointer; }
+.cta-ad video{ width:100%; height:100%; object-fit:cover; }
+.cta-ad .tag{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%); font-size:11px; font-weight:700; letter-spacing:.08em;
+  color:#f5f1e8; background:rgba(0,0,0,.5); border:1px solid var(--line-2); padding:5px 12px; border-radius:999px; pointer-events:none; }
+
+/* ---------- footer ---------- */
+footer{ border-top:1px solid var(--line); padding:48px 0 120px; text-align:center; color:var(--gray); font-size:14px; }
+footer .brand{ justify-content:center; margin-bottom:16px; }
+footer .f-links{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px 22px; margin-top:14px; }
+footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:hover{ color:var(--gold-2); }
+
+/* ---------- sticky mobile dock ---------- */
+.dock{ position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); z-index:90; display:flex; align-items:center;
+  gap:12px; padding:10px 10px 10px 18px; border-radius:16px; background:rgba(14,14,18,.86); border:1px solid var(--line-2);
+  box-shadow:0 16px 40px rgba(0,0,0,.55); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  transform:translateY(160%); opacity:0; transition:transform .5s var(--ease), opacity .4s; }
+.dock.show{ transform:none; opacity:1; }
+.dock .t{ font-size:13.5px; font-weight:600; flex:1; }
+.dock .btn{ padding:11px 18px; font-size:14px; }
+
+/* ---------- reel viewer ---------- */
+.viewer{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:18px;
+  background:rgba(4,4,6,.95); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity .35s; }
+.viewer.open{ opacity:1; pointer-events:auto; }
+.viewer video{ max-width:100%; max-height:84vh; border-radius:22px; background:#000; box-shadow:0 30px 80px rgba(0,0,0,.7); }
+.viewer .x{ position:absolute; top:16px; right:16px; width:46px; height:46px; border-radius:50%; font-size:20px; color:#fff;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); display:grid; place-items:center; }
+
+/* ---------- responsive ---------- */
+@media (min-width:760px){
+  .g-2{ grid-template-columns:1fr 1fr; } .g-3{ grid-template-columns:repeat(3,1fr); }
+  .ba{ grid-template-columns:1fr 1fr; } .plans{ grid-template-columns:repeat(3,1fr); }
+  .prev-list{ grid-template-columns:1fr 1fr; }
+}
+@media (min-width:760px) and (max-width:1023px){ .g-4{ grid-template-columns:1fr 1fr; } }
+@media (min-width:1024px){
+  .nav{ display:flex; } .head-cta{ display:inline-flex; } .burger{ display:none; }
+  .g-4{ grid-template-columns:repeat(4,1fr); }
+  .hero-grid{ grid-template-columns:1.05fr .95fr; }
+  .hero{ text-align:left; } .dock{ display:none; }
+}
+@media (hover:none),(pointer:coarse){ .bg-grid{ display:none; } .cursor-glow{ display:none !important; } }
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; scroll-behavior:auto !important; }
+  .reveal,[data-stagger]>*,.hero .word b{ opacity:1 !important; transform:none !important; transition:none !important; }
+}
+</style>
 </head>
-<body>Weiterleitung zu Cleanlines Studio … <a href="index.html" style="color:#e8d2a0">Hier klicken</a></body>
+<body>
+
+<div class="bg-base"></div>
+<div class="bg-aurora" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="mk" viewBox="0 0 100 100">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="50,6 88.1,28 88.1,72 50,94 11.9,72 11.9,28"/>
+    <polygon points="50,17 78.6,33.5 78.6,66.5 50,83 21.4,66.5 21.4,33.5" opacity=".75"/>
+    <path d="M50,50 L50,6 M50,50 L11.9,72 M50,50 L88.1,72"/>
+  </g></symbol></svg>
+
+<header id="header">
+  <a class="brand" href="#top"><svg class="mk"><use href="#mk"/></svg>Cleanlines <span>Studio</span></a>
+  <nav class="nav" id="nav">
+    <a href="#leistungen">Leistungen</a>
+    <a href="#fuer-wen">Für wen</a>
+    <a href="#showreel">Showreel</a>
+    <a href="#ablauf">Ablauf</a>
+    <a href="#pakete">Pakete</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn btn-primary head-cta" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Content-Preview</a>
+  <button class="burger" id="burger" aria-label="Menü"><span></span></button>
+</header>
+
+<div class="mobile-nav" id="mnav">
+  <a href="#leistungen">Leistungen</a>
+  <a href="#fuer-wen">Für wen</a>
+  <a href="#showreel">Showreel</a>
+  <a href="#ablauf">Ablauf</a>
+  <a href="#pakete">Pakete</a>
+  <a href="#faq">FAQ</a>
+  <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Content-Preview</a>
+</div>
+
+<main id="flow">
+<span id="top"></span>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow reveal">Content-Studio für Unternehmen & lokale Betriebe</span>
+        <h1 class="h-xl" id="heroH">Content, der dein Unternehmen sichtbar macht.</h1>
+        <p class="lead-sub reveal">Cleanlines Studio erstellt Content-Ideen, Captions, Google-Beiträge und klare Monatspläne für Unternehmen, die online professioneller auftreten wollen – ohne dass du selbst planen musst.</p>
+        <div class="btns reveal">
+          <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Content-Preview anfragen</a>
+          <a class="btn btn-ghost" href="#leistungen">Leistungen ansehen</a>
+        </div>
+        <div class="trust reveal">
+          <span>Unverbindlich</span><span>Persönlicher Kontakt</span><span>Monatlich kündbar</span><span>Für Betriebe & Unternehmen</span>
+        </div>
+      </div>
+      <div class="hero-visual reveal r-s">
+        <div class="phone tilt" id="heroPhone">
+          <span class="live"><b></b>LIVE</span>
+          <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto" poster="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png"></video>
+        </div>
+        <div class="float-chip fc-1"><i>▶</i>Reel-Idee</div>
+        <div class="float-chip fc-2"><i>✎</i>Caption fertig</div>
+        <div class="float-chip fc-3"><i>◆</i>Monatsplan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Das Problem</span>
+      <h2 class="h-lg">Social Media bleibt oft liegen – obwohl es wichtig wäre.</h2>
+      <p class="lead-sub">Viele Unternehmen wissen, dass sie regelmäßig posten sollten. Trotzdem fehlt im Alltag die Zeit, die Ideen oder ein klarer Plan. Genau hier setzt Cleanlines Studio an.</p>
+    </div>
+    <div class="grid g-3" data-stagger>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3>Keine Zeit</h3><p>Zwischen Kunden, Terminen und Tagesgeschäft bleibt Content meistens auf der Strecke.</p></div>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.5.8.5 1.6h6c0-.8 0-1.2.5-1.6A6 6 0 0 0 12 3z"/></svg></div><h3>Keine Ideen</h3><p>Was soll man posten? Wie formuliert man es? Was passt zur eigenen Zielgruppe?</p></div>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></div><h3>Kein System</h3><p>Einzelne Posts bringen wenig, wenn kein klarer Plan dahintersteht.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEISTUNGEN / LÖSUNG -->
+<section id="leistungen">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Die Lösung</span>
+      <h2 class="h-lg">Wir machen aus deinem Angebot regelmäßigen Content.</h2>
+      <p class="lead-sub">Du kennst dein Unternehmen. Wir verwandeln deine Leistungen, Angebote, Projekte und Neuigkeiten in klare Ideen, fertige Texte und einen strukturierten Plan.</p>
+    </div>
+    <div class="grid g-4" data-stagger>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="4.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div><h3>Reel-Ideen</h3><p>Konkrete Reel-Konzepte mit Hook, Ablauf und CTA – du weißt sofort, was du posten kannst.</p></div>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/></svg></div><h3>Captions</h3><p>Fertige Texte für Instagram, TikTok und Facebook – klar, natürlich und nach dir klingend.</p></div>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg></div><h3>Google-Beiträge</h3><p>Regelmäßige Beiträge für dein Google-Profil – für Angebote, Aktionen und mehr Vertrauen.</p></div>
+      <div class="card tilt glow-edge"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5M7.5 13.5h4M7.5 17h7"/></svg></div><h3>Monatsplan</h3><p>Ein übersichtlicher Plan für den ganzen Monat: Was posten, wann und mit welcher Botschaft.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLTAG -> CONTENT -->
+<section id="alltag">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Dein Content-Potenzial</span>
+      <h2 class="h-lg">Aus deinem Alltag wird Content.</h2>
+      <p class="lead-sub">Jedes Unternehmen hat Inhalte: Angebote, Projekte, Kundenfragen, Ergebnisse und Einblicke. Wir erkennen daraus das Potenzial und bereiten es verständlich auf.</p>
+    </div>
+    <div class="grid g-4" data-stagger>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.6L3.5 20.5l1.4-5.2A8.5 8.5 0 1 1 21 11.5z"/></svg></div><h3>Kundenfrage → Reel</h3><p>Aus einer häufigen Frage wird ein Reel, das genau diese Frage beantwortet.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></svg></div><h3>Angebot → Google-Beitrag</h3><p>Aus einem Angebot wird ein Beitrag, der neue Kunden auf dich aufmerksam macht.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M12 4.5v15"/></svg></div><h3>Projekt → Vorher/Nachher</h3><p>Aus einem Projekt wird ein überzeugender Vorher/Nachher-Post.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5"/></svg></div><h3>Alltag → Monatsplan</h3><p>Aus deinem normalen Arbeitsalltag wird ein klar strukturierter Monatsplan.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABLAUF / SYSTEM -->
+<section id="ablauf">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">So arbeiten wir</span>
+      <h2 class="h-lg">Ein System statt zufälliger Posts.</h2>
+      <p class="lead-sub">Der Unterschied zwischen einem leeren Profil und einem professionellen Auftritt ist nicht Glück, sondern Struktur. Du bekommst ein klares Content-System für jeden Monat.</p>
+    </div>
+    <div class="grid g-4" data-stagger>
+      <div class="card tilt"><span class="step-num">01</span><div class="ic"><b>1</b></div><h3>Wir verstehen dein Unternehmen</h3><p>Branche, Zielgruppe, Angebot und aktueller Auftritt – damit alles wirklich passt.</p></div>
+      <div class="card tilt"><span class="step-num">02</span><div class="ic"><b>2</b></div><h3>Wir entwickeln passende Ideen</h3><p>Keine Standard-Vorlagen, sondern Inhalte, die zu deinem Betrieb und deinen Kunden passen.</p></div>
+      <div class="card tilt"><span class="step-num">03</span><div class="ic"><b>3</b></div><h3>Du bekommst Texte & Planung</h3><p>Captions, Reel-Konzepte, Google-Beiträge und eine klare Monatsstruktur – fertig vorbereitet.</p></div>
+      <div class="card tilt"><span class="step-num">04</span><div class="ic"><b>4</b></div><h3>Umsetzen oder erweitern</h3><p>Du postest selbst – oder fragst fertig produzierte Reels einfach zusätzlich an.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWREEL -->
+<section id="showreel">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Showreel</span>
+      <h2 class="h-lg">So kann dein Content aussehen.</h2>
+      <p class="lead-sub">Beispiele für Reels, die wir konzipieren – tippen zum Abspielen mit Ton.</p>
+    </div>
+  </div>
+  <div class="rail" id="reelRail">
+    <div class="reel-card"><button class="phone" data-reel="assets/videos/show-1.mp4" aria-label="Reel abspielen"><video class="lazy" data-src="assets/videos/show-1.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Reel-Produktion</div></div>
+    <div class="reel-card"><button class="phone" data-reel="assets/videos/show-2.mp4" aria-label="Reel abspielen"><video class="lazy" data-src="assets/videos/show-2.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Hook & Schnitt</div></div>
+    <div class="reel-card"><button class="phone" data-reel="assets/videos/show-3.mp4" aria-label="Reel abspielen"><video class="lazy" data-src="assets/videos/show-3.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Story-Reel</div></div>
+    <div class="reel-card"><button class="phone" data-reel="assets/videos/reel-4.mp4" aria-label="Reel abspielen"><video class="lazy" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Promo-Clip</div></div>
+    <div class="reel-card"><button class="phone" data-reel="assets/videos/show-4.mp4" aria-label="Reel abspielen"><video class="lazy" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="reel-tap">▶</span></button><div class="cap">Brand-Film</div></div>
+  </div>
+</section>
+
+<!-- FÜR WEN -->
+<section id="fuer-wen">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Für wen ist das?</span>
+      <h2 class="h-lg">Für Unternehmen, die online sichtbarer werden wollen.</h2>
+      <p class="lead-sub">Egal ob lokaler Betrieb, Dienstleister, Praxis, Studio, Werkstatt oder wachsendes Unternehmen – wenn du Kunden gewinnen und professioneller wahrgenommen werden willst, brauchst du Inhalte, die regelmäßig sichtbar sind.</p>
+    </div>
+  </div>
+  <div class="rail reveal" id="indRail">
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_121505_3df017d3-688d-4350-9362-5167c2efd165.png" alt="Friseure"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Sichtbarkeit</span><h3>Friseure & Barbershops</h3></div></div>
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_121507_0737227a-d299-4c94-bdf2-ff59219631c8.png" alt="Restaurants"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Gäste</span><h3>Restaurants & Cafés</h3></div></div>
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_121508_62c6e4c1-ec60-419e-b7c9-4a3daf92dc62.png" alt="Handwerk"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Vertrauen</span><h3>Handwerk & Bau</h3></div></div>
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_121510_e1bfc022-7446-419f-adca-0812f520f80f.png" alt="Kosmetik"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Wohlgefühl</span><h3>Kosmetik & Beauty</h3></div></div>
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260615_003121_1f780c2f-d658-48e5-829c-32dcce3f1e8c.png" alt="Autohäuser"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Anfragen</span><h3>Autohäuser & Werkstätten</h3></div></div>
+    <div class="show-card"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260615_003122_2462d848-1d79-4383-807c-62e8689a9a0c.png" alt="Fitness"><div class="sc-scrim"></div><div class="sc-body"><span class="m">Mehr Motivation</span><h3>Fitnessstudios & Coaches</h3></div></div>
+  </div>
+  <div class="wrap">
+    <div class="pills reveal" style="margin-top:14px">
+      <span class="pill">Immobilien & Makler</span><span class="pill">Ärzte, Praxen & Therapie</span><span class="pill">Fahrschulen</span><span class="pill">Reinigungsfirmen</span><span class="pill">Lokale Dienstleister</span><span class="pill">Online-Dienstleister</span><span class="pill">Kleine & mittlere Unternehmen</span>
+    </div>
+  </div>
+</section>
+
+<!-- VORHER / NACHHER -->
+<section id="vergleich">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Vorher / Nachher</span>
+      <h2 class="h-lg">Vorher: unregelmäßig. Nachher: klar geplant.</h2>
+    </div>
+    <div class="ba">
+      <div class="col before reveal r-l"><h4>Vorher</h4><ul>
+        <li>Posts entstehen spontan und unregelmäßig</li>
+        <li>Ideen fehlen, kein roter Faden</li>
+        <li>Google-Profil bleibt inaktiv</li>
+        <li>Texte wirken gezwungen</li>
+        <li>Social Media wirkt unprofessionell</li>
+      </ul></div>
+      <div class="col after reveal r-r"><h4>Nachher</h4><ul>
+        <li>Klare Ideen und fertige Texte</li>
+        <li>Ein durchdachter Monatsplan</li>
+        <li>Regelmäßige Google-Beiträge</li>
+        <li>Ein einheitlicher, runder Auftritt</li>
+        <li>Deutlich aktiver & professioneller</li>
+      </ul></div>
+    </div>
+    <div class="center btns reveal"><a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Meinen%20Auftritt%20verbessern">Meinen Auftritt verbessern</a></div>
+  </div>
+</section>
+
+<!-- WARUM -->
+<section id="warum">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Warum Cleanlines Studio?</span>
+      <h2 class="h-lg">Keine komplizierte Agentur. Kein Content-Chaos.</h2>
+      <p class="lead-sub">Cleanlines Studio ist für Unternehmen gemacht, die eine einfache, klare und professionelle Lösung wollen – kein unnötiges Marketing-Gerede, sondern Inhalte, die im Alltag wirklich helfen.</p>
+    </div>
+    <div class="grid g-2" data-stagger>
+      <div class="card tilt"><h3>Direkter Kontakt</h3><p>Kurze Wege und schnelle Abstimmung statt komplizierter Agentur-Prozesse.</p></div>
+      <div class="card tilt"><h3>Klare Inhalte</h3><p>Verständlich und auf den Punkt – statt leerer Marketing-Floskeln.</p></div>
+      <div class="card tilt"><h3>Monatlich planbar</h3><p>Ein System, auf das du dich verlassen kannst – statt spontanem Posten.</p></div>
+      <div class="card tilt"><h3>Passend zu dir</h3><p>Content, der wirklich zu deinem Unternehmen gehört – statt Standard-Vorlagen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PREVIEW -->
+<section id="preview">
+  <div class="wrap">
+    <div class="preview-box center reveal">
+      <span class="eyebrow">Kostenlose Content-Preview</span>
+      <h2 class="h-lg">Starte mit einer kostenlosen Content-Preview.</h2>
+      <p class="lead-sub" style="margin-left:auto;margin-right:auto">Bevor du dich entscheidest, zeigen wir dir, welche Inhalte für dein Unternehmen funktionieren könnten. Du bekommst erste konkrete Ansätze und siehst direkt, ob der Stil zu dir passt.</p>
+      <ul class="prev-list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>3 konkrete Reel-Ideen</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>3 Caption-Ansätze</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>1 Google-Beitragsidee</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Kurze Einschätzung deines Auftritts</li>
+      </ul>
+      <div class="btns center"><a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Preview anfragen</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAKETE -->
+<section id="pakete">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Monatspakete</span>
+      <h2 class="h-lg">Wähle, wie sichtbar dein Unternehmen werden soll.</h2>
+    </div>
+    <div class="plans" data-stagger>
+      <article class="plan tilt">
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l1.7 5L19 11l-5.3 1.8L12 18l-1.7-5.2L5 11l5.3-2z" fill="currentColor" stroke="none"/></svg></div>
+        <div class="pname">Starter</div>
+        <div class="price"><b>250€</b><span>/Monat</span></div>
+        <p class="pdesc">Für Unternehmen, die endlich regelmäßig sichtbar werden wollen.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Reel-Konzepte / Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>12 fertige Captions</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>4 Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>1 klarer Monatsplan</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Starter-Paket%20Anfrage">Starter anfragen</a>
+      </article>
+      <article class="plan feat tilt">
+        <span class="badge">Beliebt</span>
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M5 15l4-4 3 3 6-6.5"/><path d="M14.5 7.5H19V12"/></svg></div>
+        <div class="pname">Wachstum</div>
+        <div class="price"><b>490€</b><span>/Monat</span></div>
+        <p class="pdesc">Für Unternehmen, die ihren Auftritt professioneller planen und mehr Content-Ideen nutzen möchten.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>16 Reel-Konzepte / Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>30 fertige Captions</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>8 Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Bewertungsantworten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Monatsplan + Strategie-Call</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Wachstum-Paket%20Anfrage">Wachstum anfragen</a>
+      </article>
+      <article class="plan tilt">
+        <div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17.5h16l1-9-5 3.5L12 5.5 8 12 3 8.5z" fill="currentColor" stroke="none"/><path d="M4 20h16"/></svg></div>
+        <div class="pname">Premium</div>
+        <div class="price"><b>890€</b><span>/Monat</span></div>
+        <p class="pdesc">Für Unternehmen, die Content langfristig strukturiert auslagern und dauerhaft präsent bleiben wollen.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Unbegrenzte Reel-Konzepte</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>60+ Captions / Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Tägliche Google-Beiträge</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Persönlicher Ansprechpartner</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>Priorisierter Support</li>
+        </ul>
+        <a class="pcta" href="mailto:cleanlinesstudio@example.com?subject=Premium-Paket%20Anfrage">Premium anfragen</a>
+      </article>
+    </div>
+    <p class="paynote reveal">Fertig produzierte Reels mit Schnitt, Untertiteln und Musik können zusätzlich angefragt werden.<br>Keine direkte Zahlung auf der Website. Du bekommst zuerst eine kurze Einschätzung, welches Paket zu deinem Unternehmen passt.</p>
+  </div>
+</section>
+
+<!-- EINZELAUFTRÄGE -->
+<section id="einzel">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Einzelaufträge</span>
+      <h2 class="h-lg">Du brauchst mehr als Content?</h2>
+      <p class="lead-sub">Für einzelne Projekte bekommst du klare Festpreise, saubere Umsetzung und ein professionelles Ergebnis.</p>
+    </div>
+    <div class="grid g-4" data-stagger>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9.5h18"/></svg></div><h3>Website-Design</h3><p style="color:var(--gold-2);font-weight:700;margin:6px 0">ab 1.490€</p><p>Eine moderne Website, die auf dem Handy stark aussieht und Kunden zur Anfrage bringt.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3.5l1.7 4 4 1.7-4 1.7L11 15l-1.7-4-4-1.7 4-1.7z" fill="currentColor" stroke="none"/></svg></div><h3>Logo & Branding</h3><p style="color:var(--gold-2);font-weight:700;margin:6px 0">ab 590€</p><p>Ein sauberer Markenauftritt mit Logo, Farben und Schriften.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div><h3>Reel-Produktion</h3><p style="color:var(--gold-2);font-weight:700;margin:6px 0">ab 290€ / Reel</p><p>Fertig geschnittene Reels mit Hook, Untertiteln und Musik – bereit zum Posten.</p></div>
+      <div class="card tilt"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="12" r="2.5"/><circle cx="17" cy="6.5" r="2.5"/><circle cx="17" cy="17.5" r="2.5"/><path d="M8.7 10.8l6-3.2M8.7 13.2l6 3.2"/></svg></div><h3>Social-Media-Setup</h3><p style="color:var(--gold-2);font-weight:700;margin:6px 0">ab 390€</p><p>Wir optimieren Profil, Bio, Highlights und deinen ersten Content-Aufbau.</p></div>
+    </div>
+    <div class="center btns reveal"><a class="btn btn-ghost" href="mailto:cleanlinesstudio@example.com?subject=Einzelauftrag%20Anfrage">Projekt anfragen</a></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2 class="h-lg">Häufige Fragen.</h2>
+    </div>
+    <div class="faq reveal">
+      <details open><summary>Für welche Unternehmen ist Cleanlines Studio geeignet?<span class="pm"></span></summary><p>Für lokale Betriebe, Dienstleister und Unternehmen, die online regelmäßiger und professioneller sichtbar sein wollen – auch wenn intern keine Zeit für Content-Planung bleibt.</p></details>
+      <details><summary>Muss mein Unternehmen schon viele Inhalte haben?<span class="pm"></span></summary><p>Nein. Oft reichen Angebote, Leistungen, Kundenfragen, Einblicke in den Alltag oder vorhandene Bilder und Videos. Daraus entwickeln wir passende Content-Ideen.</p></details>
+      <details><summary>Macht ihr nur Ideen oder auch fertige Videos?<span class="pm"></span></summary><p>Die Monatspakete enthalten vor allem Ideen, Captions, Google-Beiträge und Planung. Fertig produzierte Reels mit Schnitt, Untertiteln und Musik können zusätzlich angefragt werden.</p></details>
+      <details><summary>Wie startet die Zusammenarbeit?<span class="pm"></span></summary><p>Du schickst kurz deine Branche, dein Unternehmen und dein Ziel. Danach bekommst du eine erste Einschätzung und auf Wunsch eine kostenlose Content-Preview.</p></details>
+      <details><summary>Gibt es eine Mindestlaufzeit?<span class="pm"></span></summary><p>Nein. Die Zusammenarbeit ist monatlich kündbar. Du kannst klein starten und später erweitern.</p></details>
+      <details><summary>Warum sollte ich das nicht einfach selbst machen?<span class="pm"></span></summary><p>Weil es im Alltag meistens nicht an Möglichkeiten fehlt, sondern an Zeit, Struktur und passenden Ideen. Cleanlines Studio nimmt dir genau diesen Teil ab.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="kontakt" class="final">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Jetzt unverbindlich anfragen</span>
+      <h2 class="h-lg">Bereit für einen professionelleren Auftritt?</h2>
+      <p class="lead-sub" style="margin:18px auto 0">Schick uns kurz dein Unternehmen und wir zeigen dir, welche Inhalte für dich funktionieren könnten – unverbindlich, persönlich und ohne direkte Zahlung.</p>
+    </div>
+    <div class="cta-ad reveal" id="ctaAd" style="margin-top:34px">
+      <video src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125937_dc5905c4-3f78-4df5-bcde-ead86fd0716f.mp4" poster="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125800_57f40445-c12b-43c1-bb20-984efe6df3a4.png" muted loop autoplay playsinline preload="metadata"></video>
+      <span class="tag">TIPPEN FÜR TON</span>
+    </div>
+    <div class="btns center reveal" style="margin-top:30px">
+      <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Content-Preview anfragen</a>
+      <a class="btn btn-wa" href="https://wa.me/49XXXXXXXXXX?text=Hallo%20Cleanlines%20Studio%2C%20ich%20m%C3%B6chte%20eine%20kostenlose%20Content-Preview%20anfragen." target="_blank" rel="noopener">WhatsApp-Anfrage starten</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top"><svg class="mk"><use href="#mk"/></svg>Cleanlines <span>Studio</span></a>
+    <p>Content-Studio für Unternehmen & lokale Betriebe</p>
+    <p style="margin-top:6px"><a href="mailto:cleanlinesstudio@example.com" style="color:var(--gold-2)">cleanlinesstudio@example.com</a></p>
+    <div class="f-links"><a href="#impressum">Impressum</a><a href="#datenschutz">Datenschutz</a><a href="#kontakt">Kontakt</a><a href="index.html?web=1">Desktop-Version</a></div>
+  </div>
+</footer>
+</main>
+
+<!-- sticky mobile dock -->
+<div class="dock" id="dock">
+  <span class="t">Kostenlose Content-Preview</span>
+  <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Anfragen</a>
+</div>
+
+<!-- reel viewer -->
+<div class="viewer" id="viewer" aria-hidden="true">
+  <button class="x" id="viewerX" aria-label="Schließen">✕</button>
+  <video id="viewerVid" playsinline loop></video>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+
+  /* ---- reveal on scroll ---- */
+  var revs=document.querySelectorAll(".reveal,[data-stagger]");
+  if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else{
+    var ro=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); ro.unobserve(en.target); } }); },{rootMargin:"0px 0px -10% 0px",threshold:.12});
+    revs.forEach(function(e){ ro.observe(e); });
+  }
+  /* hero word reveal */
+  (function(){
+    var h=document.getElementById("heroH"); if(!h) return;
+    var words=h.textContent.split(" ");
+    h.innerHTML=words.map(function(w){ return '<span class="word"><b>'+w+'</b></span>'; }).join(" ");
+    var hero=document.getElementById("hero");
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add("lit"); }); });
+  })();
+
+  /* ---- header: hide on scroll down, solid after hero ---- */
+  var header=document.getElementById("header"), lastY=0;
+  /* ---- scrollspy ---- */
+  var navLinks=[].slice.call(document.querySelectorAll(".nav a"));
+  var secs=navLinks.map(function(a){ return document.getElementById(a.getAttribute("href").slice(1)); });
+
+  /* ---- lazy videos: only the most-visible reel plays ---- */
+  var lazy=[].slice.call(document.querySelectorAll("video.lazy"));
+  var vo=new IntersectionObserver(function(es){
+    es.forEach(function(en){ var v=en.target;
+      if(en.isIntersecting){ if(!v.src) v.src=v.dataset.src; var p=v.play(); if(p&&p.catch)p.catch(function(){}); }
+      else{ try{v.pause();}catch(e){} }
+    });
+  },{threshold:.55});
+  lazy.forEach(function(v){ vo.observe(v); });
+
+  /* ---- reel fullscreen viewer ---- */
+  var viewer=document.getElementById("viewer"), vVid=document.getElementById("viewerVid"), vX=document.getElementById("viewerX");
+  function openReel(src){ vVid.src=src; vVid.muted=false; vVid.currentTime=0; viewer.classList.add("open"); viewer.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; var p=vVid.play(); if(p&&p.catch)p.catch(function(){ vVid.muted=true; vVid.play().catch(function(){}); }); }
+  function closeReel(){ viewer.classList.remove("open"); viewer.setAttribute("aria-hidden","true"); document.body.style.overflow=""; try{vVid.pause(); vVid.removeAttribute("src"); vVid.load();}catch(e){} }
+  document.querySelectorAll("[data-reel]").forEach(function(b){ b.addEventListener("click",function(){ openReel(b.dataset.reel); }); });
+  document.querySelector("#ctaAd").addEventListener("click",function(){ var v=this.querySelector("video"); v.muted=!v.muted; if(v.paused)v.play(); });
+  vX.addEventListener("click",closeReel);
+  viewer.addEventListener("click",function(e){ if(e.target===viewer) closeReel(); });
+  window.addEventListener("keydown",function(e){ if(e.key==="Escape") closeReel(); });
+
+  /* ---- mobile menu ---- */
+  var burger=document.getElementById("burger");
+  function menu(open){ document.body.classList.toggle("menu",open); }
+  burger.addEventListener("click",function(){ menu(!document.body.classList.contains("menu")); });
+  document.querySelectorAll("#mnav a").forEach(function(a){ a.addEventListener("click",function(){ menu(false); }); });
+
+  /* ---- 3D tilt (pointer) ---- */
+  if(fine){
+    document.querySelectorAll(".tilt").forEach(function(el){
+      el.addEventListener("pointermove",function(e){
+        var r=el.getBoundingClientRect();
+        var px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+        el.style.transform="perspective(900px) rotateY("+(px*9).toFixed(2)+"deg) rotateX("+(-py*9).toFixed(2)+"deg) translateY(-4px)";
+      });
+      el.addEventListener("pointerleave",function(){ el.style.transform=""; });
+    });
+    /* magnetic buttons */
+    document.querySelectorAll(".btn").forEach(function(b){
+      b.addEventListener("pointermove",function(e){ var r=b.getBoundingClientRect(); b.style.transform="translate("+((e.clientX-r.left-r.width/2)/r.width*10).toFixed(1)+"px,"+((e.clientY-r.top-r.height/2)/r.height*8-2).toFixed(1)+"px)"; });
+      b.addEventListener("pointerleave",function(){ b.style.transform=""; });
+    });
+    /* cursor glow */
+    var glow=document.getElementById("cursorGlow");
+    window.addEventListener("pointermove",function(e){ glow.style.opacity="1"; glow.style.transform="translate("+e.clientX+"px,"+e.clientY+"px)"; },{passive:true});
+  }
+
+  /* ---- one rAF loop: progress + header + dock + parallax + velocity skew + scrollspy ---- */
+  var progress=document.getElementById("progress"), dock=document.getElementById("dock");
+  var flow=document.getElementById("flow"), heroPhone=document.getElementById("heroPhone");
+  var docEl=document.documentElement, hero=document.getElementById("hero");
+  var rafOn=false, prevY=window.scrollY||0, skew=0, lastDir=0, idle=0, curSpy=-1;
+  function frame(){
+    var vh=innerHeight, y=window.scrollY||window.pageYOffset;
+    var max=(docEl.scrollHeight-vh)||1, ratio=y/max; if(ratio<0)ratio=0; else if(ratio>1)ratio=1;
+    if(progress) progress.style.transform="scaleX("+ratio.toFixed(4)+")";
+    /* header */
+    header.classList.toggle("solid", y>40);
+    if(y>lastY && y>vh*0.9 && !document.body.classList.contains("menu")) header.classList.add("hide"); else header.classList.remove("hide");
+    /* dock (mobile) appears after hero */
+    if(dock) dock.classList.toggle("show", y>vh*1.1 && ratio<0.93);
+    /* hero phone parallax */
+    if(heroPhone && y<vh*1.4) heroPhone.style.transform="translateY("+(y*0.06).toFixed(1)+"px)";
+    /* velocity skew (subtle liquid feel) */
+    if(!reduce && flow){
+      var vel=y-prevY; var t=vel*0.045; if(t>1.6)t=1.6; else if(t<-1.6)t=-1.6;
+      skew+=(t-skew)*0.2; if(skew<0.02&&skew>-0.02)skew=0;
+      flow.style.transform= skew===0 ? "" : "skewY("+skew.toFixed(2)+"deg)";
+    }
+    /* scrollspy */
+    var probe=y+vh*0.32, act=-1;
+    for(var i=0;i<secs.length;i++){ if(secs[i] && secs[i].offsetTop<=probe) act=i; }
+    if(act!==curSpy){ curSpy=act; navLinks.forEach(function(a,i){ a.classList.toggle("active",i===act); }); }
+    if(y!==lastY){ lastY=y; idle=0; } else { idle++; }
+    prevY=y;
+    if(idle<6 || skew!==0){ requestAnimationFrame(frame); } else { rafOn=false; }
+  }
+  function kick(){ if(!rafOn){ rafOn=true; idle=0; requestAnimationFrame(frame); } }
+  addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick,{passive:true}); addEventListener("load",kick);
+  kick();
+})();
+</script>
+</body>
 </html>
