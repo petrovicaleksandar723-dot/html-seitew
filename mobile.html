@@ -199,34 +199,35 @@ header{
 .bcard,.hsec-track .reel-card,.hsec-track .plan{ scroll-snap-align:center; }
 
 /* ============================================================================
-   NON-PIN CINEMATIC CAROUSELS — natural vertical scroll, swipe-able rows.
-   The horizontal track is a native snap carousel; the centred card is in
-   focus (full opacity + scale + glow), neighbours fall gently back for depth.
+   CLEAN VERTICAL SECTIONS — modern, Nike-style. The horizontal swipe carousels
+   are gone: every section is a calm vertical stack whose cards reveal smoothly
+   on scroll. Transform/opacity only -> buttery smooth on phones, no scroll-jack.
    ========================================================================== */
-.hsec{ padding:40px 0; }
+.hsec{ padding:64px 20px; }
 .hsec-head,.hsec-foot{ position:relative; z-index:3; }
-.hsec-viewport{ position:relative; z-index:2; padding:8px 0 4px; scroll-snap-type:x proximity; }
-.hsec-track > *{ scroll-snap-align:center;
-  transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .55s cubic-bezier(.22,1,.36,1); }
-.hsec-track > *:not(.active){ opacity:.76; transform:scale(.965); }
-.hsec-track > .active{ opacity:1; }
-.hsec-track > .card.active,.hsec-track > .col.active,.hsec-track > .review.active{
-  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 46px rgba(201,162,90,.18); }
-/* every track item is a positioning context (sheen + stacking) */
-.hsec-track > *{ position:relative; }
-/* icons come alive on the focused card — lift, glow, warm up */
-.card .ic,.plan .pic,.bcard-body .label,.pill svg{ transition:transform .5s var(--ease), box-shadow .5s var(--ease), background .5s var(--ease), color .5s var(--ease); }
-.hsec-track > .active .ic,.hsec-track > .active .pic{
-  transform:translateY(-3px) scale(1.07); background:rgba(201,162,90,.2);
-  box-shadow:0 12px 28px rgba(201,162,90,.3), inset 0 0 0 1px rgba(201,162,90,.5); }
-/* a single elegant gold sheen sweeps across a card the moment it gains focus */
-.hsec-track > .card.active::after,.hsec-track > .bcard.active::after{
+.hsec-head{ max-width:600px; margin:0 auto 28px; }
+.hsec-head .lead{ font-size:clamp(27px,8.4vw,40px); line-height:1.1; }
+.hsec-viewport{ position:relative; z-index:2; display:block; overflow:visible; padding:0; scroll-snap-type:none; }
+.hsec-track{ display:flex; flex-direction:column; gap:16px; padding:0; margin:0 auto; width:100%; max-width:600px; transform:none; }
+/* each card spans the column and glides up as it scrolls into view */
+.hsec-track > *{ position:relative; flex:0 0 auto; width:100%; max-width:100%; margin:0; scroll-snap-align:none;
+  opacity:0; transform:translateY(36px);
+  transition:opacity .8s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+.hsec-track > *.in{ opacity:1; transform:none; }
+/* carousel chrome no longer needed */
+.bdots,.hsec-bar,.swipe-tag,#tabs{ display:none !important; }
+/* items adapt to the full column width */
+.bcard{ max-width:100%; }
+.hmedia{ width:100%; aspect-ratio:16/10; }
+.reel-card{ width:100%; }
+.reel-card .phone{ width:min(300px,76vw); margin:0 auto; }
+/* premium touches as a card reveals: soft icon glow + one gold sheen sweep */
+.card .ic,.plan .pic{ transition:transform .6s var(--ease), box-shadow .6s var(--ease), background .6s var(--ease); }
+.hsec-track > *.in .ic,.hsec-track > *.in .pic{ box-shadow:0 12px 28px rgba(201,162,90,.18); }
+.hsec-track > .card.in::after,.hsec-track > .bcard.in::after{
   content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:6;
-  background:linear-gradient(115deg, transparent 38%, rgba(255,245,220,.18) 50%, transparent 62%);
-  background-size:260% 100%; animation:cardsheen 1.05s var(--ease) 1; }
-/* gentle idle float on focused-card icons for a living, premium feel */
-.hsec-track > .active .ic svg,.hsec-track > .active .pic svg{ animation:icofloat 3.4s var(--ease) infinite; }
-@keyframes icofloat{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2.5px) } }
+  background:linear-gradient(115deg, transparent 38%, rgba(255,245,220,.15) 50%, transparent 62%);
+  background-size:260% 100%; animation:cardsheen 1.15s var(--ease) 1; }
 
 /* ---- CTA showreel: the brand ad embedded in the closing section ---- */
 .cta-reel{ margin:28px auto 6px; width:min(286px,78vw); }
@@ -958,14 +959,12 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       var v = en.target;
       if(en.isIntersecting){
         if(!v.src){ v.src = v.dataset.src; }      // lazy-load source on first view
-        // carousel reels are driven by the focus logic (only the centred one plays);
-        // standalone reels (e.g. the CTA video) autoplay when they scroll into view.
-        if(!v.closest("[data-hsec]")){ var p = v.play(); if(p && p.catch){ p.catch(function(){}); } }
+        var p = v.play(); if(p && p.catch){ p.catch(function(){}); }
       } else {
-        v.pause();
+        v.pause();                                 // only the on-screen reel decodes
       }
     });
-  }, { threshold:0.5 });
+  }, { threshold:0.6 });
   vids.forEach(function(v){ vo.observe(v); });
 
 
@@ -1039,76 +1038,23 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
      a native snap carousel whose focused item + dots update while you swipe.
      Depth, focus and parallax are layered on top for the cinematic feel.
      ========================================================================== */
-  var hSecs = [];
-  document.querySelectorAll("[data-hsec]").forEach(function(sec){
-    var vpt=sec.querySelector(".hsec-viewport"), track=sec.querySelector(".hsec-track");
-    if(!vpt || !track) return;
-    var items=track.children;
-    var dotsBox=sec.querySelector("[data-dots]");
-    if(dotsBox && !dotsBox.children.length){ for(var n=0;n<items.length;n++){ dotsBox.appendChild(document.createElement("span")); } }
-    var dots=dotsBox?dotsBox.querySelectorAll("span"):[];
-    var isBranche = track.id==="bGallery";
-    var o={ sec:sec, vpt:vpt, track:track, items:items, dots:dots, isBranche:isBranche, active:-1, tick:false };
-    o.onActive=function(i){
-      for(var k=0;k<items.length;k++){
-        items[k].classList.toggle("active", k===i);
-        var vid=items[k].querySelector("video.lazyreel");
-        if(vid){
-          if(k===i){ if(!vid.src) vid.src=vid.dataset.src; var pp=vid.play(); if(pp&&pp.catch) pp.catch(function(){}); }
-          else { try{ vid.pause(); }catch(e){} }
-        }
-      }
-      for(var d=0;d<dots.length;d++) dots[d].classList.toggle("on", d===i);
-      if(isBranche) setBrancheActive(i);
-    };
-    hSecs.push(o);
-  });
+  /* ---- reveal each section card as it scrolls into view (smooth, staggered) ---- */
+  var vEls=document.querySelectorAll(".hsec-track > *");
+  if(reduce || !("IntersectionObserver" in window)){
+    vEls.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var vio=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); vio.unobserve(en.target); } });
+    }, { rootMargin:"0px 0px -10% 0px", threshold:0.12 });
+    document.querySelectorAll(".hsec-track").forEach(function(tr){
+      Array.prototype.slice.call(tr.children).forEach(function(el,idx){
+        el.style.transitionDelay=Math.min(idx*0.06,0.28)+"s";   // gentle stagger per section
+        vio.observe(el);
+      });
+    });
+  }
 
-  // centre the first & last card so every item can snap to the middle
-  function padCarousels(){
-    for(var i=0;i<hSecs.length;i++){ var o=hSecs[i];
-      var vw=o.vpt.clientWidth;
-      var fw=o.items[0]?o.items[0].offsetWidth:0;
-      var lw=o.items.length?o.items[o.items.length-1].offsetWidth:0;
-      o.track.style.paddingLeft=Math.max(16,(vw-fw)/2)+"px";
-      o.track.style.paddingRight=Math.max(16,(vw-lw)/2)+"px";
-    }
-  }
-  // which card is currently centred in the viewport
-  function updateActive(o){
-    if(!o.items.length) return;
-    var centre=o.vpt.scrollLeft + o.vpt.clientWidth/2, best=0, bd=1e9;
-    for(var k=0;k<o.items.length;k++){
-      var c=o.items[k].offsetLeft + o.items[k].offsetWidth/2, d=c>centre?c-centre:centre-c;
-      if(d<bd){ bd=d; best=k; }
-    }
-    if(best!==o.active){ o.active=best; o.onActive(best); }
-  }
-  // smooth-scroll a carousel so item i sits in the centre
-  function goTo(o, i){
-    var it=o.items[i]; if(!it) return;
-    var left=it.offsetLeft - (o.vpt.clientWidth - it.offsetWidth)/2;
-    o.vpt.scrollTo({ left:Math.max(0,left), behavior:reduce?"auto":"smooth" });
-  }
-  /* ---- wire each carousel: swipe updates focus, dots & side-taps navigate ---- */
-  hSecs.forEach(function(o){
-    // update the focused card while swiping (rAF-throttled per carousel)
-    o.vpt.addEventListener("scroll", function(){
-      if(o.tick) return; o.tick=true;
-      requestAnimationFrame(function(){ o.tick=false; updateActive(o); });
-    }, { passive:true });
-    // tap a dot -> centre that card
-    for(var i=0;i<o.dots.length;i++){ (function(idx){
-      o.dots[idx].addEventListener("click", function(){ goTo(o, idx); });
-    })(i); }
-    // tap a side (non-focused) card -> bring it to the centre first
-    for(var c=0;c<o.items.length;c++){ (function(idx){
-      o.items[idx].addEventListener("click", function(e){
-        if(idx!==o.active){ e.preventDefault(); e.stopPropagation(); goTo(o, idx); }
-      }, true);
-    })(c); }
-  });
-  /* ---- parallax: section backdrop images drift slower than the page ---- */
+  /* ---- parallax: section backdrop images drift gently while scrolling ---- */
   var bgImgs=[];
   document.querySelectorAll(".hsec-bg img").forEach(function(img){
     var sec=img.closest(".hsec"); if(sec) bgImgs.push({ img:img, sec:sec });
@@ -1117,25 +1063,11 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     if(reduce) return;
     for(var i=0;i<bgImgs.length;i++){
       var r=bgImgs[i].sec.getBoundingClientRect();
-      if(r.bottom<-60 || r.top>vh+60) continue;               // offscreen -> skip
-      var rel=(r.top + r.height/2 - vh/2) / vh;                // ~ -1 .. 1 across the viewport
-      bgImgs[i].img.style.transform="translate3d(0,"+(rel*-26).toFixed(1)+"px,0)";
+      if(r.bottom<-60 || r.top>vh+60) continue;
+      var rel=(r.top + r.height/2 - vh/2) / vh;
+      bgImgs[i].img.style.transform="translate3d(0,"+(rel*-22).toFixed(1)+"px,0)";
     }
   }
-  // recompute centre-padding + active card after layout changes
-  function relayout(){
-    padCarousels();
-    for(var i=0;i<hSecs.length;i++){ hSecs[i].active=-1; updateActive(hSecs[i]); }
-  }
-  // Branchen tabs -> centre the matching card in its carousel (no page jump)
-  var brancheSec=null; for(var hi=0;hi<hSecs.length;hi++){ if(hSecs[hi].isBranche) brancheSec=hSecs[hi]; }
-  tabs.forEach(function(t){
-    t.addEventListener("click", function(){
-      var i=+t.dataset.b;
-      setBrancheActive(i);                                    // instant highlight
-      if(brancheSec) goTo(brancheSec, i);                     // swipe the row to it
-    });
-  });
 
   /* ---- one light render loop: progress bar + sticky dock + parallax ---- */
   var progress=document.getElementById("progress");
@@ -1154,10 +1086,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   }
   function kick(){ if(!rafOn){ rafOn=true; idle=0; requestAnimationFrame(frame); } }
   window.addEventListener("scroll", kick, { passive:true });
-  window.addEventListener("resize", function(){ relayout(); kick(); });
-  window.addEventListener("orientationchange", function(){ setTimeout(function(){ relayout(); kick(); }, 250); });
-  window.addEventListener("load", function(){ relayout(); kick(); });
-  relayout();
+  window.addEventListener("resize", kick, { passive:true });
+  window.addEventListener("load", kick);
   kick();
 
   /* ---- make the service / Leistungen cards clickable (open a mail enquiry) ---- */
