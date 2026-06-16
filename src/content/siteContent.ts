@@ -3,9 +3,10 @@
    ============================================================ */
 
 export const CONTACT = {
-  // ← TODO: vor dem Live-Gang durch echte Werte ersetzen
-  email: "cleanlinesstudio@example.com",
-  whatsapp: "49XXXXXXXXXX", // Format 49..., ohne + / Leerzeichen
+  email: "cleanlinesstudiosgermany@gmail.com",
+  // Beispielnummer – vor dem Live-Gang durch die echte WhatsApp-Nummer ersetzen.
+  // Format: 49 + Nummer ohne führende 0 / ohne + / ohne Leerzeichen.
+  whatsapp: "491701234567",
   city: "München",
 };
 
