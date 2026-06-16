@@ -417,6 +417,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 }
 .intro-launcher .app-icon svg{ width:40px; height:40px; }
 .intro-launcher h2{ font-family:var(--display); font-size:21px; font-weight:800; }
+.intro-launcher .launch-logo{ width:84%; max-width:230px; height:auto; margin:0 auto 2px; display:block;
+  mix-blend-mode:screen; filter:drop-shadow(0 6px 22px rgba(201,162,90,.3)); }
 .intro-launcher p{ color:var(--gray); font-size:12.5px; letter-spacing:.05em; }
 .scroll-hint{ display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:20px; color:var(--gold); font-size:10.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
 .scroll-hint .mouse{ width:22px; height:34px; border:2px solid rgba(201,162,90,.6); border-radius:12px; position:relative; }
@@ -495,8 +497,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       <div class="intro-screen">
         <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
         <div class="intro-launcher" id="introLauncher">
-          <div class="app-icon"><svg style="width:40px;height:40px"><use href="#cl-mark"/></svg></div>
-          <h2>CleanLines Studios</h2>
+          <img class="launch-logo" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/bca379b1-d387-42a3-9ca8-98e59955910d.png" alt="CleanLines Studios">
           <p>Creative Content Hub</p>
           <div class="scroll-hint"><span class="mouse"></span>Scroll zum Starten</div>
         </div>

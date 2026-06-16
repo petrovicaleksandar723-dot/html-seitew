@@ -467,6 +467,8 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
   50%{box-shadow:0 22px 70px var(--orange-glow),0 2px 0 rgba(255,255,255,.6) inset,0 -10px 24px rgba(120,30,0,.5) inset;} }
 .app-icon .cl{ width:58%; height:58%; color:#fff; filter:drop-shadow(0 1px 2px rgba(120,30,0,.45)); }
 .launcher h2{ font-size:clamp(20px,3.4vmin,32px); font-weight:800; letter-spacing:-.01em; }
+.launch-logo{ width:min(420px,76vw); max-width:100%; height:auto; display:block; margin:0 auto -4px;
+  mix-blend-mode:screen; filter:drop-shadow(0 8px 34px rgba(201,162,90,.28)); }
 .launcher .sub{ color:var(--gray); font-size:clamp(12px,1.9vmin,15px); }
 .scroll-hint{ margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:8px;
   color:var(--orange); font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
@@ -1122,7 +1124,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
 <!-- Premium intro loader -->
 <div class="loader" id="loader">
   <!-- drop assets/logo.png into the repo and it auto-replaces the vector below -->
-  <img class="loader-logo" src="assets/logo.png" alt="CleanLines Studios"
+  <img class="loader-logo" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/bca379b1-d387-42a3-9ca8-98e59955910d.png" alt="CleanLines Studios"
        onload="var fb=document.getElementById('loaderFb');if(fb)fb.style.display='none';"
        onerror="this.style.display='none';">
   <div class="loader-fallback" id="loaderFb">
@@ -1179,8 +1181,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
         <!-- ===== SCENE 0 — APP LAUNCHER ===== -->
         <section class="scene" id="s0">
           <div class="launcher" id="launcher">
-            <div class="app-icon"><svg class="cl"><use href="#cl-mark"/></svg></div>
-            <h2>CleanLines Studios</h2>
+            <img class="launch-logo" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/bca379b1-d387-42a3-9ca8-98e59955910d.png" alt="CleanLines Studios">
             <p class="sub">Creative Content Hub</p>
             <div class="scroll-hint"><div class="mouse"></div><span>Scroll zum Starten</span></div>
           </div>
