@@ -1,0 +1,28 @@
+:root{
+  /* color world */
+  --bg:#060608;
+  --bg-2:#0c0c11;
+  --card:#121218;
+  --card-2:#17171d;
+  --ink:#f7f3ec;
+  --gray:#c2c8d2;
+  --dim:#7c818c;
+  --gold:#c9a25a;
+  --gold-2:#e8d2a0;
+  --gold-3:#fff4da;
+  --line:rgba(255,255,255,.11);
+  --line-2:rgba(201,162,90,.34);
+
+  /* type */
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:"Sora","Inter",sans-serif;
+
+  /* motion */
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-2:cubic-bezier(.16,1,.3,1);
+
+  /* shape & rhythm */
+  --r:20px;
+  --maxw:1180px;
+  --pad:clamp(64px,11vw,128px);
+}
