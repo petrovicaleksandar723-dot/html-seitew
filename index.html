@@ -79,6 +79,10 @@ html,body{
   text-rendering:optimizeLegibility;
 }
 body{ overscroll-behavior-y:none; }
+html.lenis,html.lenis body{ height:auto; }
+.lenis.lenis-smooth{ scroll-behavior:auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent]{ overscroll-behavior:contain; }
+.lenis.lenis-stopped{ overflow:hidden; }
 /* ---- global ultra-sharp text rendering -------------------------------- */
 html,body,.screen,.scene,.svc,.plan-card,.review,.ba .col{
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
@@ -1621,6 +1625,9 @@ body.cursor-on .cursor-trail{ opacity:1; }
 <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
+<!-- Lenis: buttery inertia smooth-scroll (award-tier feel). Loaded with guard:
+     if it fails, the site keeps its original native scrolling unchanged. -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1631,6 +1638,17 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var lerp=function(a,b,t){return a+(b-a)*t;};
   var gauss=function(x,c,w){var d=x-c;return Math.exp(-(d*d)/(2*w*w));}; // bell curve
   var reduceMotion=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  /* ---- Lenis smooth-scroll (guarded; falls back to native if unavailable) ---- */
+  var lenis=null, ENGINE_EASE=0.18;
+  try{
+    if(window.Lenis && !reduceMotion){
+      lenis=new Lenis({ duration:1.15, easing:function(t){ return 1-Math.pow(1-t,3); }, smoothWheel:true });
+      ENGINE_EASE=0.42;                                  // Lenis handles smoothing -> engine tracks tighter
+      var lraf=function(time){ lenis.raf(time); requestAnimationFrame(lraf); };
+      requestAnimationFrame(lraf);
+    }
+  }catch(e){ lenis=null; ENGINE_EASE=0.18; }
 
   var SCENES=16;           // launcher(0) + scenes 1..15 (incl. 4 new content scenes)
   var LAST=SCENES-1;       // 11
@@ -1841,7 +1859,8 @@ body.cursor-on .cursor-trail{ opacity:1; }
   function scrollToScene(idx){
     var max=track.offsetHeight - window.innerHeight;
     var target=(idx/LAST)*max;
-    window.scrollTo({top:target, behavior: reduceMotion ? "auto":"smooth"});
+    if(lenis){ lenis.scrollTo(target, { duration:1.2 }); }
+    else { window.scrollTo({top:target, behavior: reduceMotion ? "auto":"smooth"}); }
   }
   var dotsWrap=document.getElementById("dots"), dotEls=[];
   for(var k=0;k<SCENES;k++){
@@ -2006,7 +2025,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var lastS=-1, lastMX=99, lastMY=99;
   function render(){
     // eased scroll + parallax smoothing — snappier catch-up = responsive yet smooth
-    curScroll += (scrollP-curScroll)*0.18;
+    curScroll += (scrollP-curScroll)*ENGINE_EASE;
     mx += (tmx-mx)*0.07; my += (tmy-my)*0.07;
 
     var pos = curScroll*LAST;            // continuous scene position 0..10

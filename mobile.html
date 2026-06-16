@@ -699,19 +699,65 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   <video id="viewerVid" playsinline loop></video>
 </div>
 
+<style>
+  html.lenis,html.lenis body{ height:auto; }
+  .lenis.lenis-smooth{ scroll-behavior:auto !important; }
+  .lenis.lenis-stopped{ overflow:hidden; }
+</style>
+<!-- Award-tier motion stack (loaded with guards: if any fails, the page keeps its
+     own native reveals/parallax and nothing breaks). Original code, public libraries. -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
 (function(){
   "use strict";
   var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
   var fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
 
+  /* ---- Lenis + GSAP/ScrollTrigger motion stack (guarded) ---- */
+  var lenis=null, USE_GSAP=false;
+  try{
+    if(window.Lenis && !reduce){
+      lenis=new Lenis({ duration:1.1, easing:function(t){return 1-Math.pow(1-t,3);}, smoothWheel:true, syncTouch:false });
+    }
+    if(window.gsap && window.ScrollTrigger && !reduce){
+      gsap.registerPlugin(ScrollTrigger);
+      USE_GSAP=true;
+      if(lenis){
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+    } else if(lenis){
+      var lr=function(time){ lenis.raf(time); requestAnimationFrame(lr); }; requestAnimationFrame(lr);
+    }
+  }catch(e){ lenis=null; USE_GSAP=false; }
+
   /* ---- reveal on scroll ---- */
   var revs=document.querySelectorAll(".reveal,[data-stagger]");
   if(reduce||!("IntersectionObserver" in window)){ revs.forEach(function(e){e.classList.add("in");}); }
+  else if(USE_GSAP){
+    /* GSAP-driven reveals: smoother easing + auto-batching */
+    ScrollTrigger.batch(revs,{ start:"top 88%", once:true, onEnter:function(b){ b.forEach(function(el){ el.classList.add("in"); }); } });
+    ScrollTrigger.refresh();
+  }
   else{
     var ro=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); ro.unobserve(en.target); } }); },{rootMargin:"0px 0px -10% 0px",threshold:.12});
     revs.forEach(function(e){ ro.observe(e); });
   }
+  /* ---- GSAP scrub parallax: cinematic depth on backdrops + hero phone ---- */
+  if(USE_GSAP){
+    document.querySelectorAll(".sec-bg img").forEach(function(img){
+      gsap.fromTo(img,{yPercent:-8},{yPercent:8,ease:"none",scrollTrigger:{trigger:img.closest("section"),start:"top bottom",end:"bottom top",scrub:true}});
+    });
+    var hpEl=document.getElementById("heroPhone");
+    if(hpEl) gsap.to(hpEl,{yPercent:12,ease:"none",scrollTrigger:{trigger:"#hero",start:"top top",end:"bottom top",scrub:true}});
+    document.querySelectorAll(".show-card img").forEach(function(img){
+      gsap.fromTo(img,{scale:1.12},{scale:1,ease:"none",scrollTrigger:{trigger:img,start:"top bottom",end:"center center",scrub:true}});
+    });
+  }
+
   /* hero word reveal */
   (function(){
     var h=document.getElementById("heroH"); if(!h) return;
@@ -788,17 +834,17 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
     if(y>lastY && y>vh*0.9 && !document.body.classList.contains("menu")) header.classList.add("hide"); else header.classList.remove("hide");
     /* dock (mobile) appears after hero */
     if(dock) dock.classList.toggle("show", y>vh*1.1 && ratio<0.93);
-    /* hero phone parallax */
-    if(heroPhone && y<vh*1.4) heroPhone.style.transform="translateY("+(y*0.06).toFixed(1)+"px)";
-    /* section backdrop parallax (cinematic depth) */
-    if(!reduce){ for(var b=0;b<bgImgs.length;b++){ var r=bgImgs[b].sec.getBoundingClientRect();
-      if(r.bottom<-40||r.top>vh+40) continue; var rel=(r.top+r.height/2-vh/2)/vh;
-      bgImgs[b].im.style.transform="translate3d(0,"+(rel*-24).toFixed(1)+"px,0)"; } }
-    /* velocity skew (subtle liquid feel) */
-    if(!reduce && flow){
-      var vel=y-prevY; var t=vel*0.045; if(t>1.6)t=1.6; else if(t<-1.6)t=-1.6;
-      skew+=(t-skew)*0.2; if(skew<0.02&&skew>-0.02)skew=0;
-      flow.style.transform= skew===0 ? "" : "skewY("+skew.toFixed(2)+"deg)";
+    /* fallback parallax + skew — only when GSAP isn't driving the motion */
+    if(!USE_GSAP){
+      if(heroPhone && y<vh*1.4) heroPhone.style.transform="translateY("+(y*0.06).toFixed(1)+"px)";
+      if(!reduce){ for(var b=0;b<bgImgs.length;b++){ var r=bgImgs[b].sec.getBoundingClientRect();
+        if(r.bottom<-40||r.top>vh+40) continue; var rel=(r.top+r.height/2-vh/2)/vh;
+        bgImgs[b].im.style.transform="translate3d(0,"+(rel*-24).toFixed(1)+"px,0)"; } }
+      if(!reduce && flow){
+        var vel=y-prevY; var t=vel*0.045; if(t>1.6)t=1.6; else if(t<-1.6)t=-1.6;
+        skew+=(t-skew)*0.2; if(skew<0.02&&skew>-0.02)skew=0;
+        flow.style.transform= skew===0 ? "" : "skewY("+skew.toFixed(2)+"deg)";
+      }
     }
     /* scrollspy */
     var probe=y+vh*0.32, act=-1;
@@ -811,6 +857,15 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   function kick(){ if(!rafOn){ rafOn=true; idle=0; requestAnimationFrame(frame); } }
   addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick,{passive:true}); addEventListener("load",kick);
   kick();
+
+  /* ---- safety net: recalc ScrollTrigger after media loads, and never let a
+         section stay hidden if anything went wrong with the motion stack ---- */
+  addEventListener("load",function(){ if(window.ScrollTrigger){ try{ ScrollTrigger.refresh(); }catch(e){} } });
+  setTimeout(function(){
+    document.querySelectorAll(".reveal:not(.in),[data-stagger]:not(.in)").forEach(function(e){
+      var r=e.getBoundingClientRect(); if(r.top < innerHeight*1.1) e.classList.add("in");
+    });
+  },1400);
 })();
 </script>
 </body>
