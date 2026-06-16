@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanLines World — 3D Cinematic Platformer</title>
+<style>
+  :root{--accent:#60a5fa;--accent2:#a78bfa;--gold:#fbbf24}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#0a0e1a;font-family:"Space Grotesk",system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+  #c{display:block;position:fixed;inset:0}
+  .ui{position:fixed;pointer-events:none;z-index:5;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+  #hud{top:22px;left:24px;font-weight:700}
+  #hud .row{display:flex;align-items:center;gap:10px;font-size:1.5rem;margin-bottom:6px}
+  #hud .lbl{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;opacity:.6;font-weight:600}
+  #timer{top:22px;right:24px;text-align:right}
+  #timer .big{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums}
+  #hint{bottom:22px;left:50%;transform:translateX(-50%);font-size:.9rem;opacity:.7;text-align:center;line-height:1.7}
+  .key{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:2px 9px;font-size:.82rem;font-weight:700;margin:0 2px}
+  /* overlays */
+  .screen{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(80% 80% at 50% 30%,rgba(20,28,55,.85),rgba(5,7,16,.97));backdrop-filter:blur(8px);text-align:center;transition:opacity .6s,visibility .6s}
+  .screen.hide{opacity:0;visibility:hidden;pointer-events:none}
+  .screen h1{font-size:clamp(2.4rem,7vw,5rem);font-weight:800;letter-spacing:-.03em;line-height:1;
+    background:linear-gradient(105deg,#22d3ee,#60a5fa 40%,#a78bfa 75%,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+  .screen .sub{opacity:.7;font-size:1.1rem;margin-bottom:34px;max-width:440px}
+  .screen .stats{display:flex;gap:36px;margin-bottom:34px}
+  .screen .stats .v{font-size:2.4rem;font-weight:800;color:var(--gold)}
+  .screen .stats .k{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;opacity:.6}
+  .btn{pointer-events:auto;cursor:pointer;border:none;font-family:inherit;font-weight:700;font-size:1.05rem;
+    padding:16px 38px;border-radius:14px;background:linear-gradient(105deg,#60a5fa,#a78bfa);color:#06080f;
+    box-shadow:0 12px 40px rgba(96,165,250,.5);transition:transform .25s,box-shadow .25s}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 18px 54px rgba(96,165,250,.7)}
+  .loadbar{width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:24px}
+  .loadbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#60a5fa,#a78bfa);transition:width .3s}
+  #flash{position:fixed;inset:0;z-index:8;pointer-events:none;background:#fff;opacity:0;transition:opacity .25s}
+  .coin-pop{position:fixed;z-index:7;pointer-events:none;font-weight:800;color:var(--gold);font-size:1.3rem;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="flash"></div>
+
+<!-- HUD -->
+<div class="ui" id="hud">
+  <div class="lbl">Coins</div>
+  <div class="row">🪙 <span id="coins">0</span> <span style="opacity:.4;font-size:1rem">/ <span id="coinsTotal">0</span></span></div>
+  <div class="lbl">Leben</div>
+  <div class="row" id="lives">❤️❤️❤️</div>
+</div>
+<div class="ui" id="timer"><div class="lbl">Zeit</div><div class="big" id="time">0.0</div></div>
+<div class="ui" id="hint">
+  <span class="key">W A S D</span> Bewegen &nbsp; <span class="key">Space</span> Springen (Doppel!) &nbsp; <span class="key">Maus</span> Kamera &nbsp; <span class="key">R</span> Respawn
+</div>
+
+<!-- START -->
+<div class="screen" id="start">
+  <h1>CleanLines World</h1>
+  <p class="sub">Sammle alle Coins, hüpf über die schwebenden Plattformen, zerstampf die Gegner und erreiche das leuchtende Ziel-Portal.</p>
+  <button class="btn" id="startBtn">▶ Spiel starten</button>
+  <div class="loadbar"><i id="lb"></i></div>
+</div>
+
+<!-- WIN / LOSE -->
+<div class="screen hide" id="end">
+  <h1 id="endTitle">Geschafft!</h1>
+  <p class="sub" id="endSub">Du hast das Portal erreicht.</p>
+  <div class="stats">
+    <div><div class="v" id="endCoins">0</div><div class="k">Coins</div></div>
+    <div><div class="v" id="endTime">0</div><div class="k">Sekunden</div></div>
+  </div>
+  <button class="btn" id="restartBtn">↻ Nochmal</button>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   CLEANLINES WORLD — 3D Platformer
+   Architektur nach UE-Skill-Konzepten:
+   - GameMode   : Spielzustand, Score, Win/Lose            (ue-gameplay-framework)
+   - Character  : Movement-Komponente, Jump, Gravitation   (ue-character-movement)
+   - Collision  : Plattform-Landung, Overlap, Stomp         (ue-physics-collision)
+   - AI         : patrouillierende Gegner                   (ue-ai-navigation)
+   - Rendering  : Schatten, Fog, Skybox, emissive Materials (ue-materials-rendering)
+   - HUD        : Coins / Leben / Timer                     (ue-ui-umg-slate)
+   ============================================================ */
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a2545, 45, 130);
+
+// ---- Skybox (cinematic gradient) ----
+{
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(300, 32, 16),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms:{ top:{value:new THREE.Color(0x0a1840)}, mid:{value:new THREE.Color(0x274690)}, bot:{value:new THREE.Color(0xf0a3c0)} },
+      vertexShader:`varying vec3 p; void main(){ p=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+      fragmentShader:`varying vec3 p; uniform vec3 top,mid,bot; void main(){ float h=normalize(p).y;
+        vec3 c = h>0.0 ? mix(mid,top,h) : mix(mid,bot,-h); gl_FragColor=vec4(c,1.0);}`
+    })
+  );
+  scene.add(sky);
+}
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 600);
+
+// ---- Lighting (cinematic) ----
+scene.add(new THREE.HemisphereLight(0xbcd4ff, 0x202840, 0.7));
+const sun = new THREE.DirectionalLight(0xfff0d8, 2.2);
+sun.position.set(30, 60, 20);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.near=1; sun.shadow.camera.far=200;
+sun.shadow.camera.left=-80; sun.shadow.camera.right=80; sun.shadow.camera.top=80; sun.shadow.camera.bottom=-80;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+scene.add(new THREE.PointLight(0xa78bfa, 0.6, 120).translateY(20));
+
+/* ============ LEVEL DATA ============ */
+const platforms = []; // {mesh, box, x,y,z,w,h,d, top}
+function addPlatform(x,y,z,w,h,d,color=0x2b3a6b, moving=null){
+  const geo = new THREE.BoxGeometry(w,h,d);
+  const mat = new THREE.MeshStandardMaterial({color, roughness:.8, metalness:.15});
+  const m = new THREE.Mesh(geo, mat); m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  scene.add(m);
+  // decorative glowing top edge
+  const edge = new THREE.Mesh(new THREE.BoxGeometry(w*1.005,0.12,d*1.005),
+    new THREE.MeshStandardMaterial({color:0x60a5fa, emissive:0x2a5cc0, emissiveIntensity:.8, roughness:.4}));
+  edge.position.set(x, y+h/2+0.06, z); scene.add(edge);
+  const p = {mesh:m, edge, x,y,z,w,h,d, top:y+h/2, moving, baseX:x, baseZ:z, prevX:x, prevZ:z};
+  platforms.push(p);
+  return p;
+}
+
+// Course: a winding path of floating platforms climbing toward the goal
+addPlatform(0,-1,0, 22,2,22, 0x223a2b);                  // spawn meadow
+addPlatform(0,0,-16, 8,2,8, 0x2b3a6b);
+addPlatform(7,1.2,-26, 6,2,6);
+addPlatform(-3,2.4,-35, 6,2,6);
+addPlatform(-12,3.6,-42, 6,2,6);
+const mov1 = addPlatform(-4,4.4,-52, 7,1.5,7, 0x3b2b6b, {axis:'x', amp:8, sp:0.6}); // moving platform
+addPlatform(6,5.6,-62, 6,2,6);
+addPlatform(16,6.8,-70, 6,2,6);
+addPlatform(8,8,-80, 6,2,6);
+const mov2 = addPlatform(-2,9,-90, 7,1.5,7, 0x3b2b6b, {axis:'z', amp:7, sp:0.8});
+addPlatform(-12,10.2,-100, 7,2,7);
+addPlatform(-4,11.6,-110, 9,2,9, 0x4a3a2b);              // goal platform
+
+/* ============ COINS ============ */
+const coins = [];
+const coinGeo = new THREE.TorusGeometry(0.42,0.16,12,24);
+const coinMat = new THREE.MeshStandardMaterial({color:0xffd24a, emissive:0xb8860b, emissiveIntensity:.7, metalness:1, roughness:.25});
+function addCoin(x,y,z){
+  const m = new THREE.Mesh(coinGeo, coinMat); m.position.set(x,y,z); m.rotation.x=Math.PI/2; m.castShadow=true;
+  const light = new THREE.PointLight(0xffd24a, 0.5, 6); m.add(light);
+  scene.add(m); coins.push({mesh:m, got:false});
+}
+// scatter coins above platforms
+[[0,2,-16],[7,3.4,-26],[-3,4.6,-35],[-12,5.8,-42],[-4,6.8,-52],[6,7.8,-62],
+ [16,9,-70],[8,10.2,-80],[-2,11.2,-90],[-12,12.4,-100],
+ [3,1.5,-4],[-3,1.5,-8],[4,1.6,-20]].forEach(c=>addCoin(...c));
+
+/* ============ GOAL PORTAL ============ */
+const goal = new THREE.Group(); goal.position.set(-4,13.4,-110); scene.add(goal);
+{
+  const ringMat = new THREE.MeshStandardMaterial({color:0x22d3ee, emissive:0x22d3ee, emissiveIntensity:1.4, metalness:.8, roughness:.2});
+  const torus = new THREE.Mesh(new THREE.TorusGeometry(1.7,0.18,16,48), ringMat); goal.add(torus);
+  const inner = new THREE.Mesh(new THREE.CircleGeometry(1.55,32),
+    new THREE.MeshBasicMaterial({color:0x0af, transparent:true, opacity:.35, side:THREE.DoubleSide})); goal.add(inner);
+  goal.add(new THREE.PointLight(0x22d3ee, 2, 30));
+  goal.userData.torus=torus; goal.userData.inner=inner;
+}
+
+/* ============ ENEMIES (AI patrol) ============ */
+const enemies = [];
+const enemyMat = new THREE.MeshStandardMaterial({color:0xef4444, roughness:.6, metalness:.2, emissive:0x550000, emissiveIntensity:.4});
+function addEnemy(x,y,z,amp,axis='x'){
+  const g = new THREE.Group(); g.position.set(x,y,z);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.4,1.4,1.4), enemyMat); body.castShadow=true; g.add(body);
+  // eyes
+  const eyeMat=new THREE.MeshBasicMaterial({color:0xffffff});
+  [-0.32,0.32].forEach(ex=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),eyeMat);e.position.set(ex,0.2,0.72);g.add(e);
+    const p=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,8),new THREE.MeshBasicMaterial({color:0x000}));p.position.set(ex,0.2,0.86);g.add(p);});
+  scene.add(g);
+  enemies.push({grp:g, body, baseX:x, baseZ:z, amp, axis, sp:0.8+Math.random()*0.5, alive:true, half:0.7, top:y+0.7});
+}
+addEnemy(7,2.2,-26, 2);
+addEnemy(-12,4.6,-42, 2);
+addEnemy(6,6.6,-62, 2.5);
+addEnemy(8,9,-80, 2.5, 'z');
+addEnemy(-12,11.2,-100, 3);
+
+/* ============ PLAYER (Character) ============ */
+const player = new THREE.Group(); scene.add(player);
+const PLR = {radius:0.55, height:1.7};
+{
+  const bodyMat = new THREE.MeshStandardMaterial({color:0x60a5fa, roughness:.45, metalness:.3, emissive:0x10306a, emissiveIntensity:.35});
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(PLR.radius,0.7,8,16), bodyMat); body.position.y=PLR.height/2; body.castShadow=true; player.add(body);
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.6,0.7,16),
+    new THREE.MeshStandardMaterial({color:0xa78bfa, roughness:.4, metalness:.3, emissive:0x3a1f7a, emissiveIntensity:.4}));
+  hat.position.y=PLR.height+0.15; hat.castShadow=true; player.add(hat);
+  const eM=new THREE.MeshBasicMaterial({color:0xffffff});
+  [-0.22,0.22].forEach(ex=>{const e=new THREE.Mesh(new THREE.SphereGeometry(0.12,12,12),eM);e.position.set(ex,PLR.height*0.62,0.5);player.add(e);
+    const p=new THREE.Mesh(new THREE.SphereGeometry(0.055,8,8),new THREE.MeshBasicMaterial({color:0x06183a}));p.position.set(ex,PLR.height*0.62,0.6);player.add(p);});
+  player.userData.body=body;
+}
+
+const SPAWN = new THREE.Vector3(0,1.5,0);
+const vel = new THREE.Vector3();
+let onGround=false, jumps=0, coyote=0, jumpBuffer=0, currentPlatform=null;
+
+/* ============ MOVEMENT TUNING (CharacterMovementComponent-style) ============ */
+const MOVE = { accel:60, maxSpeed:11, friction:10, airControl:0.55, gravity:-32, jumpVel:13, doubleJumpVel:12 };
+
+/* ============ INPUT ============ */
+const keys = {};
+addEventListener('keydown',e=>{ keys[e.code]=true;
+  if(e.code==='Space'){ jumpBuffer=0.12; e.preventDefault(); }
+  if(e.code==='KeyR') respawn();
+});
+addEventListener('keyup',e=>keys[e.code]=false);
+
+// camera orbit via mouse drag / move
+let camYaw=0, camPitch=0.35, dragging=false, lastX=0,lastY=0;
+canvas.addEventListener('mousedown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;});
+addEventListener('mouseup',()=>dragging=false);
+addEventListener('mousemove',e=>{ if(!dragging)return;
+  camYaw -= (e.clientX-lastX)*0.005; camPitch += (e.clientY-lastY)*0.004;
+  camPitch=Math.max(0.05,Math.min(1.1,camPitch)); lastX=e.clientX; lastY=e.clientY; });
+// touch
+canvas.addEventListener('touchstart',e=>{dragging=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;},{passive:true});
+addEventListener('touchend',()=>dragging=false);
+addEventListener('touchmove',e=>{ if(!dragging)return; camYaw-=(e.touches[0].clientX-lastX)*0.008; lastX=e.touches[0].clientX;},{passive:true});
+
+/* ============ GAME STATE (GameMode) ============ */
+const G = { coins:0, total:coins.length, lives:3, time:0, playing:false, ended:false };
+document.getElementById('coinsTotal').textContent = G.total;
+
+function updateHUD(){
+  document.getElementById('coins').textContent = G.coins;
+  document.getElementById('lives').textContent = '❤️'.repeat(Math.max(0,G.lives)) || '💀';
+  document.getElementById('time').textContent = G.time.toFixed(1);
+}
+function flash(color='#fff'){ const f=document.getElementById('flash'); f.style.background=color; f.style.opacity='.6'; setTimeout(()=>f.style.opacity='0',80); }
+function coinPop(text){
+  const el=document.createElement('div'); el.className='coin-pop'; el.textContent=text;
+  el.style.left='50%'; el.style.top='46%'; document.body.appendChild(el);
+  el.animate([{transform:'translate(-50%,0)',opacity:1},{transform:'translate(-50%,-60px)',opacity:0}],{duration:900,easing:'ease-out'});
+  setTimeout(()=>el.remove(),900);
+}
+
+function respawn(){
+  player.position.copy(SPAWN); vel.set(0,0,0); jumps=0;
+}
+function loseLife(){
+  G.lives--; updateHUD(); flash('#ef4444');
+  if(G.lives<=0){ endGame(false); } else respawn();
+}
+function endGame(win){
+  G.playing=false; G.ended=true;
+  document.getElementById('endTitle').textContent = win?'Geschafft! 🏆':'Game Over';
+  document.getElementById('endSub').textContent = win?'Du hast das Portal erreicht. Cinematic clear!':'Keine Leben mehr — probier es nochmal!';
+  document.getElementById('endCoins').textContent = G.coins;
+  document.getElementById('endTime').textContent = G.time.toFixed(1);
+  document.getElementById('end').classList.remove('hide');
+}
+
+/* ============ COLLISION HELPERS (ue-physics-collision) ============ */
+function landingPlatform(px,pz,feetY,prevFeetY){
+  for(const p of platforms){
+    if(px > p.x-p.w/2-PLR.radius && px < p.x+p.w/2+PLR.radius &&
+       pz > p.z-p.d/2-PLR.radius && pz < p.z+p.d/2+PLR.radius){
+      // crossed the top surface while falling
+      if(vel.y<=0 && prevFeetY >= p.top-0.05 && feetY <= p.top+0.35){
+        return p;
+      }
+    }
+  }
+  return null;
+}
+
+/* ============ MAIN LOOP ============ */
+const clock = new THREE.Clock();
+const fwd=new THREE.Vector3(), right=new THREE.Vector3(), wish=new THREE.Vector3();
+
+function tick(){
+  requestAnimationFrame(tick);
+  let dt = Math.min(clock.getDelta(), 0.033);
+  if(!G.playing){ renderScene(); return; }
+  G.time += dt;
+
+  // ----- moving platforms -----
+  const t = clock.elapsedTime;
+  platforms.forEach(p=>{ if(!p.moving) return;
+    p.prevX=p.x; p.prevZ=p.z;
+    const off=Math.sin(t*p.moving.sp)*p.moving.amp;
+    if(p.moving.axis==='x'){ p.x=p.baseX+off; } else { p.z=p.baseZ+off; }
+    p.mesh.position.set(p.x,p.y,p.z); p.edge.position.set(p.x,p.y+p.h/2+0.06,p.z);
+  });
+
+  // ----- input → wish direction (camera relative) -----
+  fwd.set(Math.sin(camYaw),0,Math.cos(camYaw)).multiplyScalar(-1);
+  right.set(fwd.z,0,-fwd.x);
+  wish.set(0,0,0);
+  if(keys['KeyW']||keys['ArrowUp']) wish.add(fwd);
+  if(keys['KeyS']||keys['ArrowDown']) wish.sub(fwd);
+  if(keys['KeyD']||keys['ArrowRight']) wish.add(right);
+  if(keys['KeyA']||keys['ArrowLeft']) wish.sub(right);
+  const moving = wish.lengthSq()>0; if(moving) wish.normalize();
+
+  // ----- horizontal accel + friction -----
+  const ctrl = onGround?1:MOVE.airControl;
+  vel.x += wish.x*MOVE.accel*ctrl*dt;
+  vel.z += wish.z*MOVE.accel*ctrl*dt;
+  if(onGround && !moving){
+    const damp = Math.max(0,1-MOVE.friction*dt);
+    vel.x*=damp; vel.z*=damp;
+  }
+  const hs=Math.hypot(vel.x,vel.z);
+  if(hs>MOVE.maxSpeed){ vel.x*=MOVE.maxSpeed/hs; vel.z*=MOVE.maxSpeed/hs; }
+
+  // ----- jump (buffer + coyote + double) -----
+  coyote = onGround?0.1:Math.max(0,coyote-dt);
+  jumpBuffer = Math.max(0,jumpBuffer-dt);
+  if(jumpBuffer>0){
+    if(onGround || coyote>0){ vel.y=MOVE.jumpVel; jumps=1; onGround=false; coyote=0; jumpBuffer=0; }
+    else if(jumps<2){ vel.y=MOVE.doubleJumpVel; jumps=2; jumpBuffer=0; flash('rgba(167,139,250,.5)'); }
+  }
+
+  // ----- gravity -----
+  vel.y += MOVE.gravity*dt;
+
+  // ----- integrate -----
+  const prevFeet = player.position.y;
+  player.position.x += vel.x*dt;
+  player.position.z += vel.z*dt;
+  player.position.y += vel.y*dt;
+
+  // ----- ground / platform collision -----
+  onGround=false; currentPlatform=null;
+  const lp = landingPlatform(player.position.x, player.position.z, player.position.y, prevFeet);
+  if(lp){ player.position.y=lp.top; vel.y=0; onGround=true; jumps=0; currentPlatform=lp; }
+
+  // carry with moving platform
+  if(currentPlatform && currentPlatform.moving){
+    player.position.x += currentPlatform.x - currentPlatform.prevX;
+    player.position.z += currentPlatform.z - currentPlatform.prevZ;
+  }
+
+  // ----- fall off world -----
+  if(player.position.y < -22){ loseLife(); }
+
+  // ----- face movement direction -----
+  if(moving){
+    const tgt=Math.atan2(vel.x,vel.z);
+    let d=tgt-player.rotation.y; while(d>Math.PI)d-=2*Math.PI; while(d<-Math.PI)d+=2*Math.PI;
+    player.rotation.y += d*Math.min(1,dt*12);
+  }
+  // squash & stretch
+  const sb=player.userData.body; const stretch=THREE.MathUtils.clamp(1+vel.y*0.012,0.8,1.25);
+  sb.scale.set(2-stretch,stretch,2-stretch);
+
+  // ----- coins -----
+  coins.forEach(c=>{ if(c.got)return; c.mesh.rotation.z+=dt*3;
+    c.mesh.position.y += Math.sin(t*2+c.mesh.position.x)*0.004;
+    if(player.position.distanceTo(c.mesh.position)<1.4){
+      c.got=true; c.mesh.visible=false; G.coins++; updateHUD(); flash('rgba(251,191,36,.45)'); coinPop('+1 🪙');
+    }
+  });
+
+  // ----- enemies (AI patrol + stomp/hit) -----
+  enemies.forEach(en=>{ if(!en.alive)return;
+    const off=Math.sin(t*en.sp)*en.amp;
+    if(en.axis==='x') en.grp.position.x=en.baseX+off; else en.grp.position.z=en.baseZ+off;
+    en.grp.rotation.y=Math.sin(t*en.sp)*0.3;
+    en.body.position.y=Math.abs(Math.sin(t*4))*0.12;
+    // collision vs player
+    const dx=Math.abs(player.position.x-en.grp.position.x), dz=Math.abs(player.position.z-en.grp.position.z);
+    if(dx<en.half+PLR.radius && dz<en.half+PLR.radius){
+      const feet=player.position.y;
+      if(vel.y<0 && feet > en.grp.position.y+1.0){ // stomp from above
+        en.alive=false; en.grp.visible=false; vel.y=MOVE.jumpVel*0.85; jumps=1;
+        G.coins++; updateHUD(); flash('rgba(167,139,250,.5)'); coinPop('STOMP! +1');
+      } else if(feet < en.grp.position.y+1.2){ // hit from side
+        loseLife();
+      }
+    }
+  });
+
+  // ----- goal -----
+  goal.userData.torus.rotation.z += dt*1.5; goal.rotation.y += dt*0.6;
+  if(player.position.distanceTo(goal.position)<2.4){ endGame(true); }
+
+  renderScene();
+}
+
+function renderScene(){
+  // camera follow (third-person orbit)
+  const dist=10, hgt=Math.sin(camPitch)*9;
+  const cx=player.position.x - Math.sin(camYaw)*Math.cos(camPitch)*dist;
+  const cz=player.position.z - Math.cos(camYaw)*Math.cos(camPitch)*dist;
+  camera.position.lerp(new THREE.Vector3(cx, player.position.y+hgt+1.5, cz), 0.12);
+  camera.lookAt(player.position.x, player.position.y+1.2, player.position.z);
+  sun.position.set(player.position.x+30, 60, player.position.z+20);
+  sun.target.position.copy(player.position); sun.target.updateMatrixWorld();
+  renderer.render(scene,camera);
+}
+
+addEventListener('resize',()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+
+/* ============ BOOT ============ */
+function startGame(){
+  // reset
+  G.coins=0; G.lives=3; G.time=0; G.ended=false;
+  coins.forEach(c=>{c.got=false;c.mesh.visible=true;});
+  enemies.forEach(e=>{e.alive=true;e.grp.visible=true;});
+  respawn(); updateHUD();
+  document.getElementById('start').classList.add('hide');
+  document.getElementById('end').classList.add('hide');
+  G.playing=true;
+}
+document.getElementById('startBtn').addEventListener('click',startGame);
+document.getElementById('restartBtn').addEventListener('click',startGame);
+
+// fake load + idle render behind start screen
+let lp2=0; const lb=document.getElementById('lb');
+const li=setInterval(()=>{lp2=Math.min(100,lp2+Math.random()*30);lb.style.width=lp2+'%';if(lp2>=100)clearInterval(li);},140);
+respawn();
+tick();
+</script>
+</body>
+</html>
