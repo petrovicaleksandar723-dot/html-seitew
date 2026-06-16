@@ -420,6 +420,16 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 .intro-launcher .launch-logo{ width:84%; max-width:230px; height:auto; margin:0 auto 2px; display:block;
   mix-blend-mode:screen; filter:drop-shadow(0 6px 22px rgba(201,162,90,.3)); }
 .intro-launcher p{ color:var(--gray); font-size:12.5px; letter-spacing:.05em; }
+/* ===== interactive 3D logo ===== */
+.logo3d{ display:flex; flex-direction:column; align-items:center; gap:10px; perspective:560px; user-select:none; }
+.logo3d-stage{ transform-style:preserve-3d; transition:transform .1s ease-out; will-change:transform; }
+.l3d-mark{ position:relative; width:70px; aspect-ratio:1; margin:0 auto; transform-style:preserve-3d; }
+.l3d-mark svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; color:#3a2c12; }
+.l3d-mark svg.face{ color:#fff7e2; filter:drop-shadow(0 0 12px rgba(236,212,154,.6)); }
+.l3d-word{ text-align:center; transform:translateZ(18px); }
+.l3d-word .w1{ display:block; font-family:var(--display); font-weight:800; letter-spacing:.2em; font-size:18px;
+  background:linear-gradient(180deg,#fffaf0,#d8bd80 70%,#b99750); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.l3d-word .w2{ display:block; margin-top:.4em; font-family:var(--display); font-weight:600; letter-spacing:.5em; padding-left:.5em; font-size:9.5px; color:var(--gold); }
 .scroll-hint{ display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:20px; color:var(--gold); font-size:10.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
 .scroll-hint .mouse{ width:22px; height:34px; border:2px solid rgba(201,162,90,.6); border-radius:12px; position:relative; }
 .scroll-hint .mouse::after{ content:""; position:absolute; top:6px; left:50%; width:3px; height:6px; border-radius:2px; background:var(--gold); transform:translateX(-50%); animation:wheel 1.6s var(--ease) infinite; }
@@ -497,7 +507,12 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       <div class="intro-screen">
         <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
         <div class="intro-launcher" id="introLauncher">
-          <img class="launch-logo" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/bca379b1-d387-42a3-9ca8-98e59955910d.png" alt="CleanLines Studios">
+          <div class="logo3d" data-logo3d>
+            <div class="logo3d-stage">
+              <div class="l3d-mark"><svg viewBox="0 0 100 100"><use href="#cl-mark"/></svg></div>
+              <div class="l3d-word"><span class="w1">CLEANLINES</span><span class="w2">STUDIOS</span></div>
+            </div>
+          </div>
           <p>Creative Content Hub</p>
           <div class="scroll-hint"><span class="mouse"></span>Scroll zum Starten</div>
         </div>
@@ -1028,7 +1043,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     for(var i=0;i<hSecs.length;i++){ var o=hSecs[i];
       var p = o.range>0 ? (y-o.top)/o.range : 0; if(p<0)p=0; else if(p>1)p=1;
       var target = p*o.dist;
-      var cur = (o.cur===null) ? target : o.cur + (target-o.cur)*0.16;   // lerp -> silky glide
+      var cur = (o.cur===null) ? target : o.cur + (target-o.cur)*0.2;    // lerp -> silky, snappier glide
       if(Math.abs(target-cur) < 0.4){ cur=target; } else { moving=true; }
       o.cur=cur;
       o.track.style.transform = "translate3d(" + (-cur).toFixed(2) + "px,0,0)";
@@ -1137,6 +1152,38 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       counters.forEach(function(c){ no.observe(c); });
     }
   }
+})();
+</script>
+
+<!-- interactive 3D logo (extruded mark + pointer/gyro tilt) -->
+<script>
+(function(){
+  var marks=document.querySelectorAll(".l3d-mark");
+  if(!marks.length) return;
+  var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  marks.forEach(function(m){
+    var face=m.querySelector("svg"); if(!face) return; face.classList.add("face");
+    var N=6;
+    for(var i=1;i<=N;i++){
+      var c=face.cloneNode(true); c.classList.remove("face");
+      c.style.transform="translateZ("+(-i*1.4)+"px)";
+      var t=1-i/(N+1.2);
+      c.style.color="rgb("+Math.round(120*t+34)+","+Math.round(96*t+26)+","+Math.round(54*t+14)+")";
+      m.insertBefore(c, face);
+    }
+  });
+  var stages=document.querySelectorAll(".logo3d-stage");
+  var tx=6,ty=-10,cx=0,cy=0,idle=999;
+  window.addEventListener("deviceorientation",function(e){ if(e.gamma==null)return; ty=Math.max(-30,Math.min(30,e.gamma)); tx=Math.max(-22,Math.min(22,(e.beta-42)*-0.5)); idle=0; },{passive:true});
+  window.addEventListener("pointermove",function(e){ tx=(e.clientY/innerHeight-.5)*-22; ty=(e.clientX/innerWidth-.5)*30; idle=0; },{passive:true});
+  (function loop(){
+    idle++;
+    var ax=tx, ay=ty;
+    if(idle>90 && !reduce){ var t=Date.now()*0.0006; ax=Math.sin(t)*6; ay=Math.cos(t*0.8)*11; }
+    cx+=(ax-cx)*0.09; cy+=(ay-cy)*0.09;
+    for(var i=0;i<stages.length;i++){ stages[i].style.transform="rotateX("+cx.toFixed(2)+"deg) rotateY("+cy.toFixed(2)+"deg)"; }
+    requestAnimationFrame(loop);
+  })();
 })();
 </script>
 </body>
