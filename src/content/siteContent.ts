@@ -45,7 +45,7 @@ export const HERO = {
   headline: ["Dein Betrieb.", "Als wäre er", "eine große Marke."],
   gold: "eine große Marke.",
   subline:
-    "Cinematic Reels, KI-Visuals und Content-Systeme für lokale Betriebe, die online endlich hochwertig wirken wollen.",
+    "Wir machen aus deinem Betrieb einen Auftritt, der online Vertrauen aufbaut — mit cinematic Reels, KI-Visuals und einem Content-System, das jeden Monat für dich arbeitet.",
   primary: "Content-Preview sichern",
   secondary: "Showcase ansehen",
   stats: [
@@ -66,13 +66,14 @@ export const MARQUEE = [
 
 export const DIAGNOSIS = {
   label: "01 — Diagnose",
-  headline: "Dein Betrieb ist gut. Aber online sieht man es nicht.",
-  gold: "online sieht man es nicht.",
-  lede: "Dein Betrieb wirkt online nur so hochwertig wie dein Content. Gute Arbeit allein reicht nicht — wirkt der erste Eindruck im Feed beliebig, entscheiden sich Kunden für jemand anderen.",
+  headline: "Gute Arbeit reicht online nicht mehr.",
+  gold: "nicht mehr.",
+  lede: "Wenn dein Feed beliebig aussieht, entscheiden Kunden in Sekunden gegen dich — obwohl dein Betrieb besser ist als dein Auftritt.",
   modules: [
     { k: "A", title: "Kein klarer erster Eindruck", desc: "Profil und Feed verkaufen deinen Standard nicht." },
-    { k: "B", title: "Content wirkt beliebig", desc: "Posten, um irgendwas zu posten — ohne System." },
-    { k: "C", title: "Keine Wiedererkennung", desc: "Kein roter Faden, keine Marke, keine Erinnerung." },
+    { k: "B", title: "Content wirkt zufällig", desc: "Posten, um irgendwas zu posten — ohne System." },
+    { k: "C", title: "Wiedererkennung fehlt", desc: "Kein roter Faden, keine Marke, keine Erinnerung." },
+    { k: "D", title: "Anfragen gehen woanders hin", desc: "Kunden buchen bei Betrieben, die hochwertiger wirken." },
   ],
   meters: [
     { label: "Sichtbarkeit", value: 22, display: "niedrig", tone: "low" as const },
@@ -84,10 +85,11 @@ export const DIAGNOSIS = {
 };
 
 export const OS = {
-  label: "Das System",
-  headline: "Kein einzelnes Video. Ein Content-System.",
-  gold: "Ein Content-System.",
-  lede: "Du bekommst kein einzelnes Video. Du bekommst ein System, das deinen Betrieb regelmäßig hochwertig sichtbar macht — Modul für Modul, jeden Monat fertig.",
+  label: "Control Center",
+  headline: "Nicht ein Video. Ein System, das dich sichtbar macht.",
+  gold: "sichtbar macht.",
+  lede: "Wir planen, gestalten und produzieren Content so, dass dein Betrieb regelmäßig hochwertig erscheint — ohne dass du selbst jeden Tag posten musst.",
+  note: "Tippe dich durch dein Content-OS",
   core: { title: "CleanLines OS", desc: "Alle Module laufen in einem System zusammen — geplant, konsistent, sendefertig." },
   modules: [
     { n: "M01", title: "Cinematic Reels", desc: "Wort-für-Wort-Skripte mit Hook, Ablauf und CTA." },
@@ -99,6 +101,44 @@ export const OS = {
     { n: "M07", title: "Posting-System", desc: "Du postest in Minuten statt Stunden." },
     { n: "M08", title: "Content-Kalender", desc: "Ein roter Faden über den ganzen Monat." },
   ],
+};
+
+/* ---- iPad "Control Center" home screen ---- */
+export type OSAppId =
+  | "reels" | "kalender" | "kivisuals" | "google" | "reviews"
+  | "branchen" | "pakete" | "whatsapp" | "preview";
+
+export type OSApp = {
+  id: OSAppId;
+  label: string;
+  preview: "video" | "calendar" | "posts" | "reviews" | "industries" | "packages" | "whatsapp" | "preview";
+  video?: string;
+  caption: string;
+};
+
+export const CONTROL: { apps: OSApp[] } = {
+  apps: [
+    { id: "reels", label: "Reels", preview: "video", video: "/assets/videos/reel-1.mp4", caption: "Cinematic Reel · live im System" },
+    { id: "kalender", label: "Content-Kalender", preview: "calendar", caption: "Dein Monat — geplant statt zufällig" },
+    { id: "kivisuals", label: "KI-Visuals", preview: "video", video: "/assets/videos/show-2.mp4", caption: "Premium-Visuals auf Knopfdruck" },
+    { id: "google", label: "Google-Beiträge", preview: "posts", caption: "Lokal gefunden werden" },
+    { id: "reviews", label: "Bewertungen", preview: "reviews", caption: "Antworten, die Vertrauen schaffen" },
+    { id: "branchen", label: "Branchen", preview: "industries", caption: "Auf deinen Betrieb abgestimmt" },
+    { id: "pakete", label: "Pakete", preview: "packages", caption: "Dein Content-System wählen" },
+    { id: "whatsapp", label: "WhatsApp", preview: "whatsapp", caption: "Direkter Draht, kurze Wege" },
+    { id: "preview", label: "Preview", preview: "preview", caption: "Kostenlose Content-Preview" },
+  ],
+};
+
+export const REELCINEMA = {
+  headline: "Content, der nicht aussieht wie Werbung. Sondern wie Marke.",
+  gold: "wie Marke.",
+};
+
+export const INDUSTRIES_HEAD = {
+  headline: "Für Betriebe, die endlich hochwertig wirken wollen.",
+  gold: "hochwertig wirken wollen.",
+  sub: "Restaurant, Barber, Gym, Praxis oder Autohaus — wenn Vertrauen entscheidet, entscheidet dein Auftritt.",
 };
 
 export type Reel = {
@@ -125,43 +165,45 @@ export type Industry = {
   title: string;
   desc: string;
   hue: string; // base radial color
+  video: string; // atmosphere video behind the active industry
 };
 
 export const INDUSTRIES: Industry[] = [
-  { id: "friseure", name: "Friseure", tag: "Auslastung", title: "Wir füllen leere Stühle", desc: "Reels, die deine Cuts und Fades zeigen, Google-Beiträge für freie Termine und Story-Konzepte für deine Online-Buchung.", hue: "#241a12" },
-  { id: "restaurants", name: "Restaurants", tag: "Reservierungen", title: "Volle Tische, auch unter der Woche", desc: "Appetitstarke Reels zu deinen Spezialitäten, Wochenkarten-Beiträge und Story-Konzepte, die schon mittags Lust auf den Abend machen.", hue: "#2a1a10" },
-  { id: "handwerker", name: "Handwerker", tag: "Expertenstatus", title: "Lokaler Expertenstatus", desc: "Projekte verständlich aufbereitet, regionale Google-Beiträge und dein Team im Einsatz — für qualifizierte Anfragen aus der Umgebung.", hue: "#1f1810" },
-  { id: "kosmetik", name: "Kosmetikstudios", tag: "Vertrauen", title: "Content, der Vertrauen aufbaut", desc: "Echte Behandlungsvorteile statt Floskeln: Vorher/Nachher-Ideen, Pflege-Tipps, FAQ-Posts und Reels für Treatments.", hue: "#251a13" },
-  { id: "auto", name: "Autohäuser", tag: "Premium-Aufträge", title: "Mach den Unterschied sichtbar", desc: "Cinematic Fahrzeug-Clips, Premium-Visuals und Angebots-Beiträge, die hochwertige Anfragen bringen.", hue: "#1d1610" },
-  { id: "fitness", name: "Fitnessstudios", tag: "Anmeldungen", title: "Planbar neue Mitglieder", desc: "Motivierende Kampagnen, Transformation-Reels und Aktions-Beiträge, die deine Probetrainings füllen.", hue: "#22180f" },
-  { id: "cafes", name: "Cafés", tag: "Reichweite", title: "Lokale Reichweite zum Launch", desc: "Atmosphärische Clips, Specials und Beiträge, die Laufkundschaft aus deiner Nachbarschaft holen.", hue: "#241b11" },
-  { id: "kliniken", name: "Kliniken", tag: "Seriosität", title: "Seriös und nahbar zugleich", desc: "Aufklärungs-Content, FAQ-Beiträge und ein Auftritt, der Kompetenz zeigt und Patienten Sicherheit gibt.", hue: "#1b1510" },
-  { id: "immobilien", name: "Immobilien", tag: "Premium-Auftritt", title: "Objekte, die hochwertig wirken", desc: "Cinematic Objekt-Clips, Premium-Visuals und Beiträge, die Eigentümer und Käufer gleichermaßen überzeugen.", hue: "#241b12" },
+  { id: "friseure", name: "Friseure", tag: "Auslastung", title: "Wir füllen leere Stühle", desc: "Reels, die deine Cuts und Fades zeigen, Google-Beiträge für freie Termine und Story-Konzepte für deine Online-Buchung.", hue: "#241a12", video: "/assets/videos/reel-1.mp4" },
+  { id: "restaurants", name: "Restaurants", tag: "Reservierungen", title: "Volle Tische, auch unter der Woche", desc: "Appetitstarke Reels zu deinen Spezialitäten, Wochenkarten-Beiträge und Story-Konzepte, die schon mittags Lust auf den Abend machen.", hue: "#2a1a10", video: "/assets/videos/show-1.mp4" },
+  { id: "handwerker", name: "Handwerker", tag: "Expertenstatus", title: "Lokaler Expertenstatus", desc: "Projekte verständlich aufbereitet, regionale Google-Beiträge und dein Team im Einsatz — für qualifizierte Anfragen aus der Umgebung.", hue: "#1f1810", video: "/assets/videos/show-4.mp4" },
+  { id: "kosmetik", name: "Kosmetikstudios", tag: "Vertrauen", title: "Content, der Vertrauen aufbaut", desc: "Echte Behandlungsvorteile statt Floskeln: Vorher/Nachher-Ideen, Pflege-Tipps, FAQ-Posts und Reels für Treatments.", hue: "#251a13", video: "/assets/videos/reel-3.mp4" },
+  { id: "auto", name: "Autohäuser", tag: "Premium-Aufträge", title: "Mach den Unterschied sichtbar", desc: "Cinematic Fahrzeug-Clips, Premium-Visuals und Angebots-Beiträge, die hochwertige Anfragen bringen.", hue: "#1d1610", video: "/assets/videos/reel-2.mp4" },
+  { id: "fitness", name: "Fitnessstudios", tag: "Anmeldungen", title: "Planbar neue Mitglieder", desc: "Motivierende Kampagnen, Transformation-Reels und Aktions-Beiträge, die deine Probetrainings füllen.", hue: "#22180f", video: "/assets/videos/show-2.mp4" },
+  { id: "cafes", name: "Cafés", tag: "Reichweite", title: "Lokale Reichweite zum Launch", desc: "Atmosphärische Clips, Specials und Beiträge, die Laufkundschaft aus deiner Nachbarschaft holen.", hue: "#241b11", video: "/assets/videos/show-3.mp4" },
+  { id: "kliniken", name: "Kliniken", tag: "Seriosität", title: "Seriös und nahbar zugleich", desc: "Aufklärungs-Content, FAQ-Beiträge und ein Auftritt, der Kompetenz zeigt und Patienten Sicherheit gibt.", hue: "#1b1510", video: "/assets/videos/reel-4.mp4" },
+  { id: "immobilien", name: "Immobilien", tag: "Premium-Auftritt", title: "Objekte, die hochwertig wirken", desc: "Cinematic Objekt-Clips, Premium-Visuals und Beiträge, die Eigentümer und Käufer gleichermaßen überzeugen.", hue: "#241b12", video: "/assets/videos/hero.mp4" },
 ];
 
 export const TRANSFORMATION = {
   before: {
     state: "Vorher · ohne System",
-    headline: "Gute Arbeit, schwacher Auftritt.",
+    headline: "Gute Leistung, aber kein klarer Eindruck.",
     list: ["Unregelmäßige Posts", "Keine klare Linie", "Wenig Vertrauen", "Social Media bleibt liegen"],
   },
   after: {
     state: "Nachher · mit CleanLines",
-    headline: "Ein Auftritt, der Vertrauen verkauft.",
-    gold: "Vertrauen verkauft.",
-    list: ["Klarer Monatsplan", "Cinematic Reels", "Einheitlicher Auftritt", "Mehr Vertrauen"],
+    headline: "Ein Auftritt, der sofort Vertrauen erzeugt.",
+    gold: "Vertrauen erzeugt.",
+    list: ["Klarer Monatsplan", "Cinematic Reels", "Einheitlicher Auftritt", "Mehr Anfragen"],
+    video: "/assets/videos/show-3.mp4",
   },
 };
 
 export const PIPELINE = {
   label: "Ablauf",
-  headline: "Die Produktions-Pipeline.",
-  gold: "Produktions-Pipeline.",
+  headline: "Von deiner Leistung zu Content, der verkauft.",
+  gold: "Content, der verkauft.",
   steps: [
-    { n: "01", title: "Analyse", desc: "Branche, Angebot und Ziele — wir verstehen deinen Betrieb in Minuten." },
-    { n: "02", title: "Konzept", desc: "Wir bauen dein Content-System: Themen, Hooks, roter Faden, Plan." },
-    { n: "03", title: "Content-Produktion", desc: "Reels-Skripte, KI-Visuals und Beiträge — premium und sendefertig." },
-    { n: "04", title: "Posting-System", desc: "Mit Kalender online — du postest in Minuten, Feedback verfeinert alles." },
+    { n: "01", title: "Wir verstehen deinen Betrieb", desc: "Branche, Angebot und Ziele — in Minuten erfasst, ohne langes Briefing." },
+    { n: "02", title: "Wir bauen deine visuelle Richtung", desc: "Themen, Hooks, roter Faden und ein klarer Look für deine Marke." },
+    { n: "03", title: "Wir produzieren Reels, Visuals & Texte", desc: "Cinematic Content, KI-Visuals und Beiträge — premium und sendefertig." },
+    { n: "04", title: "Du bekommst Content zum Einsetzen", desc: "Mit Kalender und Plan online — du postest in Minuten statt Stunden." },
   ],
 };
 
@@ -223,9 +265,9 @@ export const FAQ = [
 
 export const FINAL = {
   label: "Kostenlose Preview",
-  headline: ["Dein Betrieb kann aussehen wie eine Marke.", "Wir bauen den Content dafür."],
-  gold: "Wir bauen den Content dafür.",
-  sub: "Schick uns kurz deinen Betrieb und wir zeigen dir, welche Inhalte für dich funktionieren — unverbindlich, ohne Abo, ohne Risiko.",
+  headline: ["Lass deinen Betrieb nicht kleiner wirken,", "als er ist."],
+  gold: "als er ist.",
+  sub: "Schick uns kurz, was du machst. Wir zeigen dir, wie dein Content aussehen könnte — unverbindlich, klar und direkt.",
   primary: "Kostenlose Content-Preview anfragen",
-  whatsapp: "WhatsApp-Anfrage starten",
+  whatsapp: "Per WhatsApp starten",
 };

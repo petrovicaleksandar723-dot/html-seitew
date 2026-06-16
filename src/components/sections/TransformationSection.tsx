@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { TRANSFORMATION as T } from "../../content/siteContent";
+import { VideoPanel } from "../ui/VideoPanel";
 import { buildTransformation } from "../../motion/transformationTimeline";
 import { gsap } from "../../motion/scrollTriggers";
 
@@ -41,6 +42,7 @@ export function TransformationSection() {
           </div>
         </div>
         <div className="ba-layer ba-after" ref={afterRef}>
+          <VideoPanel src={T.after.video} className="ba-video" />
           <div className="ba-content">
             <span className="ba-state">{T.after.state}</span>
             <h2 className="ba-h">

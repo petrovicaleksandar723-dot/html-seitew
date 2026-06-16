@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
-import { REELS } from "../../content/siteContent";
+import { REELS, REELCINEMA } from "../../content/siteContent";
 import { buildReelCinema } from "../../motion/reelCinemaTimeline";
 import { gsap } from "../../motion/scrollTriggers";
 
@@ -59,7 +59,8 @@ export function ReelCinemaSection() {
       <div className="reel-stage">
         <div className="reel-head">
           <h2>
-            Content, der aus der <span className="gold-text">Engine kommt.</span>
+            {REELCINEMA.headline.replace(REELCINEMA.gold, "")}
+            <span className="gold-text">{REELCINEMA.gold}</span>
           </h2>
           <div className="reel-progress">
             <span className="pcount" ref={countRef}>

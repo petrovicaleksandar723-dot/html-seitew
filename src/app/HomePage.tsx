@@ -1,7 +1,7 @@
 import { MARQUEE, mailtoHref, whatsappHref } from "../content/siteContent";
 import { HeroSection } from "../components/sections/HeroSection";
 import { DiagnosisSection } from "../components/sections/DiagnosisSection";
-import { ContentOSSection } from "../components/sections/ContentOSSection";
+import { ControlCenterSection } from "../components/sections/ControlCenterSection";
 import { ReelCinemaSection } from "../components/sections/ReelCinemaSection";
 import { IndustriesSection } from "../components/sections/IndustriesSection";
 import { TransformationSection } from "../components/sections/TransformationSection";
@@ -53,7 +53,7 @@ export function HomePage() {
       <HeroSection />
       <Marquee />
       <DiagnosisSection />
-      <ContentOSSection />
+      <ControlCenterSection />
       <ReelCinemaSection />
       <IndustriesSection />
       <TransformationSection />
