@@ -1,0 +1,19 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "5.3",
+	"Category": "",
+	"Description": "LumenArena — a cinematic Triple-A mini-game built in C++ (Lumen GI, Nanite, Virtual Shadow Maps, TSR). Collect the glowing orbs in a dark arena.",
+	"Modules": [
+		{
+			"Name": "LumenArena",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		}
+	]
+}
