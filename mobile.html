@@ -62,6 +62,11 @@ button{ font:inherit; color:inherit; cursor:pointer; border:none; background:non
 /* ---------- layout ---------- */
 .wrap{ width:100%; max-width:1180px; margin:0 auto; padding:0 22px; }
 section{ position:relative; padding:clamp(64px,11vw,130px) 0; }
+/* cinematic section backdrops (faint image + scrim, gentle parallax) */
+.has-bg{ isolation:isolate; }
+.sec-bg{ position:absolute; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+.sec-bg img{ position:absolute; left:0; top:-12%; width:100%; height:124%; object-fit:cover; opacity:.20; will-change:transform; }
+.sec-bg::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,var(--bg) 0%,rgba(7,7,10,.55) 42%,rgba(7,7,10,.82) 100%); }
 .eyebrow{ display:inline-flex; align-items:center; gap:9px; font-size:12px; font-weight:700; letter-spacing:.18em;
   text-transform:uppercase; color:var(--gold); padding:8px 16px; border:1px solid var(--line-2); border-radius:999px;
   background:rgba(201,162,90,.07); margin-bottom:20px; }
@@ -388,7 +393,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- PROBLEM -->
-<section id="problem">
+<section id="problem" class="has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222127_c2eb04f0-ec8c-448d-8c0e-22dde767f339.png"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Das Problem</span>
@@ -421,7 +427,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- ALLTAG -> CONTENT -->
-<section id="alltag">
+<section id="alltag" class="has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Dein Content-Potenzial</span>
@@ -438,7 +445,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- ABLAUF / SYSTEM -->
-<section id="ablauf">
+<section id="ablauf" class="has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">So arbeiten wir</span>
@@ -650,7 +658,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- FINAL CTA -->
-<section id="kontakt" class="final">
+<section id="kontakt" class="final has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125800_57f40445-c12b-43c1-bb20-984efe6df3a4.png"></div>
   <div class="wrap">
     <div class="reveal">
       <span class="eyebrow">Jetzt unverbindlich anfragen</span>
@@ -768,6 +777,7 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   var progress=document.getElementById("progress"), dock=document.getElementById("dock");
   var flow=document.getElementById("flow"), heroPhone=document.getElementById("heroPhone");
   var docEl=document.documentElement, hero=document.getElementById("hero");
+  var bgImgs=[].slice.call(document.querySelectorAll(".sec-bg img")).map(function(im){ return {im:im, sec:im.closest("section")}; });
   var rafOn=false, prevY=window.scrollY||0, skew=0, lastDir=0, idle=0, curSpy=-1;
   function frame(){
     var vh=innerHeight, y=window.scrollY||window.pageYOffset;
@@ -780,6 +790,10 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
     if(dock) dock.classList.toggle("show", y>vh*1.1 && ratio<0.93);
     /* hero phone parallax */
     if(heroPhone && y<vh*1.4) heroPhone.style.transform="translateY("+(y*0.06).toFixed(1)+"px)";
+    /* section backdrop parallax (cinematic depth) */
+    if(!reduce){ for(var b=0;b<bgImgs.length;b++){ var r=bgImgs[b].sec.getBoundingClientRect();
+      if(r.bottom<-40||r.top>vh+40) continue; var rel=(r.top+r.height/2-vh/2)/vh;
+      bgImgs[b].im.style.transform="translate3d(0,"+(rel*-24).toFixed(1)+"px,0)"; } }
     /* velocity skew (subtle liquid feel) */
     if(!reduce && flow){
       var vel=y-prevY; var t=vel*0.045; if(t>1.6)t=1.6; else if(t<-1.6)t=-1.6;
