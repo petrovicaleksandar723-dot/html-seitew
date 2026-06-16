@@ -1,15 +1,14 @@
 [build]
-  # Static site — no build step, the repo root is published as-is.
-  publish = "."
-  command = ""
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # Long-cache the heavy media so repeat visits are instant.
 [[headers]]
   for = "/assets/videos/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
