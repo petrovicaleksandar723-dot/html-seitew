@@ -45,6 +45,7 @@ body::before{
     radial-gradient(60% 40% at 50% -5%, rgba(201,162,90,.16), transparent 70%),
     radial-gradient(50% 35% at 100% 100%, rgba(201,162,90,.07), transparent 70%),
     var(--bg);
+  transform:translateZ(0);          /* promote to its own layer -> no repaint on scroll */
 }
 
 /* ---------- layout helpers ---------- */
@@ -204,10 +205,10 @@ header{
    ========================================================================== */
 .hsec{ padding:40px 0; }
 .hsec-head,.hsec-foot{ position:relative; z-index:3; }
-.hsec-viewport{ position:relative; z-index:2; padding:8px 0 4px; }
+.hsec-viewport{ position:relative; z-index:2; padding:8px 0 4px; scroll-snap-type:x proximity; }
 .hsec-track > *{ scroll-snap-align:center;
-  transition:transform .5s var(--ease), opacity .5s var(--ease); }
-.hsec-track > *:not(.active){ opacity:.62; transform:scale(.94); }
+  transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .55s cubic-bezier(.22,1,.36,1); }
+.hsec-track > *:not(.active){ opacity:.76; transform:scale(.965); }
 .hsec-track > .active{ opacity:1; }
 .hsec-track > .card.active,.hsec-track > .col.active,.hsec-track > .review.active{
   box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 46px rgba(201,162,90,.18); }
@@ -490,7 +491,7 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 @keyframes wheel{ 0%{opacity:0; transform:translate(-50%,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,12px)} }
 
 /* ---------- reveal animation (cheap: opacity+transform only) ---------- */
-.reveal{ opacity:0; transform:translateY(40px) scale(.96); transition:opacity .7s var(--ease), transform .8s cubic-bezier(.2,.85,.25,1.04); }
+.reveal{ opacity:0; transform:translateY(34px) scale(.975); transition:opacity .8s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
 .reveal.in{ will-change:auto; }
 .reveal.from-l{ transform:translateX(-64px) rotate(-1.2deg); }
 .reveal.from-r{ transform:translateX(64px) rotate(1.2deg); }
@@ -957,7 +958,9 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       var v = en.target;
       if(en.isIntersecting){
         if(!v.src){ v.src = v.dataset.src; }      // lazy-load source on first view
-        var p = v.play(); if(p && p.catch){ p.catch(function(){}); }
+        // carousel reels are driven by the focus logic (only the centred one plays);
+        // standalone reels (e.g. the CTA video) autoplay when they scroll into view.
+        if(!v.closest("[data-hsec]")){ var p = v.play(); if(p && p.catch){ p.catch(function(){}); } }
       } else {
         v.pause();
       }
@@ -1047,7 +1050,14 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     var isBranche = track.id==="bGallery";
     var o={ sec:sec, vpt:vpt, track:track, items:items, dots:dots, isBranche:isBranche, active:-1, tick:false };
     o.onActive=function(i){
-      for(var k=0;k<items.length;k++) items[k].classList.toggle("active", k===i);
+      for(var k=0;k<items.length;k++){
+        items[k].classList.toggle("active", k===i);
+        var vid=items[k].querySelector("video.lazyreel");
+        if(vid){
+          if(k===i){ if(!vid.src) vid.src=vid.dataset.src; var pp=vid.play(); if(pp&&pp.catch) pp.catch(function(){}); }
+          else { try{ vid.pause(); }catch(e){} }
+        }
+      }
       for(var d=0;d<dots.length;d++) dots[d].classList.toggle("on", d===i);
       if(isBranche) setBrancheActive(i);
     };
