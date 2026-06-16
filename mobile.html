@@ -20,7 +20,7 @@
 :root{
   --bg:#07070a; --bg2:#0c0c11; --card:#131318; --card2:#17171d;
   --gold:#c9a25a; --gold-2:#e8d2a0; --gold-3:#fff4da; --cream:#f5f1e8;
-  --ink:#f4f1ea; --gray:#aeb4c0; --dim:#7c818c; --line:rgba(255,255,255,.10);
+  --ink:#f7f3ec; --gray:#c2c8d2; --dim:#7c818c; --line:rgba(255,255,255,.12);
   --line-2:rgba(201,162,90,.30);
   --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   --display:"Sora","Inter",sans-serif;
@@ -350,6 +350,32 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 .marquee-row span::after{ content:"✦"; -webkit-text-stroke:0; color:var(--gold); font-size:.42em; opacity:.85; }
 @keyframes mq{ to{ transform:translateX(-50%); } }
 .marquee:hover .marquee-row{ animation-play-state:paused; }
+
+/* ---------- intro: scroll into the phone ---------- */
+body.has-intro header{ opacity:0; pointer-events:none; transition:opacity .5s var(--ease); }
+body.has-intro header.show{ opacity:1; pointer-events:auto; }
+.intro{ position:relative; height:170vh; z-index:30; }
+.intro-stage{ position:sticky; top:0; height:100vh; height:100dvh; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.intro-glow{ position:absolute; inset:0; pointer-events:none; background:radial-gradient(46% 36% at 50% 42%, rgba(201,162,90,.24), transparent 70%); }
+.intro-phone{ position:relative; width:min(266px,67vw); aspect-ratio:9/19; border-radius:40px; background:#000; border:1px solid rgba(255,255,255,.16); padding:7px; box-shadow:0 44px 90px rgba(0,0,0,.7),0 0 0 1px rgba(201,162,90,.16),0 0 70px rgba(201,162,90,.22); transform:scale(1); transform-origin:50% 44%; will-change:transform; }
+.intro-phone .notch{ position:absolute; top:7px; left:50%; transform:translateX(-50%); width:32%; height:16px; background:#000; border-radius:0 0 12px 12px; z-index:3; }
+.intro-screen{ position:relative; width:100%; height:100%; border-radius:33px; overflow:hidden; background:#0a0a0c; }
+.intro-screen video{ width:100%; height:100%; object-fit:cover; opacity:.5; }
+.intro-launcher{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; padding:20px; background:radial-gradient(60% 50% at 50% 45%, rgba(10,10,12,.3), rgba(7,7,10,.8)); }
+.intro-launcher p{ color:var(--gray); font-size:12.5px; letter-spacing:.05em; }
+.logo3d{ display:flex; flex-direction:column; align-items:center; gap:10px; perspective:560px; user-select:none; }
+.logo3d-stage{ transform-style:preserve-3d; transition:transform .1s ease-out; will-change:transform; }
+.l3d-mark{ position:relative; width:76px; aspect-ratio:1; margin:0 auto; transform-style:preserve-3d; }
+.l3d-mark svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; color:#3a2c12; }
+.l3d-mark svg.face{ color:#fff7e2; filter:drop-shadow(0 0 12px rgba(236,212,154,.6)); }
+.l3d-word{ text-align:center; transform:translateZ(18px); }
+.l3d-word .w1{ display:block; font-family:var(--display); font-weight:800; letter-spacing:.2em; font-size:19px; background:linear-gradient(180deg,#fffaf0,#e8d2a0 70%,#c9a25a); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.l3d-word .w2{ display:block; margin-top:.4em; font-family:var(--display); font-weight:600; letter-spacing:.5em; padding-left:.5em; font-size:9.5px; color:var(--gold); }
+.scroll-hint{ display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:20px; color:var(--gold); font-size:10.5px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
+.scroll-hint .mouse{ width:22px; height:34px; border:2px solid rgba(201,162,90,.6); border-radius:12px; position:relative; }
+.scroll-hint .mouse::after{ content:""; position:absolute; top:6px; left:50%; width:3px; height:6px; border-radius:2px; background:var(--gold); transform:translateX(-50%); animation:wheel 1.6s var(--ease) infinite; }
+@keyframes wheel{ 0%{opacity:0; transform:translate(-50%,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,12px)} }
+@media (prefers-reduced-motion:reduce){ .intro{ height:auto; } .intro-stage{ position:relative; height:auto; padding:90px 0; } }
 </style>
 </head>
 <body>
@@ -395,6 +421,29 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 <span id="top"></span>
 
 <!-- HERO -->
+<!-- INTRO — scroll into the phone -->
+<div class="intro" id="intro">
+  <div class="intro-stage" id="introStage">
+    <div class="intro-glow"></div>
+    <div class="intro-phone" id="introPhone">
+      <div class="notch"></div>
+      <div class="intro-screen">
+        <video src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <div class="intro-launcher" id="introLauncher">
+          <div class="logo3d" data-logo3d>
+            <div class="logo3d-stage">
+              <div class="l3d-mark"><svg viewBox="0 0 100 100"><use href="#mk"/></svg></div>
+              <div class="l3d-word"><span class="w1">CLEANLINES</span><span class="w2">STUDIO</span></div>
+            </div>
+          </div>
+          <p>Creative Content Hub</p>
+          <div class="scroll-hint"><span class="mouse"></span>Scroll zum Starten</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="hero" id="hero">
   <div class="wrap">
     <div class="hero-grid">
@@ -447,7 +496,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- LEISTUNGEN / LÖSUNG -->
-<section id="leistungen">
+<section id="leistungen" class="has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222127_c2eb04f0-ec8c-448d-8c0e-22dde767f339.png"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Die Lösung</span>
@@ -569,7 +619,8 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
 </section>
 
 <!-- WARUM -->
-<section id="warum">
+<section id="warum" class="has-bg">
+  <div class="sec-bg"><img loading="lazy" alt="" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Warum Cleanlines Studio?</span>
@@ -742,6 +793,31 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
   var fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
 
+  /* ---- INTRO: scroll into the phone (native scroll, transform only — stable) ---- */
+  (function(){
+    var intro=document.getElementById("intro"), introPhone=document.getElementById("introPhone"),
+        introLauncher=document.getElementById("introLauncher"), introStage=document.getElementById("introStage"),
+        hdr=document.getElementById("header");
+    if(!intro || reduce){ if(hdr) hdr.classList.add("show"); return; }
+    document.body.classList.add("has-intro");
+    var vid=introPhone.querySelector("video"), range=1, tick=false;
+    function measure(){ range=Math.max(1, intro.offsetHeight - innerHeight); }
+    measure(); addEventListener("resize", measure, {passive:true});
+    function f(){
+      tick=false;
+      var y=window.scrollY||window.pageYOffset;
+      if(y>range+innerHeight) return;
+      var p=Math.min(1,Math.max(0,y/range)), z=1+p*p*3.2;
+      introPhone.style.transform="translateZ(0) scale("+z.toFixed(3)+")";
+      introLauncher.style.opacity=Math.max(0,1-p*2.4).toFixed(3);
+      if(vid){ vid.style.opacity=(0.55+0.4*Math.min(1,p/0.5)).toFixed(3); if(p<0.94){ if(vid.paused) vid.play().catch(function(){}); } else if(!vid.paused) vid.pause(); }
+      introStage.style.opacity=(p>0.85?Math.max(0,1-(p-0.85)/0.15):1).toFixed(3);
+      if(hdr) hdr.classList.toggle("show", p>0.55);
+    }
+    addEventListener("scroll",function(){ if(!tick){ tick=true; requestAnimationFrame(f); } },{passive:true});
+    f();
+  })();
+
   /* native scroll only — no smooth-scroll library (fixes the auto-scroll bug) */
   var USE_GSAP=false;
 
@@ -877,6 +953,45 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
       var r=e.getBoundingClientRect(); if(r.top < innerHeight*1.1) e.classList.add("in");
     });
   },1400);
+})();
+</script>
+<!-- interactive 3D logo (extruded mark + pointer/gyro tilt) -->
+<script>
+(function(){
+  var marks=document.querySelectorAll(".l3d-mark");
+  if(!marks.length) return;
+  var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  marks.forEach(function(m){
+    var face=m.querySelector("svg"); if(!face) return; face.classList.add("face");
+    var N=6;
+    for(var i=1;i<=N;i++){
+      var c=face.cloneNode(true); c.classList.remove("face");
+      c.style.transform="translateZ("+(-i*1.4)+"px)";
+      var t=1-i/(N+1.2);
+      c.style.color="rgb("+Math.round(120*t+34)+","+Math.round(96*t+26)+","+Math.round(54*t+14)+")";
+      m.insertBefore(c, face);
+    }
+  });
+  var stages=document.querySelectorAll(".logo3d-stage");
+  var tx=6,ty=-10,cx=0,cy=0,idle=999;
+  window.addEventListener("deviceorientation",function(e){ if(e.gamma==null)return; ty=Math.max(-30,Math.min(30,e.gamma)); tx=Math.max(-22,Math.min(22,(e.beta-42)*-0.5)); idle=0; },{passive:true});
+  window.addEventListener("pointermove",function(e){ tx=(e.clientY/innerHeight-.5)*-22; ty=(e.clientX/innerWidth-.5)*30; idle=0; },{passive:true});
+  var running=false, visible=true;
+  function loop(){
+    if(!visible){ running=false; return; }
+    idle++;
+    var ax=tx, ay=ty;
+    if(idle>90 && !reduce){ var t=Date.now()*0.0006; ax=Math.sin(t)*6; ay=Math.cos(t*0.8)*11; }
+    cx+=(ax-cx)*0.09; cy+=(ay-cy)*0.09;
+    for(var i=0;i<stages.length;i++){ stages[i].style.transform="rotateX("+cx.toFixed(2)+"deg) rotateY("+cy.toFixed(2)+"deg)"; }
+    requestAnimationFrame(loop);
+  }
+  function start(){ if(!running){ running=true; requestAnimationFrame(loop); } }
+  var host=document.querySelector(".logo3d")||stages[0];
+  if(host && "IntersectionObserver" in window){
+    new IntersectionObserver(function(es){ visible=es[0].isIntersecting; if(visible) start(); },{threshold:0.01}).observe(host);
+  }
+  start();
 })();
 </script>
 </body>
