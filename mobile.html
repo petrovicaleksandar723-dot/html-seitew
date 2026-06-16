@@ -206,7 +206,7 @@ header{
 .hsec-head,.hsec-foot{ position:relative; z-index:3; }
 .hsec-viewport{ position:relative; z-index:2; padding:8px 0 4px; }
 .hsec-track > *{ scroll-snap-align:center;
-  transition:transform .55s var(--ease), opacity .55s var(--ease), box-shadow .55s var(--ease); }
+  transition:transform .5s var(--ease), opacity .5s var(--ease); }
 .hsec-track > *:not(.active){ opacity:.62; transform:scale(.94); }
 .hsec-track > .active{ opacity:1; }
 .hsec-track > .card.active,.hsec-track > .col.active,.hsec-track > .review.active{
@@ -328,6 +328,20 @@ body.pin .hsec-track > .active::after{ content:""; position:absolute; inset:0; b
 .grain{ position:fixed; inset:0; z-index:75; pointer-events:none; opacity:.045; mix-blend-mode:overlay;
   background-size:150px 150px;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* ============================================================
+   MOBILE PERFORMANCE — kill the per-frame compositing cost on phones.
+   The film grain (mix-blend-mode) and the drifting aura forced a
+   full-screen recomposite every scroll frame -> the main cause of jank.
+   On touch devices we drop the blend layer, freeze the aura and trim
+   the heavy blurs so scrolling stays buttery.
+   ============================================================ */
+@media (hover:none),(pointer:coarse){
+  .grain{ display:none !important; }                /* blend-mode recomposite -> gone */
+  .aura{ animation:none !important; }               /* huge animated layer -> static */
+  header{ backdrop-filter:saturate(140%) blur(7px); -webkit-backdrop-filter:saturate(140%) blur(7px); }
+  .dock{ -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+}
 /* professional, accessible focus rings */
 a:focus-visible,button:focus-visible,[role=button]:focus-visible,summary:focus-visible{
   outline:2px solid var(--gold); outline-offset:3px; border-radius:10px; }
@@ -476,7 +490,8 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 @keyframes wheel{ 0%{opacity:0; transform:translate(-50%,0)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,12px)} }
 
 /* ---------- reveal animation (cheap: opacity+transform only) ---------- */
-.reveal{ opacity:0; transform:translateY(48px) scale(.95); transition:opacity .8s var(--ease), transform .9s cubic-bezier(.2,.85,.25,1.04); will-change:opacity,transform; }
+.reveal{ opacity:0; transform:translateY(40px) scale(.96); transition:opacity .7s var(--ease), transform .8s cubic-bezier(.2,.85,.25,1.04); }
+.reveal.in{ will-change:auto; }
 .reveal.from-l{ transform:translateX(-64px) rotate(-1.2deg); }
 .reveal.from-r{ transform:translateX(64px) rotate(1.2deg); }
 .reveal.from-s{ transform:scale(.8); }
@@ -1219,14 +1234,27 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   var tx=6,ty=-10,cx=0,cy=0,idle=999;
   window.addEventListener("deviceorientation",function(e){ if(e.gamma==null)return; ty=Math.max(-30,Math.min(30,e.gamma)); tx=Math.max(-22,Math.min(22,(e.beta-42)*-0.5)); idle=0; },{passive:true});
   window.addEventListener("pointermove",function(e){ tx=(e.clientY/innerHeight-.5)*-22; ty=(e.clientX/innerWidth-.5)*30; idle=0; },{passive:true});
-  (function loop(){
+  // Only animate while the logo is actually on screen — no wasted frames once
+  // the user has scrolled past the intro (a key smoothness win on phones).
+  var running=false, visible=true;
+  function loop(){
+    if(!visible){ running=false; return; }
     idle++;
     var ax=tx, ay=ty;
     if(idle>90 && !reduce){ var t=Date.now()*0.0006; ax=Math.sin(t)*6; ay=Math.cos(t*0.8)*11; }
     cx+=(ax-cx)*0.09; cy+=(ay-cy)*0.09;
     for(var i=0;i<stages.length;i++){ stages[i].style.transform="rotateX("+cx.toFixed(2)+"deg) rotateY("+cy.toFixed(2)+"deg)"; }
     requestAnimationFrame(loop);
-  })();
+  }
+  function start(){ if(!running){ running=true; requestAnimationFrame(loop); } }
+  var host=document.querySelector(".logo3d")||stages[0];
+  if(host && "IntersectionObserver" in window){
+    new IntersectionObserver(function(es){
+      visible=es[0].isIntersecting;
+      if(visible) start();
+    },{threshold:0.01}).observe(host);
+  }
+  start();
 })();
 </script>
 </body>
