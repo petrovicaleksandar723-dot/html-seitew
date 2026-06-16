@@ -38,7 +38,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 
         html, body {
             max-width: 100%;
@@ -313,15 +313,91 @@
         /* ---------- SCROLL REVEAL (JS adds .js to <html>; without JS everything stays visible) ---------- */
         .js .reveal {
             opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+            transform: translateY(30px);
+            filter: blur(8px);
+            transition: opacity 0.85s var(--ease), transform 0.85s var(--ease), filter 0.85s var(--ease);
+            will-change: opacity, transform, filter;
         }
 
-        .js .reveal.in { opacity: 1; transform: none; }
+        .js .reveal.in {
+            opacity: 1;
+            transform: none;
+            filter: blur(0);
+            will-change: auto;
+        }
+
+        /* Directional + scale variants for a richer scroll choreography */
+        .js .reveal-scale { transform: translateY(24px) scale(0.94); }
+        .js .reveal-left  { transform: translateX(-36px); }
+        .js .reveal-right { transform: translateX(36px); }
+        .js .reveal-scale.in,
+        .js .reveal-left.in,
+        .js .reveal-right.in { transform: none; }
 
         .js .reveal-d1 { transition-delay: 0.08s; }
         .js .reveal-d2 { transition-delay: 0.16s; }
         .js .reveal-d3 { transition-delay: 0.24s; }
+        .js .reveal-d4 { transition-delay: 0.32s; }
+        .js .reveal-d5 { transition-delay: 0.40s; }
+
+        /* Auto-stagger: same-parent reveal siblings cascade in (set by JS) */
+        .js .reveal-stagger { transition-delay: calc(var(--i, 0) * 0.07s); }
+
+        /* ---------- SCROLL PROGRESS BAR ---------- */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            width: 100%;
+            transform: scaleX(0);
+            transform-origin: 0 50%;
+            background: var(--grad);
+            background-size: 200% 100%;
+            z-index: 1100;
+            pointer-events: none;
+            box-shadow: 0 0 14px rgba(96, 165, 250, 0.55);
+            will-change: transform;
+        }
+
+        /* ---------- BACK TO TOP ---------- */
+        .to-top {
+            position: fixed;
+            right: 18px;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            width: 48px; height: 48px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border-glow);
+            border-radius: 50%;
+            background: rgba(13, 16, 28, 0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            color: var(--text);
+            cursor: pointer;
+            z-index: 180;
+            opacity: 0;
+            transform: translateY(16px) scale(0.85);
+            pointer-events: none;
+            transition: opacity 0.4s var(--ease), transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .to-top.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .to-top:hover { box-shadow: 0 0 24px rgba(96, 165, 250, 0.4); }
+        .to-top:active { transform: scale(0.92); }
+        .to-top svg { width: 20px; height: 20px; }
+
+        /* ---------- SCROLLSPY: active nav link ---------- */
+        .desktop-nav a.active { color: var(--text); }
+        .desktop-nav a.active::after {
+            transform: scaleX(1);
+        }
+        .mobile-nav a.active { color: var(--blue-light); }
 
         /* ============================================================
            HEADER & NAVIGATION
@@ -384,6 +460,7 @@
         }
 
         nav.desktop-nav a {
+            position: relative;
             font-size: 0.86rem;
             font-weight: 600;
             color: var(--text-muted);
@@ -391,7 +468,21 @@
             transition: color 0.3s ease;
         }
 
+        nav.desktop-nav a::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            bottom: -6px;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--grad);
+            transform: scaleX(0);
+            transform-origin: 0 50%;
+            transition: transform 0.4s var(--ease);
+        }
+
         nav.desktop-nav a:hover { color: var(--text); }
+        nav.desktop-nav a:hover::after { transform: scaleX(1); }
 
         .header-cta {
             display: none;
@@ -1890,6 +1981,24 @@
         /* ============================================================
            RESPONSIVE
            ============================================================ */
+        /* ---------- MOBILE SCROLL TUNING ---------- */
+        @media (max-width: 767px) {
+            /* Snappier, lighter reveals so scrolling feels instant on a phone */
+            .js .reveal {
+                transform: translateY(22px);
+                filter: blur(5px);
+                transition-duration: 0.6s;
+            }
+            .js .reveal-scale { transform: translateY(20px) scale(0.96); }
+            /* Neutralise horizontal reveals on mobile to avoid any sideways shift */
+            .js .reveal-left,
+            .js .reveal-right { transform: translateY(22px); }
+            /* Tighten cascade timing on small screens */
+            .js .reveal-stagger { transition-delay: calc(var(--i, 0) * 0.05s); }
+
+            .to-top { width: 44px; height: 44px; right: 14px; }
+        }
+
         @media (max-width: 419px) {
             .float-card { width: 146px; padding: 11px 12px; }
             .hero-visual { height: 500px; }
@@ -1942,6 +2051,9 @@
     </style>
 </head>
 <body>
+
+    <!-- SCROLL PROGRESS -->
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
     <!-- CINEMATIC BACKGROUND -->
     <div class="scene" aria-hidden="true">
@@ -2786,6 +2898,13 @@
         </div>
     </footer>
 
+    <!-- BACK TO TOP -->
+    <button class="to-top" id="to-top" type="button" aria-label="Nach oben scrollen">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
     <script>
         (function () {
             "use strict";
@@ -2808,12 +2927,37 @@
                 prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
             } catch (e) { /* matchMedia not available — keep defaults */ }
 
-            /* ---------- HEADER: hide on scroll down ---------- */
-            var header = document.getElementById("main-header");
-            var lastY = window.scrollY || 0;
+            /* ============================================================
+               UNIFIED SCROLL ENGINE
+               One rAF-throttled listener powers the header, the progress
+               bar, the back-to-top button and the active-section spy.
+               Keeping it all in a single frame keeps mobile scrolling
+               buttery smooth.
+               ============================================================ */
+            var header   = document.getElementById("main-header");
+            var progress = document.getElementById("scroll-progress");
+            var toTop    = document.getElementById("to-top");
 
-            window.addEventListener("scroll", function () {
+            // Build the scrollspy map: nav link -> target section element.
+            var spyLinks = [];
+            document.querySelectorAll('.desktop-nav a[href^="#"], .mobile-nav a[href^="#"]').forEach(function (link) {
+                if (link.classList.contains("btn")) return; // skip CTA buttons
+                var id = link.getAttribute("href").slice(1);
+                var section = id ? document.getElementById(id) : null;
+                if (section) spyLinks.push({ link: link, section: section });
+            });
+
+            var lastY = window.scrollY || 0;
+            var ticking = false;
+            var currentActive = null;
+
+            function onFrame() {
+                ticking = false;
                 var y = window.scrollY || 0;
+                var docH = document.documentElement.scrollHeight - window.innerHeight;
+                var ratio = docH > 0 ? Math.min(1, Math.max(0, y / docH)) : 0;
+
+                /* Header: hide when scrolling down, reveal when scrolling up */
                 if (header) {
                     if (y > lastY && y > 120 && !document.body.classList.contains("menu-open")) {
                         header.classList.add("nav-hidden");
@@ -2821,8 +2965,53 @@
                         header.classList.remove("nav-hidden");
                     }
                 }
+
+                /* Progress bar */
+                if (progress) progress.style.transform = "scaleX(" + ratio + ")";
+
+                /* Back-to-top visibility */
+                if (toTop) toTop.classList.toggle("show", y > 640);
+
+                /* Scrollspy: highlight the section currently in view
+                   (nothing active while still in the hero at the top) */
+                if (spyLinks.length) {
+                    var probe = y + 140;
+                    var active = null;
+                    for (var s = 0; s < spyLinks.length; s++) {
+                        if (spyLinks[s].section.offsetTop <= probe) active = spyLinks[s];
+                    }
+                    if (active !== currentActive) {
+                        var targetId = active ? active.section.id : null;
+                        spyLinks.forEach(function (item) {
+                            item.link.classList.toggle("active", item.section.id === targetId);
+                        });
+                        currentActive = active;
+                    }
+                }
+
                 lastY = y;
-            }, { passive: true });
+            }
+
+            function requestScroll() {
+                if (!ticking) {
+                    ticking = true;
+                    window.requestAnimationFrame(onFrame);
+                }
+            }
+
+            window.addEventListener("scroll", requestScroll, { passive: true });
+            window.addEventListener("resize", requestScroll, { passive: true });
+            requestScroll(); // set initial state
+
+            /* Back-to-top click */
+            if (toTop) {
+                toTop.addEventListener("click", function () {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: prefersReducedMotion ? "auto" : "smooth"
+                    });
+                });
+            }
 
             /* ---------- BURGER MENU + BODY SCROLL LOCK ---------- */
             var burger = document.getElementById("burger");
@@ -2953,8 +3142,28 @@
                 });
             });
 
-            /* ---------- SCROLL REVEAL (with fallback) ---------- */
+            /* ---------- SCROLL REVEAL (with fallback) ----------
+               Trigger as soon as a sliver enters from the bottom. A small
+               threshold (instead of 0.12) means elements taller than the
+               viewport still reveal reliably on phones. */
             var revealEls = document.querySelectorAll(".reveal");
+
+            // Auto-cascade: give same-parent reveal siblings a stagger index
+            // so any group flows in sequence, even without manual delay classes.
+            if (typeof Map === "function") {
+                var groups = new Map();
+                revealEls.forEach(function (el) {
+                    if (el.className.indexOf("reveal-d") !== -1) return; // respect manual delays
+                    var parent = el.parentNode;
+                    if (!parent) return;
+                    var idx = groups.get(parent) || 0;
+                    if (idx > 0) {
+                        el.style.setProperty("--i", idx);
+                        el.classList.add("reveal-stagger");
+                    }
+                    groups.set(parent, idx + 1);
+                });
+            }
 
             if ("IntersectionObserver" in window && !prefersReducedMotion) {
                 var observer = new IntersectionObserver(function (entries) {
@@ -2964,7 +3173,7 @@
                             observer.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+                }, { threshold: 0.05, rootMargin: "0px 0px -8% 0px" });
 
                 revealEls.forEach(function (el) { observer.observe(el); });
             } else {
