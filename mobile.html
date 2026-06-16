@@ -211,6 +211,30 @@ header{
 .hsec-track > .active{ opacity:1; }
 .hsec-track > .card.active,.hsec-track > .col.active,.hsec-track > .review.active{
   box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 46px rgba(201,162,90,.18); }
+/* every track item is a positioning context (sheen + stacking) */
+.hsec-track > *{ position:relative; }
+/* icons come alive on the focused card — lift, glow, warm up */
+.card .ic,.plan .pic,.bcard-body .label,.pill svg{ transition:transform .5s var(--ease), box-shadow .5s var(--ease), background .5s var(--ease), color .5s var(--ease); }
+.hsec-track > .active .ic,.hsec-track > .active .pic{
+  transform:translateY(-3px) scale(1.07); background:rgba(201,162,90,.2);
+  box-shadow:0 12px 28px rgba(201,162,90,.3), inset 0 0 0 1px rgba(201,162,90,.5); }
+/* a single elegant gold sheen sweeps across a card the moment it gains focus */
+.hsec-track > .card.active::after,.hsec-track > .bcard.active::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:6;
+  background:linear-gradient(115deg, transparent 38%, rgba(255,245,220,.18) 50%, transparent 62%);
+  background-size:260% 100%; animation:cardsheen 1.05s var(--ease) 1; }
+/* gentle idle float on focused-card icons for a living, premium feel */
+.hsec-track > .active .ic svg,.hsec-track > .active .pic svg{ animation:icofloat 3.4s var(--ease) infinite; }
+@keyframes icofloat{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-2.5px) } }
+
+/* ---- CTA showreel: the brand ad embedded in the closing section ---- */
+.cta-reel{ margin:28px auto 6px; width:min(286px,78vw); }
+.cta-reel .phone{ width:100%; aspect-ratio:9/16; margin:0; display:block; cursor:pointer;
+  box-shadow:0 30px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(201,162,90,.25), 0 0 54px rgba(201,162,90,.2); }
+.cta-reel .phone:active{ transform:scale(.985); }
+.cta-reel .reel-tap{ opacity:.95; }
+.cta-reel .cap{ margin-top:14px; text-align:center; font-size:12.5px; font-weight:600; letter-spacing:.02em; color:var(--gold-soft); }
+.cta-reel .cap b{ color:var(--ink); }
 
 /* JS-enabled PIN mode: sticky stage; content is centred in the FULL screen,
    heading + dots float as top/bottom overlays -> structured & balanced */
@@ -478,7 +502,10 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
   *{ scroll-behavior:auto !important; }
   .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
   .phone .live b,.intro-launcher .app-icon,.scroll-hint .mouse::after,.aura,.hero .lead .gold,
-  .btn-primary::after,.dock-btn::after,.swipe-tag,.bslide.active img,.hsec-track > .active::after{ animation:none !important; }
+  .btn-primary::after,.dock-btn::after,.swipe-tag,.bslide.active img,.hsec-track > .active::after,
+  .hsec-track > .active .ic svg,.hsec-track > .active .pic svg,
+  .hsec-track > .card.active::after,.hsec-track > .bcard.active::after{ animation:none !important; }
+  .hsec-track > *:not(.active){ opacity:1 !important; transform:none !important; }
   .hero .lead .gold{ -webkit-text-fill-color:var(--gold); color:var(--gold); }
   .intro{ height:100vh; }
 }
@@ -818,6 +845,14 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
     <div class="eyebrow reveal">Jetzt unverbindlich anfragen</div>
     <h1 class="lead reveal d1">Bereit für einen klareren Social-Media-Auftritt?</h1>
     <p class="sub reveal d2">Schick uns kurz deinen Betrieb und wir zeigen dir, welche Inhalte für dich funktionieren könnten – unverbindlich und ohne direkte Zahlung.</p>
+    <div class="cta-reel reveal d2">
+      <button class="phone reel-open" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125937_dc5905c4-3f78-4df5-bcde-ead86fd0716f.mp4" aria-label="Cleanlines Werbevideo abspielen">
+        <div class="notch"></div>
+        <video class="lazyreel" data-src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125937_dc5905c4-3f78-4df5-bcde-ead86fd0716f.mp4" poster="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260616_125800_57f40445-c12b-43c1-bb20-984efe6df3a4.png" muted loop playsinline preload="none"></video>
+        <span class="reel-tap">▶</span>
+      </button>
+      <div class="cap"><b>Unser Reel</b> · tippen für Ton</div>
+    </div>
     <div class="btns reveal d2">
       <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Content-Preview anfragen</a>
       <a class="btn btn-ghost" href="https://wa.me/49XXXXXXXXXX?text=Hallo%20Cleanlines%20Studio%2C%20ich%20m%C3%B6chte%20eine%20kostenlose%20Content-Preview%20anfragen." target="_blank" rel="noopener">WhatsApp-Anfrage starten</a>
