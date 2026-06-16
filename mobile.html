@@ -207,6 +207,16 @@ body.pin .hsec-foot{ position:absolute; left:0; right:0; bottom:0; z-index:4; po
   padding-bottom:82px; background:linear-gradient(to top, rgba(7,7,10,.95) 60%, rgba(7,7,10,0)); }
 body.pin .hsec-track{ will-change:transform; }
 body.pin .hsec-head .tabs{ pointer-events:auto; }
+/* full-bleed section background image (max-res, NOT part of the scroll track) */
+.hsec-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.hsec-bg img{ width:100%; height:100%; object-fit:cover; opacity:.55; }
+.hsec-bg::after{ content:""; position:absolute; inset:0;
+  background:radial-gradient(125% 95% at 50% 42%, rgba(7,7,10,.28), rgba(7,7,10,.8) 100%); }
+body.pin .hsec-viewport{ z-index:2; }
+/* clickable dots -> free navigation (tap to jump to any item) */
+.bdots span{ cursor:pointer; pointer-events:auto; }
+body.pin .hsec-foot{ pointer-events:none; }
+body.pin .hsec-foot .bdots{ pointer-events:auto; }
 /* focus visuals are now driven per-frame by JS (dynamic per-section effects);
    CSS only keeps the glow + sheen which are class-based */
 body.pin .hsec-track > *{ position:relative; transition:box-shadow .5s var(--ease); backface-visibility:hidden; }
@@ -224,8 +234,8 @@ body.pin .hsec-track > .active::after{ content:""; position:absolute; inset:0; b
 .bcard{ flex:0 0 84vw; max-width:440px; border-radius:20px; overflow:hidden; border:1px solid var(--line);
   background:linear-gradient(165deg,var(--card),var(--bg2)); }
 .bcard.active{ border-color:rgba(201,162,90,.35); }
-.bcard-media{ position:relative; aspect-ratio:16/9; overflow:hidden; }
-.bcard-media img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); transition:transform 1.1s var(--ease); }
+.bcard-media{ position:relative; aspect-ratio:4/3; overflow:hidden; }
+.bcard-media img{ width:100%; height:100%; object-fit:cover; object-position:center 42%; transform:scale(1.02); transition:transform 1.1s var(--ease); }
 .bcard.active .bcard-media img{ transform:scale(1.09); }
 .bcard-media .scrim{ position:absolute; inset:0; background:linear-gradient(to top, rgba(7,7,10,.85), transparent 60%); }
 .bcard-media .metric{ position:absolute; left:14px; bottom:12px; font-size:12.5px; font-weight:700; color:#fff; padding:7px 13px; border-radius:999px; background:rgba(0,0,0,.5); border:1px solid rgba(201,162,90,.35); }
@@ -519,12 +529,12 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 <!-- LEISTUNGEN (pinned horizontal) -->
 <section class="hsec" data-hsec data-fx="cover">
   <div class="hsec-pin">
+    <div class="hsec-bg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png" alt=""></div>
     <div class="hsec-head wrap">
     <div class="eyebrow reveal">Leistungen</div>
     <h1 class="lead reveal d1">Alles vorbereitet. Du musst nur noch posten.</h1>
     </div>
     <div class="hsec-viewport"><div class="hsec-track">
-      <div class="hmedia"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222123_993c409b-ec39-4b87-b34f-b64aea42f779.png" alt=""><div class="scrim"></div><span class="banner-cap">Dein Content – fertig vorbereitet</span></div>
       <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="4.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></div>
         <h3>Reel-Konzepte</h3><p>Konkrete Reel-Ideen mit Hook, Ablauf, Szenenaufbau und CTA – damit du sofort weißt, was du posten oder produzieren lassen kannst.</p>
@@ -703,12 +713,12 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
 <!-- EINZELAUFTRÄGE (pinned horizontal) -->
 <section class="hsec" data-hsec data-fx="fade">
   <div class="hsec-pin">
+    <div class="hsec-bg"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png" alt=""></div>
     <div class="hsec-head wrap">
       <div class="eyebrow reveal">Einzelaufträge</div>
       <h1 class="lead reveal d1">Du brauchst mehr als Content?</h1>
     </div>
     <div class="hsec-viewport"><div class="hsec-track">
-      <div class="hmedia"><img loading="lazy" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222125_f8ee3347-b8f0-4d2d-a0e7-d2e8ed2de41a.png" alt=""><div class="scrim"></div><span class="banner-cap">Websites, Branding &amp; Reels</span></div>
       <div class="card">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9.5h18"/></svg></div>
         <h3>Website-Design</h3><span class="tag">ab 1.490€</span>
@@ -963,9 +973,29 @@ body.has-intro header.show{ transform:none; opacity:1; pointer-events:auto; }
       };
       var foot=sec.querySelector(".hsec-foot"), bar=null;
       if(foot){ var bw=document.createElement("div"); bw.className="hsec-bar"; var bf=document.createElement("i"); bw.appendChild(bf); foot.insertBefore(bw, foot.firstChild); bar=bf; }
-      hSecs.push({ sec:sec, vpt:vpt, track:track, items:items, fx:(sec.dataset.fx||"depth"), bar:bar, cur:null, dist:0, top:0, range:0, vw:0, mid:[], active:-1, onActive:onActive });
+      hSecs.push({ sec:sec, vpt:vpt, track:track, items:items, dots:dots, fx:(sec.dataset.fx||"depth"), bar:bar, cur:null, dist:0, top:0, range:0, vw:0, mid:[], active:-1, onActive:onActive });
     });
   })();
+  /* ---- FREE NAVIGATION: tap a dot (or a card) to jump to any item ---- */
+  function jumpToItem(o, i){
+    if(!o || !o.mid || o.mid[i]==null) return;
+    if(o.dist>0){
+      var pTarget=Math.min(1, Math.max(0,(o.mid[i]-o.vw/2)/o.dist));
+      window.scrollTo({ top:o.top + pTarget*o.range, behavior:"smooth" });
+    }
+  }
+  hSecs.forEach(function(o){
+    if(!o.dots) return;
+    for(var i=0;i<o.dots.length;i++){ (function(idx){
+      o.dots[idx].addEventListener("click", function(){ jumpToItem(o, idx); });
+    })(i); }
+    // also let a tap on a side (non-centred) card bring it to the centre
+    for(var c=0;c<o.items.length;c++){ (function(idx){
+      o.items[idx].addEventListener("click", function(e){
+        if(idx!==o.active){ e.preventDefault(); e.stopPropagation(); jumpToItem(o, idx); }
+      }, true);
+    })(c); }
+  });
   function measureHsec(){
     var vh=window.innerHeight;
     // centre the first & last item by padding the track, then measure travel distance
