@@ -469,6 +469,18 @@ h1.lead{ font-size:clamp(34px,6vmin,94px); line-height:1.06; font-weight:800; le
 .launcher h2{ font-size:clamp(20px,3.4vmin,32px); font-weight:800; letter-spacing:-.01em; }
 .launch-logo{ width:min(420px,76vw); max-width:100%; height:auto; display:block; margin:0 auto -4px;
   mix-blend-mode:screen; filter:drop-shadow(0 8px 34px rgba(201,162,90,.28)); }
+/* ---- Showreel deck (scene 8) ---- */
+.showreel-deck{ display:flex; gap:clamp(10px,1.6vmin,22px); justify-content:center; align-items:flex-end; margin-top:clamp(22px,3.4vmin,46px); flex-wrap:nowrap; }
+.sr-phone{ position:relative; width:clamp(90px,11.4vmin,146px); aspect-ratio:9/19.2; border-radius:clamp(14px,1.8vmin,22px);
+  background:#05060a; border:1px solid rgba(255,255,255,.16); padding:5px; overflow:hidden;
+  box-shadow:0 22px 54px rgba(0,0,0,.6), 0 0 0 1px rgba(201,162,90,.08);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease); }
+.sr-phone:hover{ transform:translateY(-10px) scale(1.05); box-shadow:0 34px 72px rgba(0,0,0,.66), 0 0 40px rgba(201,162,90,.28); }
+.sr-notch{ position:absolute; top:5px; left:50%; transform:translateX(-50%); width:34%; height:9px; background:#000; border-radius:0 0 8px 8px; z-index:3; }
+.sr-phone video{ width:100%; height:100%; object-fit:cover; border-radius:clamp(10px,1.4vmin,17px); display:block; background:#0a0a0c; }
+.sr-cap{ position:absolute; left:0; right:0; bottom:7px; text-align:center; font-size:clamp(9px,1.05vmin,12px); font-weight:700; letter-spacing:.03em; color:#fff; text-shadow:0 1px 7px rgba(0,0,0,.85); z-index:2; }
+.scene .showreel-deck{ opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .8s var(--ease); transition-delay:.22s; }
+.scene.show .showreel-deck{ opacity:1; transform:none; }
 .launcher .sub{ color:var(--gray); font-size:clamp(12px,1.9vmin,15px); }
 .scroll-hint{ margin-top:10px; display:flex; flex-direction:column; align-items:center; gap:8px;
   color:var(--orange); font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; }
@@ -1034,7 +1046,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
 .loader .logo-svg{ width:78px; height:78px; color:#ecd49a;
   filter:drop-shadow(0 0 26px rgba(236,212,154,.45)); animation:logoGlow 2.6s var(--ease) infinite; }
 @keyframes logoGlow{ 0%,100%{opacity:.78; transform:scale(.98);} 50%{opacity:1; transform:scale(1);} }
-.loader-logo{ width:min(440px,72vw); height:auto; filter:drop-shadow(0 0 40px rgba(236,212,154,.25)); }
+.loader-logo{ width:min(440px,72vw); height:auto; mix-blend-mode:screen; filter:drop-shadow(0 0 40px rgba(236,212,154,.25)); }
 .loader-fallback{ display:flex; flex-direction:column; align-items:center; gap:18px; }
 .loader .wordmark{ display:flex; flex-direction:column; align-items:center; gap:5px; }
 .loader .wm1{ font-weight:300; letter-spacing:.42em; font-size:21px; color:#f3ead2; text-indent:.42em;
@@ -1430,8 +1442,22 @@ body.cursor-on .cursor-trail{ opacity:1; }
           </div>
         </section>
 
-        <!-- ===== SCENE 8 — BEWERTUNGEN ===== -->
+        <!-- ===== SCENE 8 — SHOWREEL ===== -->
         <section class="scene scene-bg-dark" id="s8">
+          <div class="eyebrow">Showreel</div>
+          <h1 class="lead">So sieht dein Content aus.</h1>
+          <p class="subline">Echte Beispiele aus unseren Reel-Produktionen – fertig für Instagram, TikTok und Co.</p>
+          <div class="showreel-deck" id="showreelDeck">
+            <div class="sr-phone"><div class="sr-notch"></div><video class="srvid" data-src="assets/videos/show-1.mp4" muted loop playsinline preload="none"></video><span class="sr-cap">Reel-Produktion</span></div>
+            <div class="sr-phone"><div class="sr-notch"></div><video class="srvid" data-src="assets/videos/show-2.mp4" muted loop playsinline preload="none"></video><span class="sr-cap">Hook &amp; Schnitt</span></div>
+            <div class="sr-phone"><div class="sr-notch"></div><video class="srvid" data-src="assets/videos/show-3.mp4" muted loop playsinline preload="none"></video><span class="sr-cap">Story-Reel</span></div>
+            <div class="sr-phone"><div class="sr-notch"></div><video class="srvid" data-src="assets/videos/reel-4.mp4" muted loop playsinline preload="none"></video><span class="sr-cap">Promo-Clip</span></div>
+            <div class="sr-phone"><div class="sr-notch"></div><video class="srvid" data-src="assets/videos/show-4.mp4" muted loop playsinline preload="none"></video><span class="sr-cap">Brand-Film</span></div>
+          </div>
+        </section>
+
+        <!-- ===== SCENE 9 — BEWERTUNGEN ===== -->
+        <section class="scene scene-bg-dark" id="s9">
           <img class="scene-img" src="https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260614_222127_c2eb04f0-ec8c-448d-8c0e-22dde767f339.png" alt="" loading="lazy">
           <div class="scene-img-ov"></div>
           <div class="eyebrow">Über Cleanlines Studios</div>
@@ -1458,7 +1484,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
         </section>
 
         <!-- ===== SCENE 9 — FAQ ===== -->
-        <section class="scene scene-bg-dark" id="s9">
+        <section class="scene scene-bg-dark" id="s10">
           <div class="eyebrow">FAQ</div>
           <h1 class="lead">Häufige Fragen.</h1>
           <div class="faq">
@@ -1490,7 +1516,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
         </section>
 
         <!-- ===== SCENE 10 — FINAL CTA ===== -->
-        <section class="scene scene-bg-dark" id="s10">
+        <section class="scene scene-bg-dark" id="s11">
           <div class="eyebrow">Jetzt unverbindlich anfragen</div>
           <h1 class="lead">Bereit für einen klareren<br>Social-Media-Auftritt?</h1>
           <p class="subline">Schick uns kurz deinen Betrieb und wir zeigen dir, welche Inhalte für dich funktionieren könnten – unverbindlich und ohne direkte Zahlung.</p>
@@ -1535,8 +1561,8 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var gauss=function(x,c,w){var d=x-c;return Math.exp(-(d*d)/(2*w*w));}; // bell curve
   var reduceMotion=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-  var SCENES=11;           // launcher(0) + scenes 1..10
-  var LAST=SCENES-1;       // 10
+  var SCENES=12;           // launcher(0) + scenes 1..11 (incl. showreel s8)
+  var LAST=SCENES-1;       // 11
 
   /* ---- elements --------------------------------------------------------- */
   var rig=document.getElementById("rig");
@@ -1579,6 +1605,16 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var pricesDone=false;
   function maybeCountPrices(){ if(pricesDone)return; pricesDone=true;
     document.querySelectorAll("#priceDeck .price").forEach(countUp); }
+
+  /* ---- showreel videos: lazy-load + play only while the showreel scene is active ---- */
+  var srVids=document.querySelectorAll(".srvid"), srOn=false;
+  function toggleShowreel(on){
+    if(on===srOn) return; srOn=on;
+    srVids.forEach(function(v){
+      if(on){ if(!v.src){ v.src=v.dataset.src; } var p=v.play(); if(p&&p.catch){p.catch(function(){});} }
+      else{ try{ v.pause(); }catch(e){} }
+    });
+  }
 
   /* ---- intro loader: fade out once ready -------------------------------- */
   function hideLoader(){ if(loader){ loader.classList.add("done"); } }
@@ -1754,7 +1790,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
   if(heroPhoneVid){ heroPhoneVid.addEventListener("loadedmetadata",function(){ heroPhoneVid.playbackRate=1.0; }); try{heroPhoneVid.playbackRate=1.0;}catch(e){} }
   // fully alternating reels — start page (0) has its own, hero (1) a different
   // one, no two neighbours share a video for maximum variety
-  var vidMap=["reel3","reel1","reel2","reel4","final","reel1","reel2","reel4","reel1","reel2","final"];
+  var vidMap=["reel3","reel1","reel2","reel4","final","reel1","reel2","reel4","reel3","reel1","reel2","final"];
   var curVidKey=null;
   function setSceneVideo(idx){
     var key=vidMap[idx]||"final";
@@ -1833,12 +1869,11 @@ body.cursor-on .cursor-trail{ opacity:1; }
   }
 
   /* ---- scroll progress -------------------------------------------------- */
-  var scrollP=0, curScroll=0, lastDot=-1, maxScroll=1;
-  function onScroll(){ scrollP=clamp(window.scrollY/(maxScroll||1),0,1); }   // no layout read per scroll
-  function measureScroll(){ maxScroll=track.offsetHeight - window.innerHeight; onScroll(); }
+  var scrollP=0, curScroll=0, lastDot=-1;
+  function onScroll(){ var max=track.offsetHeight - window.innerHeight; scrollP=clamp(window.scrollY/(max||1),0,1); }
   window.addEventListener("scroll",onScroll,{passive:true});
-  window.addEventListener("resize",measureScroll);
-  measureScroll();
+  window.addEventListener("resize",onScroll);
+  onScroll();
 
   /* ---- special animated mouse cursor (trailing ring + instant dot) ------- */
   (function(){
@@ -1899,9 +1934,9 @@ body.cursor-on .cursor-trail{ opacity:1; }
   /* ---- main render loop ------------------------------------------------- */
   var lastS=-1, lastMX=99, lastMY=99;
   function render(){
-    // eased scroll + parallax smoothing (lower factors = smoother, cinematic glide)
-    curScroll += (scrollP-curScroll)*0.11;
-    mx += (tmx-mx)*0.06; my += (tmy-my)*0.06;
+    // eased scroll + parallax smoothing — snappier catch-up = responsive yet smooth
+    curScroll += (scrollP-curScroll)*0.18;
+    mx += (tmx-mx)*0.07; my += (tmy-my)*0.07;
 
     var pos = curScroll*LAST;            // continuous scene position 0..10
     var inIntro = pos < 1.06;            // keep the cinematic intro sway alive while there
@@ -1986,13 +2021,14 @@ body.cursor-on .cursor-trail{ opacity:1; }
       }
       el.style.visibility="visible";
       el.style.zIndex=String(30-Math.round(ad*12));   // active scene always on top
-      var op=ss(clamp(1-ad/0.5,0,1));
+      var op=ss(clamp(1-ad/0.62,0,1));                 // wider overlap -> smoother, cinematic crossfade
       el.style.opacity=op;
-      // cinematic, pronounced scroll: incoming rises from below + zooms in,
-      // NEVER scale text scenes -> keeps text natively sharp. Only translateY.
-      var tY=delta*18;
-      if(ad<0.05){ el.style.transform="none"; }
-      else{ el.style.transform="translateY("+tY.toFixed(2)+"%)"; }
+      // cinematic depth scroll: scenes glide in with a subtle 3D "settle" zoom +
+      // gentle parallax drift, then snap to a perfectly sharp transform:none at rest.
+      var tY=delta*11;
+      var sc=1-Math.min(ad,1)*0.055;
+      if(ad<0.04){ el.style.transform="none"; }
+      else{ el.style.transform="translateY("+tY.toFixed(2)+"%) scale("+sc.toFixed(3)+")"; }
       el.style.pointerEvents=(ad<0.5)?"auto":"none";
       el.classList.toggle("show", ad<0.45);
     }
@@ -2008,6 +2044,7 @@ body.cursor-on .cursor-trail{ opacity:1; }
       setSceneVideo(active);
       if(active===1) maybeCountStats();
       if(active===6) maybeCountPrices();
+      toggleShowreel(active===8);
       lastDot=active;
     }
     } /* end dirty-checked heavy stage */
