@@ -1625,9 +1625,6 @@ body.cursor-on .cursor-trail{ opacity:1; }
 <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
-<!-- Lenis: buttery inertia smooth-scroll (award-tier feel). Loaded with guard:
-     if it fails, the site keeps its original native scrolling unchanged. -->
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1639,16 +1636,8 @@ body.cursor-on .cursor-trail{ opacity:1; }
   var gauss=function(x,c,w){var d=x-c;return Math.exp(-(d*d)/(2*w*w));}; // bell curve
   var reduceMotion=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-  /* ---- Lenis smooth-scroll (guarded; falls back to native if unavailable) ---- */
+  /* native scroll only (no smooth-scroll library) */
   var lenis=null, ENGINE_EASE=0.18;
-  try{
-    if(window.Lenis && !reduceMotion){
-      lenis=new Lenis({ duration:1.15, easing:function(t){ return 1-Math.pow(1-t,3); }, smoothWheel:true });
-      ENGINE_EASE=0.42;                                  // Lenis handles smoothing -> engine tracks tighter
-      var lraf=function(time){ lenis.raf(time); requestAnimationFrame(lraf); };
-      requestAnimationFrame(lraf);
-    }
-  }catch(e){ lenis=null; ENGINE_EASE=0.18; }
 
   var SCENES=16;           // launcher(0) + scenes 1..15 (incl. 4 new content scenes)
   var LAST=SCENES-1;       // 11

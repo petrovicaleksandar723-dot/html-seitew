@@ -401,7 +401,7 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
       <div class="hero-copy">
         <span class="eyebrow reveal">Content-Studio für Unternehmen & lokale Betriebe</span>
         <h1 class="h-xl" id="heroH">Content, der dein Unternehmen sichtbar macht.</h1>
-        <p class="lead-sub reveal">Cleanlines Studio erstellt Content-Ideen, Captions, Google-Beiträge und klare Monatspläne für Unternehmen, die online professioneller auftreten wollen – ohne dass du selbst planen musst.</p>
+        <p class="lead-sub reveal">Reel-Ideen, Captions, Google-Beiträge und ein klarer Monatsplan – fertig vorbereitet. Du postest, wir denken voraus.</p>
         <div class="btns reveal">
           <a class="btn btn-primary" href="mailto:cleanlinesstudio@example.com?subject=Kostenlose%20Content-Preview">Kostenlose Content-Preview anfragen</a>
           <a class="btn btn-ghost" href="#leistungen">Leistungen ansehen</a>
@@ -523,7 +523,7 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
     <div class="sec-head center reveal">
       <span class="eyebrow">Für wen ist das?</span>
       <h2 class="h-lg">Für Unternehmen, die online sichtbarer werden wollen.</h2>
-      <p class="lead-sub">Egal ob lokaler Betrieb, Dienstleister, Praxis, Studio, Werkstatt oder wachsendes Unternehmen – wenn du Kunden gewinnen und professioneller wahrgenommen werden willst, brauchst du Inhalte, die regelmäßig sichtbar sind.</p>
+      <p class="lead-sub">Vom lokalen Betrieb bis zum wachsenden Unternehmen – sichtbar wird, wer regelmäßig guten Content zeigt.</p>
     </div>
   </div>
   <div class="rail reveal" id="indRail">
@@ -736,40 +736,14 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   <video id="viewerVid" playsinline loop></video>
 </div>
 
-<style>
-  html.lenis,html.lenis body{ height:auto; }
-  .lenis.lenis-smooth{ scroll-behavior:auto !important; }
-  .lenis.lenis-stopped{ overflow:hidden; }
-</style>
-<!-- Award-tier motion stack (loaded with guards: if any fails, the page keeps its
-     own native reveals/parallax and nothing breaks). Original code, public libraries. -->
-<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
 (function(){
   "use strict";
   var reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
   var fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
 
-  /* ---- Lenis + GSAP/ScrollTrigger motion stack (guarded) ---- */
-  var lenis=null, USE_GSAP=false;
-  try{
-    if(window.Lenis && !reduce){
-      lenis=new Lenis({ duration:1.1, easing:function(t){return 1-Math.pow(1-t,3);}, smoothWheel:true, syncTouch:false });
-    }
-    if(window.gsap && window.ScrollTrigger && !reduce){
-      gsap.registerPlugin(ScrollTrigger);
-      USE_GSAP=true;
-      if(lenis){
-        lenis.on("scroll", ScrollTrigger.update);
-        gsap.ticker.add(function(t){ lenis.raf(t*1000); });
-        gsap.ticker.lagSmoothing(0);
-      }
-    } else if(lenis){
-      var lr=function(time){ lenis.raf(time); requestAnimationFrame(lr); }; requestAnimationFrame(lr);
-    }
-  }catch(e){ lenis=null; USE_GSAP=false; }
+  /* native scroll only — no smooth-scroll library (fixes the auto-scroll bug) */
+  var USE_GSAP=false;
 
   /* ---- reveal on scroll ---- */
   var revs=document.querySelectorAll(".reveal,[data-stagger]");
