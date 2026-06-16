@@ -319,6 +319,37 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   *{ animation:none !important; scroll-behavior:auto !important; }
   .reveal,[data-stagger]>*,.hero .word b{ opacity:1 !important; transform:none !important; transition:none !important; }
 }
+
+/* ============================================================
+   "MAX" LAYER — bigger kinetic type, animated gold borders,
+   outlined marquee band, shimmering accents. Pure transform/opacity.
+   ============================================================ */
+.h-xl{ font-size:clamp(40px,11vw,84px); line-height:1.02; letter-spacing:-.03em; }
+.h-lg{ font-size:clamp(32px,7.5vw,60px); }
+.hero .lead-sub,.sec-head .lead-sub{ font-size:clamp(16px,4.2vw,21px); }
+/* shimmering gold accent for a highlighted word */
+.shine{ background:linear-gradient(100deg,var(--gold) 12%,#fff6db 38%,var(--gold-2) 50%,#fff6db 62%,var(--gold) 88%);
+  background-size:240% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  animation:shine 4.2s linear infinite; }
+@keyframes shine{ to{ background-position:240% center; } }
+/* animated gradient border on cards/plans (always-on, premium) */
+.card,.plan{ background-clip:padding-box; }
+.card::after,.plan::after{ content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; z-index:1;
+  background:linear-gradient(130deg,rgba(201,162,90,.55),transparent 35%,transparent 65%,rgba(201,162,90,.4));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+  opacity:.5; transition:opacity .4s; }
+.card:hover::after,.plan:hover::after,.card.in::after{ opacity:1; }
+.card>*,.plan>*{ position:relative; z-index:2; }
+/* outlined marquee band */
+.marquee{ overflow:hidden; padding:clamp(22px,5vw,40px) 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(201,162,90,.05),transparent); position:relative; }
+.marquee-row{ display:flex; width:max-content; gap:48px; white-space:nowrap; animation:mq 28s linear infinite; will-change:transform; }
+.marquee-row.rev{ animation-duration:34s; animation-direction:reverse; margin-top:10px; opacity:.6; }
+.marquee-row span{ font-family:var(--display); font-weight:800; font-size:clamp(30px,8vw,58px); letter-spacing:-.02em; line-height:1;
+  color:transparent; -webkit-text-stroke:1.2px rgba(201,162,90,.6); display:inline-flex; align-items:center; gap:48px; }
+.marquee-row span::after{ content:"✦"; -webkit-text-stroke:0; color:var(--gold); font-size:.42em; opacity:.85; }
+@keyframes mq{ to{ transform:translateX(-50%); } }
+.marquee:hover .marquee-row{ animation-play-state:paused; }
 </style>
 </head>
 <body>
@@ -391,6 +422,12 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
     </div>
   </div>
 </section>
+
+<!-- KINETIC MARQUEE BAND -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-row"><span>REEL-IDEEN</span><span>CAPTIONS</span><span>GOOGLE-BEITRÄGE</span><span>MONATSPLAN</span><span>REEL-IDEEN</span><span>CAPTIONS</span><span>GOOGLE-BEITRÄGE</span><span>MONATSPLAN</span></div>
+  <div class="marquee-row rev"><span>SICHTBARKEIT</span><span>VERTRAUEN</span><span>MEHR ANFRAGEN</span><span>PROFESSIONELL</span><span>SICHTBARKEIT</span><span>VERTRAUEN</span><span>MEHR ANFRAGEN</span><span>PROFESSIONELL</span></div>
+</div>
 
 <!-- PROBLEM -->
 <section id="problem" class="has-bg">
@@ -762,7 +799,7 @@ footer .f-links a{ color:var(--gray); transition:color .3s; } footer .f-links a:
   (function(){
     var h=document.getElementById("heroH"); if(!h) return;
     var words=h.textContent.split(" ");
-    h.innerHTML=words.map(function(w){ return '<span class="word"><b>'+w+'</b></span>'; }).join(" ");
+    h.innerHTML=words.map(function(w){ var sh=/sichtbar/i.test(w)?" shine":""; return '<span class="word"><b class="'+sh.trim()+'">'+w+'</b></span>'; }).join(" ");
     var hero=document.getElementById("hero");
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ hero.classList.add("lit"); }); });
   })();
