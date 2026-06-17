@@ -1,9 +1,10 @@
 # Dependencies
 node_modules
 
-# Build output
-dist
-dist-ssr
+# Next.js
+.next
+out
+next-env.d.ts
 
 # Logs
 *.log
@@ -20,5 +21,5 @@ npm-debug.log*
 .env
 .env.*
 
-# Source archive (content reference only — not part of the app build)
+# Source archive (content reference only)
 _source

@@ -41,10 +41,10 @@
   --page-pad: clamp(28px, 5.5vw, 130px);
   --max-width: 1720px;
 
-  /* ── Fonts ──────────────────────────────────────────────── */
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
-  --font-mono: "Hanken Grotesk", system-ui, sans-serif; /* technical labels (tracked) */
+  /* ── Fonts (next/font variables, with graceful fallbacks) ── */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-hanken), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-hanken), system-ui, sans-serif; /* technical labels (tracked) */
 
   /* ── Motion ─────────────────────────────────────────────── */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

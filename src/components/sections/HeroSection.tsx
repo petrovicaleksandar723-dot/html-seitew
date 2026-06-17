@@ -1,4 +1,5 @@
-import { Suspense, lazy, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { hero, mailto, contact } from "../../content/siteContent";
 import MagneticButton from "../ui/MagneticButton";
 import ErrorBoundary from "../ui/ErrorBoundary";
@@ -6,7 +7,8 @@ import { scrollToTarget } from "../../motion/lenis";
 import { playHeroIntro, buildHeroScroll } from "../../motion/heroTimeline";
 import { gsap } from "../../motion/scrollTriggers";
 
-const HeroCanvas = lazy(() => import("../../experience/HeroCanvas"));
+// WebGL canvas is client-only (no SSR/prerender of three.js).
+const HeroCanvas = dynamic(() => import("../../experience/HeroCanvas"), { ssr: false });
 
 interface Props {
   ready: boolean;

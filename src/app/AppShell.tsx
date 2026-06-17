@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 import Preloader from "../components/layout/Preloader";
 import Header from "../components/layout/Header";

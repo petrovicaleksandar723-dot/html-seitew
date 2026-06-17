@@ -30,3 +30,12 @@ display, deep ink + warm gold, alternating light scenes with dark cinematic
 Reel Cinema + Final CTA. New serif media hero (dark WebGL engine retired).
 Screenshot-verified hero, diagnosis, OS, reel cinema, industries, transformation,
 packages, final, footer. 0 horizontal overflow + 0 page errors on ultrawide/desktop/mobile.
+
+## v2 — Next.js award stack migration (verified)
+Migrated Vite → Next.js 14 (App Router, static export `out/`). Stack now:
+Next.js + TypeScript + Tailwind (preflight off, coexists w/ design system) +
+GSAP + ScrollTrigger + SplitText (gsap 3.15) + Lenis + Three/R3F/Drei/postprocessing
++ next/font (Fraunces + Hanken Grotesk). Hero 3D loaded client-only (ssr:false)
+with Higgsfield GLB (runtime) + procedural fallback. `next build` green,
+static export renders, 0 page errors, headline SplitText reveals working.
+Deploy: Netlify (publish `out`) / Vercel / drag `out/` to netlify drop.

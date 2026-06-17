@@ -1,7 +1,8 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 /**
  * Lightweight split-text: wraps each word of an element in a masked line so it
@@ -55,13 +56,26 @@ export function revealHeadline(
   opts: { start?: string; stagger?: number; trigger?: Element } = {}
 ): gsap.core.Tween {
   const { start = "top 82%", stagger = 0.08, trigger = el } = opts;
-  const words = splitWords(el);
-  gsap.set(words, { yPercent: 110 });
-  return gsap.to(words, {
-    yPercent: 0,
-    duration: 1.2,
-    ease: "expo.out",
-    stagger,
-    scrollTrigger: { trigger, start },
-  });
+  // GSAP SplitText (free in 3.13+) for masked line reveals; manual fallback.
+  try {
+    const split = new SplitText(el, { type: "lines", linesClass: "split-line", mask: "lines" });
+    gsap.set(split.lines, { yPercent: 110 });
+    return gsap.to(split.lines, {
+      yPercent: 0,
+      duration: 1.15,
+      ease: "expo.out",
+      stagger: Math.max(stagger, 0.1),
+      scrollTrigger: { trigger, start },
+    });
+  } catch {
+    const words = splitWords(el);
+    gsap.set(words, { yPercent: 110 });
+    return gsap.to(words, {
+      yPercent: 0,
+      duration: 1.2,
+      ease: "expo.out",
+      stagger,
+      scrollTrigger: { trigger, start },
+    });
+  }
 }
