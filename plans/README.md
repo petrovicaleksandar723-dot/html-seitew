@@ -26,7 +26,7 @@ site to Awwwards/FWA-level maximum. All plans are written against commit `ed3cc1
 
 | Plan | Status |
 |---|---|
-| 001-responsive-mobile-overhaul | TODO |
+| 001-responsive-mobile-overhaul | DONE (executed + reviewed, build green) |
 | 002-brand-broll-integration | TODO |
 | 003-a11y-reduced-motion | TODO |
 | 004-seo-completeness | TODO |

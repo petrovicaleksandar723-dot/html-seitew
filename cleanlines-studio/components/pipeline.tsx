@@ -35,6 +35,17 @@ function PinnedTimeline() {
   const section = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [distance, setDistance] = useState(0);
+  // Default desktop; pinned translateX is janky on touch, so small screens
+  // fall back to the simple scroll row just like reduced-motion users.
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const onMq = () => setMobile(mq.matches);
+    onMq();
+    mq.addEventListener("change", onMq);
+    return () => mq.removeEventListener("change", onMq);
+  }, []);
 
   useEffect(() => {
     const measure = () => {
@@ -54,7 +65,7 @@ function PinnedTimeline() {
   const x = useSpring(xRaw, { stiffness: 120, damping: 30, mass: 0.5 });
   const lineScale = useTransform(scrollYProgress, [0.05, 0.95], [0, 1]);
 
-  if (reduce) {
+  if (reduce || mobile) {
     return (
       <div className="shell content no-bar mt-12 flex gap-8 overflow-x-auto pb-4">
         {PIPELINE.map((s) => (

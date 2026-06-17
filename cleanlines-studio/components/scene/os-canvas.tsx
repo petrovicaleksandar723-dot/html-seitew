@@ -176,9 +176,21 @@ class TextureBoundary extends Component<{ children: ReactNode }, { failed: boole
 }
 
 /* marker: glowing pin on the globe + beam + popping billboard card */
-function Marker({ lat, lng, src, index }: { lat: number; lng: number; src: string; index: number }) {
+function Marker({
+  lat,
+  lng,
+  src,
+  index,
+  orbit,
+}: {
+  lat: number;
+  lng: number;
+  src: string;
+  index: number;
+  orbit: number;
+}) {
   const surface = useMemo(() => latLngToVec(R + 0.01, lat, lng), [lat, lng]);
-  const cardPos = useMemo(() => latLngToVec(R + 0.75, lat, lng), [lat, lng]);
+  const cardPos = useMemo(() => latLngToVec(orbit, lat, lng), [lat, lng, orbit]);
   const lineGeo = useMemo(
     () => new THREE.BufferGeometry().setFromPoints([surface, cardPos]),
     [surface, cardPos]
@@ -216,7 +228,15 @@ function Marker({ lat, lng, src, index }: { lat: number; lng: number; src: strin
 }
 
 /* spinning globe with everything attached */
-function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef }) {
+function Globe({
+  progress,
+  velocity,
+  orbit,
+}: {
+  progress?: NumRef;
+  velocity?: NumRef;
+  orbit: number;
+}) {
   const g = useRef<THREE.Group>(null);
   useFrame((_, dt) => {
     if (!g.current) return;
@@ -230,7 +250,7 @@ function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef })
       </Suspense>
       <Atmosphere />
       {MARKERS.map((m, i) => (
-        <Marker key={i} {...m} index={i} />
+        <Marker key={i} {...m} index={i} orbit={orbit} />
       ))}
     </group>
   );
@@ -248,7 +268,21 @@ function Rig({ children }: { children: ReactNode }) {
   return <group ref={g}>{children}</group>;
 }
 
-export default function OsCanvas({ progress, velocity }: { progress?: NumRef; velocity?: NumRef }) {
+export default function OsCanvas({
+  progress,
+  velocity,
+  offsetX = 2.7,
+}: {
+  progress?: NumRef;
+  velocity?: NumRef;
+  offsetX?: number;
+}) {
+  // When the globe is centred (small offset, e.g. mobile) widen the FOV so the
+  // full sphere + orbiting phones fit a narrow viewport, and pull the phone
+  // orbit in a touch so the cards don't sprawl off the sides.
+  const centred = Math.abs(offsetX) < 1.5;
+  const fov = centred ? 48 : 40;
+  const orbit = centred ? R + 0.55 : R + 0.75;
   return (
     <Canvas
       dpr={[1, 2]}
@@ -258,7 +292,7 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
         powerPreference: "high-performance",
         toneMappingExposure: 1.35,
       }}
-      camera={{ position: [0, 0.4, 9.6], fov: 40 }}
+      camera={{ position: [0, 0.4, 9.6], fov }}
     >
       {/* low ambient + a strong sun = realistic day/night terminator (shadow) */}
       <ambientLight intensity={0.18} />
@@ -269,9 +303,9 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
         <Environment preset="sunset" />
       </Suspense>
 
-      <group position={[2.7, 0, 0]}>
+      <group position={[offsetX, 0, 0]}>
         <Rig>
-          <Globe progress={progress} velocity={velocity} />
+          <Globe progress={progress} velocity={velocity} orbit={orbit} />
         </Rig>
       </group>
 

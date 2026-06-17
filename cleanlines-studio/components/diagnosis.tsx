@@ -140,7 +140,7 @@ export function Diagnosis() {
         </div>
 
         <Reveal delay={0.15}>
-          <div className="glass rounded-2xl p-8">
+          <div className="glass rounded-2xl p-6 sm:p-8">
             <div className="flex items-center justify-between">
               <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
                 Status-Analyse
@@ -154,7 +154,7 @@ export function Diagnosis() {
               </span>
             </div>
 
-            <div className="mt-6 flex items-center gap-7">
+            <div className="mt-6 flex items-center gap-4 sm:gap-7">
               <Gauge />
               <div className="flex-1 space-y-5">
                 {DIAGNOSIS_METRICS.map((m, i) => (

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useScroll,
@@ -27,6 +27,16 @@ export function CleanlinesOS() {
   const section = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const velocity = useRef(0);
+  // Default to desktop so SSR / first paint match; refine in the browser.
+  // (Never read matchMedia during render — that would risk a hydration mismatch.)
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
   const { scrollYProgress } = useScroll({
     target: section,
     offset: ["start end", "end start"],
@@ -44,10 +54,10 @@ export function CleanlinesOS() {
     <section
       id="system"
       ref={section}
-      className="relative flex min-h-screen items-center overflow-hidden bg-black py-[clamp(80px,12vw,140px)]"
+      className="relative flex min-h-screen flex-col overflow-hidden bg-black py-[clamp(80px,12vw,140px)] lg:items-center lg:justify-center"
     >
-      {/* 3D earth fills the stage */}
-      <div className="absolute inset-0 z-0">
+      {/* 3D earth: a ~50vh top band on mobile, full-bleed stage on desktop */}
+      <div className="relative z-0 h-[50vh] w-full lg:absolute lg:inset-0 lg:h-auto">
         <InView
           fallback={
             <div className="absolute inset-0 grid place-items-center">
@@ -55,15 +65,19 @@ export function CleanlinesOS() {
             </div>
           }
         >
-          <OsCanvas progress={progress} velocity={velocity} />
+          <OsCanvas
+            progress={progress}
+            velocity={velocity}
+            offsetX={isDesktop ? 2.7 : 0}
+          />
         </InView>
       </div>
       {/* fluid hand-off to neighbouring sections */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-black to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-black to-transparent" />
 
-      <div className="shell content relative z-10">
-        <div className="max-w-[560px]">
+      <div className="shell content relative z-10 mt-10 lg:mt-0">
+        <div className="mx-auto max-w-[560px] text-center lg:mx-0 lg:text-left">
           <Reveal>
             <span className="eyebrow">Cleanlines OS</span>
           </Reveal>
@@ -75,14 +89,14 @@ export function CleanlinesOS() {
             ]}
           />
           <Reveal delay={0.1}>
-            <p className="mt-6 max-w-[460px] font-body text-[16px] leading-relaxed text-dim">
+            <p className="mx-auto mt-6 max-w-[460px] font-body text-[16px] leading-relaxed text-dim lg:mx-0">
               Du bekommst nicht einfach ein paar Videos. Du bekommst ein klares
               Content-System, das deinen Betrieb regelmäßig sichtbar macht —
               Themen, Formate, Texte und Posting-Ideen mit Richtung.
             </p>
           </Reveal>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
             {OS_MODULES.map((m, i) => (
               <motion.div
                 key={m.title}
