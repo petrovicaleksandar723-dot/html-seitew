@@ -62,13 +62,13 @@ function Earth() {
       <meshStandardMaterial
         map={day}
         emissiveMap={night}
-        emissive="#ffcaa0"
-        emissiveIntensity={0.65}
+        emissive="#ffd9a8"
+        emissiveIntensity={1.1}
         bumpMap={topo}
-        bumpScale={0.05}
-        metalness={0.1}
-        roughness={0.85}
-        envMapIntensity={0.5}
+        bumpScale={0.06}
+        metalness={0.05}
+        roughness={0.92}
+        envMapIntensity={0.35}
       />
     </mesh>
   );
@@ -85,9 +85,15 @@ function EarthFallback() {
 
 function Atmosphere() {
   return (
-    <mesh scale={1.14}>
-      <sphereGeometry args={[R, 48, 48]} />
-      <meshBasicMaterial color="#3e8bff" transparent opacity={0.12} side={THREE.BackSide} />
+    <mesh scale={1.025}>
+      <sphereGeometry args={[R, 64, 64]} />
+      <meshBasicMaterial
+        color="#2f6dd0"
+        transparent
+        opacity={0.06}
+        side={THREE.BackSide}
+        depthWrite={false}
+      />
     </mesh>
   );
 }
@@ -201,16 +207,14 @@ function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef })
   );
 }
 
-/* pointer parallax + scroll-driven downward travel */
-function Rig({ progress, children }: { progress?: NumRef; children: ReactNode }) {
+/* pointer parallax (hover / swipe) */
+function Rig({ children }: { children: ReactNode }) {
   const g = useRef<THREE.Group>(null);
   const { pointer } = useThree();
   useFrame(() => {
     if (!g.current) return;
     g.current.rotation.y += (pointer.x * 0.3 - g.current.rotation.y) * 0.05;
     g.current.rotation.x += (-pointer.y * 0.2 - g.current.rotation.x) * 0.05;
-    const targetY = -(progress?.current ?? 0) * 2.2;
-    g.current.position.y += (targetY - g.current.position.y) * 0.08;
   });
   return <group ref={g}>{children}</group>;
 }
@@ -222,15 +226,15 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ position: [0, 0.6, 7.4], fov: 42 }}
     >
-      <ambientLight intensity={0.45} />
-      <directionalLight position={[5, 3, 5]} intensity={2.4} color="#fff1cf" />
-      <pointLight position={[-6, 1, 3]} intensity={55} color="#3e6bff" />
-      <pointLight position={[5, -2, -2]} intensity={40} color="#ff3da6" />
+      {/* low ambient + a single strong sun = realistic day/night terminator (shadow) */}
+      <ambientLight intensity={0.13} />
+      <directionalLight position={[6, 2.5, 4]} intensity={3.4} color="#fff3da" />
+      <pointLight position={[-6, 0, 1]} intensity={22} color="#3e6bff" />
       <Suspense fallback={null}>
         <Environment preset="sunset" />
       </Suspense>
 
-      <Rig progress={progress}>
+      <Rig>
         <Globe progress={progress} velocity={velocity} />
       </Rig>
 

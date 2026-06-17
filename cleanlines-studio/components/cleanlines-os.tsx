@@ -28,7 +28,7 @@ export function CleanlinesOS() {
   const velocity = useRef(0);
   const { scrollYProgress } = useScroll({
     target: section,
-    offset: ["start start", "end end"],
+    offset: ["start end", "end start"],
   });
   const rawVel = useVelocity(scrollYProgress);
   const smoothVel = useSpring(rawVel, { damping: 50, stiffness: 300 });
@@ -40,16 +40,18 @@ export function CleanlinesOS() {
   });
 
   return (
-    <section id="system" ref={section} className="relative h-[180vh]">
-      {/* pinned stage */}
-      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        {/* 3D core fills the stage */}
-        <div className="absolute inset-0 z-0">
-          <OsCanvas progress={progress} velocity={velocity} />
-        </div>
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(120%_120%_at_50%_50%,transparent_45%,#050505_92%)]" />
+    <section
+      id="system"
+      ref={section}
+      className="relative flex min-h-screen items-center overflow-hidden py-[clamp(80px,12vw,140px)]"
+    >
+      {/* 3D earth fills the stage */}
+      <div className="absolute inset-0 z-0">
+        <OsCanvas progress={progress} velocity={velocity} />
+      </div>
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(130%_130%_at_50%_50%,transparent_55%,rgba(5,5,5,0.72)_100%)]" />
 
-        <div className="shell content relative z-10 grid w-full items-center gap-10 lg:grid-cols-[1fr_1fr]">
+      <div className="shell content relative z-10 grid w-full items-center gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
             <Reveal>
               <span className="eyebrow">Cleanlines OS</span>
@@ -101,7 +103,6 @@ export function CleanlinesOS() {
             ))}
           </div>
         </div>
-      </div>
     </section>
   );
 }
