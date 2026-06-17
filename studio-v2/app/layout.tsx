@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Nav } from "@/components/nav";
+import { Grain } from "@/components/grain";
 
 const display = Hanken_Grotesk({
   subsets: ["latin"],
@@ -56,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
     >
       <body className="bg-bg font-body text-ink antialiased">
-        <div className="grain" aria-hidden />
+        <Grain />
         <Nav />
         <SmoothScroll>{children}</SmoothScroll>
       </body>

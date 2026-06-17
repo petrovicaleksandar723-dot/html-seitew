@@ -8,6 +8,7 @@ import {
   ContactShadows,
   RoundedBox,
   Html,
+  AdaptiveDpr,
 } from "@react-three/drei";
 
 /* ------------------------------------------------------------------ palette */
@@ -534,7 +535,7 @@ export function Scene({
     // mouse parallax + slow idle spin
     const px = s.pointer.x;
     const py = s.pointer.y;
-    const baseSpin = s.clock.elapsedTime * 0.04;
+    const baseSpin = s.clock.elapsedTime * 0.02;
     root.current.rotation.y += ((baseSpin + px * 0.4) - root.current.rotation.y) * 0.05;
     root.current.rotation.x += (0.02 + -py * 0.12 - root.current.rotation.x) * 0.05;
     root.current.position.y = -0.4 + (1 - e) * -3;
@@ -544,18 +545,11 @@ export function Scene({
   return (
     <>
       <OrthographicCamera makeDefault position={[14, 12, 14]} zoom={62} near={-50} far={100} />
-      <ambientLight intensity={0.65} />
-      <hemisphereLight args={["#fff3e0", "#2a2030", 0.7]} />
-      <directionalLight
-        position={[10, 16, 8]}
-        intensity={2.4}
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-bias={-0.0004}
-      >
-        <orthographicCamera attach="shadow-camera" args={[-12, 12, 12, -12, 0.1, 60]} />
-      </directionalLight>
-      {/* warm key fill + cool rim for shape without an external HDR */}
+      <ambientLight intensity={0.7} />
+      <hemisphereLight args={["#fff3e0", "#2a2030", 0.75]} />
+      {/* warm key + cool rim for form (shading only — grounding via baked
+          contact shadows below, so no costly per-frame shadow-map render) */}
+      <directionalLight position={[10, 16, 8]} intensity={2.2} color={"#fff1da"} />
       <directionalLight position={[-8, 6, -6]} intensity={0.6} color={"#8fb4ff"} />
       <pointLight position={[0, 9, 0]} intensity={0.5} color={"#ffe9c4"} />
 
@@ -610,9 +604,20 @@ export function Scene({
           <Plant s={1.0} />
         </group>
 
-        {/* contact shadow under everything */}
-        <ContactShadows position={[0, 0.02, 0]} scale={16} blur={2.4} opacity={0.5} far={8} resolution={1024} color="#1a0f06" />
+        {/* baked soft contact shadow — rendered once (rotates with the group,
+            so a single bake stays correct) for smooth performance */}
+        <ContactShadows
+          frames={1}
+          position={[0, 0.02, 0]}
+          scale={16}
+          blur={3}
+          opacity={0.62}
+          far={9}
+          resolution={1024}
+          color="#160c04"
+        />
       </group>
+      <AdaptiveDpr pixelated={false} />
     </>
   );
 }

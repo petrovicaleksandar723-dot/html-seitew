@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette, SMAA } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { AnimatePresence, motion } from "framer-motion";
 import { Scene, type ZoneId } from "@/components/diorama/scene";
@@ -36,18 +36,22 @@ export default function Diorama() {
   return (
     <div className="relative h-[100svh] w-full">
       <Canvas
-        shadows
-        dpr={[1, 2]}
-        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }}
+        dpr={[1, 1.5]}
+        performance={{ min: 0.5 }}
+        gl={{
+          antialias: true,
+          powerPreference: "high-performance",
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.05,
+        }}
         onPointerMissed={() => setActive(null)}
       >
         <color attach="background" args={["#0b0a08"]} />
         <fog attach="fog" args={["#0b0a08", 28, 52]} />
         <Scene active={active} onSelect={setActive} />
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.7} luminanceThreshold={0.65} luminanceSmoothing={0.2} mipmapBlur radius={0.7} />
-          <Vignette eskil={false} offset={0.25} darkness={0.75} />
-          <SMAA />
+          <Bloom intensity={0.6} luminanceThreshold={0.7} luminanceSmoothing={0.25} mipmapBlur radius={0.6} />
+          <Vignette eskil={false} offset={0.28} darkness={0.7} />
         </EffectComposer>
       </Canvas>
 
