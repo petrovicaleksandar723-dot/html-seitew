@@ -1,7 +1,7 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, useVideoTexture, Environment } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Float, useVideoTexture, Environment, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import {
   Component,
@@ -183,13 +183,15 @@ function Nodes({
                 )
               }
             />
-            <Float speed={2.2} floatIntensity={0.9} rotationIntensity={0.4}>
-              <group position={n.pos} rotation={[0, -n.a + Math.PI / 2, 0]}>
-                <TextureBoundary>
-                  <Suspense fallback={<FallbackFace />}>
-                    <VideoFace src={n.src} />
-                  </Suspense>
-                </TextureBoundary>
+            <Float speed={2.2} floatIntensity={0.9} rotationIntensity={0}>
+              <group position={n.pos}>
+                <Billboard>
+                  <TextureBoundary>
+                    <Suspense fallback={<FallbackFace />}>
+                      <VideoFace src={n.src} />
+                    </Suspense>
+                  </TextureBoundary>
+                </Billboard>
               </group>
             </Float>
           </group>
@@ -197,6 +199,26 @@ function Nodes({
       })}
     </group>
   );
+}
+
+/* pointer parallax (hover/swipe) + scroll-driven downward travel */
+function Rig({
+  progress,
+  children,
+}: {
+  progress?: NumRef;
+  children: ReactNode;
+}) {
+  const g = useRef<THREE.Group>(null);
+  const { pointer } = useThree();
+  useFrame(() => {
+    if (!g.current) return;
+    g.current.rotation.y += (pointer.x * 0.3 - g.current.rotation.y) * 0.05;
+    g.current.rotation.x += (-pointer.y * 0.2 - g.current.rotation.x) * 0.05;
+    const targetY = -(progress?.current ?? 0) * 3.4;
+    g.current.position.y += (targetY - g.current.position.y) * 0.08;
+  });
+  return <group ref={g}>{children}</group>;
 }
 
 export default function OsCanvas({
@@ -221,10 +243,12 @@ export default function OsCanvas({
         <Environment preset="sunset" />
       </Suspense>
 
-      <Core progress={progress} />
-      <Suspense fallback={null}>
-        <Nodes progress={progress} velocity={velocity} />
-      </Suspense>
+      <Rig progress={progress}>
+        <Core progress={progress} />
+        <Suspense fallback={null}>
+          <Nodes progress={progress} velocity={velocity} />
+        </Suspense>
+      </Rig>
 
       <EffectComposer multisampling={4}>
         <Bloom intensity={1.1} luminanceThreshold={0.22} luminanceSmoothing={0.6} mipmapBlur />

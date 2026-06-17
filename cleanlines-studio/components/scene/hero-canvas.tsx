@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, useVideoTexture, Environment } from "@react-three/drei";
+import { Float, useVideoTexture, Environment, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import {
   Component,
@@ -225,16 +225,15 @@ function VideoCards() {
   return (
     <group ref={ring}>
       {CARDS.map((c, i) => (
-        <Float key={i} speed={1.8} rotationIntensity={0.4} floatIntensity={1.1}>
-          <group
-            position={[Math.cos(c.a) * c.r, c.y, Math.sin(c.a) * c.r]}
-            rotation={[0, -c.a + Math.PI / 2, 0]}
-          >
-            <TextureBoundary>
-              <Suspense fallback={<FallbackCard />}>
-                <VideoFace src={c.src} />
-              </Suspense>
-            </TextureBoundary>
+        <Float key={i} speed={1.8} rotationIntensity={0} floatIntensity={1.0}>
+          <group position={[Math.cos(c.a) * c.r, c.y, Math.sin(c.a) * c.r]}>
+            <Billboard>
+              <TextureBoundary>
+                <Suspense fallback={<FallbackCard />}>
+                  <VideoFace src={c.src} />
+                </Suspense>
+              </TextureBoundary>
+            </Billboard>
           </group>
         </Float>
       ))}
