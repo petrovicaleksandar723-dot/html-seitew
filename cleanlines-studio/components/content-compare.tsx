@@ -2,6 +2,7 @@
 
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { asset } from "@/lib/asset";
 
 const EXAMPLES = [
@@ -34,24 +35,7 @@ export function ContentCompare() {
       className="relative overflow-hidden py-[clamp(100px,15vw,180px)]"
     >
       {/* background montage — 4 example clips */}
-      <div className="absolute inset-0 z-0 grid grid-cols-2 md:grid-cols-4">
-        {EXAMPLES.map((src, i) => (
-          <video
-            key={i}
-            className="h-full w-full scale-105 object-cover opacity-[0.16]"
-            src={src}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
-        ))}
-      </div>
-      {/* readability overlays */}
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(120%_120%_at_50%_40%,rgba(5,5,5,0.55)_30%,rgba(5,5,5,0.92)_100%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-bg to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-bg to-transparent" />
+      <MediaBackdrop videos={EXAMPLES} opacity={0.16} />
 
       <div className="shell content relative z-10">
         <div className="max-w-[760px]">

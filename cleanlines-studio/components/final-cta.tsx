@@ -3,14 +3,24 @@
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { MagneticButton } from "@/components/ui/magnetic";
+import { asset } from "@/lib/asset";
+
+const BG = [
+  asset("/videos/example-1.mp4"),
+  asset("/videos/example-2.mp4"),
+  asset("/videos/example-3.mp4"),
+  asset("/videos/example-4.mp4"),
+];
 
 export function FinalCta() {
   return (
     <section id="kontakt" className="py-[clamp(100px,16vw,200px)]">
+      <MediaBackdrop videos={BG} opacity={0.14} />
       {/* cinematic closing glow + light trails */}
-      <div className="lightfield left-1/2 top-1/2 h-[50vw] w-[50vw] -translate-x-1/2 -translate-y-1/2 bg-gold/[0.09]" />
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-40">
+      <div className="lightfield left-1/2 top-1/2 z-[1] h-[50vw] w-[50vw] -translate-x-1/2 -translate-y-1/2 bg-gold/[0.09]" />
+      <div className="pointer-events-none absolute inset-0 z-[1] opacity-40">
         {[0, 1, 2, 3].map((i) => (
           <motion.span
             key={i}

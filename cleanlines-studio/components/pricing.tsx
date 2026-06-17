@@ -4,7 +4,11 @@ import { useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { PLANS } from "@/lib/constants";
+import { asset } from "@/lib/asset";
+
+const BG = [asset("/videos/reel-3.mp4"), asset("/videos/example-4.mp4")];
 
 type Plan = (typeof PLANS)[number];
 
@@ -37,7 +41,7 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
         className={`group relative flex h-full flex-col rounded-2xl p-8 transition-[transform,border-color,box-shadow] duration-300 ease-out-expo will-change-transform ${
           plan.featured
             ? "glass border-gold/40 shadow-[0_30px_80px_-30px_rgba(216,178,116,0.5)]"
-            : "border border-line bg-white/[0.015] hover:border-gold/30"
+            : "border border-line bg-bg/40 backdrop-blur-md hover:border-gold/30"
         }`}
         style={{ transformStyle: "preserve-3d" }}
       >
@@ -103,7 +107,8 @@ function PlanCard({ plan, index }: { plan: Plan; index: number }) {
 export function Pricing() {
   return (
     <section id="pakete" className="py-[clamp(90px,14vw,170px)]">
-      <div className="lightfield left-1/2 top-1/3 h-[36vw] w-[36vw] -translate-x-1/2 bg-gold/[0.05]" />
+      <MediaBackdrop videos={BG} opacity={0.07} />
+      <div className="lightfield left-1/2 top-1/3 z-[1] h-[36vw] w-[36vw] -translate-x-1/2 bg-gold/[0.05]" />
       <div className="shell content relative z-10">
         <div className="mx-auto max-w-[720px] text-center">
           <Reveal>
