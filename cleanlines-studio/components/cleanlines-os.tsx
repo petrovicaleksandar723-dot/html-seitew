@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { InView } from "@/components/ui/in-view";
 import { OS_MODULES } from "@/lib/constants";
 
 const OsCanvas = dynamic(() => import("@/components/scene/os-canvas"), {
@@ -47,7 +48,15 @@ export function CleanlinesOS() {
     >
       {/* 3D earth fills the stage */}
       <div className="absolute inset-0 z-0">
-        <OsCanvas progress={progress} velocity={velocity} />
+        <InView
+          fallback={
+            <div className="absolute inset-0 grid place-items-center">
+              <div className="lightfield h-64 w-64 bg-gold/15" />
+            </div>
+          }
+        >
+          <OsCanvas progress={progress} velocity={velocity} />
+        </InView>
       </div>
       {/* only a soft left wash so the copy stays readable — earth floats free */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[55%] bg-gradient-to-r from-black via-black/50 to-transparent" />

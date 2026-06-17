@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { MagneticButton } from "@/components/ui/magnetic";
 import { CharHeading } from "@/components/ui/char-heading";
+import { InView } from "@/components/ui/in-view";
 
 const HeroCanvas = dynamic(() => import("@/components/scene/hero-canvas"), {
   ssr: false,
@@ -48,7 +49,9 @@ export function Hero() {
         style={{ y: canvasY, scale: canvasScale }}
         className="absolute inset-0 z-0"
       >
-        <HeroCanvas />
+        <InView fallback={<CanvasFallback />}>
+          <HeroCanvas />
+        </InView>
       </motion.div>
 
       {/* cinematic vignettes */}

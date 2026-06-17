@@ -16,7 +16,7 @@ import { asset } from "@/lib/asset";
 
 const GOLD = "#d8b274";
 const GOLD_BRIGHT = "#f4d79e";
-const R = 1.65;
+const R = 1.5;
 
 type NumRef = MutableRefObject<number>;
 
@@ -25,9 +25,7 @@ const MARKERS = [
   { lat: 40, lng: -74, src: asset("/videos/reel-1.mp4") }, // New York
   { lat: 51, lng: 0, src: asset("/videos/reel-2.mp4") }, // London
   { lat: 35, lng: 139, src: asset("/videos/reel-3.mp4") }, // Tokyo
-  { lat: -23, lng: -46, src: asset("/videos/example-1.mp4") }, // São Paulo
-  { lat: 1, lng: 103, src: asset("/videos/ambient-1.mp4") }, // Singapore
-  { lat: -33, lng: 151, src: asset("/videos/ambient-2.mp4") }, // Sydney
+  { lat: -30, lng: 140, src: asset("/videos/example-1.mp4") }, // Sydney-ish
 ];
 
 function latLngToVec(radius: number, lat: number, lng: number) {
@@ -96,10 +94,10 @@ function Atmosphere() {
 }
 
 /* ---------- 3D phone showing the clip on its screen ---------- */
-const PH_W = 0.66;
-const PH_H = 1.34;
-const SCR_W = 0.58;
-const SCR_H = 1.22;
+const PH_W = 0.58;
+const PH_H = 1.18;
+const SCR_W = 0.5;
+const SCR_H = 1.06;
 
 function PhoneBody({ children }: { children: ReactNode }) {
   return (
@@ -174,7 +172,7 @@ class TextureBoundary extends Component<{ children: ReactNode }, { failed: boole
 /* marker: glowing pin on the globe + beam + popping billboard card */
 function Marker({ lat, lng, src, index }: { lat: number; lng: number; src: string; index: number }) {
   const surface = useMemo(() => latLngToVec(R + 0.01, lat, lng), [lat, lng]);
-  const cardPos = useMemo(() => latLngToVec(R + 1.25, lat, lng), [lat, lng]);
+  const cardPos = useMemo(() => latLngToVec(R + 0.95, lat, lng), [lat, lng]);
   const lineGeo = useMemo(
     () => new THREE.BufferGeometry().setFromPoints([surface, cardPos]),
     [surface, cardPos]
@@ -254,7 +252,7 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
         powerPreference: "high-performance",
         toneMappingExposure: 1.35,
       }}
-      camera={{ position: [0, 0.6, 7.4], fov: 42 }}
+      camera={{ position: [0, 0.4, 9.6], fov: 40 }}
     >
       {/* low ambient + a strong sun = realistic day/night terminator (shadow) */}
       <ambientLight intensity={0.18} />
