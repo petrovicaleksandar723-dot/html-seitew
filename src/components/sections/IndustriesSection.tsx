@@ -73,7 +73,7 @@ export default function IndustriesSection() {
           </div>
 
           <div>
-            <div className="ind-visual" style={{ "--glow": current.glow } as CSSProperties}>
+            <div className="ind-visual" data-parallax="6" style={{ "--glow": current.glow } as CSSProperties}>
               {industries.items.map((ind, i) => (
                 <video
                   key={ind.name}

@@ -57,7 +57,7 @@ export default function DiagnosisSection() {
             <p className="text-soft">{diagnosis.subline}</p>
           </div>
 
-          <div className="diag-panel">
+          <div className="diag-panel" data-parallax="6">
             <div className="diag-scanline" />
             {diagnosis.meters.map((m) => (
               <div className="meter" key={m.label}>

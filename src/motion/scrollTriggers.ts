@@ -38,3 +38,35 @@ export function revealUp(
 export function refreshScrollTriggers(): void {
   ScrollTrigger.refresh();
 }
+
+/**
+ * Depth parallax for any element carrying `data-parallax="<speed>"`.
+ * Positive speed drifts the element up as it scrolls through the viewport
+ * (foreground), negative drifts it down (background). Respects reduced motion.
+ */
+export function initParallax(): () => void {
+  if (typeof window === "undefined") return () => {};
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
+
+  const ctx = gsap.context(() => {
+    gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+      const speed = parseFloat(el.dataset.parallax || "0");
+      if (!speed) return;
+      gsap.fromTo(
+        el,
+        { yPercent: -speed },
+        {
+          yPercent: speed,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
+    });
+  });
+  return () => ctx.revert();
+}

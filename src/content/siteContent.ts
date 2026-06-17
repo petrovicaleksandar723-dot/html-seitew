@@ -381,6 +381,9 @@ export const finalCTA = {
   ctaSecondary: "WhatsApp-Anfrage starten",
   trust: ["Unverbindlich", "klare Einschätzung", "keine versteckten Kosten"],
   video: "/assets/videos/final.mp4",
+  /** Higgsfield cinematic film (runtime); falls back to `video` on error. */
+  videoRemote:
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3F5SAXdcmbfUfI7TTqv7gEJmXiN/hf_20260617_052600_ca3ef409-a093-4c36-a91e-3096328ec761.mp4",
 };
 
 export const nav = [

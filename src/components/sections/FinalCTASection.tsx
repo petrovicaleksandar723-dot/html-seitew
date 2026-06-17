@@ -24,12 +24,16 @@ export default function FinalCTASection() {
       });
     }, el);
 
-    // lazy-start the background video
+    // lazy-start the background video — prefer the cinematic Higgsfield film,
+    // fall back to the bundled clip if the remote can't load.
     if (v) {
+      v.onerror = () => {
+        if (v.src.indexOf(finalCTA.video) === -1) v.src = finalCTA.video;
+      };
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            if (!v.src) v.src = finalCTA.video;
+            if (!v.src) v.src = finalCTA.videoRemote || finalCTA.video;
             v.play().catch(() => {});
           } else v.pause();
         });
@@ -45,7 +49,7 @@ export default function FinalCTASection() {
 
   return (
     <section className="final section" id="final-cta" ref={root}>
-      <div className="final__video">
+      <div className="final__video" data-parallax="-10">
         <video ref={video} muted loop playsInline preload="none" />
       </div>
 

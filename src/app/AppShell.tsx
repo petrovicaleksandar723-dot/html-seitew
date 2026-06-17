@@ -7,7 +7,7 @@ import CursorGlow from "../components/layout/CursorGlow";
 import ScrollProgress from "../components/layout/ScrollProgress";
 import HomePage from "./HomePage";
 import { initLenis, destroyLenis, stopLenis, startLenis } from "../motion/lenis";
-import { ScrollTrigger } from "../motion/scrollTriggers";
+import { ScrollTrigger, initParallax } from "../motion/scrollTriggers";
 
 /**
  * Top-level shell: boots Lenis + GSAP, gates the experience behind the
@@ -30,15 +30,17 @@ export default function AppShell() {
     requestAnimationFrame(() => ScrollTrigger.refresh());
   }, []);
 
-  // keep triggers honest after fonts/images load
+  // keep triggers honest after fonts/images load + start depth parallax
   useEffect(() => {
     if (!ready) return;
     const onLoad = () => ScrollTrigger.refresh();
     window.addEventListener("load", onLoad);
     const t = setTimeout(() => ScrollTrigger.refresh(), 800);
+    const cleanupParallax = initParallax();
     return () => {
       window.removeEventListener("load", onLoad);
       clearTimeout(t);
+      cleanupParallax();
     };
   }, [ready]);
 

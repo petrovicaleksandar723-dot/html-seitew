@@ -39,3 +39,11 @@ GSAP + ScrollTrigger + SplitText (gsap 3.15) + Lenis + Three/R3F/Drei/postproces
 with Higgsfield GLB (runtime) + procedural fallback. `next build` green,
 static export renders, 0 page errors, headline SplitText reveals working.
 Deploy: Netlify (publish `out`) / Vercel / drag `out/` to netlify drop.
+
+## v2.1 — real cinematic asset + scroll choreography (no zip)
+- Higgsfield: generated a cinematic 16:9 luxury film (image -> veo3_1_lite,
+  1080p, 8s) and wired it as the Final CTA background (runtime URL + local
+  fallback). ~56 credits left.
+- Added a depth-parallax engine (data-parallax, scrubbed) on diagnosis panel,
+  industries stage and final video; reduced-motion aware.
+- Verified static export: 0 overflow desktop/mobile, 0 page errors.
