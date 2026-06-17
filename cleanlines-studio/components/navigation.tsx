@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { NAV_LINKS } from "@/lib/constants";
+import { Logo } from "@/components/ui/logo";
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
@@ -31,13 +32,8 @@ export function Navigation() {
         }`}
       >
         <nav className="shell flex h-[72px] items-center justify-between">
-          <a href="#hero" className="flex items-center gap-3" aria-label="Cleanlines Studio">
-            <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-gradient-to-br from-gold-bright to-gold-deep shadow-[0_6px_20px_-6px_rgba(216,178,116,0.8)]">
-              <span className="h-3 w-3 rounded-[3px] border-[2.5px] border-[#1a1206]" />
-            </span>
-            <span className="font-display text-[18px] font-extrabold tracking-tight">
-              Cleanlines<span className="text-gold">.</span>
-            </span>
+          <a href="#hero" className="flex items-center gap-3" aria-label="Cleanlines Studios">
+            <Logo />
           </a>
 
           <div className="hidden items-center gap-8 lg:flex">

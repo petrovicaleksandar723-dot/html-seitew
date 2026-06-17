@@ -1,4 +1,5 @@
 import { NAV_LINKS } from "@/lib/constants";
+import { LogoMark } from "@/components/ui/logo";
 
 export function Footer() {
   return (
@@ -6,12 +7,10 @@ export function Footer() {
       <div className="shell content flex flex-col gap-10">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div className="flex items-center gap-3">
-            <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-gradient-to-br from-gold-bright to-gold-deep">
-              <span className="h-3 w-3 rounded-[3px] border-[2.5px] border-[#1a1206]" />
-            </span>
+            <LogoMark className="h-10 w-10 drop-shadow-[0_2px_12px_rgba(216,178,116,0.45)]" />
             <div>
-              <div className="font-display text-[16px] font-extrabold tracking-tight">
-                Cleanlines Studio
+              <div className="font-display text-[16px] font-extrabold tracking-[0.1em]">
+                CLEANLINES STUDIOS
               </div>
               <div className="font-body text-[12.5px] text-muted">
                 Premium Content für lokale Betriebe
