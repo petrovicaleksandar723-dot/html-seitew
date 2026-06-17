@@ -392,6 +392,96 @@
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
+/* Floating UI proof-satellites */
+.hero__floats {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.hfloat {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(150deg, rgba(20, 16, 10, 0.72), rgba(8, 6, 4, 0.58));
+  backdrop-filter: blur(14px);
+  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  will-change: transform;
+}
+.hfloat b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 640;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+.hfloat small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 3px;
+}
+.hfloat__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #6ee7a0;
+  box-shadow: 0 0 10px #6ee7a0;
+}
+.hfloat__dot--gold {
+  background: var(--gold-1);
+  box-shadow: 0 0 10px var(--gold-1);
+}
+.hfloat__check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold-1);
+  font-size: 0.7rem;
+}
+.hfloat--a {
+  top: 41%;
+  left: 53%;
+  animation: hfloat-y 7s ease-in-out infinite;
+}
+.hfloat--b {
+  top: 22%;
+  right: 5%;
+  animation: hfloat-y 8.5s ease-in-out infinite reverse;
+}
+.hfloat--c {
+  top: 62%;
+  left: 51%;
+  animation: hfloat-y 9.5s ease-in-out infinite;
+}
+@keyframes hfloat-y {
+  0%, 100% { transform: translateY(-7px); }
+  50% { transform: translateY(7px); }
+}
+@media (max-width: 1080px) {
+  .hfloat--b { display: none; }
+  .hfloat--a { left: 3%; top: 26%; }
+  .hfloat--c { right: 4%; bottom: 18%; }
+}
+@media (max-width: 640px) {
+  .hero__floats { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hfloat { animation: none !important; }
+}
+
 .hero__watermark {
   position: absolute;
   top: 50%;

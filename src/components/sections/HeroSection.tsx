@@ -52,6 +52,31 @@ export default function HeroSection({ ready }: Props) {
         STUDIOS
       </div>
 
+      {/* Floating UI proof-satellites — subtle depth + conversion micro-proof */}
+      <div className="hero__floats" aria-hidden>
+        <div className="hfloat hfloat--a">
+          <span className="hfloat__dot" />
+          <div>
+            <b>+38%</b>
+            <small>Sichtbarkeit</small>
+          </div>
+        </div>
+        <div className="hfloat hfloat--b">
+          <span className="hfloat__check">✓</span>
+          <div>
+            <b>Reel geplant</b>
+            <small>Mo · 18:00</small>
+          </div>
+        </div>
+        <div className="hfloat hfloat--c">
+          <span className="hfloat__dot hfloat__dot--gold" />
+          <div>
+            <b>Bewertung beantwortet</b>
+            <small>★ 5,0 · heute</small>
+          </div>
+        </div>
+      </div>
+
       <div className="hero__inner shell">
         <div className="hero__col">
           <div className="hero__eyebrow eyebrow">{hero.eyebrow}</div>
