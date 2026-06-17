@@ -1,8 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { MagneticButton } from "@/components/ui/magnetic";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 
 const HeroCanvas = dynamic(() => import("@/components/scene/hero-canvas"), {
   ssr: false,
@@ -12,57 +14,76 @@ const HeroCanvas = dynamic(() => import("@/components/scene/hero-canvas"), {
 function CanvasFallback() {
   return (
     <div className="absolute inset-0">
-      <div className="lightfield h-[60vh] w-[60vh] left-1/2 top-1/3 -translate-x-1/2 bg-gold/20" />
+      <div className="lightfield left-1/2 top-1/3 h-[60vh] w-[60vh] -translate-x-1/2 bg-gold/20" />
     </div>
   );
 }
 
 const ease = [0.22, 1, 0.36, 1] as const;
+// reveal after the preloader lifts (~1.85s)
+const D = 1.9;
 
 export function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -160]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const contentBlur = useTransform(scrollYProgress, [0, 0.6], [0, 8]);
+  const blurFilter = useTransform(contentBlur, (b) => `blur(${b}px)`);
+  const canvasY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const canvasScale = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
+
   return (
     <section
+      ref={ref}
       id="hero"
       className="relative flex min-h-screen items-center pt-[72px]"
     >
       {/* WebGL stage */}
-      <div className="absolute inset-0 z-0">
+      <motion.div
+        style={{ y: canvasY, scale: canvasScale }}
+        className="absolute inset-0 z-0"
+      >
         <HeroCanvas />
-      </div>
+      </motion.div>
 
       {/* cinematic vignettes */}
       <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(120%_90%_at_50%_-10%,transparent_40%,#050505_100%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-bg to-transparent" />
 
-      <div className="shell relative z-10 w-full">
-        <div className="max-w-[760px]">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity, filter: blurFilter }}
+        className="shell relative z-10 w-full"
+      >
+        <div className="max-w-[820px]">
           <motion.span
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease }}
+            transition={{ duration: 0.8, ease, delay: D }}
             className="eyebrow"
           >
             Premium Content Studio
           </motion.span>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease, delay: 0.08 }}
-            className="mt-6 font-display text-[clamp(44px,7.4vw,104px)] font-extrabold leading-[0.94] tracking-[-0.035em]"
-          >
-            Dein Betrieb.
-            <br />
-            Sichtbar wie eine{" "}
-            <span className="font-serif italic font-normal text-gradient-gold">
-              große Marke.
-            </span>
-          </motion.h1>
+          <AnimatedHeading
+            as="h1"
+            startDelay={D + 0.15}
+            className="mt-6 font-display text-[clamp(44px,7.6vw,108px)] font-extrabold leading-[0.92] tracking-[-0.04em]"
+            lines={[
+              [{ t: "Dein Betrieb." }],
+              [{ t: "Sichtbar wie eine" }],
+              [{ t: "große Marke.", accent: true }],
+            ]}
+          />
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.2 }}
+            transition={{ duration: 0.9, ease, delay: D + 0.5 }}
             className="mt-8 max-w-[560px] font-body text-[clamp(15px,1.5vw,18px)] leading-relaxed text-dim"
           >
             Wir erstellen hochwertige Reels, KI-Visuals und ein klares
@@ -74,7 +95,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.32 }}
+            transition={{ duration: 0.9, ease, delay: D + 0.62 }}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <MagneticButton href="#kontakt" variant="primary">
@@ -88,13 +109,13 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            transition={{ duration: 1, delay: D + 0.8 }}
             className="mt-7 font-mono text-[12px] uppercase tracking-[0.18em] text-muted"
           >
             Unverbindlich · persönlich · monatlich kündbar
           </motion.p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="pointer-events-none absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
         <motion.div

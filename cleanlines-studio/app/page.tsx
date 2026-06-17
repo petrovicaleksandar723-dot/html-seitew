@@ -1,5 +1,8 @@
+import { Preloader } from "@/components/ui/preloader";
+import { Cursor } from "@/components/ui/cursor";
 import { Navigation } from "@/components/navigation";
 import { Hero } from "@/components/hero";
+import { Marquee } from "@/components/ui/marquee";
 import { Diagnosis } from "@/components/diagnosis";
 import { Transformation } from "@/components/transformation";
 import { ReelCinema } from "@/components/reel-cinema";
@@ -15,9 +18,12 @@ import { Footer } from "@/components/footer";
 export default function Home() {
   return (
     <>
+      <Preloader />
+      <Cursor />
       <Navigation />
       <main>
         <Hero />
+        <Marquee />
         <Diagnosis />
         <Transformation />
         <ReelCinema />

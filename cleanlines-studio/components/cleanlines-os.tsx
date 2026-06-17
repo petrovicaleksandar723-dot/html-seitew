@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { OS_MODULES } from "@/lib/constants";
 
 const OsCanvas = dynamic(() => import("@/components/scene/os-canvas"), {
@@ -17,15 +18,18 @@ export function CleanlinesOS() {
   return (
     <section id="system" className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <Reveal>
-          <div className="max-w-[640px]">
+        <div className="max-w-[680px]">
+          <Reveal>
             <span className="eyebrow">Cleanlines OS</span>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Ein System.{" "}
-              <span className="font-serif italic font-normal text-gradient-gold">
-                Nicht nur einzelne Posts.
-              </span>
-            </h2>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Ein System." }],
+              [{ t: "Nicht nur einzelne Posts.", accent: true }],
+            ]}
+          />
+          <Reveal delay={0.1}>
             <p className="mt-6 font-body text-[17px] leading-relaxed text-dim">
               Du bekommst nicht einfach ein paar Videos. Du bekommst ein klares
               Content-System, das deinen Betrieb regelmäßig sichtbar macht. Wir
@@ -33,8 +37,8 @@ export function CleanlinesOS() {
               Auftritt nicht zufällig wirkt — sondern wie eine Marke mit
               Richtung.
             </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
 
         <div className="mt-16 grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           {/* WebGL core */}

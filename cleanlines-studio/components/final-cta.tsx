@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { MagneticButton } from "@/components/ui/magnetic";
 
 export function FinalCta() {
@@ -25,14 +26,13 @@ export function FinalCta() {
         <Reveal>
           <span className="eyebrow justify-center">Final Call</span>
         </Reveal>
-        <Reveal delay={0.06}>
-          <h2 className="mx-auto mt-6 max-w-[900px] font-display text-[clamp(34px,6vw,76px)] font-extrabold leading-[1.0] tracking-[-0.035em]">
-            Dein Betrieb kann aussehen wie eine Marke.{" "}
-            <span className="font-serif italic font-normal text-gradient-gold">
-              Wir bauen den Content dafür.
-            </span>
-          </h2>
-        </Reveal>
+        <AnimatedHeading
+          className="mx-auto mt-6 max-w-[1000px] font-display text-[clamp(34px,6vw,78px)] font-extrabold leading-[1.0] tracking-[-0.035em]"
+          lines={[
+            [{ t: "Dein Betrieb kann aussehen wie eine Marke." }],
+            [{ t: "Wir bauen den Content dafür.", accent: true }],
+          ]}
+        />
         <Reveal delay={0.14}>
           <p className="mx-auto mt-7 max-w-[560px] font-body text-[17px] leading-relaxed text-dim">
             Schick uns kurz deinen Betrieb und wir zeigen dir, welche Inhalte

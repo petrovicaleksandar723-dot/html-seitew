@@ -1,23 +1,25 @@
 "use client";
 
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { TRANSFORM_BEFORE, TRANSFORM_AFTER } from "@/lib/constants";
 
 export function Transformation() {
   return (
     <section className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <Reveal>
-          <div className="max-w-[640px]">
+        <div className="max-w-[680px]">
+          <Reveal>
             <span className="eyebrow">Transformation</span>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Aus zufälligen Posts wird ein{" "}
-              <span className="font-serif italic font-normal text-gradient-gold">
-                klarer Markenauftritt.
-              </span>
-            </h2>
-          </div>
-        </Reveal>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Aus zufälligen Posts wird ein" }],
+              [{ t: "klarer Markenauftritt.", accent: true }],
+            ]}
+          />
+        </div>
 
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           <Reveal delay={0.05}>

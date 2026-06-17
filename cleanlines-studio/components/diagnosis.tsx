@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { DIAGNOSIS_METRICS, DIAGNOSIS_TAGS } from "@/lib/constants";
 
 export function Diagnosis() {
@@ -13,16 +14,14 @@ export function Diagnosis() {
           <Reveal>
             <span className="eyebrow">Diagnose</span>
           </Reveal>
-          <Reveal delay={0.05}>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Gute Arbeit.
-              <br />
-              Aber online sieht man sie{" "}
-              <span className="font-serif italic font-normal text-gold">
-                nicht richtig.
-              </span>
-            </h2>
-          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Gute Arbeit." }],
+              [{ t: "Aber online sieht man sie" }],
+              [{ t: "nicht richtig.", accent: true }],
+            ]}
+          />
           <Reveal delay={0.12}>
             <p className="mt-6 max-w-[480px] font-body text-[17px] leading-relaxed text-dim">
               Viele Betriebe liefern jeden Tag starke Arbeit. Nur wirkt der
