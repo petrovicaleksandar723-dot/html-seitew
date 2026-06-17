@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="NEXUS — eine immersive 3D-Weberfahrung mit Echtzeit-WebGL, Shader-Animationen und cinematischem Design." />
+<meta name="theme-color" content="#04060f" />
+<title>NEXUS — Immersive 3D Experience</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   NEXUS — IMMERSIVE 3D / MOTION-DRIVEN DARK SYSTEM
+   ============================================================ */
+:root{
+  --bg:#04060f;
+  --bg-deep:#020308;
+  --surface:rgba(16,20,38,0.55);
+  --surface-solid:#0b0e1c;
+  --border:rgba(255,255,255,0.08);
+  --border-glow:rgba(102,224,255,0.35);
+  --text:#eef2ff;
+  --text-muted:#9aa6c4;
+  --text-dim:#5e6b8c;
+  --cyan:#34e3ff;
+  --violet:#9b7bff;
+  --magenta:#ff5cc8;
+  --grad:linear-gradient(110deg,#34e3ff 0%,#9b7bff 50%,#ff5cc8 100%);
+  --grad-soft:linear-gradient(110deg,rgba(52,227,255,.18),rgba(155,123,255,.18));
+  --font-head:"Space Grotesk",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --maxw:1200px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- WebGL canvas: fixed full-screen backdrop ---- */
+#scene{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  display:block;
+  /* subtle radial vignette so text always wins contrast */
+}
+.scene-veil{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 0%, transparent 40%, rgba(2,3,8,.55) 100%),
+    radial-gradient(80% 60% at 50% 110%, rgba(2,3,8,.85), transparent 60%);
+}
+#webgl-fallback{
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(60% 60% at 30% 20%, rgba(52,227,255,.16), transparent 60%),
+    radial-gradient(60% 60% at 75% 70%, rgba(255,92,200,.14), transparent 60%),
+    var(--bg-deep);
+  display:none;
+}
+
+/* content sits above the canvas */
+.layer{position:relative;z-index:2}
+
+/* ---- Loader ---- */
+#loader{
+  position:fixed;inset:0;z-index:50;
+  background:var(--bg-deep);
+  display:grid;place-items:center;
+  transition:opacity .8s var(--ease),visibility .8s;
+}
+#loader.done{opacity:0;visibility:hidden}
+.loader-ring{
+  width:54px;height:54px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.08);
+  border-top-color:var(--cyan);
+  border-right-color:var(--violet);
+  animation:spin 1s linear infinite;
+}
+.loader-label{
+  margin-top:18px;font-family:var(--font-head);font-size:.78rem;
+  letter-spacing:.32em;text-transform:uppercase;color:var(--text-dim);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.loader-ring{animation-duration:2.4s}}
+
+/* ---- Custom cursor glow (pointer devices only) ---- */
+#cursor{
+  position:fixed;top:0;left:0;z-index:40;
+  width:26px;height:26px;border-radius:50%;
+  border:1.5px solid var(--border-glow);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  transition:width .25s var(--ease),height .25s var(--ease),background .25s,border-color .25s;
+  mix-blend-mode:screen;
+}
+#cursor.hot{width:54px;height:54px;background:rgba(52,227,255,.10);border-color:var(--cyan)}
+@media (hover:none){#cursor{display:none}}
+
+/* ---- Nav ---- */
+header.nav{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px clamp(20px,5vw,48px);
+  transition:background .5s var(--ease),backdrop-filter .5s,border-color .5s;
+  border-bottom:1px solid transparent;
+}
+header.nav.scrolled{
+  background:rgba(4,6,15,.6);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom-color:var(--border);
+}
+.brand{
+  font-family:var(--font-head);font-weight:700;font-size:1.15rem;
+  letter-spacing:.18em;display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--text);
+}
+.brand .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--grad);box-shadow:0 0 16px var(--cyan);
+}
+.nav-links{display:flex;gap:34px;align-items:center}
+.nav-links a{
+  color:var(--text-muted);text-decoration:none;font-size:.92rem;font-weight:500;
+  position:relative;transition:color .3s var(--ease);
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;
+  background:var(--grad);transition:width .35s var(--ease);border-radius:2px;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.nav-links a:focus-visible{outline:2px solid var(--cyan);outline-offset:4px;border-radius:4px}
+@media (max-width:760px){.nav-links{display:none}}
+
+/* ---- Buttons ---- */
+.btn{
+  --pad-y:14px;--pad-x:28px;
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+  font-family:var(--font-head);font-weight:600;font-size:.95rem;
+  padding:var(--pad-y) var(--pad-x);border-radius:14px;border:1px solid transparent;
+  text-decoration:none;color:#04060f;background:var(--grad);
+  background-size:200% 100%;background-position:0% 50%;
+  transition:background-position .6s var(--ease),transform .3s var(--ease),box-shadow .4s var(--ease);
+  box-shadow:0 10px 30px rgba(52,227,255,.22),0 4px 12px rgba(155,123,255,.18);
+  will-change:transform;
+}
+.btn:hover{background-position:100% 50%;transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.btn.ghost{
+  background:var(--surface);color:var(--text);border-color:var(--border);box-shadow:none;
+  backdrop-filter:blur(10px);
+}
+.btn.ghost:hover{border-color:var(--border-glow);background:rgba(52,227,255,.06)}
+
+/* ---- Hero ---- */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:120px clamp(20px,5vw,48px) 80px;max-width:var(--maxw);margin:0 auto;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;align-self:flex-start;
+  font-family:var(--font-head);font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--cyan);padding:8px 16px;border:1px solid var(--border);border-radius:999px;
+  background:var(--surface);backdrop-filter:blur(10px);
+}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+@media (prefers-reduced-motion:reduce){.eyebrow .pulse{animation:none}}
+
+h1.hero-title{
+  font-family:var(--font-head);font-weight:700;letter-spacing:-.02em;
+  font-size:clamp(2.7rem,8vw,6rem);line-height:1.02;margin:26px 0 0;max-width:14ch;
+}
+h1.hero-title .grad{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-sub{
+  margin:28px 0 0;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--text-muted);
+  max-width:54ch;
+}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;margin-top:40px}
+.scroll-hint{
+  margin-top:64px;display:flex;align-items:center;gap:12px;color:var(--text-dim);
+  font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;font-family:var(--font-head);
+}
+.scroll-hint .mouse{
+  width:24px;height:38px;border:2px solid var(--text-dim);border-radius:14px;position:relative;
+}
+.scroll-hint .mouse::after{
+  content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;
+  background:var(--cyan);transform:translateX(-50%);animation:wheel 1.8s var(--ease) infinite;
+}
+@keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+@media (prefers-reduced-motion:reduce){.scroll-hint .mouse::after{animation:none}}
+
+/* ---- Section scaffolding ---- */
+section.block{padding:clamp(90px,14vh,160px) clamp(20px,5vw,48px);max-width:var(--maxw);margin:0 auto}
+.section-head{max-width:60ch;margin-bottom:56px}
+.section-tag{
+  font-family:var(--font-head);font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--violet);
+}
+h2.section-title{
+  font-family:var(--font-head);font-weight:700;letter-spacing:-.01em;
+  font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;margin:16px 0 0;
+}
+.section-title .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.section-desc{margin-top:18px;color:var(--text-muted);font-size:1.08rem;max-width:52ch}
+
+/* ---- Feature grid (glass cards) ---- */
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.card{
+  position:relative;padding:30px;border-radius:22px;
+  background:var(--surface);border:1px solid var(--border);
+  backdrop-filter:blur(16px) saturate(130%);-webkit-backdrop-filter:blur(16px) saturate(130%);
+  overflow:hidden;transition:transform .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease);
+  will-change:transform;
+}
+.card::before{
+  content:"";position:absolute;inset:0;border-radius:22px;padding:1px;
+  background:var(--grad);opacity:0;transition:opacity .5s var(--ease);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+.card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(2,4,12,.6)}
+.card:hover::before{opacity:1}
+.card .ico{
+  width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+  background:var(--grad-soft);border:1px solid var(--border);color:var(--cyan);margin-bottom:20px;
+}
+.card .ico svg{width:26px;height:26px;stroke:currentColor;stroke-width:1.6;fill:none}
+.card h3{font-family:var(--font-head);font-size:1.25rem;font-weight:600;margin-bottom:10px}
+.card p{color:var(--text-muted);font-size:.97rem}
+
+/* ---- Stats strip ---- */
+.stats{
+  display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:48px clamp(20px,5vw,48px);max-width:var(--maxw);margin:0 auto;
+}
+.stat .num{font-family:var(--font-head);font-weight:700;font-size:clamp(2.2rem,5vw,3.2rem);
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.stat .lbl{color:var(--text-muted);margin-top:8px;font-size:.92rem}
+
+/* ---- Showcase split ---- */
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.split ul{list-style:none;margin-top:28px;display:grid;gap:16px}
+.split li{display:flex;gap:14px;align-items:flex-start;color:var(--text-muted)}
+.split li .check{
+  flex:0 0 auto;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+  background:var(--grad-soft);border:1px solid var(--border);color:var(--cyan);margin-top:2px;
+}
+.split li .check svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.4;fill:none}
+.split li strong{color:var(--text);font-weight:600}
+.glass-panel{
+  position:relative;border-radius:24px;border:1px solid var(--border);overflow:hidden;
+  background:var(--surface);backdrop-filter:blur(16px);min-height:320px;
+  display:grid;place-items:center;padding:36px;
+}
+.glass-panel .orb{
+  width:min(70%,260px);aspect-ratio:1;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--cyan),var(--violet),var(--magenta),var(--cyan));
+  filter:blur(2px);opacity:.9;animation:rot 14s linear infinite;
+  box-shadow:0 0 80px rgba(155,123,255,.4);
+}
+.glass-panel .orb-core{position:absolute;width:min(46%,170px);aspect-ratio:1;border-radius:50%;
+  background:var(--bg-deep);box-shadow:inset 0 0 60px rgba(52,227,255,.25)}
+@keyframes rot{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.glass-panel .orb{animation:none}}
+
+/* ---- CTA ---- */
+.cta-wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,48px) 120px}
+.cta{
+  position:relative;border-radius:30px;overflow:hidden;text-align:center;
+  padding:clamp(48px,8vw,90px) clamp(24px,5vw,64px);
+  background:linear-gradient(140deg,rgba(52,227,255,.12),rgba(255,92,200,.12)),var(--surface-solid);
+  border:1px solid var(--border);
+}
+.cta::after{
+  content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 50% 0%,rgba(155,123,255,.25),transparent 70%);
+  pointer-events:none;
+}
+.cta h2{font-family:var(--font-head);font-weight:700;font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;position:relative}
+.cta p{color:var(--text-muted);margin:18px auto 34px;max-width:48ch;position:relative}
+.cta .hero-cta{justify-content:center;position:relative}
+
+/* ---- Footer ---- */
+footer{border-top:1px solid var(--border);padding:48px clamp(20px,5vw,48px);
+  max-width:var(--maxw);margin:0 auto;display:flex;justify-content:space-between;
+  align-items:center;gap:20px;flex-wrap:wrap;color:var(--text-dim);font-size:.9rem}
+footer .brand{font-size:1rem}
+
+/* ---- Scroll reveal ---- */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loader" aria-hidden="true">
+  <div style="display:grid;place-items:center">
+    <div class="loader-ring"></div>
+    <div class="loader-label">Initialisiere WebGL</div>
+  </div>
+</div>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="webgl-fallback" aria-hidden="true"></div>
+<div class="scene-veil" aria-hidden="true"></div>
+<div id="cursor" aria-hidden="true"></div>
+
+<div class="layer">
+  <header class="nav" id="nav">
+    <a class="brand" href="#top"><span class="dot"></span>NEXUS</a>
+    <nav class="nav-links" aria-label="Hauptnavigation">
+      <a href="#features" data-hot>Technologie</a>
+      <a href="#showcase" data-hot>Erlebnis</a>
+      <a href="#metrics" data-hot>Zahlen</a>
+      <a class="btn ghost" href="#start" data-hot>Loslegen</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <span class="eyebrow reveal"><span class="pulse"></span>Echtzeit-3D im Browser</span>
+      <h1 class="hero-title reveal">Erlebe das Web in einer<br><span class="grad">neuen Dimension</span>.</h1>
+      <p class="hero-sub reveal">NEXUS verschmilzt cinematisches Design mit Echtzeit-WebGL: ein lebendiger Shader-Kern, ein Feld aus tausenden Lichtpartikeln und Bewegung, die deinem Cursor und Scroll folgt.</p>
+      <div class="hero-cta reveal">
+        <a class="btn" href="#start" data-hot>Experience starten
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn ghost" href="#features" data-hot>Wie es funktioniert</a>
+      </div>
+      <div class="scroll-hint reveal"><span class="mouse"></span>Scrollen zum Entdecken</div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="block" id="features">
+      <div class="section-head reveal">
+        <span class="section-tag">Unter der Haube</span>
+        <h2 class="section-title">Gebaut für <span class="grad">flüssige 60&nbsp;FPS</span>.</h2>
+        <p class="section-desc">Jede Bewegung ist GPU-beschleunigt und respektiert dein System — vom Bloom-Glow bis zur Reduced-Motion-Einstellung.</p>
+      </div>
+      <div class="grid">
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <h3>Echte WebGL-Shader</h3>
+          <p>Ein Custom-GLSL-Kern verformt sich live über 3D-Simplex-Noise mit Fresnel-Rand — keine Videos, keine GIFs, reine Mathematik.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg></div>
+          <h3>Bloom-Post-Processing</h3>
+          <p>Ein Unreal-Bloom-Pass legt cinematisches Leuchten über die Szene — Lichtkanten glühen wie in einem Sci-Fi-Trailer.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></div>
+          <h3>Performance-bewusst</h3>
+          <p>Geometrie wird einmalig erzeugt, der Render-Loop pausiert in Hintergrund-Tabs und passt die Pixeldichte ans Gerät an.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.6"/><path d="M22 4 12 14l-3-3"/></svg></div>
+          <h3>Barrierefrei by Design</h3>
+          <p>Respektiert <code>prefers-reduced-motion</code> in Echtzeit, behält Fokus-Ringe und liefert auf Geräten ohne WebGL einen eleganten Fallback.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h3>Maus- & Scroll-Parallax</h3>
+          <p>Die Kamera neigt sich sanft zum Cursor, der Kern reagiert auf deine Scrollposition — die Szene fühlt sich an wie ein Fenster, kein Bild.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <h3>Eine einzige Datei</h3>
+          <p>Komplett self-contained: HTML, CSS und JavaScript in einem Dokument. Öffnen, deployen, fertig — kein Build-Schritt nötig.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats" id="metrics">
+      <div class="stat reveal"><div class="num" data-count="60" data-suffix=" FPS">0</div><div class="lbl">Ziel-Framerate</div></div>
+      <div class="stat reveal"><div class="num" data-count="12000" data-suffix="+">0</div><div class="lbl">Lichtpartikel</div></div>
+      <div class="stat reveal"><div class="num" data-count="100" data-suffix="%">0</div><div class="lbl">GPU-beschleunigt</div></div>
+      <div class="stat reveal"><div class="num" data-count="0" data-prefix="" data-suffix=" Builds">0</div><div class="lbl">Tooling nötig</div></div>
+    </div>
+
+    <!-- SHOWCASE -->
+    <section class="block" id="showcase">
+      <div class="split">
+        <div class="reveal">
+          <span class="section-tag">Das Erlebnis</span>
+          <h2 class="section-title">Bewegung, die <span class="grad">Bedeutung trägt</span>.</h2>
+          <p class="section-desc">Animation ist hier kein Dekor. Jeder Effekt erzählt etwas über Tiefe, Reaktion und Lebendigkeit — und bleibt jederzeit unter Kontrolle.</p>
+          <ul>
+            <li><span class="check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><strong>Spatial Continuity.</strong> Sektionen blenden gestaffelt ein, sodass dein Auge der Geschichte folgt.</span></li>
+            <li><span class="check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><strong>Spring-Easing.</strong> Bewegungen nutzen physikbasierte Kurven statt linearer Übergänge.</span></li>
+            <li><span class="check"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><strong>Kontrast zuerst.</strong> Eine Vignette sorgt dafür, dass Text immer über 4.5:1 bleibt.</span></li>
+          </ul>
+        </div>
+        <div class="glass-panel reveal" aria-hidden="true">
+          <div class="orb"></div>
+          <div class="orb-core"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-wrap" id="start">
+      <div class="cta reveal">
+        <h2>Bereit, beeindruckt zu werden?</h2>
+        <p>Bewege deine Maus, scrolle, lehn dich zurück. NEXUS läuft direkt in deinem Browser — ohne Plugin, ohne Wartezeit.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#top" data-hot>Nach oben & erleben
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+          </a>
+          <a class="btn ghost" href="https://threejs.org/docs/" target="_blank" rel="noopener" data-hot>Three.js Docs</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top"><span class="dot"></span>NEXUS</a>
+    <span>Gebaut mit Three.js &amp; WebGL · Design-System via UI/UX Pro Max</span>
+  </footer>
+</div>
+
+<!-- ============================================================
+     THREE.JS — immersive scene
+     ============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+/* ---------- UI behaviour that doesn't depend on WebGL ---------- */
+const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+let reduceMotion = reduceMQ.matches;
+reduceMQ.addEventListener('change', e => { reduceMotion = e.matches; });
+
+// Nav background on scroll
+const nav = document.getElementById('nav');
+const onScrollNav = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+onScrollNav();
+window.addEventListener('scroll', onScrollNav, { passive:true });
+
+// Scroll reveal
+const revealItems = document.querySelectorAll('.reveal');
+if (reduceMotion) {
+  revealItems.forEach(el => el.classList.add('in'));
+} else {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+  }, { threshold:0.18 });
+  revealItems.forEach(el => io.observe(el));
+}
+
+// Animated counters
+const counters = document.querySelectorAll('[data-count]');
+const animateCount = (el) => {
+  const target = +el.dataset.count;
+  const suffix = el.dataset.suffix || '';
+  const prefix = el.dataset.prefix || '';
+  if (reduceMotion || target === 0){ el.textContent = prefix + target.toLocaleString('de-DE') + suffix; return; }
+  const dur = 1400; const t0 = performance.now();
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = prefix + Math.round(target * eased).toLocaleString('de-DE') + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+};
+const countIO = new IntersectionObserver((entries) => {
+  entries.forEach(en => { if (en.isIntersecting){ animateCount(en.target); countIO.unobserve(en.target);} });
+}, { threshold:0.6 });
+counters.forEach(c => countIO.observe(c));
+
+// Custom cursor (pointer devices)
+const cursor = document.getElementById('cursor');
+const finePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+let cx = window.innerWidth/2, cy = window.innerHeight/2, tx = cx, ty = cy;
+if (finePointer){
+  window.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; }, { passive:true });
+  document.querySelectorAll('a, button, .btn, [data-hot]').forEach(el => {
+    el.addEventListener('pointerenter', () => cursor.classList.add('hot'));
+    el.addEventListener('pointerleave', () => cursor.classList.remove('hot'));
+  });
+  const cursorLoop = () => { cx += (tx-cx)*0.18; cy += (ty-cy)*0.18; cursor.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`; requestAnimationFrame(cursorLoop); };
+  cursorLoop();
+} else { cursor.style.display = 'none'; }
+
+/* ---------- WebGL scene ---------- */
+const loader = document.getElementById('loader');
+const dismissLoader = () => loader.classList.add('done');
+
+let three;
+try {
+  three = await import('three');
+} catch (err) {
+  console.warn('Three.js konnte nicht geladen werden, zeige Fallback.', err);
+  document.getElementById('scene').style.display = 'none';
+  document.getElementById('webgl-fallback').style.display = 'block';
+  dismissLoader();
+}
+
+if (three) {
+  const THREE = three;
+  const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
+  const { RenderPass } = await import('three/addons/postprocessing/RenderPass.js');
+  const { UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js');
+
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 6);
+
+  /* --- Central shader core: simplex-noise displacement + fresnel glow --- */
+  const noiseGLSL = `
+    vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+    float snoise(vec3 v){
+      const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);
+      vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+      vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+      vec3 x1=x0-i1+1.0*C.xxx;vec3 x2=x0-i2+2.0*C.xxx;vec3 x3=x0-1.0+3.0*C.xxx;
+      i=mod(i,289.0);
+      vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+      float n_=1.0/7.0;vec3 ns=n_*D.wyz-D.xzx;
+      vec4 j=p-49.0*floor(p*ns.z*ns.z);
+      vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);
+      vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);
+      vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));
+      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+      p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+      vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;
+      return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+    }`;
+
+  const coreUniforms = {
+    uTime:{ value:0 },
+    uAmp:{ value:0.34 },
+    uColA:{ value:new THREE.Color('#34e3ff') },
+    uColB:{ value:new THREE.Color('#9b7bff') },
+    uColC:{ value:new THREE.Color('#ff5cc8') },
+  };
+
+  const coreMat = new THREE.ShaderMaterial({
+    uniforms: coreUniforms,
+    vertexShader: noiseGLSL + `
+      uniform float uTime; uniform float uAmp;
+      varying vec3 vNormal; varying float vDisp; varying vec3 vView;
+      void main(){
+        float n = snoise(normal * 1.6 + uTime * 0.35);
+        n += 0.5 * snoise(normal * 3.2 - uTime * 0.22);
+        vDisp = n;
+        vec3 displaced = position + normal * n * uAmp;
+        vNormal = normalize(normalMatrix * normal);
+        vec4 mv = modelViewMatrix * vec4(displaced, 1.0);
+        vView = normalize(-mv.xyz);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      uniform vec3 uColA; uniform vec3 uColB; uniform vec3 uColC;
+      varying vec3 vNormal; varying float vDisp; varying vec3 vView;
+      void main(){
+        float fres = pow(1.0 - clamp(dot(normalize(vNormal), normalize(vView)), 0.0, 1.0), 2.2);
+        float t = clamp(vDisp * 0.5 + 0.5, 0.0, 1.0);
+        vec3 base = mix(uColB, uColA, t);
+        base = mix(base, uColC, smoothstep(0.55, 1.0, fres));
+        vec3 col = base + fres * 0.9;
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+  });
+
+  const coreGeo = new THREE.IcosahedronGeometry(1.6, 64); // created once
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  scene.add(core);
+
+  // Wireframe shell for extra detail
+  const shellGeo = new THREE.IcosahedronGeometry(2.05, 3);
+  const shellMat = new THREE.MeshBasicMaterial({ color:0x34e3ff, wireframe:true, transparent:true, opacity:0.10 });
+  const shell = new THREE.Mesh(shellGeo, shellMat);
+  scene.add(shell);
+
+  /* --- Particle starfield (created once) --- */
+  const PCOUNT = 12000;
+  const positions = new Float32Array(PCOUNT * 3);
+  const colors = new Float32Array(PCOUNT * 3);
+  const palette = [new THREE.Color('#34e3ff'), new THREE.Color('#9b7bff'), new THREE.Color('#ff5cc8'), new THREE.Color('#ffffff')];
+  for (let i = 0; i < PCOUNT; i++){
+    const r = 6 + Math.random() * 26;
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    positions[i*3]   = r * Math.sin(ph) * Math.cos(th);
+    positions[i*3+1] = r * Math.sin(ph) * Math.sin(th);
+    positions[i*3+2] = r * Math.cos(ph);
+    const c = palette[(Math.random() * palette.length) | 0];
+    colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  pGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const pMat = new THREE.PointsMaterial({ size:0.05, vertexColors:true, transparent:true, opacity:0.85, depthWrite:false, blending:THREE.AdditiveBlending });
+  const particles = new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+
+  /* --- Lights (core uses ShaderMaterial; a point light adds subtle scene depth) --- */
+  scene.add(new THREE.AmbientLight(0x223355, 0.6));
+  const key = new THREE.PointLight(0x9b7bff, 1.2, 40);
+  key.position.set(5, 5, 6);
+  scene.add(key);
+
+  /* --- Post-processing: bloom --- */
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.85, 0.55, 0.18);
+  composer.addPass(bloom);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  composer.setSize(window.innerWidth, window.innerHeight);
+
+  /* --- Pointer + scroll parallax --- */
+  let px = 0, py = 0, tpx = 0, tpy = 0;
+  if (finePointer){
+    window.addEventListener('pointermove', (e) => {
+      tpx = (e.clientX / window.innerWidth - 0.5);
+      tpy = (e.clientY / window.innerHeight - 0.5);
+    }, { passive:true });
+  }
+  let scrollN = 0;
+  const onScroll = () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    scrollN = max > 0 ? window.scrollY / max : 0;
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  /* --- Resize --- */
+  const onResize = () => {
+    const w = window.innerWidth, h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+    composer.setSize(w, h);
+    bloom.setSize(w, h);
+  };
+  window.addEventListener('resize', onResize);
+
+  /* --- Render loop --- */
+  const clock = new THREE.Clock();
+  const render = () => {
+    const dt = clock.getDelta();
+    const el = clock.elapsedTime;
+
+    if (!reduceMotion){
+      coreUniforms.uTime.value = el;
+      core.rotation.y += dt * 0.18;
+      core.rotation.x += dt * 0.06;
+      shell.rotation.y -= dt * 0.10;
+      shell.rotation.z += dt * 0.04;
+      particles.rotation.y += dt * 0.012;
+    } else {
+      coreUniforms.uTime.value = 0.0; // static, calm shape
+    }
+
+    // pointer parallax (smoothed)
+    px += (tpx - px) * 0.05;
+    py += (tpy - py) * 0.05;
+    camera.position.x = px * 1.6;
+    camera.position.y = -py * 1.2;
+
+    // scroll: ease the camera in and gently scale the core
+    const targetZ = 6 - scrollN * 1.8;
+    camera.position.z += (targetZ - camera.position.z) * 0.06;
+    const s = 1 + scrollN * 0.25;
+    core.scale.setScalar(s);
+    shell.scale.setScalar(s);
+    camera.lookAt(0, 0, 0);
+
+    composer.render();
+  };
+
+  renderer.setAnimationLoop(render);
+
+  // Pause loop when tab hidden (battery / CPU friendly)
+  document.addEventListener('visibilitychange', () => {
+    renderer.setAnimationLoop(document.hidden ? null : render);
+  });
+
+  // Dismiss loader once the first frame is on screen
+  requestAnimationFrame(() => requestAnimationFrame(dismissLoader));
+}
+</script>
+</body>
+</html>
