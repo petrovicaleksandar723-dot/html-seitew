@@ -92,19 +92,72 @@ function Showreel() {
 
 /* ---------- Card ---------- */
 function ReelCard({ n, title, body, index }: { n: string; title: string; body: string; index: number }) {
+  const reduce = useReducedMotion();
   const video = CARD_VIDEOS[index];
+  const card = useRef<HTMLDivElement>(null);
+  const vid = useRef<HTMLVideoElement>(null);
+  const [sound, setSound] = useState(false);
+
+  const onMove = (e: React.MouseEvent) => {
+    if (reduce || !card.current) return;
+    const r = card.current.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    card.current.style.transform = `perspective(1100px) rotateY(${px * 7}deg) rotateX(${-py * 7}deg) translate3d(${px * 12}px, ${py * 12}px, 0) scale(1.02)`;
+  };
+  const onEnter = () => {
+    if (vid.current) {
+      vid.current.muted = false;
+      vid.current.play().catch(() => {});
+      setSound(true);
+    }
+  };
+  const onLeave = () => {
+    if (card.current) card.current.style.transform = "";
+    if (vid.current) {
+      vid.current.muted = true;
+      setSound(false);
+    }
+  };
+
   return (
-    <div className="group relative h-[68vh] max-h-[620px] w-[84vw] flex-none overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-white/[0.04] to-transparent p-7 transition-colors duration-300 hover:border-gold/40 sm:w-[440px]">
+    <div
+      ref={card}
+      data-hot
+      onMouseMove={onMove}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="group relative h-[68vh] max-h-[620px] w-[84vw] flex-none overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-white/[0.04] to-transparent p-7 transition-[border-color] duration-300 ease-out-expo will-change-transform hover:border-gold/40 sm:w-[440px]"
+    >
       <div className="relative flex h-full flex-col justify-between">
         <div className="flex items-start justify-between">
           <span className="font-mono text-[13px] tracking-[0.2em] text-gold/80">{n}</span>
-          <span className="rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-muted">
-            Reel
+          <span className="flex items-center gap-2">
+            {video && (
+              <span className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted transition-colors group-hover:border-gold/40 group-hover:text-gold">
+                {sound ? (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor" />
+                    <path d="M16 8a5 5 0 0 1 0 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor" />
+                    <path d="m17 9 4 6M21 9l-4 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                )}
+                {sound ? "Ton" : "Hover"}
+              </span>
+            )}
+            <span className="rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-muted">
+              Reel
+            </span>
           </span>
         </div>
         <div className="relative my-5 flex-1 overflow-hidden rounded-xl border border-line bg-[radial-gradient(120%_120%_at_30%_20%,rgba(216,178,116,0.16),transparent_60%)]">
           {video ? (
             <video
+              ref={vid}
               className="absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100"
               src={video}
               autoPlay

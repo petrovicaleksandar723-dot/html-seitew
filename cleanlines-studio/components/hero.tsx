@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { MagneticButton } from "@/components/ui/magnetic";
-import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { CharHeading } from "@/components/ui/char-heading";
 
 const HeroCanvas = dynamic(() => import("@/components/scene/hero-canvas"), {
   ssr: false,
@@ -69,7 +69,7 @@ export function Hero() {
             Premium Content Studio
           </motion.span>
 
-          <AnimatedHeading
+          <CharHeading
             as="h1"
             startDelay={D + 0.15}
             className="mt-6 font-display text-[clamp(44px,7.6vw,108px)] font-extrabold leading-[0.92] tracking-[-0.04em]"

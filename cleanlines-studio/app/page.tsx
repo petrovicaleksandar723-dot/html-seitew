@@ -1,5 +1,6 @@
 import { Preloader } from "@/components/ui/preloader";
 import { Cursor } from "@/components/ui/cursor";
+import { PageCurtain } from "@/components/ui/page-curtain";
 import { ScrollBackdrop } from "@/components/ui/scroll-backdrop";
 import { Divider } from "@/components/ui/divider";
 import { Navigation } from "@/components/navigation";
@@ -22,6 +23,7 @@ export default function Home() {
     <>
       <Preloader />
       <Cursor />
+      <PageCurtain />
       <ScrollBackdrop />
       <Navigation />
       <main>

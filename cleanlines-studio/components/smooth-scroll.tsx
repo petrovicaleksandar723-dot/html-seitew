@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { lenisRef } from "@/lib/lenis";
 
 export default function SmoothScroll({
   children,
@@ -22,6 +23,7 @@ export default function SmoothScroll({
       smoothWheel: true,
       touchMultiplier: 1.6,
     });
+    lenisRef.current = lenis;
 
     let frame = 0;
     function raf(time: number) {
@@ -30,26 +32,12 @@ export default function SmoothScroll({
     }
     frame = requestAnimationFrame(raf);
 
-    // Anchor links route through Lenis
-    const onClick = (e: MouseEvent) => {
-      const target = (e.target as HTMLElement)?.closest(
-        'a[href^="#"]'
-      ) as HTMLAnchorElement | null;
-      if (!target) return;
-      const id = target.getAttribute("href");
-      if (!id || id === "#") return;
-      const el = document.querySelector(id);
-      if (el) {
-        e.preventDefault();
-        lenis.scrollTo(el as HTMLElement, { offset: -20 });
-      }
-    };
-    document.addEventListener("click", onClick);
+    // Anchor navigation is handled by <PageCurtain> (curtain + scroll).
 
     return () => {
       cancelAnimationFrame(frame);
-      document.removeEventListener("click", onClick);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
