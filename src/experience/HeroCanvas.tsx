@@ -10,6 +10,8 @@ import {
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import HeroArtifact from "./HeroArtifact";
+import GLBArtifact from "./GLBArtifact";
+import ErrorBoundary from "../components/ui/ErrorBoundary";
 
 /** Tracks scroll progress through the hero into a ref (no re-renders). */
 function ScrollProbe({ target }: { target: React.MutableRefObject<number> }) {
@@ -50,7 +52,12 @@ export default function HeroCanvas() {
       <directionalLight position={[-5, 2, -3]} intensity={0.7} color="#caa05a" />
 
       <Suspense fallback={null}>
-        <HeroArtifact scroll={scroll} />
+        {/* real Higgsfield GLB mark; falls back to the procedural artifact */}
+        <ErrorBoundary fallback={<HeroArtifact scroll={scroll} />}>
+          <Suspense fallback={<HeroArtifact scroll={scroll} />}>
+            <GLBArtifact scroll={scroll} />
+          </Suspense>
+        </ErrorBoundary>
 
         <ContactShadows
           position={[0, -2.1, 0]}
