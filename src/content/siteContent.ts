@@ -184,13 +184,31 @@ export const TRANSFORMATION = {
   before: {
     state: "Vorher · ohne System",
     headline: "Gute Leistung, aber kein klarer Eindruck.",
-    list: ["Unregelmäßige Posts", "Keine klare Linie", "Wenig Vertrauen", "Social Media bleibt liegen"],
+    list: [
+      "Unregelmäßige Posts",
+      "Keine klare Linie",
+      "Wenig Wiedererkennung",
+      "Schwacher erster Eindruck",
+      "Social Media bleibt liegen",
+      "Inhalte wirken zufällig",
+      "Wenig Vertrauen",
+      "Anfragen gehen an andere",
+    ],
   },
   after: {
     state: "Nachher · mit CleanLines",
     headline: "Ein Auftritt, der sofort Vertrauen erzeugt.",
     gold: "Vertrauen erzeugt.",
-    list: ["Klarer Monatsplan", "Cinematic Reels", "Einheitlicher Auftritt", "Mehr Anfragen"],
+    list: [
+      "Klarer Monatsplan",
+      "Cinematic Reels",
+      "Einheitlicher Auftritt",
+      "Mehr Wiedererkennung",
+      "Vertrauensvoller Ersteindruck",
+      "Sichtbarere Marke",
+      "Mehr Anfragen",
+      "Bessere Außenwirkung",
+    ],
     video: "/assets/videos/show-3.mp4",
   },
 };

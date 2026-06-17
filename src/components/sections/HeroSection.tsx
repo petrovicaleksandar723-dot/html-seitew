@@ -3,6 +3,7 @@ import { HERO } from "../../content/siteContent";
 import { MagneticButton } from "../ui/MagneticButton";
 import { Boundary } from "../ui/Boundary";
 import { VideoPanel } from "../ui/VideoPanel";
+import { IpadFrame } from "../ui/IpadFrame";
 import { buildHeroIntro } from "../../motion/heroTimeline";
 import { gsap } from "../../motion/scrollTriggers";
 
@@ -10,6 +11,7 @@ const HeroCanvas = lazy(() => import("../../experience/HeroCanvas"));
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null);
+  const ipadWrap = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scope = ref.current;
@@ -18,8 +20,16 @@ export function HeroSection() {
     const ctx = gsap.context(() => {
       if (reduce) {
         scope.querySelectorAll<HTMLElement>("[data-fade]").forEach((e) => (e.style.opacity = "1"));
-      } else {
-        buildHeroIntro(scope, 0.55);
+        if (ipadWrap.current) ipadWrap.current.style.opacity = "1";
+        return;
+      }
+      buildHeroIntro(scope, 0.55);
+      if (ipadWrap.current) {
+        gsap.fromTo(
+          ipadWrap.current,
+          { opacity: 0, x: 50, rotateY: -10 },
+          { opacity: 1, x: 0, rotateY: 0, duration: 1.4, ease: "expo.out", delay: 0.85 }
+        );
       }
     }, scope);
     return () => ctx.revert();
@@ -35,11 +45,6 @@ export function HeroSection() {
 
       <div className="hero-bgtype" aria-hidden>
         ENGINE
-      </div>
-
-      <div className="hero-frags" aria-hidden>
-        <VideoPanel src="/assets/videos/reel-2.mp4" className="hero-frag f1" />
-        <VideoPanel src="/assets/videos/show-2.mp4" className="hero-frag f2" />
       </div>
 
       <div className="wrap hero-inner">
@@ -90,15 +95,38 @@ export function HeroSection() {
                 {HERO.secondary}
               </MagneticButton>
             </div>
+            <div className="hero-stats-row" data-fade>
+              {HERO.stats.map((s) => (
+                <div className="stat" key={s.label}>
+                  <b>{s.value}</b>
+                  <span>{s.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="hero-status" data-fade>
-            {HERO.stats.map((s) => (
-              <div className="stat" key={s.label}>
-                <b>{s.value}</b>
-                <span>{s.label}</span>
+        </div>
+      </div>
+
+      {/* Large premium iPad intro — plays the CleanLines promo, with floating video panels */}
+      <div className="hero-ipad-wrap" ref={ipadWrap}>
+        <div className="hero-frags" aria-hidden>
+          <VideoPanel src="/assets/videos/reel-2.mp4" className="hero-frag f1" />
+          <VideoPanel src="/assets/videos/show-2.mp4" className="hero-frag f2" />
+        </div>
+        <div className="hero-ipad">
+          <IpadFrame>
+            <div className="hero-ipad-screen">
+              <video src="/assets/videos/hero.mp4" autoPlay muted loop playsInline preload="metadata" />
+              <div className="hero-ipad-veil" />
+              <div className="hero-ipad-logo">
+                CleanLines<span className="gold-text">.</span>
+                <small>STUDIO</small>
               </div>
-            ))}
-          </div>
+              <div className="hero-ipad-badge">
+                <i /> Showreel
+              </div>
+            </div>
+          </IpadFrame>
         </div>
       </div>
 

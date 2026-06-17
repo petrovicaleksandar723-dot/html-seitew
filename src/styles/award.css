@@ -428,3 +428,52 @@ section{position:relative}
   .os-apps{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line-hair)}
   .os-app-l{display:none}
 }
+
+/* ============================================================
+   FINAL POLISH PASS — hero iPad, bigger control center,
+   before/after fix, typography/clipping audit
+   ============================================================ */
+
+/* --- typography / clipping guards --- */
+.h-hero,.h-section,.ba-h,.reel-head h2,.gi-name,.cc-copy .h-section{overflow-wrap:break-word;hyphens:none}
+.gold-text{-webkit-box-decoration-break:clone;box-decoration-break:clone;padding-right:.03em}
+.line-mask{padding-bottom:.14em;margin-bottom:-.10em}
+.hero-line{padding-bottom:.02em}
+
+/* --- hero: stats row + iPad intro --- */
+.hero-stats-row{display:flex;gap:clamp(22px,2.4vw,34px);margin-top:30px;flex-wrap:wrap}
+.hero-stats-row .stat b{display:block;font-size:clamp(22px,2vw,32px);font-weight:600;letter-spacing:-.03em;line-height:1}
+.hero-stats-row .stat span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)}
+
+.hero-ipad-wrap{position:relative;width:100%;max-width:560px;margin:48px auto 0;z-index:2;perspective:1600px}
+.hero-ipad{transform-style:preserve-3d}
+.hero-ipad .ipad{aspect-ratio:4/3;width:100%}
+.hero-ipad-screen{position:relative;width:100%;height:100%}
+.hero-ipad-screen video{width:100%;height:100%;object-fit:cover;display:block}
+.hero-ipad-veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(2,2,2,.42),transparent 28%,transparent 60%,rgba(2,2,2,.72))}
+.hero-ipad-logo{position:absolute;top:16px;left:18px;z-index:3;font-family:var(--font-display);font-weight:700;letter-spacing:.04em;font-size:17px;display:flex;align-items:flex-end;gap:.12em}
+.hero-ipad-logo small{font-size:.5em;letter-spacing:.3em;color:var(--text-faint);padding-bottom:.25em}
+.hero-ipad-badge{position:absolute;bottom:15px;right:15px;z-index:3;display:flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-1);background:rgba(0,0,0,.4);padding:6px 11px;border-radius:100px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.hero-ipad-badge i{width:6px;height:6px;border-radius:50%;background:var(--gold-1);box-shadow:0 0 8px var(--gold-1);animation:pulse 1.6s infinite}
+
+/* reposition floating fragments around the iPad */
+.hero-frag.f1{right:-6%;top:-9%;left:auto;bottom:auto}
+.hero-frag.f2{left:-8%;bottom:-7%;right:auto;top:auto}
+
+@media(min-width:1100px){
+  .hero-headline{max-width:55%}
+  .hero-foot{max-width:52%}
+  .hero-ipad-wrap{position:absolute;right:var(--page-pad);top:52%;transform:translateY(-50%);width:clamp(420px,40vw,640px);max-width:none;margin:0}
+}
+
+/* --- bigger, more dominant Control Center iPad --- */
+.cc-grid{grid-template-columns:.7fr 1.3fr}
+.cc-stage .ipad{width:min(100%,800px)}
+@media(min-width:1500px){ .cc-stage .ipad{width:min(100%,880px)} }
+
+/* --- before/after: 2-col bullet lists, no collision --- */
+.ba-content{position:relative;z-index:2;max-width:min(46ch,46vw)}
+.ba-h{font-size:clamp(34px,4.6vw,84px)}
+.ba-list{display:grid;grid-template-columns:1fr 1fr;gap:9px 22px;max-width:32em;margin-top:24px}
+.ba-list li{font-size:clamp(13px,1.05vw,15.5px)}
+@media(max-width:680px){ .ba-list{grid-template-columns:1fr} .ba-content{max-width:88vw} }
