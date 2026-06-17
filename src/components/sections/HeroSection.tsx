@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useRef } from "react";
 import { HERO } from "../../content/siteContent";
 import { MagneticButton } from "../ui/MagneticButton";
 import { Boundary } from "../ui/Boundary";
-import { VideoPanel } from "../ui/VideoPanel";
+import { HeroMedia } from "../ui/HeroMedia";
 import { IpadFrame } from "../ui/IpadFrame";
 import { buildHeroIntro } from "../../motion/heroTimeline";
 import { gsap } from "../../motion/scrollTriggers";
@@ -46,6 +46,8 @@ export function HeroSection() {
       <div className="hero-bgtype" aria-hidden>
         ENGINE
       </div>
+
+      <HeroMedia />
 
       <div className="wrap hero-inner">
         <div className="hero-top">
@@ -107,12 +109,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Large premium iPad intro — plays the CleanLines promo, with floating video panels */}
+      {/* Large premium iPad intro — plays the CleanLines promo */}
       <div className="hero-ipad-wrap" ref={ipadWrap}>
-        <div className="hero-frags" aria-hidden>
-          <VideoPanel src="/assets/videos/reel-2.mp4" className="hero-frag f1" />
-          <VideoPanel src="/assets/videos/show-2.mp4" className="hero-frag f2" />
-        </div>
         <div className="hero-ipad">
           <IpadFrame>
             <div className="hero-ipad-screen">

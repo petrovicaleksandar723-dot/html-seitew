@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { DIAGNOSIS } from "../../content/siteContent";
 import { KineticLabel } from "../ui/KineticLabel";
 import { SplitHeadline } from "../ui/SplitHeadline";
+import { SectionVideoBg } from "../ui/SectionVideoBg";
 import { useScrollReveal } from "../../motion/useScrollReveal";
 import { gsap, ScrollTrigger } from "../../motion/scrollTriggers";
 
@@ -36,6 +37,7 @@ export function DiagnosisSection() {
 
   return (
     <section id="problem" className="scene" ref={ref}>
+      <SectionVideoBg src="/assets/videos/show-2.mp4" opacity={0.08} />
       <div className="wrap">
         <div className="diag-grid">
           <div className="diag-left">

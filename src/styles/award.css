@@ -477,3 +477,37 @@ section{position:relative}
 .ba-list{display:grid;grid-template-columns:1fr 1fr;gap:9px 22px;max-width:32em;margin-top:24px}
 .ba-list li{font-size:clamp(13px,1.05vw,15.5px)}
 @media(max-width:680px){ .ba-list{grid-template-columns:1fr} .ba-content{max-width:88vw} }
+
+/* ============================================================
+   AWARD POLISH v2 — bigger hero video field, section video
+   atmospheres, more interactivity
+   ============================================================ */
+
+/* hero floating video field ("weltraum mit videos") */
+.hero-media{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.hm{position:absolute;border-radius:14px;overflow:hidden;border:1px solid var(--line-gold);box-shadow:0 30px 70px -30px rgba(0,0,0,.92),0 0 50px -22px var(--gold-glow)}
+.hm video{width:100%;height:100%;object-fit:cover}
+.hm .vpanel-veil{background:linear-gradient(180deg,rgba(2,2,2,.28),rgba(2,2,2,.6))}
+.hm.a{left:2.5%;top:14%;width:clamp(170px,15vw,290px);aspect-ratio:9/16;animation:floatA 10s ease-in-out infinite}
+.hm.b{left:9%;bottom:9%;width:clamp(150px,13vw,250px);aspect-ratio:16/10;animation:floatB 12s ease-in-out infinite}
+.hm.c{right:3.5%;top:12%;width:clamp(150px,12.5vw,230px);aspect-ratio:9/16;animation:floatA 11s ease-in-out infinite}
+.hm.d{right:13%;bottom:8%;width:clamp(130px,10.5vw,200px);aspect-ratio:16/10;animation:floatB 13s ease-in-out infinite}
+.hm.e{left:41%;top:5%;width:clamp(120px,10vw,185px);aspect-ratio:16/9;opacity:.85;animation:floatA 14s ease-in-out infinite}
+@media(max-width:1100px){ .hero-media{display:none} }
+
+/* bigger, more dominant hero iPad */
+@media(min-width:1100px){
+  .hero-ipad-wrap{width:clamp(460px,44vw,720px)}
+}
+
+/* section background video atmospheres */
+.section-vbg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.section-vbg .vpanel{position:absolute;inset:0;width:100%;height:100%}
+.section-vbg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,2,2,.6),rgba(2,2,2,.8))}
+.scene>.wrap{position:relative;z-index:1}
+
+/* more interactivity */
+.tier:hover{box-shadow:0 34px 80px -42px rgba(0,0,0,.9),0 0 44px -20px var(--gold-glow)}
+.addon:hover .addon-ic{background:linear-gradient(135deg,var(--gold-1),var(--gold-3));color:#160f04;border-color:transparent}
+.gal-item{will-change:color}
+.os-app{will-change:background}

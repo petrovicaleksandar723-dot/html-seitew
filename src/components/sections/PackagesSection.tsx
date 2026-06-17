@@ -5,6 +5,7 @@ import { KineticLabel } from "../ui/KineticLabel";
 import { SplitHeadline } from "../ui/SplitHeadline";
 import { SectionNumber } from "../ui/SectionNumber";
 import { MagneticButton } from "../ui/MagneticButton";
+import { SectionVideoBg } from "../ui/SectionVideoBg";
 import { useScrollReveal } from "../../motion/useScrollReveal";
 
 export function PackagesSection() {
@@ -13,6 +14,7 @@ export function PackagesSection() {
 
   return (
     <section id="packages" className="scene" ref={ref}>
+      <SectionVideoBg src="/assets/videos/reel-2.mp4" opacity={0.09} />
       <div className="wrap">
         <div className="sol-head">
           <SectionNumber n="07" />

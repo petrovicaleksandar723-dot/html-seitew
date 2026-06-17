@@ -36,9 +36,9 @@ export function ContentEngine() {
   });
 
   return (
-    <group ref={group} position={[2.1, 0, 0]}>
+    <group ref={group} position={[1.3, 0, 0]} scale={1.32}>
       <mesh ref={knot}>
-        <torusKnotGeometry args={[1.35, 0.34, 220, 32, 2, 3]} />
+        <torusKnotGeometry args={[1.6, 0.42, 240, 32, 2, 3]} />
         <meshPhysicalMaterial
           color="#2a2118"
           metalness={1}
@@ -51,11 +51,11 @@ export function ContentEngine() {
       </mesh>
 
       <mesh ref={ring1} rotation={[1.2, 0, 0]}>
-        <torusGeometry args={[2.55, 0.012, 16, 160]} />
+        <torusGeometry args={[3.0, 0.014, 16, 180]} />
         <meshStandardMaterial color="#d6a65f" metalness={1} roughness={0.3} emissive="#8c5a22" emissiveIntensity={0.4} />
       </mesh>
       <mesh ref={ring2} rotation={[-0.7, 0.5, 0]}>
-        <torusGeometry args={[3.15, 0.008, 16, 160]} />
+        <torusGeometry args={[3.7, 0.01, 16, 180]} />
         <meshStandardMaterial color="#d6a65f" metalness={1} roughness={0.3} emissive="#8c5a22" emissiveIntensity={0.4} />
       </mesh>
 

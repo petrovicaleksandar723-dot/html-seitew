@@ -4,6 +4,7 @@ import { PIPELINE } from "../../content/siteContent";
 import { KineticLabel } from "../ui/KineticLabel";
 import { SplitHeadline } from "../ui/SplitHeadline";
 import { SectionNumber } from "../ui/SectionNumber";
+import { SectionVideoBg } from "../ui/SectionVideoBg";
 import { useScrollReveal } from "../../motion/useScrollReveal";
 import { buildPipeline } from "../../motion/pipelineTimeline";
 import { gsap } from "../../motion/scrollTriggers";
@@ -34,6 +35,7 @@ export function PipelineSection() {
 
   return (
     <section id="process" className="scene" ref={ref}>
+      <SectionVideoBg src="/assets/videos/show-4.mp4" opacity={0.1} />
       <div className="wrap">
         <div className="sol-head">
           <SectionNumber n="06" />
