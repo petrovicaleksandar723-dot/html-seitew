@@ -1,0 +1,30 @@
+:root{
+  --black-0:#020202;
+  --black-1:#060504;
+  --black-2:#0d0a07;
+  --black-3:#13110c;
+
+  --gold-1:#f4d7a1;
+  --gold-2:#d6a65f;
+  --gold-3:#8c5a22;
+  --gold-glow:rgba(214,166,95,.28);
+  --gold-dim:rgba(214,166,95,.16);
+
+  --text-main:#f4efe7;
+  --text-soft:rgba(244,239,231,.68);
+  --text-faint:rgba(244,239,231,.38);
+
+  --line-soft:rgba(255,255,255,.10);
+  --line-hair:rgba(255,255,255,.06);
+  --line-gold:rgba(244,215,161,.22);
+
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-inout:cubic-bezier(.77,0,.175,1);
+
+  --page-pad:clamp(28px,5vw,96px);
+  --section-gap:clamp(120px,18vh,240px);
+  --max-width:1680px;
+
+  --font-display:"Sora","Inter",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,sans-serif;
+}
