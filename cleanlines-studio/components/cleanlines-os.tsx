@@ -63,7 +63,7 @@ export function CleanlinesOS() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-black to-transparent" />
 
       <div className="shell content relative z-10">
-        <div className="max-w-[620px]">
+        <div className="max-w-[560px]">
           <Reveal>
             <span className="eyebrow">Cleanlines OS</span>
           </Reveal>

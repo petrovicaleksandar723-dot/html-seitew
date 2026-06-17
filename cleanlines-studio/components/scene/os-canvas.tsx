@@ -178,7 +178,7 @@ class TextureBoundary extends Component<{ children: ReactNode }, { failed: boole
 /* marker: glowing pin on the globe + beam + popping billboard card */
 function Marker({ lat, lng, src, index }: { lat: number; lng: number; src: string; index: number }) {
   const surface = useMemo(() => latLngToVec(R + 0.01, lat, lng), [lat, lng]);
-  const cardPos = useMemo(() => latLngToVec(R + 0.95, lat, lng), [lat, lng]);
+  const cardPos = useMemo(() => latLngToVec(R + 0.75, lat, lng), [lat, lng]);
   const lineGeo = useMemo(
     () => new THREE.BufferGeometry().setFromPoints([surface, cardPos]),
     [surface, cardPos]
@@ -269,7 +269,7 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
         <Environment preset="sunset" />
       </Suspense>
 
-      <group position={[2.0, 0, 0]}>
+      <group position={[2.7, 0, 0]}>
         <Rig>
           <Globe progress={progress} velocity={velocity} />
         </Rig>
