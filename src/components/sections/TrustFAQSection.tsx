@@ -1,13 +1,38 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trust, faq } from "../../content/siteContent";
 import SectionNumber from "../ui/SectionNumber";
 import SplitHeadline from "../ui/SplitHeadline";
-import gsap from "gsap";
+import { gsap } from "../../motion/scrollTriggers";
 
 /** Scene 11 — Trust + FAQ. Trust protocol + premium accordion. */
 export default function TrustFAQSection() {
+  const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState<number>(0);
   const answers = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      gsap.from(el.querySelectorAll(".trust-card"), {
+        x: -40,
+        opacity: 0,
+        duration: 0.9,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 70%" },
+      });
+      gsap.from(el.querySelectorAll(".faq-item"), {
+        y: 36,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 68%" },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, []);
 
   const toggle = (i: number) => {
     const next = open === i ? -1 : i;
@@ -26,7 +51,7 @@ export default function TrustFAQSection() {
   };
 
   return (
-    <section className="trustfaq section scene-pad" id="trust-faq">
+    <section className="trustfaq section scene-pad" id="trust-faq" ref={root}>
       <div className="shell">
         <div className="scene-head">
           <SectionNumber num="08" label="Trust & FAQ" />

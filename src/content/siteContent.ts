@@ -240,22 +240,25 @@ export const transformation = {
     label: "Vorher",
     items: [
       "Unregelmäßige Posts",
-      "Keine klare Linie",
+      "Keine Ideen, kein roter Faden",
+      "Keine klare Linie im Auftritt",
       "Texte wirken gezwungen",
-      "Wenig Vertrauen",
-      "Social Media bleibt liegen",
+      "Wenig Sichtbarkeit, kaum Anfragen",
+      "Social Media bleibt ständig liegen",
     ],
   },
   after: {
     label: "Nachher",
     items: [
-      "Klarer Monatsplan",
-      "Cinematic Reels",
-      "Einheitlicher Auftritt",
+      "Ein klarer Monatsplan",
+      "Cinematic Reels & KI-Visuals",
+      "Fertige Texte, die nach dir klingen",
+      "Einheitlicher Auftritt auf Instagram & Google",
       "Mehr Vertrauen bei neuen Kunden",
-      "Content, der regelmäßig läuft",
+      "Content, der regelmäßig veröffentlicht wird",
     ],
   },
+  video: "/assets/videos/final.mp4",
   cta: "Content-Preview für meinen Betrieb anfragen",
 };
 

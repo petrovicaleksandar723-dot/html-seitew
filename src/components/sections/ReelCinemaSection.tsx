@@ -57,6 +57,7 @@ export default function ReelCinemaSection() {
   return (
     <section className="cinema section" id="reel-cinema" ref={section}>
       <div className="cinema__pin">
+        <div className="cinema__ambient" />
         <div className="cinema__head shell" style={{ paddingInline: 0 }}>
           <div className="scene-head" style={{ gap: 16 }}>
             <SectionNumber num="03" label="Reel Cinema" />

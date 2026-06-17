@@ -12,9 +12,11 @@ export function playHeroIntro(root: HTMLElement): gsap.core.Timeline {
   const headline = root.querySelector<HTMLElement>(".hero__headline");
   const subline = root.querySelector(".hero__subline");
   const cta = root.querySelector(".hero__cta");
-  const hud = root.querySelectorAll(".hero__hud .hud-row");
+  const hud = root.querySelectorAll(".hero__hudbar .hud-row");
   const trust = root.querySelector(".hero__trust");
   const scroll = root.querySelector(".hero__scroll");
+  const ipad = root.querySelector(".hero__ipad");
+  const tiles = root.querySelectorAll(".cc-tile");
 
   if (eyebrow) tl.from(eyebrow, { y: 30, opacity: 0, duration: 1 }, 0);
 
@@ -23,9 +25,11 @@ export function playHeroIntro(root: HTMLElement): gsap.core.Timeline {
     gsap.set(words, { yPercent: 110 });
     tl.to(words, { yPercent: 0, duration: 1.3, stagger: 0.09 }, 0.1);
   }
+  if (ipad) tl.from(ipad, { y: 60, opacity: 0, rotateY: -12, scale: 0.92, duration: 1.4 }, 0.3);
+  if (tiles.length) tl.from(tiles, { y: 18, opacity: 0, duration: 0.7, stagger: 0.08 }, 0.9);
   if (subline) tl.from(subline, { y: 40, opacity: 0, duration: 1.1 }, 0.5);
   if (cta) tl.from(cta, { y: 30, opacity: 0, duration: 1 }, 0.65);
-  if (hud.length) tl.from(hud, { x: 30, opacity: 0, duration: 0.9, stagger: 0.1 }, 0.5);
+  if (hud.length) tl.from(hud, { y: 20, opacity: 0, duration: 0.9, stagger: 0.1 }, 0.7);
   if (trust) tl.from(trust, { opacity: 0, duration: 1 }, 0.8);
   if (scroll) tl.from(scroll, { opacity: 0, duration: 1 }, 1);
 

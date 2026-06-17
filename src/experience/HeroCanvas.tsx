@@ -31,10 +31,14 @@ function CameraRig() {
 
 /** Full WebGL hero canvas — the main wow moment. */
 export default function HeroCanvas() {
+  const reduced =
+    typeof window !== "undefined" &&
+    (window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 720);
+
   return (
     <Canvas
       className="hero__canvas"
-      dpr={[1, 1.8]}
+      dpr={reduced ? [1, 1.4] : [1, 1.8]}
       gl={{
         antialias: true,
         alpha: true,
@@ -52,9 +56,11 @@ export default function HeroCanvas() {
       <HeroLights />
 
       <Suspense fallback={null}>
-        <ContentEngine />
-        <FloatingReelFrames />
-        <DepthParticles />
+        <group position={reduced ? [0, 0, 0] : [-1.4, 0.2, 0]}>
+          <ContentEngine />
+        </group>
+        <FloatingReelFrames reduced={reduced} />
+        <DepthParticles count={reduced ? 180 : 460} />
         {/* inline environment for glass reflections — no network fetch */}
         <Environment resolution={256} frames={1}>
           <Lightformer intensity={2.2} color="#f4d7a1" position={[0, 4, 4]} scale={[8, 4, 1]} />

@@ -27,6 +27,12 @@ export function splitWords(el: HTMLElement): HTMLElement[] {
     mask.style.display = "inline-block";
     mask.style.overflow = "hidden";
     mask.style.verticalAlign = "top";
+    // extend the clip box below the baseline so descenders (g, y, p, ß) and
+    // tight line-heights are never cut off, without affecting layout spacing.
+    mask.style.paddingBottom = "0.18em";
+    mask.style.marginBottom = "-0.18em";
+    mask.style.paddingRight = "0.04em";
+    mask.style.marginRight = "-0.04em";
 
     const inner = document.createElement("span");
     inner.className = "split-word";
