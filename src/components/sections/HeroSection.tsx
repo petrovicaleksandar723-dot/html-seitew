@@ -40,6 +40,31 @@ export default function HeroSection({ ready }: Props) {
     ipadVideo.current?.play().catch(() => {});
   }, [ready]);
 
+  // Pointer-reactive depth parallax on the DOM layers (floats + watermark).
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    if (window.matchMedia("(pointer: coarse), (prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let tx = 0;
+    let ty = 0;
+    const onMove = (e: MouseEvent) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 2;
+      ty = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (!raf)
+        raf = requestAnimationFrame(() => {
+          el.style.setProperty("--mx", tx.toFixed(3));
+          el.style.setProperty("--my", ty.toFixed(3));
+          raf = 0;
+        });
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className="hero section" id="hero" ref={root}>
       <ErrorBoundary fallback={<div className="hero__canvas hero__canvas--fallback" />}>

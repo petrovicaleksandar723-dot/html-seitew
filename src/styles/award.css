@@ -137,8 +137,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(20px, 2.4vw, 34px) var(--page-pad);
-  mix-blend-mode: difference;
+  padding: clamp(18px, 2.2vw, 30px) var(--page-pad);
+}
+/* always-on scrim so headlines never collide with the brand/nav as they
+   scroll under the fixed header (replaces mix-blend-mode: difference). */
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  bottom: -40px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 2, 2, 0.82) 0%, rgba(2, 2, 2, 0.5) 45%, transparent 100%);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
 }
 .header__brand {
   font-family: var(--font-display);
@@ -398,6 +411,8 @@
   inset: 0;
   z-index: 5;
   pointer-events: none;
+  transform: translate3d(calc(var(--mx, 0) * 18px), calc(var(--my, 0) * 18px), 0);
+  transition: transform 0.4s var(--ease-out);
 }
 .hfloat {
   position: absolute;
@@ -486,7 +501,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-50% + var(--mx, 0) * -26px), calc(-50% + var(--my, 0) * -16px));
+  transition: transform 0.5s var(--ease-out);
   z-index: 2;
   font-family: var(--font-display);
   font-weight: 800;
@@ -533,6 +549,8 @@
   grid-column: 2;
   align-self: end;
   justify-self: end;
+  transform: translate3d(calc(var(--mx, 0) * -11px), calc(var(--my, 0) * -8px), 0);
+  transition: transform 0.45s var(--ease-out);
 }
 .hero__eyebrow {
   margin-bottom: clamp(20px, 3vh, 38px);
@@ -1285,7 +1303,10 @@
   }
   .reel-card .reel-card__meta { opacity: 1; }
   .cinema__head { position: static; margin-bottom: 30px; }
-  .cinema__controls { position: static; transform: none; margin-top: 30px; justify-content: center; }
+  /* controls steer the pinned active reel — irrelevant in the mobile scroll
+     fallback and they collided with the fixed header. Hide them. */
+  .cinema__controls { display: none; }
+  .cinema__ambient { display: none; }
 }
 
 /* ============================================================
@@ -1560,13 +1581,38 @@
 .tf-cta {
   margin-top: clamp(24px, 4vh, 44px);
 }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .tf-col { width: 50%; }
   .tf-list li { font-size: clamp(0.95rem, 3vw, 1.3rem); }
 }
-@media (pointer: coarse), (max-width: 640px) {
-  .tf-after { clip-path: inset(0 0 0 50%) !important; }
-  .tf-col { width: 48%; }
+/* Mobile / touch: the clip-path wipe is pointless and the 50/50 split is too
+   cramped. Stack the two states vertically as full-width blocks instead. */
+@media (pointer: coarse), (max-width: 760px) {
+  .transform__pin { position: relative; height: auto; }
+  .tf-eyebrow {
+    position: static;
+    transform: none;
+    width: 100%;
+    text-align: left;
+    padding: 110px var(--page-pad) 0;
+  }
+  .tf-layer {
+    position: relative;
+    inset: auto;
+    clip-path: none !important;
+    padding: 32px var(--page-pad);
+  }
+  .tf-before { filter: saturate(0.55); }
+  .tf-col,
+  .tf-after .tf-col {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    text-align: left;
+  }
+  .tf-after .tf-list li::before { content: "→ "; }
+  .tf-line { display: none; }
+  .tf-cta { margin-top: 28px; }
 }
 
 /* ============================================================
