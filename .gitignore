@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Local env
+*.local
+.env
+.env.*
+
+# Source archive (content reference only — not part of the app build)
+_source

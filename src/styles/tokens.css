@@ -1,0 +1,41 @@
+:root {
+  /* ── Surfaces ───────────────────────────────────────────── */
+  --black-0: #020202;
+  --black-1: #060504;
+  --black-2: #0d0a07;
+  --black-3: #131009;
+
+  /* ── Gold system ────────────────────────────────────────── */
+  --gold-1: #f4d7a1;
+  --gold-2: #d6a65f;
+  --gold-3: #8c5a22;
+  --gold-glow: rgba(214, 166, 95, 0.28);
+
+  /* ── Type ───────────────────────────────────────────────── */
+  --text-main: #f4efe7;
+  --text-soft: rgba(244, 239, 231, 0.68);
+  --text-faint: rgba(244, 239, 231, 0.38);
+
+  /* ── Lines ──────────────────────────────────────────────── */
+  --line-soft: rgba(255, 255, 255, 0.1);
+  --line-gold: rgba(244, 215, 161, 0.22);
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  --page-pad: clamp(36px, 5vw, 96px);
+  --max-width: 1680px;
+
+  /* ── Fonts ──────────────────────────────────────────────── */
+  --font-display: "Sora", system-ui, -apple-system, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, monospace;
+
+  /* ── Motion ─────────────────────────────────────────────── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  /* ── Depth ──────────────────────────────────────────────── */
+  --z-canvas: 1;
+  --z-content: 10;
+  --z-header: 60;
+  --z-cursor: 90;
+  --z-preloader: 100;
+}

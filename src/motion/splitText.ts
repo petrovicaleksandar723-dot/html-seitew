@@ -1,0 +1,61 @@
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Lightweight split-text: wraps each word of an element in a masked line so it
+ * can be revealed with a clip-style upward slide. Avoids the paid SplitText
+ * plugin. Returns the created word spans.
+ */
+export function splitWords(el: HTMLElement): HTMLElement[] {
+  if (el.dataset.split === "done") {
+    return Array.from(el.querySelectorAll<HTMLElement>(".split-word"));
+  }
+  const text = el.textContent ?? "";
+  el.textContent = "";
+  const words = text.split(/(\s+)/);
+  const spans: HTMLElement[] = [];
+
+  words.forEach((word) => {
+    if (word.trim() === "") {
+      el.appendChild(document.createTextNode(word));
+      return;
+    }
+    const mask = document.createElement("span");
+    mask.className = "split-line";
+    mask.style.display = "inline-block";
+    mask.style.overflow = "hidden";
+    mask.style.verticalAlign = "top";
+
+    const inner = document.createElement("span");
+    inner.className = "split-word";
+    inner.style.display = "inline-block";
+    inner.style.willChange = "transform";
+    inner.textContent = word;
+
+    mask.appendChild(inner);
+    el.appendChild(mask);
+    spans.push(inner);
+  });
+
+  el.dataset.split = "done";
+  return spans;
+}
+
+/** Split a headline and reveal its words on scroll with a masked slide. */
+export function revealHeadline(
+  el: HTMLElement,
+  opts: { start?: string; stagger?: number; trigger?: Element } = {}
+): gsap.core.Tween {
+  const { start = "top 82%", stagger = 0.08, trigger = el } = opts;
+  const words = splitWords(el);
+  gsap.set(words, { yPercent: 110 });
+  return gsap.to(words, {
+    yPercent: 0,
+    duration: 1.2,
+    ease: "expo.out",
+    stagger,
+    scrollTrigger: { trigger, start },
+  });
+}
