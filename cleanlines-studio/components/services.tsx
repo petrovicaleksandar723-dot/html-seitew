@@ -1,28 +1,29 @@
 "use client";
 
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { SERVICES } from "@/lib/constants";
 
 export function Services() {
   return (
     <section className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <Reveal>
-          <div className="max-w-[640px]">
+        <div className="max-w-[680px]">
+          <Reveal>
             <span className="eyebrow">Mehr als Content</span>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Mehr als nur{" "}
-              <span className="font-serif italic font-normal text-gold">
-                Content.
-              </span>
-            </h2>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[[{ t: "Mehr als nur" }, { t: "Content.", accent: true }]]}
+          />
+          <Reveal delay={0.1}>
             <p className="mt-6 font-body text-[17px] leading-relaxed text-dim">
               Ein starker Auftritt besteht nicht nur aus Reels. Website,
               Branding, Google, Bewertungen und Social Media müssen
               zusammenpassen, damit Kunden schneller Vertrauen aufbauen.
             </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (

@@ -1,5 +1,7 @@
 import { Preloader } from "@/components/ui/preloader";
 import { Cursor } from "@/components/ui/cursor";
+import { ScrollBackdrop } from "@/components/ui/scroll-backdrop";
+import { Divider } from "@/components/ui/divider";
 import { Navigation } from "@/components/navigation";
 import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/ui/marquee";
@@ -20,6 +22,7 @@ export default function Home() {
     <>
       <Preloader />
       <Cursor />
+      <ScrollBackdrop />
       <Navigation />
       <main>
         <Hero />
@@ -28,8 +31,10 @@ export default function Home() {
         <Transformation />
         <ReelCinema />
         <CleanlinesOS />
+        <Divider label="Branchen" />
         <Industries />
         <Pipeline />
+        <Divider label="Leistungen" />
         <Services />
         <Pricing />
         <Faq />

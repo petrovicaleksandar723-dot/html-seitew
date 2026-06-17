@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { INDUSTRIES } from "@/lib/constants";
 
 export function Industries() {
@@ -10,15 +11,18 @@ export function Industries() {
   return (
     <section id="branchen" className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <Reveal>
-          <div className="max-w-[640px]">
+        <div className="max-w-[680px]">
+          <Reveal>
             <span className="eyebrow">Branchen</span>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Content, der zu deinem{" "}
-              <span className="font-serif italic font-normal text-gold">
-                Betrieb passt.
-              </span>
-            </h2>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Content, der zu deinem" }],
+              [{ t: "Betrieb passt.", accent: true }],
+            ]}
+          />
+          <Reveal delay={0.1}>
             <p className="mt-6 font-body text-[17px] leading-relaxed text-dim">
               Jede Branche verkauft anders. Ein Restaurant verkauft Atmosphäre.
               Ein Friseur verkauft Stil. Ein Handwerker verkauft Vertrauen. Ein
@@ -26,8 +30,8 @@ export function Industries() {
               Inhalte, die zu deinem Betrieb, deinen Kunden und deinem Angebot
               passen — nicht irgendeinen Standard-Content.
             </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {INDUSTRIES.map((ind, i) => (

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { PIPELINE } from "@/lib/constants";
 
 export function Pipeline() {
@@ -16,21 +17,24 @@ export function Pipeline() {
   return (
     <section id="pipeline" className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <Reveal>
-          <div className="max-w-[640px]">
+        <div className="max-w-[680px]">
+          <Reveal>
             <span className="eyebrow">Pipeline</span>
-            <h2 className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]">
-              Von der Analyse zum{" "}
-              <span className="font-serif italic font-normal text-gradient-gold">
-                laufenden Content-System.
-              </span>
-            </h2>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Von der Analyse zum" }],
+              [{ t: "laufenden Content-System.", accent: true }],
+            ]}
+          />
+          <Reveal delay={0.1}>
             <p className="mt-6 font-body text-[17px] leading-relaxed text-dim">
               Vom ersten Blick auf deinen Betrieb bis zum fertigen Content läuft
               alles klar, schnell und ohne komplizierte Agenturprozesse.
             </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
 
         <div ref={ref} className="relative mt-16 pl-8 md:pl-0">
           {/* progress rail */}

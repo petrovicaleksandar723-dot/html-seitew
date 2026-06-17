@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
+import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { TRUST, FAQ } from "@/lib/constants";
 
 function Item({
@@ -62,12 +63,15 @@ export function Faq() {
         <div>
           <Reveal>
             <span className="eyebrow">Trust</span>
-            <h2 className="mt-6 font-display text-[clamp(30px,4.4vw,52px)] font-bold leading-[1.03] tracking-[-0.02em]">
-              Klarer Content.{" "}
-              <span className="font-serif italic font-normal text-gold">
-                Kein Agentur-Blabla.
-              </span>
-            </h2>
+          </Reveal>
+          <AnimatedHeading
+            className="mt-6 font-display text-[clamp(30px,4.4vw,52px)] font-bold leading-[1.03] tracking-[-0.02em]"
+            lines={[
+              [{ t: "Klarer Content." }],
+              [{ t: "Kein Agentur-Blabla.", accent: true }],
+            ]}
+          />
+          <Reveal delay={0.1}>
             <p className="mt-6 max-w-[380px] font-body text-[16px] leading-relaxed text-dim">
               Du bekommst keine komplizierten Strategien, die am Ende keiner
               umsetzt. Du bekommst klare Inhalte, klare Abläufe und Content, der

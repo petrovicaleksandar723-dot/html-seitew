@@ -3,19 +3,23 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 
 const GOLD = "#d8b274";
 const GOLD_BRIGHT = "#f4d79e";
 
-function Core() {
+type ProgressRef = MutableRefObject<number>;
+
+function Core({ progress }: { progress?: ProgressRef }) {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.y += delta * 0.25;
-      ref.current.rotation.x += delta * 0.1;
-    }
+    if (!ref.current) return;
+    const p = progress?.current ?? 0;
+    ref.current.rotation.y += delta * 0.25 + p * 0.04;
+    ref.current.rotation.x += delta * 0.1;
+    const s = 1 + p * 0.25;
+    ref.current.scale.setScalar(s);
   });
   return (
     <Float speed={1.2} floatIntensity={0.5} rotationIntensity={0.2}>
@@ -34,7 +38,7 @@ function Core() {
   );
 }
 
-function Nodes() {
+function Nodes({ progress }: { progress?: ProgressRef }) {
   const ring = useRef<THREE.Group>(null);
   const nodes = useMemo(
     () =>
@@ -54,7 +58,12 @@ function Nodes() {
   );
 
   useFrame((_, delta) => {
-    if (ring.current) ring.current.rotation.y += delta * 0.18;
+    if (!ring.current) return;
+    const p = progress?.current ?? 0;
+    ring.current.rotation.y += delta * 0.18 + p * 0.06;
+    // modules dock inward as the section scrolls
+    const s = 1 - p * 0.28;
+    ring.current.scale.setScalar(s);
   });
 
   return (
@@ -103,7 +112,7 @@ function Nodes() {
   );
 }
 
-export default function OsCanvas() {
+export default function OsCanvas({ progress }: { progress?: ProgressRef }) {
   return (
     <Canvas
       dpr={[1, 2]}
@@ -113,8 +122,8 @@ export default function OsCanvas() {
       <ambientLight intensity={0.3} />
       <pointLight position={[0, 0, 0]} intensity={18} color={GOLD_BRIGHT} />
       <directionalLight position={[5, 5, 5]} intensity={1.1} color="#fff2d6" />
-      <Core />
-      <Nodes />
+      <Core progress={progress} />
+      <Nodes progress={progress} />
       <EffectComposer multisampling={4}>
         <Bloom
           intensity={0.85}
