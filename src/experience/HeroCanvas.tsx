@@ -57,7 +57,7 @@ export default function HeroCanvas() {
       <HeroLights />
 
       {/* Logo + particles render immediately — no async dependency. */}
-      <group position={reduced ? [0, 0, 0] : [1.55, 0.6, 0.2]} scale={reduced ? 1 : 1.85}>
+      <group position={reduced ? [0, 0, 0] : [1.5, 0.5, 0.2]} scale={reduced ? 1 : 1.8}>
         <ContentEngine />
       </group>
       <DepthParticles count={reduced ? 180 : 460} />
