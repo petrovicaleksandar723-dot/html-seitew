@@ -1,73 +1,188 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { INDUSTRIES } from "@/lib/constants";
+import { asset } from "@/lib/asset";
+
+const VIDEOS = [
+  asset("/videos/reel-1.mp4"),
+  asset("/videos/reel-2.mp4"),
+  asset("/videos/reel-3.mp4"),
+  asset("/videos/showreel.mp4"),
+];
 
 export function Industries() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (paused) return;
+    timer.current = setInterval(
+      () => setActive((a) => (a + 1) % INDUSTRIES.length),
+      4200
+    );
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, [paused]);
+
+  const cur = INDUSTRIES[active];
+  const video = VIDEOS[active % VIDEOS.length];
 
   return (
     <section id="branchen" className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
-        <div className="max-w-[680px]">
-          <Reveal>
-            <span className="eyebrow">Branchen</span>
-          </Reveal>
-          <AnimatedHeading
-            className="mt-6 font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
-            lines={[
-              [{ t: "Content, der zu deinem" }],
-              [{ t: "Betrieb passt.", accent: true }],
-            ]}
-          />
-          <Reveal delay={0.1}>
-            <p className="mt-6 font-body text-[17px] leading-relaxed text-dim">
-              Jede Branche verkauft anders. Ein Restaurant verkauft Atmosphäre.
-              Ein Friseur verkauft Stil. Ein Handwerker verkauft Vertrauen. Ein
-              Kosmetikstudio verkauft Ergebnis und Gefühl. Wir erstellen
-              Inhalte, die zu deinem Betrieb, deinen Kunden und deinem Angebot
-              passen — nicht irgendeinen Standard-Content.
-            </p>
-          </Reveal>
-        </div>
+        <Reveal>
+          <span className="eyebrow">Branchen</span>
+        </Reveal>
+        <AnimatedHeading
+          className="mt-6 max-w-[760px] font-display text-[clamp(32px,5vw,60px)] font-bold leading-[1.02] tracking-[-0.02em]"
+          lines={[
+            [{ t: "Content, der zu deinem" }],
+            [{ t: "Betrieb passt.", accent: true }],
+          ]}
+        />
+        <Reveal delay={0.1}>
+          <p className="mt-6 max-w-[640px] font-body text-[17px] leading-relaxed text-dim">
+            Jede Branche verkauft anders. Wähle deinen Bereich — Tonalität,
+            Formate und Visuals passen sich an.
+          </p>
+        </Reveal>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {INDUSTRIES.map((ind, i) => (
-            <Reveal key={ind.title} delay={i * 0.05}>
-              <button
-                onMouseEnter={() => setActive(i)}
-                onFocus={() => setActive(i)}
-                className="group relative h-full w-full overflow-hidden rounded-2xl border border-line bg-white/[0.015] p-7 text-left transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-white/25"
-                style={{
-                  boxShadow:
-                    active === i
-                      ? `0 24px 60px -28px ${ind.accent}66, inset 0 0 0 1px ${ind.accent}55`
-                      : undefined,
-                }}
+        <div
+          className="mt-14 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* selector list */}
+          <div className="flex flex-col">
+            {INDUSTRIES.map((ind, i) => {
+              const on = i === active;
+              return (
+                <button
+                  key={ind.title}
+                  data-hot
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                  className="group relative border-b border-line py-5 text-left"
+                >
+                  <div className="flex items-center gap-4">
+                    <span
+                      className="font-mono text-[12px] tabular-nums transition-colors"
+                      style={{ color: on ? ind.accent : "#6e6a62" }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={`font-display text-[clamp(20px,2.4vw,30px)] font-bold tracking-tight transition-all duration-300 ${
+                        on ? "text-ink" : "text-muted group-hover:text-dim"
+                      }`}
+                      style={{ paddingLeft: on ? 8 : 0 }}
+                    >
+                      {ind.title}
+                    </span>
+                  </div>
+                  {on && (
+                    <motion.span
+                      layoutId="ind-bar"
+                      className="absolute -bottom-px left-0 h-[2px] w-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${ind.accent}, transparent)`,
+                      }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* morphing stage */}
+          <div className="relative min-h-[420px] overflow-hidden rounded-2xl border border-line lg:min-h-[520px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.99 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0"
               >
-                <div
-                  className="lightfield -right-10 -top-10 h-40 w-40 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                  style={{ background: `${ind.accent}22` }}
+                <video
+                  className="h-full w-full object-cover"
+                  src={video}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
                 />
-                <div className="relative">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(180deg, ${cur.accent}14 0%, rgba(5,5,5,0.2) 40%, rgba(5,5,5,0.92) 100%)`,
+                  }}
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* foreground content (stable, crossfades text) */}
+            <div className="relative z-10 flex h-full min-h-[420px] flex-col justify-end p-8 lg:min-h-[520px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <span
-                    className="font-mono text-[12px] tracking-[0.18em]"
-                    style={{ color: ind.accent }}
+                    className="font-mono text-[11px] uppercase tracking-[0.22em]"
+                    style={{ color: cur.accent }}
                   >
-                    {String(i + 1).padStart(2, "0")}
+                    Branche {String(active + 1).padStart(2, "0")} /{" "}
+                    {String(INDUSTRIES.length).padStart(2, "0")}
                   </span>
-                  <h3 className="mt-3 font-display text-[22px] font-bold tracking-tight">
-                    {ind.title}
+                  <h3 className="mt-3 font-display text-[clamp(28px,4vw,46px)] font-extrabold tracking-tight">
+                    {cur.title}
                   </h3>
-                  <p className="mt-2 font-body text-[14px] leading-relaxed text-dim">
-                    {ind.body}
+                  <p className="mt-3 max-w-[440px] font-body text-[15px] leading-relaxed text-dim">
+                    {cur.body}
                   </p>
-                </div>
-              </button>
-            </Reveal>
-          ))}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* progress ticks */}
+              <div className="mt-7 flex gap-1.5">
+                {INDUSTRIES.map((_, i) => (
+                  <span
+                    key={i}
+                    className="h-1 flex-1 overflow-hidden rounded-full bg-white/10"
+                  >
+                    {i === active && !paused && (
+                      <motion.span
+                        className="block h-full"
+                        style={{ background: cur.accent }}
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 4.2, ease: "linear" }}
+                      />
+                    )}
+                    {i < active && (
+                      <span
+                        className="block h-full w-full"
+                        style={{ background: `${cur.accent}99` }}
+                      />
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
