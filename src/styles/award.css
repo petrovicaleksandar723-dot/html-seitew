@@ -2317,3 +2317,365 @@
     transition: none;
   }
 }
+
+/* ============================================================
+   ▓▓▓ EDITORIAL LUXURY LAYER (complete art-direction override) ▓▓▓
+   Light ivory paper, deep ink, elegant Fraunces serif display.
+   Intentional dark scenes: Reel Cinema + Final CTA + preloader.
+   ============================================================ */
+
+/* ── Type ─────────────────────────────────────────────────── */
+.headline-hero,
+.headline-section {
+  font-family: var(--font-display);
+  font-weight: 460;
+  letter-spacing: -0.018em;
+  font-optical-sizing: auto;
+  color: var(--text-main);
+}
+.headline-hero { font-size: clamp(54px, 7.6vw, 144px); line-height: 0.95; }
+.headline-section { font-size: clamp(44px, 5.2vw, 104px); line-height: 0.98; }
+.grad-text { color: var(--gold-1); -webkit-text-fill-color: currentColor; background: none; }
+.eyebrow { font-family: var(--font-mono); color: var(--gold-1); letter-spacing: 0.26em; font-weight: 600; }
+.eyebrow::before { background: linear-gradient(90deg, var(--gold-1), transparent); }
+.label-tech, .section-number { font-family: var(--font-mono); color: var(--gold-1); letter-spacing: 0.2em; }
+.text-soft { color: var(--text-soft); }
+
+/* ── FX overlays tuned for light ──────────────────────────── */
+.grain { opacity: 0.035; mix-blend-mode: multiply; }
+.vignette {
+  background: radial-gradient(120% 100% at 50% 30%, transparent 60%, rgba(120, 96, 60, 0.07) 100%);
+}
+
+/* ── Header (light) ───────────────────────────────────────── */
+.header::before {
+  background: linear-gradient(180deg, rgba(244, 239, 228, 0.92) 0%, rgba(244, 239, 228, 0.55) 50%, transparent 100%);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.header__brand { color: var(--text-main); font-family: var(--font-display); font-weight: 600; }
+.header__brand .dot { background: var(--gold-1); box-shadow: none; }
+.nav__item { font-family: var(--font-mono); color: var(--text-soft); font-weight: 500; }
+.nav__item:hover { color: var(--text-main); }
+.nav__item.is-active { color: var(--gold-1); }
+.nav__item::after, .nav__item.is-active::after { background: var(--gold-1); }
+.scroll-progress { background: var(--gold-1); box-shadow: none; }
+
+/* ── Cursor (ink) ─────────────────────────────────────────── */
+.cursor-glow { border-color: var(--line-strong); }
+.cursor-glow.is-active { background: var(--gold-glow); border-color: transparent; }
+.cursor-dot { background: var(--gold-1); }
+
+/* ── Buttons (editorial) ──────────────────────────────────── */
+.btn-primary { background: var(--text-main); color: var(--paper-main); box-shadow: none; }
+.btn-primary::after { background: var(--gold-1); }
+.btn-primary:hover { color: var(--paper-main); }
+.btn-ghost { border: 1px solid var(--line-strong); color: var(--text-main); background: transparent; backdrop-filter: none; }
+.btn-ghost:hover { border-color: var(--gold-1); color: var(--gold-1); }
+
+/* ── Preloader (light editorial) ──────────────────────────── */
+.preloader { background: var(--black-0); }
+.preloader__brand { font-family: var(--font-display); font-weight: 500; color: var(--text-main); }
+.preloader__brand small { color: var(--gold-1); }
+.preloader__bar { background: var(--line-soft); }
+.preloader__bar i { background: var(--gold-1); box-shadow: none; }
+.preloader__meta { color: var(--text-soft); }
+.preloader__pct { color: var(--gold-1); }
+
+/* ============================================================
+   HERO (editorial)
+   ============================================================ */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(96px, 13vh, 168px) 0 clamp(36px, 6vh, 72px);
+  background: var(--black-0);
+}
+.hero__inner { width: 100%; }
+.hero__topline {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: clamp(32px, 5vh, 68px);
+}
+.hero__main {
+  display: grid;
+  grid-template-columns: 1.32fr 0.68fr;
+  gap: clamp(30px, 4vw, 72px);
+  align-items: end;
+}
+.hero__eyebrow { margin-bottom: clamp(20px, 3vh, 38px); }
+.hero__headline { max-width: 15ch; }
+.hero__bottom {
+  display: flex;
+  gap: clamp(28px, 3.5vw, 60px);
+  margin-top: clamp(30px, 4.5vh, 56px);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.hero__lead {
+  max-width: 40ch;
+  font-size: clamp(1rem, 1.15vw, 1.18rem);
+  line-height: 1.62;
+  color: var(--text-soft);
+}
+.hero__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--black-2);
+  box-shadow: 0 40px 90px -50px rgba(40, 30, 16, 0.5);
+}
+.hero__media video { width: 100%; height: 100%; object-fit: cover; }
+.hero__media-cap {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-main);
+  z-index: 2;
+}
+.hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.55));
+}
+.hero__meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(36px, 6vh, 72px);
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+}
+.hero__meta span { display: inline-flex; align-items: center; gap: 8px; }
+.hero__meta > span:not(.hero__meta-spacer):not(.hero__meta-hud)::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--gold-1);
+}
+.hero__meta-spacer { flex: 1; }
+.hero__meta-hud { color: var(--gold-1); }
+.hero__scroll {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  z-index: var(--z-content);
+}
+.hero__scroll i { width: 1px; height: 38px; background: linear-gradient(180deg, var(--gold-1), transparent); }
+@media (max-width: 900px) {
+  .hero__main { grid-template-columns: 1fr; align-items: start; }
+  .hero__media { aspect-ratio: 16 / 11; }
+}
+
+/* ============================================================
+   SECTION BACKGROUNDS (light editorial) — override dark layer
+   ============================================================ */
+.diagnosis { background: var(--black-0); }
+.os { background: var(--black-1); }
+.industries { background: var(--black-0); }
+.pipeline { background: var(--black-1); }
+.packages { background: var(--black-0); }
+.addons { background: var(--black-1); }
+.trustfaq { background: var(--black-0); }
+.diagnosis::before, .os::before, .industries::before, .pipeline::before,
+.packages::before, .addons::before, .trustfaq::before {
+  background: linear-gradient(90deg, transparent, var(--line-gold) 50%, transparent);
+}
+
+/* scene-head paragraph color */
+.scene-head .text-soft, .scene-head p { color: var(--text-soft); }
+
+/* ── Diagnosis panel → paper card ─────────────────────────── */
+.diag-panel {
+  background: var(--black-1);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 30px 70px -50px rgba(40, 30, 16, 0.4);
+}
+.diag-panel::before {
+  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+}
+.diag-scanline { background: linear-gradient(90deg, transparent, var(--gold-glow), transparent); }
+.meter__label { color: var(--text-main); }
+.meter__state { color: var(--gold-1); }
+.meter__bar { background: rgba(26, 20, 16, 0.1); }
+.meter__fill { background: linear-gradient(90deg, var(--gold-3), var(--gold-1)); box-shadow: none; }
+.diag-readouts span { color: var(--text-soft); border: 1px solid var(--line-soft); }
+
+/* ── Content OS → paper ───────────────────────────────────── */
+.os-core {
+  border: 1px solid var(--line-gold);
+  background: radial-gradient(circle, rgba(154, 106, 43, 0.1), var(--black-0) 72%);
+  box-shadow: 0 0 60px -30px var(--gold-glow);
+}
+.os-core span { color: var(--gold-1); }
+.os-core b { color: var(--text-main); }
+.os-core::after { border-color: var(--line-soft); }
+.os-link { stroke: var(--line-gold); }
+.os-module {
+  background: var(--black-1);
+  border: 1px solid var(--line-soft);
+  color: var(--text-soft);
+}
+.os-module .od { background: var(--text-faint); }
+.os-module.is-on { border-color: var(--line-gold); color: var(--text-main); box-shadow: 0 12px 30px -18px var(--gold-glow); }
+.os-module.is-on .od { background: var(--gold-1); box-shadow: none; }
+.os-body { color: var(--text-soft); }
+.os-body b { color: var(--text-main); }
+
+/* ── Industries (light editorial) ─────────────────────────── */
+.ind-item { color: var(--text-faint); }
+.ind-item:hover { color: var(--text-soft); }
+.ind-item.is-active { color: var(--text-main); }
+.ind-item.is-active::before { background: var(--gold-1); box-shadow: none; }
+.ind-visual { border: 1px solid var(--line-soft); background: var(--black-2); }
+.ind-visual__badges span { color: var(--paper-main); border: 1px solid var(--line-on-noir); background: rgba(0, 0, 0, 0.35); }
+.ind-visual__metric { color: var(--gold-bright); }
+.ind-visual__claim { color: var(--paper-main); }
+.ind-readout .row { border-left: 1px solid var(--line-gold); }
+.ind-readout .row .k { color: var(--gold-1); }
+.ind-readout .row .v { color: var(--text-soft); }
+
+/* ── Transformation (light, with dark "after" media) ──────── */
+.transform { background: var(--black-0); }
+.tf-title { color: var(--text-main); }
+.tf-before { background: var(--black-1); filter: none; }
+.tf-after { background: radial-gradient(120% 100% at 80% 20%, rgba(154, 106, 43, 0.16), var(--black-2) 64%); }
+.tf-before .tf-tag { color: var(--text-faint); }
+.tf-after .tf-tag { color: var(--gold-1); }
+.tf-before .tf-list li { color: rgba(26, 20, 16, 0.45); }
+.tf-after .tf-list li { color: var(--text-main); }
+.tf-after .tf-list li::before { color: var(--gold-1); }
+.tf-line { background: linear-gradient(180deg, transparent, var(--gold-1), transparent); box-shadow: 0 0 18px var(--gold-glow); }
+.tf-video video { opacity: 0.16; }
+
+/* ── Pipeline (light) ─────────────────────────────────────── */
+.pipe-rail { background: var(--line-soft); }
+.pipe-rail i { background: linear-gradient(90deg, var(--gold-3), var(--gold-1)); box-shadow: none; }
+.pipe-signal { background: var(--gold-1); box-shadow: 0 0 0 6px var(--gold-glow); }
+.pipe-node { border: 1px solid var(--line-gold); background: var(--black-0); }
+.pipe-step.is-on .pipe-node { background: var(--gold-1); box-shadow: none; }
+.pipe-num { color: var(--gold-1); }
+.pipe-title { color: var(--text-faint); }
+.pipe-step.is-on .pipe-title { color: var(--text-main); }
+.pipe-body { color: var(--text-soft); }
+
+/* ── Packages → paper cards ───────────────────────────────── */
+.pkg {
+  background: var(--black-1);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 30px 70px -55px rgba(40, 30, 16, 0.45);
+}
+.pkg:hover { border-color: var(--line-gold); box-shadow: 0 50px 100px -55px rgba(40, 30, 16, 0.5); }
+.pkg.is-featured {
+  background: linear-gradient(180deg, rgba(154, 106, 43, 0.1), var(--black-1));
+  border-color: var(--line-gold);
+  box-shadow: 0 50px 100px -55px var(--gold-glow);
+}
+.pkg__badge { color: var(--paper-main); background: var(--gold-1); }
+.pkg__name { color: var(--text-main); }
+.pkg__price b { color: var(--text-main); }
+.pkg__price span { color: var(--text-soft); }
+.pkg__desc { color: var(--text-soft); }
+.pkg__feat li { color: var(--text-soft); }
+.pkg__feat svg { color: var(--gold-1); }
+.pkg__notes p { color: var(--text-faint); }
+
+/* ── Add-ons (light) ──────────────────────────────────────── */
+.addon-deck { border-top: 1px solid var(--line-soft); }
+.addon-row { border-bottom: 1px solid var(--line-soft); }
+.addon-row::before { background: linear-gradient(90deg, var(--gold-glow), transparent); }
+.addon-name { color: var(--text-main); }
+.addon-body { color: var(--text-soft); }
+.addon-price { color: var(--gold-1); }
+
+/* ── Trust + FAQ (light) ──────────────────────────────────── */
+.trust-card { border: 1px solid var(--line-soft); background: var(--black-1); }
+.trust-card:hover { border-color: var(--line-gold); }
+.trust-card h4 { color: var(--text-main); }
+.trust-card h4::before { background: var(--gold-1); box-shadow: none; }
+.trust-card p { color: var(--text-soft); }
+.faq-item { border-bottom: 1px solid var(--line-soft); }
+.faq-q { color: var(--text-main); }
+.faq-q:hover { color: var(--gold-1); }
+.faq-icon::before, .faq-icon::after { background: var(--gold-1); }
+.faq-a__inner { color: var(--text-soft); }
+
+/* ============================================================
+   DARK SCENES (kept cinematic): Reel Cinema + Final CTA
+   ============================================================ */
+.cinema { background: radial-gradient(120% 80% at 50% 0%, var(--noir-2), var(--noir-0)); }
+.cinema .eyebrow { color: var(--gold-bright); }
+.cinema .headline-section, .cinema__head .label-tech, .cinema__count { color: var(--paper-main); }
+.cinema__count b { color: var(--gold-bright); }
+.cinema__count { color: var(--paper-soft); }
+.reel-card { background: var(--noir-2); border: 1px solid var(--line-on-noir); }
+.reel-card.is-active { border-color: rgba(244, 215, 161, 0.4); box-shadow: 0 40px 120px -40px #000, 0 0 50px -10px var(--gold-glow); }
+.reel-card__num, .cinema__count { font-family: var(--font-mono); }
+.reel-card__num { color: var(--paper-soft); }
+.reel-card__meta .t { color: var(--paper-main); }
+.reel-card__meta .m { color: var(--gold-bright); }
+.reel-card__gold { box-shadow: inset 0 0 0 1px rgba(244, 215, 161, 0.3); }
+.cine-btn { border: 1px solid rgba(244, 215, 161, 0.3); color: var(--gold-bright); background: rgba(12, 10, 7, 0.7); }
+.cine-btn:hover { background: var(--gold-glow); }
+
+.final { background: var(--noir-0); }
+.final__headline, .final .headline-section { color: var(--paper-main); }
+.final .eyebrow { color: var(--gold-bright); }
+.final__inner .hero__subline, .final__inner p { color: var(--paper-soft); }
+.final__trust span { color: var(--paper-faint); }
+.final__video video { opacity: 0.34; }
+
+/* ── Footer (light editorial) ─────────────────────────────── */
+.footer { background: linear-gradient(180deg, var(--black-1), var(--black-2)); border-top: 1px solid var(--line-soft); }
+.footer__tag { color: var(--text-soft); }
+.brandmark__word { color: var(--text-main); }
+.footer__contact a { border: 1px solid var(--line-strong); color: var(--text-main); }
+.footer__contact a:first-child { background: var(--text-main); color: var(--paper-main); border-color: transparent; }
+.footer__contact a:hover { border-color: var(--gold-1); color: var(--gold-1); }
+.footer__contact a:first-child:hover { color: var(--paper-main); background: var(--gold-1); }
+.footer__navlabel { color: var(--gold-1); }
+.footer__nav a, .footer__meta a, .footer__meta span { color: var(--text-soft); }
+.footer__nav a:hover, .footer__meta a:hover { color: var(--gold-1); }
+.footer__bottom { border-top: 1px solid var(--line-soft); }
+.footer__bottom p, .footer__links a { color: var(--text-faint); }
+.footer__links a:hover { color: var(--gold-1); }
+
+/* BrandMark mark strokes use gradient id bm-g (gold) — fine on light */
+
+/* Hero structural reset (old dark-hero grid no longer applies) */
+.hero__inner { display: block; }
+.hero__col { max-width: none; grid-column: auto; min-width: 0; }
+.hero__media { transform: none; }

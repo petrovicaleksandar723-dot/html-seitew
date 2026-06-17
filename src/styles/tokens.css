@@ -1,40 +1,58 @@
 :root {
-  /* ── Surfaces ───────────────────────────────────────────── */
-  --black-0: #020202;
-  --black-1: #060504;
-  --black-2: #0d0a07;
-  --black-3: #131009;
+  /* ── EDITORIAL LUXURY palette ───────────────────────────────
+     Var names kept for compatibility but repurposed: the former
+     "black" surfaces are now warm paper; "text" is deep ink.      */
 
-  /* ── Gold system ────────────────────────────────────────── */
-  --gold-1: #f4d7a1;
-  --gold-2: #d6a65f;
-  --gold-3: #8c5a22;
-  --gold-glow: rgba(214, 166, 95, 0.28);
+  /* Paper surfaces (light editorial base) */
+  --black-0: #f4efe4; /* page base — warm ivory */
+  --black-1: #efe8da; /* alt panel */
+  --black-2: #e7ddca; /* deeper panel */
+  --black-3: #ddd0b7;
 
-  /* ── Type ───────────────────────────────────────────────── */
-  --text-main: #f4efe7;
-  --text-soft: rgba(244, 239, 231, 0.68);
-  --text-faint: rgba(244, 239, 231, 0.38);
+  /* Dark scenes (Reel Cinema, Final CTA, preloader) */
+  --noir-0: #0c0a07;
+  --noir-1: #12100a;
+  --noir-2: #1a160f;
 
-  /* ── Lines ──────────────────────────────────────────────── */
-  --line-soft: rgba(255, 255, 255, 0.1);
-  --line-gold: rgba(244, 215, 161, 0.22);
+  /* Gold accent — deepened so it reads on paper */
+  --gold-1: #9a6a2b; /* primary gold on light */
+  --gold-2: #b9893f; /* brighter gold */
+  --gold-3: #7c531f; /* deepest */
+  --gold-pale: #e4d3ad;
+  --gold-glow: rgba(154, 106, 43, 0.22);
+
+  /* Ink text (on paper) */
+  --text-main: #1a1410;
+  --text-soft: rgba(26, 20, 16, 0.66);
+  --text-faint: rgba(26, 20, 16, 0.42);
+
+  /* Light text (on noir scenes) */
+  --paper-main: #f4efe4;
+  --paper-soft: rgba(244, 239, 228, 0.68);
+  --paper-faint: rgba(244, 239, 228, 0.4);
+
+  /* Lines */
+  --line-soft: rgba(26, 20, 16, 0.14);
+  --line-strong: rgba(26, 20, 16, 0.26);
+  --line-gold: rgba(154, 106, 43, 0.34);
+  --line-on-noir: rgba(244, 239, 228, 0.16);
 
   /* ── Layout ─────────────────────────────────────────────── */
-  --page-pad: clamp(36px, 5vw, 96px);
-  --max-width: 1680px;
+  --page-pad: clamp(28px, 5.5vw, 130px);
+  --max-width: 1720px;
 
   /* ── Fonts ──────────────────────────────────────────────── */
-  --font-display: "Sora", system-ui, -apple-system, sans-serif;
-  --font-mono: "Space Grotesk", ui-monospace, monospace;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "Hanken Grotesk", system-ui, sans-serif; /* technical labels (tracked) */
 
-  /* ── Motion (Emil Kowalski curves) ──────────────────────── */
+  /* ── Motion ─────────────────────────────────────────────── */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* strong ease-out for UI */
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* on-screen movement */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --dur-press: 130ms;
-  --dur-ui: 220ms;
+  --dur-ui: 240ms;
 
   /* ── Depth ──────────────────────────────────────────────── */
   --z-canvas: 1;
