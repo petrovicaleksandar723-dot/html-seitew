@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useVideoTexture, useTexture, Environment, Billboard, RoundedBox } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, HueSaturation, BrightnessContrast } from "@react-three/postprocessing";
 import {
   Component,
   Suspense,
@@ -59,13 +59,13 @@ function Earth() {
       <meshStandardMaterial
         map={day}
         emissiveMap={night}
-        emissive="#ffd9a8"
-        emissiveIntensity={1.1}
+        emissive="#ffdca8"
+        emissiveIntensity={1.5}
         bumpMap={topo}
-        bumpScale={0.06}
+        bumpScale={0.07}
         metalness={0.05}
-        roughness={0.92}
-        envMapIntensity={0.35}
+        roughness={0.9}
+        envMapIntensity={0.6}
       />
     </mesh>
   );
@@ -130,10 +130,20 @@ function PhoneVideo({ src }: { src: string }) {
     start: true,
     playsInline: true,
   });
+  const screen = useRef<THREE.Mesh>(null);
+  // contain-fit the clip inside the screen so the whole video stays visible
+  useFrame(() => {
+    const img = texture.image as HTMLVideoElement | undefined;
+    if (!screen.current || !img || !img.videoWidth) return;
+    const a = img.videoWidth / img.videoHeight;
+    const boxA = SCR_W / SCR_H;
+    if (a > boxA) screen.current.scale.set(SCR_W, SCR_W / a, 1);
+    else screen.current.scale.set(SCR_H * a, SCR_H, 1);
+  });
   return (
     <PhoneBody>
-      <mesh position={[0, 0, 0.037]}>
-        <planeGeometry args={[SCR_W, SCR_H]} />
+      <mesh ref={screen} position={[0, 0, 0.037]} scale={[SCR_W, SCR_H, 1]}>
+        <planeGeometry args={[1, 1]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </PhoneBody>
@@ -238,13 +248,19 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
   return (
     <Canvas
       dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        toneMappingExposure: 1.35,
+      }}
       camera={{ position: [0, 0.6, 7.4], fov: 42 }}
     >
-      {/* low ambient + a single strong sun = realistic day/night terminator (shadow) */}
-      <ambientLight intensity={0.13} />
-      <directionalLight position={[6, 2.5, 4]} intensity={3.4} color="#fff3da" />
-      <pointLight position={[-6, 0, 1]} intensity={22} color="#3e6bff" />
+      {/* low ambient + a strong sun = realistic day/night terminator (shadow) */}
+      <ambientLight intensity={0.18} />
+      <directionalLight position={[6, 2.5, 4]} intensity={4.4} color="#fff4dd" />
+      <directionalLight position={[-3, 1, 3]} intensity={0.8} color="#bcd4ff" />
+      <pointLight position={[-6, 0, 1]} intensity={28} color="#4f7bff" />
       <Suspense fallback={null}>
         <Environment preset="sunset" />
       </Suspense>
@@ -254,8 +270,9 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
       </Rig>
 
       <EffectComposer multisampling={4}>
-        <Bloom intensity={1.0} luminanceThreshold={0.25} luminanceSmoothing={0.6} mipmapBlur />
-        <Vignette eskil={false} offset={0.2} darkness={0.82} />
+        <Bloom intensity={1.5} luminanceThreshold={0.18} luminanceSmoothing={0.65} mipmapBlur />
+        <HueSaturation saturation={0.26} />
+        <BrightnessContrast brightness={0.05} contrast={0.12} />
       </EffectComposer>
     </Canvas>
   );

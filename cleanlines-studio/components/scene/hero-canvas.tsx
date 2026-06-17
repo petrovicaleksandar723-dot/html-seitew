@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, useVideoTexture, Environment, Billboard } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, HueSaturation, BrightnessContrast } from "@react-three/postprocessing";
 import {
   Component,
   Suspense,
@@ -302,7 +302,12 @@ export default function HeroCanvas() {
   return (
     <Canvas
       dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        toneMappingExposure: 1.3,
+      }}
       camera={{ position: [0, 0.3, 8.5], fov: 38 }}
     >
       <color attach="background" args={["#050505"]} />
@@ -328,8 +333,10 @@ export default function HeroCanvas() {
       </ParallaxRig>
 
       <EffectComposer multisampling={4}>
-        <Bloom intensity={1.15} luminanceThreshold={0.22} luminanceSmoothing={0.6} mipmapBlur />
-        <Vignette eskil={false} offset={0.2} darkness={0.92} />
+        <Bloom intensity={1.35} luminanceThreshold={0.2} luminanceSmoothing={0.65} mipmapBlur />
+        <HueSaturation saturation={0.2} />
+        <BrightnessContrast brightness={0.04} contrast={0.1} />
+        <Vignette eskil={false} offset={0.22} darkness={0.85} />
       </EffectComposer>
     </Canvas>
   );

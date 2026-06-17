@@ -43,17 +43,17 @@ export function CleanlinesOS() {
     <section
       id="system"
       ref={section}
-      className="relative flex min-h-screen items-center overflow-hidden py-[clamp(80px,12vw,140px)]"
+      className="relative flex min-h-screen items-center overflow-hidden bg-black py-[clamp(80px,12vw,140px)]"
     >
       {/* 3D earth fills the stage */}
       <div className="absolute inset-0 z-0">
         <OsCanvas progress={progress} velocity={velocity} />
       </div>
       {/* only a soft left wash so the copy stays readable — earth floats free */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[58%] bg-gradient-to-r from-bg via-bg/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[55%] bg-gradient-to-r from-black via-black/50 to-transparent" />
       {/* fluid hand-off to neighbouring sections */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-bg to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-bg to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-black to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-black to-transparent" />
 
       <div className="shell content relative z-10 grid w-full items-center gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
