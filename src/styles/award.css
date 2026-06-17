@@ -2679,3 +2679,18 @@
 .hero__inner { display: block; }
 .hero__col { max-width: none; grid-column: auto; min-width: 0; }
 .hero__media { transform: none; }
+
+/* ── Interactive 3D hero artifact ─────────────────────────── */
+.hero3d { background: #f1ebdf; }
+.hero3d__canvas { width: 100% !important; height: 100% !important; display: block; cursor: grab; }
+.hero3d__canvas:active { cursor: grabbing; }
+.hero3d__loading {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 60% at 50% 45%, rgba(202, 160, 90, 0.22), transparent 70%), #f1ebdf;
+}
+.hero3d .hero__media-cap { z-index: 3; mix-blend-mode: difference; color: #fff; }
+.hero__drag { color: var(--gold-bright); }
+/* the 3D frame doesn't need the dark scrim */
+.hero3d.hero__media::after { display: none; }

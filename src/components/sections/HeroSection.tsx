@@ -1,9 +1,12 @@
-import { useEffect, useRef } from "react";
+import { Suspense, lazy, useEffect, useRef } from "react";
 import { hero, mailto, contact } from "../../content/siteContent";
 import MagneticButton from "../ui/MagneticButton";
+import ErrorBoundary from "../ui/ErrorBoundary";
 import { scrollToTarget } from "../../motion/lenis";
 import { playHeroIntro, buildHeroScroll } from "../../motion/heroTimeline";
 import { gsap } from "../../motion/scrollTriggers";
+
+const HeroCanvas = lazy(() => import("../../experience/HeroCanvas"));
 
 interface Props {
   ready: boolean;
@@ -12,7 +15,6 @@ interface Props {
 /** Scene 1 — Editorial hero: serif statement + large cinematic video. */
 export default function HeroSection({ ready }: Props) {
   const root = useRef<HTMLElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
   const played = useRef(false);
 
   useEffect(() => {
@@ -26,7 +28,6 @@ export default function HeroSection({ ready }: Props) {
     if (!ready || played.current || !root.current) return;
     played.current = true;
     playHeroIntro(root.current);
-    video.current?.play().catch(() => {});
   }, [ready]);
 
   return (
@@ -54,20 +55,27 @@ export default function HeroSection({ ready }: Props) {
             </div>
           </div>
 
-          <figure className="hero__media">
-            <video
-              ref={video}
-              src="/assets/videos/hero.mp4"
-              muted
-              loop
-              playsInline
-              autoPlay
-              preload="auto"
-              aria-hidden="true"
-            />
+          <figure className="hero__media hero3d">
+            <ErrorBoundary
+              fallback={
+                <video
+                  src="/assets/videos/hero.mp4"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="auto"
+                  aria-hidden="true"
+                />
+              }
+            >
+              <Suspense fallback={<div className="hero3d__loading" />}>
+                <HeroCanvas />
+              </Suspense>
+            </ErrorBoundary>
             <figcaption className="hero__media-cap">
-              <span>Reel 001</span>
-              <span>Cinematic · Brand Film</span>
+              <span>Cleanlines · 3D Mark</span>
+              <span className="hero__drag">↻ Ziehen zum Drehen</span>
             </figcaption>
           </figure>
         </div>
