@@ -334,8 +334,8 @@ export default function HeroCanvas() {
 
       <EffectComposer multisampling={4}>
         <Bloom intensity={1.35} luminanceThreshold={0.2} luminanceSmoothing={0.65} mipmapBlur />
-        <HueSaturation saturation={0.2} />
-        <BrightnessContrast brightness={0.04} contrast={0.1} />
+        <HueSaturation saturation={0.28} />
+        <BrightnessContrast brightness={0.04} contrast={0.2} />
         <Vignette eskil={false} offset={0.22} darkness={0.85} />
       </EffectComposer>
     </Canvas>

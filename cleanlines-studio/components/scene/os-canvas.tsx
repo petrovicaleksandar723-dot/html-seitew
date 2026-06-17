@@ -128,20 +128,26 @@ function PhoneVideo({ src }: { src: string }) {
     start: true,
     playsInline: true,
   });
-  const screen = useRef<THREE.Mesh>(null);
-  // contain-fit the clip inside the screen so the whole video stays visible
+  // cover-fill the portrait screen so the clip plays like a full-screen reel
   useFrame(() => {
     const img = texture.image as HTMLVideoElement | undefined;
-    if (!screen.current || !img || !img.videoWidth) return;
+    if (!img || !img.videoWidth) return;
     const a = img.videoWidth / img.videoHeight;
-    const boxA = SCR_W / SCR_H;
-    if (a > boxA) screen.current.scale.set(SCR_W, SCR_W / a, 1);
-    else screen.current.scale.set(SCR_H * a, SCR_H, 1);
+    const planeA = SCR_W / SCR_H;
+    if (a > planeA) {
+      const r = planeA / a;
+      texture.repeat.set(r, 1);
+      texture.offset.set((1 - r) / 2, 0);
+    } else {
+      const r = a / planeA;
+      texture.repeat.set(1, r);
+      texture.offset.set(0, (1 - r) / 2);
+    }
   });
   return (
     <PhoneBody>
-      <mesh ref={screen} position={[0, 0, 0.037]} scale={[SCR_W, SCR_H, 1]}>
-        <planeGeometry args={[1, 1]} />
+      <mesh position={[0, 0, 0.037]}>
+        <planeGeometry args={[SCR_W, SCR_H]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </PhoneBody>
@@ -269,8 +275,8 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
 
       <EffectComposer multisampling={4}>
         <Bloom intensity={1.5} luminanceThreshold={0.18} luminanceSmoothing={0.65} mipmapBlur />
-        <HueSaturation saturation={0.26} />
-        <BrightnessContrast brightness={0.05} contrast={0.12} />
+        <HueSaturation saturation={0.34} />
+        <BrightnessContrast brightness={0.05} contrast={0.26} />
       </EffectComposer>
     </Canvas>
   );
