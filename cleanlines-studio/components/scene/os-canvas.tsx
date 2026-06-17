@@ -220,8 +220,8 @@ function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef })
   const g = useRef<THREE.Group>(null);
   useFrame((_, dt) => {
     if (!g.current) return;
-    const v = Math.min(Math.abs(velocity?.current ?? 0) * 1.8, 0.7);
-    g.current.rotation.y += dt * (0.012 + v) + (progress?.current ?? 0) * 0.02;
+    // constant, cinematic, frame-rate-independent rotation
+    g.current.rotation.y += Math.min(dt, 0.05) * 0.014;
   });
   return (
     <group ref={g} rotation={[0.35, 0, 0.1]}>
