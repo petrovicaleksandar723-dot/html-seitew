@@ -3,6 +3,13 @@
     "magic": {
       "command": "npx",
       "args": ["-y", "@21st-dev/magic@latest", "API_KEY=\"${MAGIC_API_KEY}\""]
+    },
+    "ElevenLabs": {
+      "command": "uvx",
+      "args": ["elevenlabs-mcp"],
+      "env": {
+        "ELEVENLABS_API_KEY": "${ELEVENLABS_API_KEY}"
+      }
     }
   }
 }
