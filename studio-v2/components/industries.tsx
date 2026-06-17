@@ -37,8 +37,7 @@ export function Industries() {
                   alt={ind.title}
                   rounded={false}
                   className="aspect-[4/5] w-full"
-                  amount={9}
-                  scale={1.16}
+                  amount={8}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg via-bg/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6">

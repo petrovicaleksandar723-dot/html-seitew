@@ -14,8 +14,8 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
 
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.25]);
-  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
   const overlayY = useTransform(scrollYProgress, [0, 1], ["0%", "-26%"]);
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 

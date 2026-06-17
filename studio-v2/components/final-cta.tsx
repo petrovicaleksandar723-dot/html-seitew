@@ -12,8 +12,8 @@ export function FinalCta() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  const scale = useTransform(scrollYProgress, [0, 1], [1.18, 1]);
-  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1.08, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
   return (
     <section
