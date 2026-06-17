@@ -1,3 +1,5 @@
+import { brand } from "../../content/siteContent";
+
 interface Props {
   className?: string;
   withWord?: boolean;
@@ -23,7 +25,7 @@ export default function BrandMark({ className = "", withWord = true }: Props) {
           <line x1="3" y1="22" x2="19" y2="22" />
         </g>
       </svg>
-      {withWord && <span className="brandmark__word">Cleanlines</span>}
+      {withWord && <span className="brandmark__word">{brand.name}</span>}
     </span>
   );
 }

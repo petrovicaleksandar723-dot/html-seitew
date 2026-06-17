@@ -1,6 +1,7 @@
 import { Suspense, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, AdaptiveDpr } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import ContentEngine from "./ContentEngine";
 import FloatingReelFrames from "./FloatingReelFrames";
@@ -55,19 +56,38 @@ export default function HeroCanvas() {
       <CameraRig />
       <HeroLights />
 
+      {/* Logo + particles render immediately — no async dependency. */}
+      <group position={reduced ? [0, 0, 0] : [1.55, 0.6, 0.2]} scale={reduced ? 1 : 1.85}>
+        <ContentEngine />
+      </group>
+      <DepthParticles count={reduced ? 180 : 460} />
+
+      {/* Environment (reflections) in its own boundary so it can't block the logo. */}
       <Suspense fallback={null}>
-        <group position={reduced ? [0, 0, 0] : [-1.4, 0.2, 0]}>
-          <ContentEngine />
-        </group>
-        <FloatingReelFrames reduced={reduced} />
-        <DepthParticles count={reduced ? 180 : 460} />
-        {/* inline environment for glass reflections — no network fetch */}
         <Environment resolution={256} frames={1}>
           <Lightformer intensity={2.2} color="#f4d7a1" position={[0, 4, 4]} scale={[8, 4, 1]} />
           <Lightformer intensity={1.4} color="#d6a65f" position={[-5, -2, 2]} scale={[6, 6, 1]} />
           <Lightformer intensity={1} color="#5b7da8" position={[5, 2, -4]} scale={[5, 5, 1]} />
         </Environment>
       </Suspense>
+
+      {/* Floating video panels suspend on video decode — fully isolated. */}
+      <Suspense fallback={null}>
+        <FloatingReelFrames reduced={reduced} />
+      </Suspense>
+
+      {!reduced && (
+        <EffectComposer enableNormalPass={false}>
+          <Bloom
+            intensity={0.9}
+            luminanceThreshold={0.2}
+            luminanceSmoothing={0.5}
+            mipmapBlur
+            radius={0.75}
+          />
+          <Vignette eskil={false} offset={0.25} darkness={0.85} />
+        </EffectComposer>
+      )}
 
       <AdaptiveDpr pixelated />
     </Canvas>

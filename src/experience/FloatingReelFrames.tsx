@@ -12,12 +12,11 @@ interface FrameDef {
 }
 
 const FRAMES: FrameDef[] = [
-  { src: "/assets/videos/reel-1.mp4", position: [-4.4, 1.5, -1], rotation: [0, 0.5, 0.05], scale: 1, speed: 0.6 },
-  { src: "/assets/videos/reel-2.mp4", position: [4.6, -0.6, -0.5], rotation: [0, -0.55, -0.06], scale: 1.1, speed: 0.5 },
-  { src: "/assets/videos/reel-3.mp4", position: [-3.6, -1.9, 1.2], rotation: [0, 0.4, -0.04], scale: 0.82, speed: 0.7 },
-  { src: "/assets/videos/show-1.mp4", position: [3.6, 2.2, 0.8], rotation: [0, -0.4, 0.05], scale: 0.8, speed: 0.65 },
-  { src: "/assets/videos/reel-4.mp4", position: [-5.2, -0.4, -1.6], rotation: [0, 0.6, 0.03], scale: 0.7, speed: 0.55 },
-  { src: "/assets/videos/show-2.mp4", position: [5.4, 1.4, -1.4], rotation: [0, -0.6, -0.04], scale: 0.68, speed: 0.62 },
+  { src: "/assets/videos/reel-1.mp4", position: [-4.5, 1.3, -0.6], rotation: [0, 0.42, 0.05], scale: 1, speed: 0.6 },
+  { src: "/assets/videos/reel-3.mp4", position: [-4.0, -1.7, 0.4], rotation: [0, 0.4, -0.05], scale: 0.86, speed: 0.7 },
+  { src: "/assets/videos/show-1.mp4", position: [-2.4, 2.4, -1.2], rotation: [0, 0.3, 0.04], scale: 0.72, speed: 0.62 },
+  { src: "/assets/videos/show-2.mp4", position: [5.0, 2.0, -1.4], rotation: [0, -0.5, -0.05], scale: 0.74, speed: 0.55 },
+  { src: "/assets/videos/reel-2.mp4", position: [5.2, -1.3, -1.0], rotation: [0, -0.5, 0.05], scale: 0.8, speed: 0.5 },
 ];
 
 function ReelPlane({ def }: { def: FrameDef }) {
@@ -26,6 +25,7 @@ function ReelPlane({ def }: { def: FrameDef }) {
     muted: true,
     loop: true,
     start: true,
+    playsInline: true,
     crossOrigin: "anonymous",
   });
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -33,27 +33,27 @@ function ReelPlane({ def }: { def: FrameDef }) {
   useFrame((state) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime * def.speed;
-    group.current.position.y = def.position[1] + Math.sin(t) * 0.25;
-    group.current.position.x = def.position[0] + Math.cos(t * 0.7) * 0.12;
+    group.current.position.y = def.position[1] + Math.sin(t) * 0.28;
+    group.current.position.x = def.position[0] + Math.cos(t * 0.7) * 0.14;
     group.current.rotation.z = def.rotation[2] + Math.sin(t * 0.5) * 0.04;
   });
 
   return (
     <group ref={group} position={def.position} rotation={def.rotation} scale={def.scale}>
-      {/* gold frame */}
-      <RoundedBox args={[1.32, 2.3, 0.06]} radius={0.06} smoothness={4} castShadow>
+      {/* gold backing frame (behind the video) */}
+      <RoundedBox args={[1.34, 2.32, 0.07]} radius={0.08} smoothness={4} position={[0, 0, -0.04]} castShadow>
         <meshPhysicalMaterial
-          color="#0d0a07"
-          metalness={0.9}
-          roughness={0.25}
+          color="#1a140c"
+          metalness={1}
+          roughness={0.22}
           clearcoat={1}
           emissive="#d6a65f"
-          emissiveIntensity={0.08}
+          emissiveIntensity={0.22}
         />
       </RoundedBox>
-      {/* video surface */}
-      <mesh position={[0, 0, 0.05]}>
-        <planeGeometry args={[1.18, 2.12]} />
+      {/* video surface — front-facing, full brightness */}
+      <mesh position={[0, 0, 0.02]}>
+        <planeGeometry args={[1.2, 2.14]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </group>

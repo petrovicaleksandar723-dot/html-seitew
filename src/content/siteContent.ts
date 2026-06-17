@@ -34,7 +34,7 @@ export function whatsapp(text: string): string {
 }
 
 export const brand = {
-  name: "Cleanlines Studio",
+  name: "Cleanlines Studios",
   short: "Cleanlines",
   tagline: "Content Engine für lokale Marken",
 };
@@ -108,15 +108,15 @@ export const reelCinema = {
   subline:
     "Echte Beispiele aus unseren Reel-Produktionen — fertig für Instagram, TikTok und Co.",
   reels: [
-    { src: "/assets/videos/hero.mp4", title: "Brand Opener", meta: "Cinematic Hook · 0:12", index: "01" },
-    { src: "/assets/videos/reel-1.mp4", title: "Story Reel", meta: "Hook & Schnitt · 0:18", index: "02" },
-    { src: "/assets/videos/show-1.mp4", title: "Reel-Produktion", meta: "Vertical · 0:15", index: "03" },
-    { src: "/assets/videos/reel-2.mp4", title: "Promo Clip", meta: "Aktion · 0:14", index: "04" },
-    { src: "/assets/videos/show-2.mp4", title: "Hook & Schnitt", meta: "Untertitel · 0:16", index: "05" },
-    { src: "/assets/videos/reel-3.mp4", title: "Atmosphäre", meta: "Premium Mood · 0:20", index: "06" },
-    { src: "/assets/videos/show-3.mp4", title: "Story-Reel", meta: "Narrativ · 0:17", index: "07" },
-    { src: "/assets/videos/reel-4.mp4", title: "Brand-Film", meta: "Signature · 0:22", index: "08" },
-    { src: "/assets/videos/show-4.mp4", title: "Signature Cut", meta: "Final Grade · 0:19", index: "09" },
+    { src: "/assets/videos/hero.mp4", title: "Brand Opener", meta: "SIGNATURE · Cinematic Hook", index: "01" },
+    { src: "/assets/videos/reel-1.mp4", title: "Cut & Fade Transformation", meta: "BARBER · Vorher / Nachher", index: "02" },
+    { src: "/assets/videos/show-1.mp4", title: "Wohlfühl-Behandlung", meta: "BEAUTY · Premium Mood", index: "03" },
+    { src: "/assets/videos/reel-2.mp4", title: "Signature Dish", meta: "RESTAURANT · Food Close-up", index: "04" },
+    { src: "/assets/videos/show-2.mp4", title: "Hook & Schnitt", meta: "REEL · Untertitel & Musik", index: "05" },
+    { src: "/assets/videos/reel-3.mp4", title: "Baustelle in 20s", meta: "HANDWERK · Problem → Lösung", index: "06" },
+    { src: "/assets/videos/show-3.mp4", title: "Membership-Kampagne", meta: "GYM · Probetraining", index: "07" },
+    { src: "/assets/videos/reel-4.mp4", title: "Brand-Film", meta: "AUTOHAUS · Service & Team", index: "08" },
+    { src: "/assets/videos/show-4.mp4", title: "Signature Cut", meta: "STUDIO · Final Grade", index: "09" },
   ] as ReelItem[],
 };
 
@@ -419,7 +419,7 @@ export const nav = [
 ];
 
 export const preloader = {
-  brand: "Cleanlines Studio",
+  brand: "Cleanlines Studios",
   lines: [
     "Loading Content Engine",
     "Preparing Reel Cinema",

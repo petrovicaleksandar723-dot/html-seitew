@@ -378,33 +378,62 @@
   0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
+.hero__watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(120px, 26vw, 460px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 215, 161, 0.06);
+  text-stroke: 1px rgba(244, 215, 161, 0.06);
+  pointer-events: none;
+  user-select: none;
+}
 .hero__inner {
   position: relative;
   z-index: var(--z-content);
   width: 100%;
   pointer-events: none;
 }
+.brandmark__word {
+  white-space: nowrap;
+}
 .hero__inner a,
 .hero__inner button {
   pointer-events: auto;
 }
-.hero__grid {
+.hero__inner {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: clamp(30px, 4vw, 80px);
-  width: 100%;
+  gap: clamp(24px, 3vw, 64px);
+}
+.hero__hudbar {
+  grid-column: 1 / -1;
 }
 .hero__col {
   max-width: 720px;
+  grid-column: 1;
+}
+.hero__ipad {
+  grid-column: 2;
+  align-self: end;
+  justify-self: end;
 }
 .hero__eyebrow {
   margin-bottom: clamp(20px, 3vh, 38px);
 }
 .hero__headline {
-  max-width: 13ch;
-  font-size: clamp(52px, 6.2vw, 118px);
-  line-height: 0.9;
+  max-width: 11ch;
+  font-size: clamp(46px, 5vw, 92px);
+  line-height: 0.92;
 }
 .hero__subline {
   max-width: 46ch;
@@ -459,7 +488,7 @@
 }
 .ipad {
   position: relative;
-  width: min(620px, 46vw);
+  width: min(440px, 33vw);
   transform: rotateY(-9deg) rotateX(4deg);
   transform-style: preserve-3d;
   transition: transform 0.8s var(--ease-out-expo);
@@ -675,12 +704,14 @@
 }
 
 @media (max-width: 1080px) {
-  .hero__grid {
+  .hero__inner {
     grid-template-columns: 1fr;
     gap: 40px;
   }
+  .hero__col { grid-column: 1; }
+  .hero__ipad { grid-column: 1; justify-self: start; }
   .hero__headline { max-width: 18ch; }
-  .ipad { width: min(560px, 86vw); transform: rotateY(-4deg) rotateX(2deg); }
+  .ipad { width: min(460px, 80vw); transform: rotateY(-4deg) rotateX(2deg); }
 }
 @media (max-width: 640px) {
   .hero { align-items: center; padding-top: 110px; }

@@ -48,29 +48,32 @@ export default function HeroSection({ ready }: Props) {
         </Suspense>
       </ErrorBoundary>
 
-      <div className="hero__inner shell">
-        <div className="hero__grid">
-          <div className="hero__col">
-            <div className="hero__eyebrow eyebrow">{hero.eyebrow}</div>
-            <h1 className="hero__headline headline-hero">{hero.headline}</h1>
-            <p className="hero__subline">{hero.subline}</p>
-            <div className="hero__cta">
-              <MagneticButton href={mailto("Kostenlose Content-Preview")}>
-                {hero.ctaPrimary}
-              </MagneticButton>
-              <MagneticButton variant="ghost" onClick={() => scrollToTarget("#reel-cinema")}>
-                {hero.ctaSecondary}
-              </MagneticButton>
-            </div>
-            <div className="hero__trust">
-              {hero.trust.map((t) => (
-                <span key={t}>{t}</span>
-              ))}
-            </div>
-          </div>
+      <div className="hero__watermark" aria-hidden>
+        STUDIOS
+      </div>
 
-          {/* iPad / Control Center — DOM composited over the WebGL engine */}
-          <div className="hero__ipad" aria-hidden>
+      <div className="hero__inner shell">
+        <div className="hero__col">
+          <div className="hero__eyebrow eyebrow">{hero.eyebrow}</div>
+          <h1 className="hero__headline headline-hero">{hero.headline}</h1>
+          <p className="hero__subline">{hero.subline}</p>
+          <div className="hero__cta">
+            <MagneticButton href={mailto("Kostenlose Content-Preview")}>
+              {hero.ctaPrimary}
+            </MagneticButton>
+            <MagneticButton variant="ghost" onClick={() => scrollToTarget("#reel-cinema")}>
+              {hero.ctaSecondary}
+            </MagneticButton>
+          </div>
+          <div className="hero__trust">
+            {hero.trust.map((t) => (
+              <span key={t}>{t}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Compact Control Center card — composited over the WebGL logo */}
+        <div className="hero__ipad" aria-hidden>
             <div className="ipad">
               <div className="ipad__frame">
                 <span className="ipad__cam" />
@@ -110,8 +113,6 @@ export default function HeroSection({ ready }: Props) {
               <span className="ipad__reflect" />
             </div>
           </div>
-        </div>
-
         <div className="hero__hudbar">
           <div className="hud-row">
             <span className="hud-dot" />
