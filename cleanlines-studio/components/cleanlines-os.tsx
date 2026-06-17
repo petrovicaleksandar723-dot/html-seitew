@@ -2,7 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { useRef } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useMotionValueEvent,
+  useVelocity,
+  useSpring,
+} from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
 import { OS_MODULES } from "@/lib/constants";
@@ -19,12 +25,18 @@ const OsCanvas = dynamic(() => import("@/components/scene/os-canvas"), {
 export function CleanlinesOS() {
   const section = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
+  const velocity = useRef(0);
   const { scrollYProgress } = useScroll({
     target: section,
     offset: ["start start", "end end"],
   });
+  const rawVel = useVelocity(scrollYProgress);
+  const smoothVel = useSpring(rawVel, { damping: 50, stiffness: 300 });
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     progress.current = v;
+  });
+  useMotionValueEvent(smoothVel, "change", (v) => {
+    velocity.current = v;
   });
 
   return (
@@ -33,7 +45,7 @@ export function CleanlinesOS() {
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         {/* 3D core fills the stage */}
         <div className="absolute inset-0 z-0">
-          <OsCanvas progress={progress} />
+          <OsCanvas progress={progress} velocity={velocity} />
         </div>
         <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(120%_120%_at_50%_50%,transparent_45%,#050505_92%)]" />
 
@@ -74,7 +86,7 @@ export function CleanlinesOS() {
                   delay: i * 0.08,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="glass rounded-xl p-4 transition-transform duration-300 hover:-translate-y-1"
+                className="rounded-xl border border-line bg-bg/75 p-4 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_10px_2px_rgba(216,178,116,0.8)]" />

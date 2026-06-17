@@ -8,7 +8,6 @@ import { Navigation } from "@/components/navigation";
 import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/ui/marquee";
 import { Diagnosis } from "@/components/diagnosis";
-import { Transformation } from "@/components/transformation";
 import { ReelCinema } from "@/components/reel-cinema";
 import { CleanlinesOS } from "@/components/cleanlines-os";
 import { Industries } from "@/components/industries";
@@ -33,7 +32,6 @@ export default function Home() {
         <Hero />
         <Marquee />
         <Diagnosis />
-        <Transformation />
         <ReelCinema />
         <CleanlinesOS />
         <Divider label="Branchen" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, useVideoTexture } from "@react-three/drei";
+import { Float, useVideoTexture, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import {
   Component,
@@ -118,11 +118,12 @@ function Logo3D() {
 
   const material = (
     <meshStandardMaterial
-      color="#cdb486"
-      metalness={0.72}
-      roughness={0.28}
-      emissive="#5b4420"
-      emissiveIntensity={0.2}
+      color="#f0cf8e"
+      metalness={1}
+      roughness={0.17}
+      envMapIntensity={1.6}
+      emissive="#6b4a12"
+      emissiveIntensity={0.25}
     />
   );
 
@@ -152,11 +153,12 @@ function Logo3D() {
       <mesh geometry={geoC}>{material}</mesh>
       <mesh geometry={geoL} position={[0, 0, 0.03]}>
         <meshStandardMaterial
-          color="#e6d2a6"
-          metalness={0.78}
-          roughness={0.26}
-          emissive="#5b4420"
-          emissiveIntensity={0.22}
+          color="#fbe6b0"
+          metalness={1}
+          roughness={0.14}
+          envMapIntensity={1.8}
+          emissive="#6b4a12"
+          emissiveIntensity={0.28}
         />
       </mesh>
     </group>
@@ -305,13 +307,17 @@ export default function HeroCanvas() {
       camera={{ position: [0, 0.3, 8.5], fov: 38 }}
     >
       <color attach="background" args={["#050505"]} />
-      <fog attach="fog" args={["#050505", 9, 18]} />
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[3, 5, 6]} intensity={2.2} color="#fff4da" />
-      <directionalLight position={[-4, 2, 3]} intensity={1.1} color={GOLD_BRIGHT} />
-      <pointLight position={[-5, -2, 4]} intensity={40} color={GOLD} />
-      <pointLight position={[3, 3, -4]} intensity={26} color={GOLD_BRIGHT} />
-      <pointLight position={[0, 0, 5]} intensity={18} color="#fff" />
+      <fog attach="fog" args={["#070506", 9, 19]} />
+      <ambientLight intensity={0.35} />
+      {/* cinematic colored lighting */}
+      <directionalLight position={[4, 6, 6]} intensity={2.6} color="#fff1cf" />
+      <pointLight position={[-6, 1, 2]} intensity={70} color="#3e6bff" />
+      <pointLight position={[5, -2, -3]} intensity={55} color="#ff3da6" />
+      <pointLight position={[0, 4, -5]} intensity={40} color={GOLD_BRIGHT} />
+      <pointLight position={[0, 0, 6]} intensity={22} color="#ffffff" />
+      <Suspense fallback={null}>
+        <Environment preset="sunset" />
+      </Suspense>
 
       <Logo3D />
       <ParallaxRig>
@@ -323,8 +329,8 @@ export default function HeroCanvas() {
       </ParallaxRig>
 
       <EffectComposer multisampling={4}>
-        <Bloom intensity={0.75} luminanceThreshold={0.3} luminanceSmoothing={0.5} mipmapBlur />
-        <Vignette eskil={false} offset={0.22} darkness={0.9} />
+        <Bloom intensity={1.15} luminanceThreshold={0.22} luminanceSmoothing={0.6} mipmapBlur />
+        <Vignette eskil={false} offset={0.2} darkness={0.92} />
       </EffectComposer>
     </Canvas>
   );

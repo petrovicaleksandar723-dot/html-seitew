@@ -1,57 +1,156 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useMemo, useRef, type MutableRefObject } from "react";
+import { Float, useVideoTexture, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import {
+  Component,
+  Suspense,
+  useMemo,
+  useRef,
+  type MutableRefObject,
+  type ReactNode,
+} from "react";
 import * as THREE from "three";
+import { asset } from "@/lib/asset";
 
 const GOLD = "#d8b274";
 const GOLD_BRIGHT = "#f4d79e";
 
-type ProgressRef = MutableRefObject<number>;
+type NumRef = MutableRefObject<number>;
 
-function Core({ progress }: { progress?: ProgressRef }) {
+const NODE_VIDEOS = [
+  asset("/videos/reel-1.mp4"),
+  asset("/videos/reel-2.mp4"),
+  asset("/videos/reel-3.mp4"),
+  asset("/videos/example-1.mp4"),
+  asset("/videos/ambient-1.mp4"),
+  asset("/videos/ambient-2.mp4"),
+];
+
+const CW = 0.86;
+const CH = 1.12;
+
+/* faceted gold core */
+function Core({ progress }: { progress?: NumRef }) {
   const ref = useRef<THREE.Mesh>(null);
+  const inner = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => {
-    if (!ref.current) return;
     const p = progress?.current ?? 0;
-    ref.current.rotation.y += delta * 0.25 + p * 0.04;
-    ref.current.rotation.x += delta * 0.1;
-    const s = 1 + p * 0.25;
-    ref.current.scale.setScalar(s);
+    if (ref.current) {
+      ref.current.rotation.y += delta * 0.25 + p * 0.05;
+      ref.current.rotation.x += delta * 0.1;
+      const s = 1 + p * 0.2;
+      ref.current.scale.setScalar(s);
+    }
+    if (inner.current) inner.current.rotation.y -= delta * 0.4;
   });
   return (
     <Float speed={1.2} floatIntensity={0.5} rotationIntensity={0.2}>
       <mesh ref={ref}>
         <icosahedronGeometry args={[1.05, 0]} />
         <meshStandardMaterial
-          color="#100d09"
-          emissive={GOLD}
-          emissiveIntensity={0.6}
-          metalness={0.85}
-          roughness={0.25}
+          color="#e7c483"
+          metalness={1}
+          roughness={0.15}
+          envMapIntensity={1.6}
+          emissive="#3a2a10"
+          emissiveIntensity={0.35}
           flatShading
+        />
+      </mesh>
+      <mesh ref={inner} scale={0.55}>
+        <icosahedronGeometry args={[1, 0]} />
+        <meshStandardMaterial
+          color={GOLD_BRIGHT}
+          emissive={GOLD_BRIGHT}
+          emissiveIntensity={2.2}
+          toneMapped={false}
         />
       </mesh>
     </Float>
   );
 }
 
-function Nodes({ progress }: { progress?: ProgressRef }) {
+function Frame() {
+  return (
+    <mesh>
+      <boxGeometry args={[CW + 0.06, CH + 0.06, 0.05]} />
+      <meshStandardMaterial
+        color="#0c0a08"
+        emissive={GOLD}
+        emissiveIntensity={0.18}
+        metalness={0.8}
+        roughness={0.3}
+        envMapIntensity={1.2}
+      />
+    </mesh>
+  );
+}
+
+function FallbackFace() {
+  return (
+    <group>
+      <Frame />
+      <mesh position={[0, 0, 0.03]}>
+        <planeGeometry args={[CW, CH]} />
+        <meshStandardMaterial color="#161009" emissive={GOLD} emissiveIntensity={0.3} />
+      </mesh>
+    </group>
+  );
+}
+
+function VideoFace({ src }: { src: string }) {
+  const texture = useVideoTexture(src, {
+    crossOrigin: "anonymous",
+    muted: true,
+    loop: true,
+    start: true,
+    playsInline: true,
+  });
+  return (
+    <group>
+      <Frame />
+      <mesh position={[0, 0, 0.03]}>
+        <planeGeometry args={[CW, CH]} />
+        <meshBasicMaterial map={texture} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+class TextureBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    if (this.state.failed) return <FallbackFace />;
+    return this.props.children;
+  }
+}
+
+function Nodes({
+  progress,
+  velocity,
+}: {
+  progress?: NumRef;
+  velocity?: NumRef;
+}) {
   const ring = useRef<THREE.Group>(null);
   const nodes = useMemo(
     () =>
-      Array.from({ length: 6 }).map((_, i) => {
-        const a = (i / 6) * Math.PI * 2;
-        const r = 3;
+      NODE_VIDEOS.map((src, i) => {
+        const a = (i / NODE_VIDEOS.length) * Math.PI * 2;
+        const r = 3.2;
         return {
+          src,
+          a,
           pos: new THREE.Vector3(
             Math.cos(a) * r,
-            Math.sin(a * 1.5) * 0.6,
+            Math.sin(a * 1.5) * 0.5,
             Math.sin(a) * r
           ),
-          c: i % 2 === 0 ? GOLD : GOLD_BRIGHT,
         };
       }),
     []
@@ -59,18 +158,17 @@ function Nodes({ progress }: { progress?: ProgressRef }) {
 
   useFrame((_, delta) => {
     if (!ring.current) return;
-    const p = progress?.current ?? 0;
-    ring.current.rotation.y += delta * 0.18 + p * 0.06;
-    // modules dock inward as the section scrolls
-    const s = 1 - p * 0.28;
-    ring.current.scale.setScalar(s);
+    const v = Math.min(Math.abs(velocity?.current ?? 0) * 9, 4);
+    ring.current.rotation.y += delta * (0.18 + v) + (progress?.current ?? 0) * 0.04;
   });
 
   return (
     <group ref={ring}>
       {nodes.map((n, i) => {
-        const points = [new THREE.Vector3(0, 0, 0), n.pos];
-        const geo = new THREE.BufferGeometry().setFromPoints(points);
+        const geo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          n.pos,
+        ]);
         return (
           <group key={i}>
             <primitive
@@ -80,30 +178,19 @@ function Nodes({ progress }: { progress?: ProgressRef }) {
                   new THREE.LineBasicMaterial({
                     color: GOLD,
                     transparent: true,
-                    opacity: 0.28,
+                    opacity: 0.3,
                   })
                 )
               }
             />
-            <Float speed={2.4} floatIntensity={1} rotationIntensity={0.5}>
-              <mesh position={n.pos}>
-                <boxGeometry args={[0.62, 0.78, 0.05]} />
-                <meshStandardMaterial
-                  color="#100e0b"
-                  emissive={n.c}
-                  emissiveIntensity={0.35}
-                  metalness={0.7}
-                  roughness={0.3}
-                />
-              </mesh>
-              <mesh position={[n.pos.x, n.pos.y + 0.18, n.pos.z + 0.03]}>
-                <planeGeometry args={[0.44, 0.18]} />
-                <meshStandardMaterial
-                  color={n.c}
-                  emissive={n.c}
-                  emissiveIntensity={0.6}
-                />
-              </mesh>
+            <Float speed={2.2} floatIntensity={0.9} rotationIntensity={0.4}>
+              <group position={n.pos} rotation={[0, -n.a + Math.PI / 2, 0]}>
+                <TextureBoundary>
+                  <Suspense fallback={<FallbackFace />}>
+                    <VideoFace src={n.src} />
+                  </Suspense>
+                </TextureBoundary>
+              </group>
             </Float>
           </group>
         );
@@ -112,25 +199,36 @@ function Nodes({ progress }: { progress?: ProgressRef }) {
   );
 }
 
-export default function OsCanvas({ progress }: { progress?: ProgressRef }) {
+export default function OsCanvas({
+  progress,
+  velocity,
+}: {
+  progress?: NumRef;
+  velocity?: NumRef;
+}) {
   return (
     <Canvas
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      camera={{ position: [0, 1.2, 7.2], fov: 42 }}
+      camera={{ position: [0, 1.1, 7.6], fov: 42 }}
     >
-      <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 0]} intensity={18} color={GOLD_BRIGHT} />
-      <directionalLight position={[5, 5, 5]} intensity={1.1} color="#fff2d6" />
+      <ambientLight intensity={0.35} />
+      <directionalLight position={[5, 6, 5]} intensity={2} color="#fff1cf" />
+      <pointLight position={[-6, 0, 2]} intensity={60} color="#3e6bff" />
+      <pointLight position={[5, -2, -2]} intensity={45} color="#ff3da6" />
+      <pointLight position={[0, 0, 0]} intensity={20} color={GOLD_BRIGHT} />
+      <Suspense fallback={null}>
+        <Environment preset="sunset" />
+      </Suspense>
+
       <Core progress={progress} />
-      <Nodes progress={progress} />
+      <Suspense fallback={null}>
+        <Nodes progress={progress} velocity={velocity} />
+      </Suspense>
+
       <EffectComposer multisampling={4}>
-        <Bloom
-          intensity={0.85}
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.5}
-          mipmapBlur
-        />
+        <Bloom intensity={1.1} luminanceThreshold={0.22} luminanceSmoothing={0.6} mipmapBlur />
+        <Vignette eskil={false} offset={0.2} darkness={0.85} />
       </EffectComposer>
     </Canvas>
   );
