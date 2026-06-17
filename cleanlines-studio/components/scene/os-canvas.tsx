@@ -221,7 +221,7 @@ function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef })
   useFrame((_, dt) => {
     if (!g.current) return;
     // constant, cinematic, frame-rate-independent rotation
-    g.current.rotation.y += Math.min(dt, 0.05) * 0.014;
+    g.current.rotation.y += Math.min(dt, 0.05) * 0.05;
   });
   return (
     <group ref={g} rotation={[0.35, 0, 0.1]}>
@@ -269,9 +269,11 @@ export default function OsCanvas({ progress, velocity }: { progress?: NumRef; ve
         <Environment preset="sunset" />
       </Suspense>
 
-      <Rig>
-        <Globe progress={progress} velocity={velocity} />
-      </Rig>
+      <group position={[2.0, 0, 0]}>
+        <Rig>
+          <Globe progress={progress} velocity={velocity} />
+        </Rig>
+      </group>
 
       <EffectComposer multisampling={4}>
         <Bloom intensity={1.5} luminanceThreshold={0.18} luminanceSmoothing={0.65} mipmapBlur />
