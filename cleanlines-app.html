@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CleanLines Studio — Content-Konfigurator</title>
+<meta name="description" content="Stell dir dein monatliches Content-Paket in 60 Sekunden zusammen. Branche, Umfang, Extras — Preis sofort sichtbar." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=DM+Sans:wght@400;500&family=Geist:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     CleanLines · "Cinematic Precision" design system
+     Tokens from Stitch DESIGN.md, executed with committed
+     dark-cinematic direction + a single sharp orange accent.
+     ============================================================ */
+  :root {
+    --surface: #101417;
+    --surface-lowest: #0b0f11;
+    --surface-low: #191c1f;
+    --surface-container: #1d2023;
+    --surface-high: #272a2d;
+    --ink: #e0e2e6;
+    --ink-variant: #c6c6cb;
+    --muted: #909095;
+    --outline: #45474b;
+    --accent: #ff5722;
+    --accent-bright: #ff7043;
+    --accent-deep: #d73b00;
+    --cream: #f9f7f2;
+    --ok: #6ee7b7;
+
+    --r-sm: .375rem;
+    --r: .5rem;
+    --r-md: .75rem;
+    --r-lg: 1rem;
+    --r-xl: 1.5rem;
+    --r-full: 9999px;
+
+    --container: 1180px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+    --shadow-glow: 0 30px 80px -20px rgba(255, 87, 34, .18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  @media (pointer: coarse) { body { cursor: auto; } }
+
+  ::selection { background: var(--accent); color: var(--cream); }
+
+  /* --- Atmosphere: ambient drifting glow + grain --- */
+  .atmosphere {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .glow {
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5;
+    mix-blend-mode: screen;
+  }
+  .glow.a { width: 60vw; height: 60vw; left: -15vw; top: -10vw;
+    background: radial-gradient(circle, rgba(255,87,34,.45), transparent 65%);
+    animation: drift1 26s var(--ease) infinite alternate; }
+  .glow.b { width: 50vw; height: 50vw; right: -12vw; top: 30vh;
+    background: radial-gradient(circle, rgba(215,59,0,.30), transparent 65%);
+    animation: drift2 32s var(--ease) infinite alternate; }
+  .glow.c { width: 40vw; height: 40vw; left: 30vw; bottom: -20vh;
+    background: radial-gradient(circle, rgba(120,130,255,.10), transparent 65%);
+    animation: drift1 38s var(--ease) infinite alternate-reverse; }
+  @keyframes drift1 { to { transform: translate3d(8vw, 10vh, 0) scale(1.15); } }
+  @keyframes drift2 { to { transform: translate3d(-10vw, -6vh, 0) scale(1.1); } }
+  .grain {
+    position: fixed; inset: -50%; z-index: 1; pointer-events: none; opacity: .04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grainShift 7s steps(6) infinite;
+  }
+  @keyframes grainShift {
+    0%,100%{transform:translate(0,0)} 20%{transform:translate(-4%,3%)}
+    40%{transform:translate(3%,-4%)} 60%{transform:translate(-3%,-3%)} 80%{transform:translate(4%,2%)}
+  }
+
+  /* --- Custom cursor --- */
+  .cursor-dot, .cursor-ring {
+    position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  .cursor-dot { width: 6px; height: 6px; background: var(--accent); }
+  .cursor-ring {
+    width: 34px; height: 34px; border: 1px solid rgba(255,87,34,.5);
+    transition: width .25s var(--ease), height .25s var(--ease),
+                background .25s var(--ease), border-color .25s var(--ease);
+  }
+  .cursor-ring.hot {
+    width: 56px; height: 56px; background: rgba(255,87,34,.08); border-color: var(--accent);
+  }
+
+  /* --- Layout --- */
+  .wrap { position: relative; z-index: 2; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 640px){ .wrap { padding: 0 20px; } }
+
+  /* --- Typography utilities --- */
+  h1, h2, h3 { font-family: 'Hanken Grotesk', sans-serif; letter-spacing: -.02em; line-height: 1.1; }
+  .eyebrow {
+    font-family: 'Geist', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: .22em; text-transform: uppercase; color: var(--accent);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--accent); display: inline-block; }
+
+  /* --- Header --- */
+  header {
+    position: fixed; top: 0; inset-inline: 0; z-index: 100;
+    background: rgba(16,20,23,.6); backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: 'Hanken Grotesk'; font-weight: 800; font-size: 19px; letter-spacing: -.03em; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+    background: linear-gradient(140deg, var(--accent), var(--accent-deep));
+    box-shadow: 0 6px 20px -6px rgba(255,87,34,.7);
+  }
+  .brand .mark span { width: 13px; height: 13px; border: 2.5px solid var(--cream); border-radius: 3px; }
+  nav.links { display: flex; gap: 34px; }
+  nav.links a { color: var(--ink-variant); text-decoration: none; font-size: 15px; transition: color .2s; }
+  nav.links a:hover { color: var(--ink); }
+  @media (max-width: 820px){ nav.links { display: none; } }
+
+  /* --- Buttons --- */
+  .btn {
+    font-family: 'Hanken Grotesk'; font-weight: 700; border: none; cursor: none;
+    border-radius: var(--r-full); position: relative; transition: transform .25s var(--ease-spring), box-shadow .3s var(--ease);
+    will-change: transform;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep));
+    color: var(--cream); box-shadow: 0 10px 30px -8px rgba(255,87,34,.55);
+  }
+  .btn-primary:hover { box-shadow: 0 16px 44px -8px rgba(255,87,34,.75); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,.18); }
+  .btn-ghost:hover { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.32); }
+  .btn-sm { padding: 10px 22px; font-size: 14px; }
+  .btn-lg { padding: 17px 38px; font-size: 17px; }
+
+  /* --- Hero --- */
+  .hero { min-height: 92vh; display: flex; align-items: center; text-align: center; padding-top: 68px; }
+  .hero .wrap { display: flex; flex-direction: column; align-items: center; }
+  .hero h1 {
+    font-weight: 800; font-size: clamp(42px, 8vw, 78px); margin: 26px 0 22px;
+    letter-spacing: -.045em;
+  }
+  .hero h1 .shine {
+    background: linear-gradient(120deg, var(--cream) 30%, var(--accent-bright) 50%, var(--cream) 70%);
+    background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shine 6s linear infinite;
+  }
+  @keyframes shine { to { background-position: 200% center; } }
+  .hero p { font-size: clamp(16px, 2.4vw, 19px); color: var(--ink-variant); max-width: 560px; margin-bottom: 38px; }
+  .hero .cta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+  .trust { margin-top: 46px; display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; color: var(--muted); font-size: 13.5px; }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+  .trust .material-symbols-outlined { font-size: 18px; color: var(--accent); }
+
+  .scroll-hint {
+    position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+    color: var(--muted); opacity: .5; animation: bob 2.2s var(--ease) infinite;
+  }
+  @keyframes bob { 50% { transform: translate(-50%, 10px); } }
+
+  /* --- Section heads --- */
+  .section { padding: clamp(80px, 12vw, 130px) 0; position: relative; z-index: 2; }
+  .section-head { max-width: 640px; margin-bottom: 56px; }
+  .section-head h2 { font-weight: 700; font-size: clamp(30px, 5vw, 46px); margin: 18px 0 14px; }
+  .section-head p { color: var(--ink-variant); font-size: 17px; }
+
+  /* ============================================================
+     The app: Content-Konfigurator
+     ============================================================ */
+  .configurator { display: grid; grid-template-columns: 1fr 380px; gap: 34px; align-items: start; }
+  @media (max-width: 940px){ .configurator { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+    border: 1px solid rgba(255,255,255,.08); border-radius: var(--r-xl);
+    backdrop-filter: blur(14px); padding: 30px; position: relative; overflow: hidden;
+  }
+  .panel::before { /* edge highlight */
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+    background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,0) 40%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .step-label {
+    font-family: 'Geist', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted); display: flex; align-items: center; gap: 9px; margin-bottom: 18px;
+  }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%; background: rgba(255,87,34,.14); color: var(--accent);
+    display: grid; place-items: center; font-size: 11px; font-weight: 500;
+  }
+  .field-group + .field-group { margin-top: 26px; }
+
+  /* Industry selector */
+  .industry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 560px){ .industry-grid { grid-template-columns: 1fr; } }
+  .opt {
+    position: relative; border: 1px solid rgba(255,255,255,.09); border-radius: var(--r-md);
+    padding: 18px 16px; background: rgba(255,255,255,.02); cursor: none;
+    transition: border-color .25s var(--ease), background .25s var(--ease), transform .25s var(--ease-spring);
+    text-align: left;
+  }
+  .opt:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.2); }
+  .opt .material-symbols-outlined { font-size: 26px; color: var(--ink-variant); transition: color .25s; }
+  .opt .opt-title { font-family: 'Hanken Grotesk'; font-weight: 700; font-size: 15.5px; margin-top: 10px; }
+  .opt .opt-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .opt[aria-pressed="true"] {
+    border-color: var(--accent); background: rgba(255,87,34,.07);
+    box-shadow: 0 0 0 1px var(--accent), 0 12px 30px -14px rgba(255,87,34,.6);
+  }
+  .opt[aria-pressed="true"] .material-symbols-outlined { color: var(--accent); }
+  .opt .tick {
+    position: absolute; top: 12px; right: 12px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); color: var(--cream); display: grid; place-items: center;
+    font-size: 13px; opacity: 0; transform: scale(.4); transition: .25s var(--ease-spring);
+  }
+  .opt[aria-pressed="true"] .tick { opacity: 1; transform: scale(1); }
+
+  /* Plan tiers */
+  .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 560px){ .plan-grid { grid-template-columns: 1fr; } }
+  .plan {
+    position: relative; border: 1px solid rgba(255,255,255,.09); border-radius: var(--r-md);
+    padding: 20px 18px; background: rgba(255,255,255,.02); cursor: none;
+    transition: border-color .25s, background .25s, transform .25s var(--ease-spring);
+  }
+  .plan:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.2); }
+  .plan .pname { font-family: 'Geist', monospace; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+  .plan .pprice { font-family: 'Hanken Grotesk'; font-weight: 800; font-size: 30px; letter-spacing: -.03em; margin: 6px 0 2px; }
+  .plan .pprice small { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .plan ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .plan li { font-size: 13px; color: var(--ink-variant); display: flex; align-items: center; gap: 8px; }
+  .plan li .material-symbols-outlined { font-size: 16px; color: var(--accent); }
+  .plan[aria-pressed="true"] {
+    border-color: var(--accent); background: rgba(255,87,34,.06);
+    box-shadow: 0 0 0 1px var(--accent), 0 14px 34px -16px rgba(255,87,34,.6);
+  }
+  .plan .badge {
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep)); color: var(--cream);
+    font-family: 'Geist', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: var(--r-full); white-space: nowrap; box-shadow: 0 6px 16px -6px rgba(255,87,34,.8);
+  }
+
+  /* Add-on toggles */
+  .addons { display: flex; flex-direction: column; gap: 10px; }
+  .addon {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px; cursor: none;
+    border: 1px solid rgba(255,255,255,.08); border-radius: var(--r-md); background: rgba(255,255,255,.02);
+    transition: border-color .25s, background .25s;
+  }
+  .addon:hover { border-color: rgba(255,255,255,.18); }
+  .addon[aria-pressed="true"] { border-color: rgba(255,87,34,.5); background: rgba(255,87,34,.05); }
+  .switch {
+    width: 42px; height: 24px; border-radius: var(--r-full); background: var(--surface-high);
+    position: relative; flex: 0 0 auto; transition: background .25s var(--ease);
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--muted); transition: transform .28s var(--ease-spring), background .25s;
+  }
+  .addon[aria-pressed="true"] .switch { background: rgba(255,87,34,.25); }
+  .addon[aria-pressed="true"] .switch::after { transform: translateX(18px); background: var(--accent); box-shadow: 0 0 12px rgba(255,87,34,.8); }
+  .addon .a-info { flex: 1; }
+  .addon .a-name { font-family: 'Hanken Grotesk'; font-weight: 700; font-size: 14.5px; }
+  .addon .a-desc { font-size: 12px; color: var(--muted); }
+  .addon .a-price { font-family: 'Geist', monospace; font-size: 13px; color: var(--ink-variant); }
+
+  /* Billing toggle */
+  .billing { display: inline-flex; padding: 4px; gap: 4px; background: var(--surface-low); border-radius: var(--r-full); border: 1px solid rgba(255,255,255,.07); }
+  .billing button {
+    font-family: 'Hanken Grotesk'; font-weight: 700; font-size: 13.5px; color: var(--ink-variant);
+    background: transparent; border: none; padding: 9px 20px; border-radius: var(--r-full); cursor: none; transition: color .2s;
+    position: relative; display: flex; align-items: center; gap: 7px;
+  }
+  .billing button[aria-pressed="true"] { color: var(--cream); background: linear-gradient(135deg, var(--accent-bright), var(--accent-deep)); }
+  .billing .save { font-family: 'Geist', monospace; font-size: 10px; letter-spacing: .05em; background: rgba(110,231,183,.15); color: var(--ok); padding: 2px 7px; border-radius: var(--r-full); }
+  .billing button[aria-pressed="true"] .save { background: rgba(255,255,255,.2); color: var(--cream); }
+
+  /* Summary (sticky) */
+  .summary { position: sticky; top: 92px; }
+  .summary .total-label { font-family: 'Geist', monospace; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .summary .total {
+    font-family: 'Hanken Grotesk'; font-weight: 800; font-size: 54px; letter-spacing: -.04em; line-height: 1;
+    margin: 6px 0 2px; display: flex; align-items: baseline; gap: 4px;
+  }
+  .summary .total .cur { font-size: 30px; color: var(--accent); }
+  .summary .total .per { font-size: 15px; font-weight: 500; color: var(--muted); margin-left: 4px; }
+  .summary .struck { font-family: 'Geist', monospace; font-size: 13px; color: var(--muted); text-decoration: line-through; min-height: 18px; }
+  .summary hr { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 20px 0; }
+  .summary .line { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; padding: 5px 0; }
+  .summary .line .k { color: var(--ink-variant); display: flex; align-items: center; gap: 8px; }
+  .summary .line .k .material-symbols-outlined { font-size: 16px; color: var(--accent); }
+  .summary .line .v { font-family: 'Geist', monospace; color: var(--ink); }
+  .summary .line.muted .k, .summary .line.muted .v { color: var(--muted); }
+  .summary .cta-block { margin-top: 22px; }
+  .summary .btn-primary { width: 100%; padding: 16px; font-size: 16px; }
+  .summary .note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .summary .note .material-symbols-outlined { font-size: 15px; }
+
+  .empty-line { color: var(--muted); font-size: 13px; font-style: italic; padding: 4px 0; }
+
+  /* --- Reveal on scroll --- */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* --- Toast --- */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translate(-50%, 140%);
+    background: var(--surface-high); border: 1px solid rgba(255,87,34,.4); color: var(--ink);
+    padding: 15px 22px; border-radius: var(--r-md); z-index: 9998; display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--shadow-glow); transition: transform .5s var(--ease-spring); max-width: 90vw;
+  }
+  .toast.show { transform: translate(-50%, 0); }
+  .toast .material-symbols-outlined { color: var(--accent); }
+  .toast b { font-family: 'Hanken Grotesk'; }
+
+  /* --- Footer --- */
+  footer { border-top: 1px solid rgba(255,255,255,.06); padding: 40px 0; position: relative; z-index: 2; }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
+  footer a:hover { color: var(--ink); }
+  footer .fl { display: flex; gap: 22px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="atmosphere" aria-hidden="true">
+  <div class="glow a"></div><div class="glow b"></div><div class="glow c"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="CleanLines Studio">
+      <span class="mark"><span></span></span>
+      CleanLines<span style="color:var(--accent)">.</span>
+    </a>
+    <nav class="links" aria-label="Hauptnavigation">
+      <a href="#konfigurator">Konfigurator</a>
+      <a href="#industries">Branchen</a>
+      <a href="#konfigurator">Preise</a>
+    </nav>
+    <button class="btn btn-primary btn-sm magnetic" data-scroll="#konfigurator">Paket bauen</button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow reveal">Content-Konfigurator</span>
+      <h1 class="reveal">Dein Content.<br /><span class="shine">In 60 Sekunden geplant.</span></h1>
+      <p class="reveal">Stell dir dein monatliches Paket selbst zusammen — Branche, Umfang und Extras. Der Preis steht sofort. Kein Verkaufsgespräch nötig.</p>
+      <div class="cta reveal">
+        <button class="btn btn-primary btn-lg magnetic" data-scroll="#konfigurator">Paket zusammenstellen</button>
+        <button class="btn btn-ghost btn-lg magnetic" data-scroll="#industries">Branchen ansehen</button>
+      </div>
+      <div class="trust reveal">
+        <span><span class="material-symbols-outlined">bolt</span> Fertig in 48 h</span>
+        <span><span class="material-symbols-outlined">verified</span> Monatlich kündbar</span>
+        <span><span class="material-symbols-outlined">groups</span> 120+ lokale Betriebe</span>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true"><span class="material-symbols-outlined" style="font-size:34px">keyboard_double_arrow_down</span></div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section class="section" id="industries">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Für deinen Fachbereich</span>
+        <h2>Expertise, die deinen Kalender füllt.</h2>
+        <p>Wir kennen die Sprache deiner Branche. Wähle deinen Bereich im Konfigurator — Tonalität und Formate passen sich an.</p>
+      </div>
+      <div class="industry-grid reveal" style="gap:16px">
+        <div class="opt" style="cursor:auto">
+          <span class="material-symbols-outlined">content_cut</span>
+          <div class="opt-title">Friseure &amp; Beauty</div>
+          <div class="opt-sub">Vorher/Nachher-Stories, Mitarbeiter-Spotlights, Trend-Reels.</div>
+        </div>
+        <div class="opt" style="cursor:auto">
+          <span class="material-symbols-outlined">restaurant</span>
+          <div class="opt-title">Restaurants</div>
+          <div class="opt-sub">Gericht-des-Tages, Behind-the-Kitchen, Reservierungs-Pushes.</div>
+        </div>
+        <div class="opt" style="cursor:auto">
+          <span class="material-symbols-outlined">handyman</span>
+          <div class="opt-title">Handwerker</div>
+          <div class="opt-sub">Projekt-Dokus, Experten-Tipps, Vertrauen &amp; Referenzen.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIGURATOR APP -->
+  <section class="section" id="konfigurator" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Live-Konfigurator</span>
+        <h2>Bau dir dein Paket.</h2>
+        <p>Jede Auswahl aktualisiert den Preis sofort. Keine versteckten Kosten.</p>
+      </div>
+
+      <div class="configurator">
+        <!-- LEFT: choices -->
+        <div class="reveal">
+          <!-- Step 1 -->
+          <div class="panel field-group">
+            <div class="step-label"><span class="step-num">1</span> Branche wählen</div>
+            <div class="industry-grid" id="industrySel" role="group" aria-label="Branche">
+              <button class="opt magnetic-soft" data-industry="Friseure & Beauty" aria-pressed="true">
+                <span class="tick material-symbols-outlined">check</span>
+                <span class="material-symbols-outlined">content_cut</span>
+                <div class="opt-title">Friseure</div><div class="opt-sub">&amp; Beauty</div>
+              </button>
+              <button class="opt magnetic-soft" data-industry="Restaurants" aria-pressed="false">
+                <span class="tick material-symbols-outlined">check</span>
+                <span class="material-symbols-outlined">restaurant</span>
+                <div class="opt-title">Restaurants</div><div class="opt-sub">&amp; Cafés</div>
+              </button>
+              <button class="opt magnetic-soft" data-industry="Handwerker" aria-pressed="false">
+                <span class="tick material-symbols-outlined">check</span>
+                <span class="material-symbols-outlined">handyman</span>
+                <div class="opt-title">Handwerker</div><div class="opt-sub">&amp; Bau</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="panel field-group">
+            <div class="step-label"><span class="step-num">2</span> Paket wählen</div>
+            <div class="plan-grid" id="planSel" role="group" aria-label="Paket">
+              <button class="plan magnetic-soft" data-plan="starter" data-price="99" aria-pressed="false">
+                <div class="pname">Starter</div>
+                <div class="pprice">99€<small>/mtl.</small></div>
+                <ul>
+                  <li><span class="material-symbols-outlined">check</span> 4 Reels-Skripte</li>
+                  <li><span class="material-symbols-outlined">check</span> 4 Captions</li>
+                </ul>
+              </button>
+              <button class="plan magnetic-soft" data-plan="wachstum" data-price="199" aria-pressed="true">
+                <div class="badge">Beliebt</div>
+                <div class="pname">Wachstum</div>
+                <div class="pprice">199€<small>/mtl.</small></div>
+                <ul>
+                  <li><span class="material-symbols-outlined">check</span> 12 Reels-Skripte</li>
+                  <li><span class="material-symbols-outlined">check</span> 12 Captions</li>
+                  <li><span class="material-symbols-outlined">check</span> 8 Google-Posts</li>
+                </ul>
+              </button>
+              <button class="plan magnetic-soft" data-plan="premium" data-price="349" aria-pressed="false">
+                <div class="pname">Premium</div>
+                <div class="pprice">349€<small>/mtl.</small></div>
+                <ul>
+                  <li><span class="material-symbols-outlined">check</span> Täglicher Plan</li>
+                  <li><span class="material-symbols-outlined">check</span> Story-Vorlagen</li>
+                  <li><span class="material-symbols-outlined">check</span> Full-Service</li>
+                </ul>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="panel field-group">
+            <div class="step-label"><span class="step-num">3</span> Extras dazu (optional)</div>
+            <div class="addons" id="addonSel" role="group" aria-label="Extras">
+              <button class="addon" data-addon="story" data-price="49" aria-pressed="false">
+                <span class="switch"></span>
+                <div class="a-info"><div class="a-name">Story-Vorlagen</div><div class="a-desc">10 editierbare Story-Designs pro Monat</div></div>
+                <div class="a-price">+49€</div>
+              </button>
+              <button class="addon" data-addon="google" data-price="39" aria-pressed="false">
+                <span class="switch"></span>
+                <div class="a-info"><div class="a-name">Extra Google-Posts</div><div class="a-desc">Local-SEO-Boost, 8 Beiträge/Monat</div></div>
+                <div class="a-price">+39€</div>
+              </button>
+              <button class="addon" data-addon="doku" data-price="59" aria-pressed="false">
+                <span class="switch"></span>
+                <div class="a-info"><div class="a-name">Vorher/Nachher-Doku</div><div class="a-desc">Profi-Aufbereitung deiner Ergebnisse</div></div>
+                <div class="a-price">+59€</div>
+              </button>
+              <button class="addon" data-addon="spotlight" data-price="29" aria-pressed="false">
+                <span class="switch"></span>
+                <div class="a-info"><div class="a-name">Mitarbeiter-Spotlights</div><div class="a-desc">Persönliche Team-Stories, 2/Monat</div></div>
+                <div class="a-price">+29€</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="panel field-group">
+            <div class="step-label"><span class="step-num">4</span> Abrechnung</div>
+            <div class="billing" id="billingSel" role="group" aria-label="Abrechnungszeitraum">
+              <button data-billing="monthly" aria-pressed="true">Monatlich</button>
+              <button data-billing="yearly" aria-pressed="false">Jährlich <span class="save">2 Monate gratis</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: live summary -->
+        <aside class="panel summary tilt" aria-live="polite">
+          <div class="total-label">Dein Paket</div>
+          <div class="total"><span class="cur">€</span><span id="totalNum">199</span><span class="per" id="perLabel">/ mtl.</span></div>
+          <div class="struck" id="struck"></div>
+          <hr />
+          <div id="summaryLines"></div>
+          <hr />
+          <div class="line"><span class="k" style="font-family:'Hanken Grotesk';font-weight:700;color:var(--ink)">Gesamt</span><span class="v" id="grandTotal" style="font-size:15px;color:var(--ink)">199€ / mtl.</span></div>
+          <div class="cta-block">
+            <button class="btn btn-primary magnetic" id="bookBtn">Jetzt unverbindlich buchen</button>
+            <div class="note"><span class="material-symbols-outlined">lock</span> Keine Vertragsbindung · jederzeit kündbar</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand" style="font-size:16px"><span class="mark" style="width:24px;height:24px"><span style="width:10px;height:10px"></span></span> CleanLines Studio</div>
+    <div class="fl">
+      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#konfigurator">Paket bauen</a>
+    </div>
+    <div>© 2024 CleanLines Studio</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status">
+  <span class="material-symbols-outlined">check_circle</span>
+  <span><b>Paket vorgemerkt!</b> <span id="toastMsg"></span></span>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = matchMedia('(pointer: coarse)').matches;
+
+  /* ---------- State ---------- */
+  const state = {
+    industry: 'Friseure & Beauty',
+    plan: 'wachstum', planPrice: 199, planName: 'Wachstum',
+    addons: new Map(), // key -> {name, price}
+    billing: 'monthly'
+  };
+  const ADDON_NAMES = { story:'Story-Vorlagen', google:'Extra Google-Posts', doku:'Vorher/Nachher-Doku', spotlight:'Mitarbeiter-Spotlights' };
+
+  /* ---------- Helpers ---------- */
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+
+  /* ---------- Custom cursor ---------- */
+  if (!coarse) {
+    const dot = $('.cursor-dot'), ring = $('.cursor-ring');
+    let rx = 0, ry = 0, dx = 0, dy = 0;
+    addEventListener('mousemove', e => {
+      dx = e.clientX; dy = e.clientY;
+      dot.style.left = dx + 'px'; dot.style.top = dy + 'px';
+    });
+    (function loop(){ rx += (dx-rx)*.18; ry += (dy-ry)*.18; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(loop); })();
+    const hot = 'a,button,.opt,.plan,.addon,[data-scroll]';
+    addEventListener('mouseover', e => { if (e.target.closest(hot)) ring.classList.add('hot'); });
+    addEventListener('mouseout', e => { if (e.target.closest(hot)) ring.classList.remove('hot'); });
+  }
+
+  /* ---------- Magnetic buttons ---------- */
+  if (!coarse && !reduce) {
+    $$('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const mx = e.clientX - r.left - r.width/2, my = e.clientY - r.top - r.height/2;
+        btn.style.transform = `translate(${mx*0.3}px, ${my*0.4}px)`;
+      });
+      btn.addEventListener('mouseleave', () => btn.style.transform = '');
+    });
+  }
+
+  /* ---------- 3D tilt on summary ---------- */
+  if (!coarse && !reduce) {
+    $$('.tilt').forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left)/r.width - .5, py = (e.clientY - r.top)/r.height - .5;
+        el.style.transform = `perspective(900px) rotateY(${px*5}deg) rotateX(${-py*5}deg)`;
+      });
+      el.addEventListener('mouseleave', () => el.style.transform = '');
+    });
+  }
+
+  /* ---------- Smooth scroll ---------- */
+  $$('[data-scroll]').forEach(b => b.addEventListener('click', () => {
+    const t = $(b.dataset.scroll); if (t) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
+  /* ---------- Reveal on scroll ---------- */
+  const io = new IntersectionObserver((ents) => {
+    ents.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: .14 });
+  $$('.reveal').forEach((el,i) => { el.style.transitionDelay = Math.min(i*60,300)+'ms'; io.observe(el); });
+
+  /* ---------- Price count-up ---------- */
+  const totalNum = $('#totalNum');
+  let shown = 199;
+  function animateTo(target) {
+    if (reduce) { totalNum.textContent = Math.round(target); shown = target; return; }
+    const from = shown, diff = target - from, start = performance.now(), dur = 450;
+    function tick(now){
+      const p = Math.min((now-start)/dur, 1), e = 1-Math.pow(1-p,3);
+      totalNum.textContent = Math.round(from + diff*e);
+      if (p < 1) requestAnimationFrame(tick); else shown = target;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ---------- Core recompute ---------- */
+  function monthlyBase(){
+    let sum = state.planPrice;
+    state.addons.forEach(a => sum += a.price);
+    return sum;
+  }
+  function render(){
+    const base = monthlyBase();
+    const yearly = state.billing === 'yearly';
+    // yearly = pay for 10 months (2 free); show effective monthly
+    const effMonthly = yearly ? Math.round(base * 10/12) : base;
+    const annualTotal = base * 10;
+
+    animateTo(effMonthly);
+    $('#perLabel').textContent = '/ mtl.';
+    $('#struck').textContent = yearly ? `${base}€ statt · du sparst ${base*2}€ / Jahr` : '';
+
+    // summary lines
+    const lines = [];
+    lines.push(`<div class="line"><span class="k"><span class="material-symbols-outlined">storefront</span> Branche</span><span class="v">${state.industry}</span></div>`);
+    lines.push(`<div class="line"><span class="k"><span class="material-symbols-outlined">workspace_premium</span> Paket ${state.planName}</span><span class="v">${state.planPrice}€</span></div>`);
+    if (state.addons.size === 0) {
+      lines.push(`<div class="empty-line">Noch keine Extras gewählt</div>`);
+    } else {
+      state.addons.forEach(a => {
+        lines.push(`<div class="line"><span class="k"><span class="material-symbols-outlined">add</span> ${a.name}</span><span class="v">+${a.price}€</span></div>`);
+      });
+    }
+    if (yearly) lines.push(`<div class="line muted"><span class="k"><span class="material-symbols-outlined">redeem</span> Jahres-Rabatt</span><span class="v">−2 Monate</span></div>`);
+    $('#summaryLines').innerHTML = lines.join('');
+
+    $('#grandTotal').textContent = yearly ? `${annualTotal}€ / Jahr` : `${base}€ / mtl.`;
+  }
+
+  /* ---------- Wire: industry ---------- */
+  $$('#industrySel .opt').forEach(o => o.addEventListener('click', () => {
+    $$('#industrySel .opt').forEach(x => x.setAttribute('aria-pressed','false'));
+    o.setAttribute('aria-pressed','true');
+    state.industry = o.dataset.industry;
+    render();
+  }));
+
+  /* ---------- Wire: plan ---------- */
+  $$('#planSel .plan').forEach(p => p.addEventListener('click', () => {
+    $$('#planSel .plan').forEach(x => x.setAttribute('aria-pressed','false'));
+    p.setAttribute('aria-pressed','true');
+    state.plan = p.dataset.plan;
+    state.planPrice = +p.dataset.price;
+    state.planName = p.querySelector('.pname').textContent;
+    render();
+  }));
+
+  /* ---------- Wire: add-ons ---------- */
+  $$('#addonSel .addon').forEach(a => a.addEventListener('click', () => {
+    const on = a.getAttribute('aria-pressed') === 'true';
+    a.setAttribute('aria-pressed', String(!on));
+    const key = a.dataset.addon;
+    if (on) state.addons.delete(key);
+    else state.addons.set(key, { name: ADDON_NAMES[key], price: +a.dataset.price });
+    render();
+  }));
+
+  /* ---------- Wire: billing ---------- */
+  $$('#billingSel button').forEach(b => b.addEventListener('click', () => {
+    $$('#billingSel button').forEach(x => x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+    state.billing = b.dataset.billing;
+    render();
+  }));
+
+  /* ---------- Booking ---------- */
+  const toast = $('#toast');
+  $('#bookBtn').addEventListener('click', () => {
+    const base = monthlyBase();
+    const extras = state.addons.size ? `${state.addons.size} Extra${state.addons.size>1?'s':''}` : 'ohne Extras';
+    $('#toastMsg').textContent = `${state.planName} für ${state.industry}, ${extras} — ${state.billing==='yearly'? base*10+'€/Jahr' : base+'€/mtl.'}. Wir melden uns in 24 h.`;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 5200);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
