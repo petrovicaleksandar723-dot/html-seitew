@@ -4,11 +4,12 @@ import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/ui/reveal";
 import { REELS } from "@/lib/constants";
+import { asset } from "@/lib/asset";
 
 const CARD_VIDEOS: Record<number, string> = {
-  0: "/videos/reel-1.mp4",
-  1: "/videos/reel-2.mp4",
-  2: "/videos/reel-3.mp4",
+  0: asset("/videos/reel-1.mp4"),
+  1: asset("/videos/reel-2.mp4"),
+  2: asset("/videos/reel-3.mp4"),
 };
 
 /* ---------- Featured showreel ---------- */
@@ -30,7 +31,7 @@ function Showreel() {
           <video
             ref={ref}
             className="h-full w-full object-cover"
-            src="/videos/showreel.mp4"
+            src={asset("/videos/showreel.mp4")}
             autoPlay
             muted
             loop
