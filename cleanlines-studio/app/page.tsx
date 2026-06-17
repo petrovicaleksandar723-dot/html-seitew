@@ -14,6 +14,7 @@ import { CleanlinesOS } from "@/components/cleanlines-os";
 import { Industries } from "@/components/industries";
 import { Pipeline } from "@/components/pipeline";
 import { Services } from "@/components/services";
+import { ContentCompare } from "@/components/content-compare";
 import { Pricing } from "@/components/pricing";
 import { Faq } from "@/components/faq";
 import { FinalCta } from "@/components/final-cta";
@@ -40,6 +41,7 @@ export default function Home() {
         <Pipeline />
         <Divider label="Leistungen" />
         <Services />
+        <ContentCompare />
         <Pricing />
         <Faq />
         <FinalCta />
