@@ -57,7 +57,7 @@ export function Hero() {
 
       <motion.div
         style={{ y: contentY, opacity: contentOpacity, filter: blurFilter }}
-        className="shell relative z-10 w-full"
+        className="shell pointer-events-none relative z-10 w-full"
       >
         <div className="max-w-[820px]">
           <motion.span
@@ -96,7 +96,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease, delay: D + 0.62 }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            className="pointer-events-auto mt-10 flex flex-wrap items-center gap-4"
           >
             <MagneticButton href="#kontakt" variant="primary">
               Kostenlose Einschätzung sichern

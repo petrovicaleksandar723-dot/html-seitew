@@ -35,7 +35,7 @@ export function ContentCompare() {
       className="relative overflow-hidden py-[clamp(100px,15vw,180px)]"
     >
       {/* background montage — 4 example clips */}
-      <MediaBackdrop videos={EXAMPLES} opacity={0.16} />
+      <MediaBackdrop videos={EXAMPLES} opacity={0.34} />
 
       <div className="shell content relative z-10">
         <div className="max-w-[760px]">

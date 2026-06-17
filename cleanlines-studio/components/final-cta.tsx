@@ -8,16 +8,16 @@ import { MagneticButton } from "@/components/ui/magnetic";
 import { asset } from "@/lib/asset";
 
 const BG = [
-  asset("/videos/example-1.mp4"),
+  asset("/videos/ambient-3.mp4"),
   asset("/videos/example-2.mp4"),
-  asset("/videos/example-3.mp4"),
-  asset("/videos/example-4.mp4"),
+  asset("/videos/ambient-1.mp4"),
+  asset("/videos/reel-1.mp4"),
 ];
 
 export function FinalCta() {
   return (
     <section id="kontakt" className="py-[clamp(100px,16vw,200px)]">
-      <MediaBackdrop videos={BG} opacity={0.14} />
+      <MediaBackdrop videos={BG} opacity={0.32} />
       {/* cinematic closing glow + light trails */}
       <div className="lightfield left-1/2 top-1/2 z-[1] h-[50vw] w-[50vw] -translate-x-1/2 -translate-y-1/2 bg-gold/[0.09]" />
       <div className="pointer-events-none absolute inset-0 z-[1] opacity-40">

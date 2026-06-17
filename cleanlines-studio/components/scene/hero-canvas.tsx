@@ -3,7 +3,15 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, useVideoTexture } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
-import { Component, Suspense, useMemo, useRef, type ReactNode } from "react";
+import {
+  Component,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import * as THREE from "three";
 import { asset } from "@/lib/asset";
 
@@ -14,50 +22,148 @@ const CARD_W = 0.96;
 const CARD_H = 1.46;
 
 const CARDS = [
-  { src: asset("/videos/showreel.mp4"), a: 0.3, r: 2.9, y: 0.7 },
-  { src: asset("/videos/reel-1.mp4"), a: 1.75, r: 3.05, y: -0.5 },
-  { src: asset("/videos/reel-2.mp4"), a: 3.2, r: 2.8, y: 1.15 },
-  { src: asset("/videos/reel-3.mp4"), a: 4.7, r: 3.0, y: -0.9 },
+  { src: asset("/videos/showreel.mp4"), a: 0.3, r: 3.1, y: 0.8 },
+  { src: asset("/videos/reel-1.mp4"), a: 1.75, r: 3.25, y: -0.6 },
+  { src: asset("/videos/reel-2.mp4"), a: 3.2, r: 3.0, y: 1.2 },
+  { src: asset("/videos/reel-3.mp4"), a: 4.7, r: 3.2, y: -1.0 },
 ];
 
-/* ---------- Floating premium phone ---------- */
-function Phone() {
-  const group = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    if (!group.current) return;
-    group.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.4) * 0.04;
+/* ---------- Interactive 3D "CL" monogram ---------- */
+const deg = (d: number) => THREE.MathUtils.degToRad(d);
+
+function ringGeometry() {
+  const oR = 1.0;
+  const iR = 0.74;
+  const c = new THREE.Shape();
+  c.absarc(0, 0, oR, deg(42), deg(318), false);
+  c.absarc(0, 0, iR, deg(318), deg(42), true);
+  const geo = new THREE.ExtrudeGeometry(c, {
+    depth: 0.26,
+    bevelEnabled: true,
+    bevelThickness: 0.05,
+    bevelSize: 0.035,
+    bevelSegments: 4,
+    curveSegments: 64,
   });
+  geo.center();
+  return geo;
+}
+
+function lGeometry() {
+  const L = new THREE.Shape();
+  const x0 = -0.1;
+  const x1 = 0.17;
+  const top = 0.56;
+  const bot = -0.92;
+  const footX = 0.92;
+  const footTop = -0.64;
+  L.moveTo(x0, top);
+  L.lineTo(x1, top);
+  L.lineTo(x1, footTop);
+  L.lineTo(footX, footTop);
+  L.lineTo(footX, bot);
+  L.lineTo(x0, bot);
+  L.closePath();
+  const geo = new THREE.ExtrudeGeometry(L, {
+    depth: 0.3,
+    bevelEnabled: true,
+    bevelThickness: 0.05,
+    bevelSize: 0.03,
+    bevelSegments: 4,
+    curveSegments: 24,
+  });
+  return geo;
+}
+
+function Logo3D() {
+  const geoC = useMemo(ringGeometry, []);
+  const geoL = useMemo(lGeometry, []);
+  const grp = useRef<THREE.Group>(null);
+  const spin = useRef(0);
+  const dragging = useRef(false);
+  const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    const move = (e: PointerEvent) => {
+      if (!dragging.current || !grp.current) return;
+      grp.current.rotation.y += e.movementX * 0.012;
+      grp.current.rotation.x = THREE.MathUtils.clamp(
+        grp.current.rotation.x + e.movementY * 0.008,
+        -0.7,
+        0.7
+      );
+    };
+    const up = () => {
+      dragging.current = false;
+      document.body.style.cursor = "";
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    return () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+  }, []);
+
+  useFrame((state, dt) => {
+    const g = grp.current;
+    if (!g) return;
+    if (!dragging.current) g.rotation.y += dt * 0.35 + spin.current * dt;
+    spin.current *= 0.94;
+    g.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.06;
+    const target = (hover ? 1.5 : 1.4);
+    const s = THREE.MathUtils.lerp(g.scale.x, target, 0.12);
+    g.scale.setScalar(s);
+  });
+
+  const material = (
+    <meshStandardMaterial
+      color="#cdb486"
+      metalness={0.72}
+      roughness={0.28}
+      emissive="#5b4420"
+      emissiveIntensity={0.2}
+    />
+  );
+
   return (
-    <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.7}>
-      <group ref={group} rotation={[0.04, -0.35, 0]}>
-        <mesh castShadow>
-          <boxGeometry args={[1.55, 3.2, 0.18]} />
-          <meshStandardMaterial color="#0c0b09" metalness={0.9} roughness={0.28} />
-        </mesh>
-        <mesh position={[0, 0, 0.095]}>
-          <boxGeometry args={[1.42, 3.06, 0.02]} />
-          <meshStandardMaterial color="#000000" emissive={GOLD} emissiveIntensity={0.12} metalness={0.6} roughness={0.4} />
-        </mesh>
-        <mesh position={[0, 0, 0.108]}>
-          <planeGeometry args={[1.34, 2.98]} />
-          <meshBasicMaterial color="#14110b" />
-        </mesh>
-        {[1.02, 0.32, -0.42].map((y, i) => (
-          <mesh key={i} position={[0, y, 0.12]}>
-            <planeGeometry args={[1.16, 0.52]} />
-            <meshStandardMaterial color="#1c1710" emissive={GOLD} emissiveIntensity={0.35 - i * 0.07} />
-          </mesh>
-        ))}
-        <mesh position={[0, -1.05, 0.122]}>
-          <planeGeometry args={[1.16, 0.34]} />
-          <meshStandardMaterial color={GOLD} emissive={GOLD_BRIGHT} emissiveIntensity={0.6} />
-        </mesh>
-      </group>
-    </Float>
+    <group
+      ref={grp}
+      position={[-0.08, 0.05, 0]}
+      scale={1.4}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        dragging.current = true;
+        document.body.style.cursor = "grabbing";
+      }}
+      onPointerOver={() => {
+        setHover(true);
+        document.body.style.cursor = "grab";
+      }}
+      onPointerOut={() => {
+        setHover(false);
+        if (!dragging.current) document.body.style.cursor = "";
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        spin.current += 7;
+      }}
+    >
+      <mesh geometry={geoC}>{material}</mesh>
+      <mesh geometry={geoL} position={[0, 0, 0.03]}>
+        <meshStandardMaterial
+          color="#e6d2a6"
+          metalness={0.78}
+          roughness={0.26}
+          emissive="#5b4420"
+          emissiveIntensity={0.22}
+        />
+      </mesh>
+    </group>
   );
 }
 
-/* ---------- Card frame (shared) ---------- */
+/* ---------- Card frame ---------- */
 function Frame() {
   return (
     <mesh>
@@ -67,7 +173,6 @@ function Frame() {
   );
 }
 
-/* Emissive fallback (used while loading or if a video can't decode) */
 function FallbackCard() {
   return (
     <group>
@@ -76,15 +181,10 @@ function FallbackCard() {
         <planeGeometry args={[CARD_W, CARD_H]} />
         <meshStandardMaterial color="#161009" emissive={GOLD} emissiveIntensity={0.3} />
       </mesh>
-      <mesh position={[0, 0.45, 0.04]}>
-        <planeGeometry args={[CARD_W * 0.55, 0.18]} />
-        <meshBasicMaterial color={GOLD_BRIGHT} />
-      </mesh>
     </group>
   );
 }
 
-/* Live video texture card */
 function VideoFace({ src }: { src: string }) {
   const texture = useVideoTexture(src, {
     crossOrigin: "anonymous",
@@ -104,7 +204,6 @@ function VideoFace({ src }: { src: string }) {
   );
 }
 
-/* Error boundary so a failed texture degrades to FallbackCard instead of crashing the canvas */
 class TextureBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -151,11 +250,11 @@ function Rings() {
   return (
     <group rotation={[Math.PI / 2.3, 0, 0]}>
       <mesh ref={a}>
-        <torusGeometry args={[3.7, 0.008, 16, 120]} />
+        <torusGeometry args={[3.8, 0.008, 16, 120]} />
         <meshStandardMaterial color={GOLD} emissive={GOLD} emissiveIntensity={2} />
       </mesh>
       <mesh ref={b} rotation={[0.4, 0, 0]}>
-        <torusGeometry args={[4.4, 0.006, 16, 120]} />
+        <torusGeometry args={[4.5, 0.006, 16, 120]} />
         <meshStandardMaterial color={GOLD_BRIGHT} emissive={GOLD_BRIGHT} emissiveIntensity={1.4} />
       </mesh>
     </group>
@@ -192,8 +291,8 @@ function ParallaxRig({ children }: { children: ReactNode }) {
   const { pointer } = useThree();
   useFrame(() => {
     if (!group.current) return;
-    group.current.rotation.y += (pointer.x * 0.28 - group.current.rotation.y) * 0.05;
-    group.current.rotation.x += (-pointer.y * 0.18 - group.current.rotation.x) * 0.05;
+    group.current.rotation.y += (pointer.x * 0.22 - group.current.rotation.y) * 0.04;
+    group.current.rotation.x += (-pointer.y * 0.14 - group.current.rotation.x) * 0.04;
   });
   return <group ref={group}>{children}</group>;
 }
@@ -207,13 +306,15 @@ export default function HeroCanvas() {
     >
       <color attach="background" args={["#050505"]} />
       <fog attach="fog" args={["#050505", 9, 18]} />
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[4, 6, 6]} intensity={1.6} color="#fff2d6" />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[3, 5, 6]} intensity={2.2} color="#fff4da" />
+      <directionalLight position={[-4, 2, 3]} intensity={1.1} color={GOLD_BRIGHT} />
       <pointLight position={[-5, -2, 4]} intensity={40} color={GOLD} />
       <pointLight position={[3, 3, -4]} intensity={26} color={GOLD_BRIGHT} />
+      <pointLight position={[0, 0, 5]} intensity={18} color="#fff" />
 
+      <Logo3D />
       <ParallaxRig>
-        <Phone />
         <Suspense fallback={null}>
           <VideoCards />
         </Suspense>
@@ -222,8 +323,8 @@ export default function HeroCanvas() {
       </ParallaxRig>
 
       <EffectComposer multisampling={4}>
-        <Bloom intensity={0.8} luminanceThreshold={0.25} luminanceSmoothing={0.5} mipmapBlur />
-        <Vignette eskil={false} offset={0.22} darkness={0.92} />
+        <Bloom intensity={0.75} luminanceThreshold={0.3} luminanceSmoothing={0.5} mipmapBlur />
+        <Vignette eskil={false} offset={0.22} darkness={0.9} />
       </EffectComposer>
     </Canvas>
   );

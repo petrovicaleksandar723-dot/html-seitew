@@ -7,16 +7,16 @@ import { SERVICES } from "@/lib/constants";
 import { asset } from "@/lib/asset";
 
 const BG = [
-  asset("/videos/example-1.mp4"),
+  asset("/videos/ambient-1.mp4"),
+  asset("/videos/ambient-2.mp4"),
+  asset("/videos/ambient-3.mp4"),
   asset("/videos/reel-2.mp4"),
-  asset("/videos/example-3.mp4"),
-  asset("/videos/reel-1.mp4"),
 ];
 
 export function Services() {
   return (
     <section className="py-[clamp(90px,14vw,170px)]">
-      <MediaBackdrop videos={BG} opacity={0.1} />
+      <MediaBackdrop videos={BG} opacity={0.26} />
       <div className="shell content relative z-10">
         <div className="max-w-[680px]">
           <Reveal>

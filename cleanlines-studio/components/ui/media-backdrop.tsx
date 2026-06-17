@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
  */
 export function MediaBackdrop({
   videos,
-  opacity = 0.14,
+  opacity = 0.3,
 }: {
   videos: string[];
   opacity?: number;
@@ -45,24 +45,26 @@ export function MediaBackdrop({
     <div ref={ref} className="absolute inset-0 z-0">
       <div className={`grid h-full grid-cols-2 ${cols}`}>
         {videos.map((src, i) => (
-          <video
-            key={i}
-            ref={(el) => {
-              if (el) vids.current[i] = el;
-            }}
-            className="h-full w-full scale-105 object-cover"
-            style={{ opacity }}
-            src={src}
-            muted
-            loop
-            playsInline
-            preload="none"
-          />
+          <div key={i} className="relative h-full w-full overflow-hidden">
+            <video
+              ref={(el) => {
+                if (el) vids.current[i] = el;
+              }}
+              className={`h-full w-full object-cover ${i % 2 === 0 ? "kb-a" : "kb-b"}`}
+              style={{ opacity }}
+              src={src}
+              muted
+              loop
+              playsInline
+              preload="none"
+            />
+          </div>
         ))}
       </div>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_40%,rgba(5,5,5,0.5)_28%,rgba(5,5,5,0.94)_100%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-bg to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
+      {/* lighter veil so the clips read brighter, only slightly dimmed */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(130%_130%_at_50%_42%,rgba(5,5,5,0.28)_30%,rgba(5,5,5,0.82)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-bg via-bg/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-bg via-bg/70 to-transparent" />
     </div>
   );
 }

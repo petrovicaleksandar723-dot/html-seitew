@@ -2,11 +2,16 @@
 
 import { Reveal } from "@/components/ui/reveal";
 import { AnimatedHeading } from "@/components/ui/animated-heading";
+import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { TRANSFORM_BEFORE, TRANSFORM_AFTER } from "@/lib/constants";
+import { asset } from "@/lib/asset";
+
+const BG = [asset("/videos/example-3.mp4"), asset("/videos/ambient-2.mp4")];
 
 export function Transformation() {
   return (
     <section className="py-[clamp(90px,14vw,170px)]">
+      <MediaBackdrop videos={BG} opacity={0.2} />
       <div className="shell content relative z-10">
         <div className="max-w-[680px]">
           <Reveal>
@@ -23,7 +28,7 @@ export function Transformation() {
 
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           <Reveal delay={0.05}>
-            <div className="relative h-full rounded-2xl border border-line bg-white/[0.015] p-8">
+            <div className="relative h-full rounded-2xl border border-line bg-bg/40 p-8 backdrop-blur-md">
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
                 Vorher
               </span>

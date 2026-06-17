@@ -190,6 +190,18 @@ html.lenis body {
   color: transparent;
 }
 
+/* Ken Burns drift for background video montages */
+@keyframes kb-a {
+  0% { transform: scale(1.12) translate(0, 0); }
+  100% { transform: scale(1.22) translate(-2.5%, -2%); }
+}
+@keyframes kb-b {
+  0% { transform: scale(1.18) translate(-2%, 1.5%); }
+  100% { transform: scale(1.1) translate(2%, -1.5%); }
+}
+.kb-a { animation: kb-a 18s ease-in-out infinite alternate; }
+.kb-b { animation: kb-b 22s ease-in-out infinite alternate; }
+
 /* hide scrollbar on horizontal scrollers */
 .no-bar::-webkit-scrollbar {
   display: none;
