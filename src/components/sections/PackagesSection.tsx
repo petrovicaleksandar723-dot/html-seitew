@@ -34,6 +34,7 @@ export default function PackagesSection() {
           <SectionNumber num="06" label="Pakete" />
           <div className="eyebrow">{packages.eyebrow}</div>
           <SplitHeadline text={packages.headline} />
+          <p className="text-soft">{packages.subline}</p>
         </div>
 
         <div className="pkg-deck">

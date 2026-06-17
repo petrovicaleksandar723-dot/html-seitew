@@ -93,8 +93,9 @@ export default function ContentOSSection() {
         </div>
 
         <p className="os-body">
-          Du bekommst kein einzelnes Video. Du bekommst{" "}
-          <b>ein System, das deinen Betrieb regelmäßig hochwertig sichtbar macht.</b>
+          Du bekommst nicht einfach ein Video. Du bekommst{" "}
+          <b>ein wiederholbares Content-System, das deinen Betrieb regelmäßig sichtbar macht</b> —
+          geplant in Themen, Formaten und Posting-Ideen, damit dein Auftritt wie eine klare Marke wirkt.
         </p>
       </div>
     </section>

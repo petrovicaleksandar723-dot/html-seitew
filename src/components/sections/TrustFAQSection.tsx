@@ -57,6 +57,7 @@ export default function TrustFAQSection() {
           <SectionNumber num="08" label="Trust & FAQ" />
           <div className="eyebrow">{trust.eyebrow}</div>
           <SplitHeadline text={trust.headline} />
+          <p className="text-soft">{trust.body}</p>
         </div>
 
         <div className="tf-grid">

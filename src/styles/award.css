@@ -1472,8 +1472,8 @@
   position: relative;
   margin-top: 90px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(18px, 2vw, 40px);
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(14px, 1.5vw, 32px);
 }
 .pipe-rail {
   position: absolute;
