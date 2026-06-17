@@ -19,6 +19,11 @@ export function Preloader() {
     const start = performance.now();
     const dur = 1500;
     let raf = 0;
+    // fail-safe: never let the intro block the page for more than 4.5s
+    const safety = setTimeout(() => {
+      setCount(100);
+      setDone(true);
+    }, 4500);
     const tick = (now: number) => {
       const p = Math.min((now - start) / dur, 1);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -27,7 +32,10 @@ export function Preloader() {
       else setTimeout(() => setDone(true), 350);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(safety);
+    };
   }, [reduce]);
 
   useEffect(() => {
