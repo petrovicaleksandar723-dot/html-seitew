@@ -50,6 +50,13 @@ section {
   color: #050505;
 }
 
+/* accessible focus ring for keyboard users */
+:focus-visible {
+  outline: 2px solid #f0d49a;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 html {
   scroll-behavior: smooth;
 }

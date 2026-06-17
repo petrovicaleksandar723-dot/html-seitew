@@ -253,8 +253,26 @@ function HorizontalReels() {
 }
 
 export function ReelCinema() {
+  const sectionRef = useRef<HTMLElement>(null);
+  // pause this section's clips when it's off-screen (frees video decoders)
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        el.querySelectorAll("video").forEach((v) => {
+          if (entry.isIntersecting) (v as HTMLVideoElement).play().catch(() => {});
+          else (v as HTMLVideoElement).pause();
+        });
+      },
+      { rootMargin: "250px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section id="reel-cinema" className="py-[clamp(90px,14vw,170px)]">
+    <section ref={sectionRef} id="reel-cinema" className="py-[clamp(90px,14vw,170px)]">
       <div className="shell content relative z-10">
         <Reveal>
           <span className="eyebrow">Reel Cinema</span>
