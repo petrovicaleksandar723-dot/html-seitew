@@ -49,7 +49,11 @@ export function CleanlinesOS() {
       <div className="absolute inset-0 z-0">
         <OsCanvas progress={progress} velocity={velocity} />
       </div>
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(130%_130%_at_50%_50%,transparent_55%,rgba(5,5,5,0.72)_100%)]" />
+      {/* only a soft left wash so the copy stays readable — earth floats free */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-[58%] bg-gradient-to-r from-bg via-bg/55 to-transparent" />
+      {/* fluid hand-off to neighbouring sections */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-bg to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-bg to-transparent" />
 
       <div className="shell content relative z-10 grid w-full items-center gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
@@ -82,21 +86,23 @@ export function CleanlinesOS() {
                 key={m.title}
                 initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
                 whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                whileHover={{ scale: 1.06, y: -8 }}
                 viewport={{ once: true, margin: "-5% 0px" }}
                 transition={{
-                  duration: 0.7,
+                  duration: 0.6,
                   delay: i * 0.08,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="rounded-xl border border-line bg-bg/75 p-4 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-1"
+                className="group cursor-pointer rounded-xl border border-line bg-bg/75 p-5 backdrop-blur-xl transition-colors duration-300 hover:border-gold/50 hover:shadow-[0_22px_60px_-22px_rgba(216,178,116,0.65)]"
+                data-hot
               >
-                <div className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold shadow-[0_0_10px_2px_rgba(216,178,116,0.8)]" />
-                  <h3 className="font-display text-[15px] font-bold tracking-tight">
+                <div className="flex items-center gap-2.5">
+                  <span className="h-2 w-2 rounded-full bg-gold shadow-[0_0_12px_3px_rgba(216,178,116,0.85)]" />
+                  <h3 className="font-display text-[19px] font-bold tracking-tight transition-colors group-hover:text-gold-bright">
                     {m.title}
                   </h3>
                 </div>
-                <p className="mt-1.5 font-body text-[12.5px] leading-relaxed text-dim">
+                <p className="mt-2 font-body text-[14px] leading-relaxed text-dim transition-colors group-hover:text-ink">
                   {m.body}
                 </p>
               </motion.div>

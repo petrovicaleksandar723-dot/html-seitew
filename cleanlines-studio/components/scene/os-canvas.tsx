@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useVideoTexture, useTexture, Environment, Billboard } from "@react-three/drei";
+import { useVideoTexture, useTexture, Environment, Billboard, RoundedBox } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import {
   Component,
@@ -19,9 +19,6 @@ const GOLD_BRIGHT = "#f4d79e";
 const R = 1.65;
 
 type NumRef = MutableRefObject<number>;
-
-const CW = 0.74;
-const CH = 0.98;
 
 // world locations + the clip that "bloops" out of each
 const MARKERS = [
@@ -98,27 +95,34 @@ function Atmosphere() {
   );
 }
 
-/* ---------- video card ---------- */
-function Frame() {
-  return (
-    <mesh>
-      <boxGeometry args={[CW + 0.05, CH + 0.05, 0.04]} />
-      <meshStandardMaterial color="#0c0a08" emissive={GOLD} emissiveIntensity={0.2} metalness={0.8} roughness={0.3} envMapIntensity={1.2} />
-    </mesh>
-  );
-}
-function FallbackFace() {
+/* ---------- 3D phone showing the clip on its screen ---------- */
+const PH_W = 0.66;
+const PH_H = 1.34;
+const SCR_W = 0.58;
+const SCR_H = 1.22;
+
+function PhoneBody({ children }: { children: ReactNode }) {
   return (
     <group>
-      <Frame />
-      <mesh position={[0, 0, 0.03]}>
-        <planeGeometry args={[CW, CH]} />
-        <meshStandardMaterial color="#161009" emissive={GOLD} emissiveIntensity={0.3} />
+      <RoundedBox args={[PH_W, PH_H, 0.07]} radius={0.075} smoothness={5}>
+        <meshStandardMaterial color="#0a0a0c" metalness={0.95} roughness={0.22} envMapIntensity={1.7} />
+      </RoundedBox>
+      {/* screen well */}
+      <mesh position={[0, 0, 0.033]}>
+        <planeGeometry args={[SCR_W + 0.02, SCR_H + 0.02]} />
+        <meshBasicMaterial color="#000000" />
+      </mesh>
+      {children}
+      {/* notch */}
+      <mesh position={[0, SCR_H / 2 - 0.02, 0.04]}>
+        <planeGeometry args={[0.12, 0.03]} />
+        <meshBasicMaterial color="#000000" />
       </mesh>
     </group>
   );
 }
-function VideoFace({ src }: { src: string }) {
+
+function PhoneVideo({ src }: { src: string }) {
   const texture = useVideoTexture(src, {
     crossOrigin: "anonymous",
     muted: true,
@@ -127,22 +131,33 @@ function VideoFace({ src }: { src: string }) {
     playsInline: true,
   });
   return (
-    <group>
-      <Frame />
-      <mesh position={[0, 0, 0.03]}>
-        <planeGeometry args={[CW, CH]} />
+    <PhoneBody>
+      <mesh position={[0, 0, 0.037]}>
+        <planeGeometry args={[SCR_W, SCR_H]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
-    </group>
+    </PhoneBody>
   );
 }
+
+function PhoneFallback() {
+  return (
+    <PhoneBody>
+      <mesh position={[0, 0, 0.037]}>
+        <planeGeometry args={[SCR_W, SCR_H]} />
+        <meshStandardMaterial color="#161009" emissive={GOLD} emissiveIntensity={0.3} />
+      </mesh>
+    </PhoneBody>
+  );
+}
+
 class TextureBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
   }
   render() {
-    return this.state.failed ? <FallbackFace /> : this.props.children;
+    return this.state.failed ? <PhoneFallback /> : this.props.children;
   }
 }
 
@@ -175,8 +190,8 @@ function Marker({ lat, lng, src, index }: { lat: number; lng: number; src: strin
         <group ref={card} scale={0}>
           <Billboard>
             <TextureBoundary>
-              <Suspense fallback={<FallbackFace />}>
-                <VideoFace src={src} />
+              <Suspense fallback={<PhoneFallback />}>
+                <PhoneVideo src={src} />
               </Suspense>
             </TextureBoundary>
           </Billboard>
@@ -191,8 +206,8 @@ function Globe({ progress, velocity }: { progress?: NumRef; velocity?: NumRef })
   const g = useRef<THREE.Group>(null);
   useFrame((_, dt) => {
     if (!g.current) return;
-    const v = Math.min(Math.abs(velocity?.current ?? 0) * 9, 4);
-    g.current.rotation.y += dt * (0.08 + v) + (progress?.current ?? 0) * 0.04;
+    const v = Math.min(Math.abs(velocity?.current ?? 0) * 7, 3);
+    g.current.rotation.y += dt * (0.03 + v) + (progress?.current ?? 0) * 0.05;
   });
   return (
     <group ref={g} rotation={[0.35, 0, 0.1]}>
