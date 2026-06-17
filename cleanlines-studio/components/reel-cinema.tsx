@@ -195,8 +195,15 @@ function HorizontalReels() {
       setDistance(Math.max(0, track.current.scrollWidth - window.innerWidth + 80));
     };
     measure();
+    // re-measure after layout / fonts / video metadata settle
+    const t1 = setTimeout(measure, 300);
+    const t2 = setTimeout(measure, 1200);
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -237,6 +244,9 @@ function HorizontalReels() {
             </div>
           </div>
         </motion.div>
+        {/* edge fades so partially-visible cards look intentional, not cut off */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-bg to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-bg to-transparent" />
       </div>
     </div>
   );

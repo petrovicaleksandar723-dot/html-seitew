@@ -40,7 +40,7 @@ export function CleanlinesOS() {
   });
 
   return (
-    <section id="system" ref={section} className="relative h-[260vh]">
+    <section id="system" ref={section} className="relative h-[180vh]">
       {/* pinned stage */}
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         {/* 3D core fills the stage */}
