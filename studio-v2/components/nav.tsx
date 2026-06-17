@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "#leistungen", label: "Leistungen" },
@@ -11,6 +12,7 @@ const LINKS = [
 
 export function Nav() {
   const [solid, setSolid] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 40);
@@ -18,6 +20,8 @@ export function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  if (pathname?.startsWith("/atelier")) return null;
 
   return (
     <header
