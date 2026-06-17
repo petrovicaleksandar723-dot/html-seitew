@@ -1,8 +1,8 @@
-import { brand } from "../../content/siteContent";
+import { brand, mailto, hero } from "../../content/siteContent";
 import { scrollToTarget } from "../../motion/lenis";
 import Navigation from "./Navigation";
 
-/** Fixed header with brand mark and section navigation. */
+/** Fixed header with brand mark, section navigation and a persistent CTA. */
 export default function Header() {
   return (
     <header className="header">
@@ -15,7 +15,17 @@ export default function Header() {
         <span className="dot" />
         {brand.name}
       </button>
-      <Navigation />
+
+      <div className="header__right">
+        <Navigation />
+        <a
+          className="header__cta"
+          href={mailto("Kostenlose Content-Preview")}
+          data-cursor="hover"
+        >
+          {hero.ctaPrimary}
+        </a>
+      </div>
     </header>
   );
 }

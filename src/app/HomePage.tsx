@@ -1,4 +1,5 @@
-import { brand } from "../content/siteContent";
+import { brand, brand as b, hero, contact, mailto, whatsapp, waMessage } from "../content/siteContent";
+import BrandMark from "../components/ui/BrandMark";
 import HeroSection from "../components/sections/HeroSection";
 import DiagnosisSection from "../components/sections/DiagnosisSection";
 import ContentOSSection from "../components/sections/ContentOSSection";
@@ -31,12 +32,39 @@ export default function HomePage({ ready }: Props) {
       <TrustFAQSection />
       <FinalCTASection />
 
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} {brand.name}. Alle Rechte vorbehalten.</p>
-        <div className="footer__links">
-          <a href="#impressum">Impressum</a>
-          <a href="#datenschutz">Datenschutz</a>
-          <a href="#final-cta">Kontakt</a>
+      <footer className="footer" id="kontakt">
+        <div className="footer__top shell">
+          <div className="footer__brandcol">
+            <BrandMark />
+            <p className="footer__tag">{b.tagline}. Content, der zeigt, warum Kunden sich für dich entscheiden.</p>
+            <div className="footer__contact">
+              <a href={mailto("Kostenlose Content-Preview")} data-cursor="hover">{hero.ctaPrimary}</a>
+              <a href={whatsapp(waMessage)} target="_blank" rel="noopener noreferrer" data-cursor="hover">
+                WhatsApp-Anfrage
+              </a>
+            </div>
+          </div>
+          <nav className="footer__nav" aria-label="Footer-Navigation">
+            <span className="footer__navlabel">Navigation</span>
+            <a href="#diagnosis">Diagnose</a>
+            <a href="#content-os">System</a>
+            <a href="#reel-cinema">Reel Cinema</a>
+            <a href="#industries">Branchen</a>
+            <a href="#packages">Pakete</a>
+            <a href="#final-cta">Kontakt</a>
+          </nav>
+          <div className="footer__meta">
+            <span className="footer__navlabel">Studio</span>
+            <span>{contact.location}</span>
+            <a href={mailto("Anfrage")}>{contact.email}</a>
+          </div>
+        </div>
+        <div className="footer__bottom shell">
+          <p>© {new Date().getFullYear()} {brand.name}. Alle Rechte vorbehalten.</p>
+          <div className="footer__links">
+            <a href="#impressum">Impressum</a>
+            <a href="#datenschutz">Datenschutz</a>
+          </div>
         </div>
       </footer>
     </main>

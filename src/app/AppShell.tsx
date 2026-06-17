@@ -42,6 +42,9 @@ export default function AppShell() {
 
   return (
     <>
+      <a className="skip-link" href="#reel-cinema">
+        Zum Inhalt springen
+      </a>
       <Preloader onComplete={handleLoaded} />
       <CursorGlow />
       <ScrollProgress />
