@@ -343,8 +343,9 @@ export interface AddOn {
 /** Add-ons / Einzelaufträge — exact prices preserved. */
 export const addOns = {
   eyebrow: "Einzelaufträge",
-  headline: "Du brauchst mehr als Content? Wir bauen deinen Auftritt weiter aus.",
-  subline: "Für einzelne Projekte bekommst du klare Festpreise, saubere Umsetzung und ein Ergebnis, das professionell wirkt.",
+  headline: "Mehr als nur Content.",
+  subline:
+    "Du brauchst Website, Branding oder fertig produzierte Reels? Wir bauen deinen Auftritt weiter aus — mit klaren Festpreisen, sauberer Umsetzung und einem Ergebnis, das professionell wirkt.",
   items: [
     { name: "Website-Design", price: "ab 1.490€", body: "Eine moderne Website, die auf dem Handy stark aussieht, Vertrauen schafft und Kunden zur Anfrage bringt." },
     { name: "Logo & Branding", price: "ab 590€", body: "Ein sauberer Markenauftritt mit Logo, Farben und Schriften, damit dein Betrieb hochwertiger und einheitlicher wirkt." },

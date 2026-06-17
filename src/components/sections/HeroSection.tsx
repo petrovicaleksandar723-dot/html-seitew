@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useRef } from "react";
 import { hero, mailto } from "../../content/siteContent";
 import MagneticButton from "../ui/MagneticButton";
 import BrandMark from "../ui/BrandMark";
+import ErrorBoundary from "../ui/ErrorBoundary";
 import { scrollToTarget } from "../../motion/lenis";
 import { playHeroIntro, buildHeroScroll } from "../../motion/heroTimeline";
 import { gsap } from "../../motion/scrollTriggers";
@@ -41,9 +42,11 @@ export default function HeroSection({ ready }: Props) {
 
   return (
     <section className="hero section" id="hero" ref={root}>
-      <Suspense fallback={null}>
-        <HeroCanvas />
-      </Suspense>
+      <ErrorBoundary fallback={<div className="hero__canvas hero__canvas--fallback" />}>
+        <Suspense fallback={<div className="hero__canvas hero__canvas--fallback" />}>
+          <HeroCanvas />
+        </Suspense>
+      </ErrorBoundary>
 
       <div className="hero__inner shell">
         <div className="hero__grid">
