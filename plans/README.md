@@ -27,7 +27,7 @@ site to Awwwards/FWA-level maximum. All plans are written against commit `ed3cc1
 | Plan | Status |
 |---|---|
 | 001-responsive-mobile-overhaul | DONE (executed + reviewed, build green) |
-| 002-brand-broll-integration | TODO |
+| 002-brand-broll-integration | DONE (5 sections swapped to cohesive Kling 3.0 gold b-roll; phones keep real reels) |
 | 003-a11y-reduced-motion | TODO |
 | 004-seo-completeness | TODO |
 | 005-performance-pass | TODO |

@@ -25,7 +25,7 @@ const MARKERS = [
   { lat: 40, lng: -74, src: asset("/videos/reel-1.mp4") }, // New York
   { lat: 51, lng: 0, src: asset("/videos/reel-2.mp4") }, // London
   { lat: 35, lng: 139, src: asset("/videos/reel-3.mp4") }, // Tokyo
-  { lat: -30, lng: 140, src: asset("/videos/example-1.mp4") }, // Sydney-ish
+  { lat: -30, lng: 140, src: asset("/videos/reel-1.mp4") }, // Sydney-ish
 ];
 
 function latLngToVec(radius: number, lat: number, lng: number) {

@@ -8,10 +8,10 @@ import { INDUSTRIES } from "@/lib/constants";
 import { asset } from "@/lib/asset";
 
 const VIDEOS = [
-  asset("/videos/reel-1.mp4"),
-  asset("/videos/reel-2.mp4"),
-  asset("/videos/reel-3.mp4"),
-  asset("/videos/showreel.mp4"),
+  asset("/videos/brand-particles.mp4"),
+  asset("/videos/brand-studio.mp4"),
+  asset("/videos/brand-streaks.mp4"),
+  asset("/videos/brand-gold-flow.mp4"),
 ];
 
 export function Industries() {

@@ -6,10 +6,10 @@ import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { asset } from "@/lib/asset";
 
 const EXAMPLES = [
-  asset("/videos/example-1.mp4"),
-  asset("/videos/example-2.mp4"),
-  asset("/videos/example-3.mp4"),
-  asset("/videos/example-4.mp4"),
+  asset("/videos/brand-gold-flow.mp4"),
+  asset("/videos/brand-particles.mp4"),
+  asset("/videos/brand-studio.mp4"),
+  asset("/videos/brand-phone.mp4"),
 ];
 
 const CONS = [

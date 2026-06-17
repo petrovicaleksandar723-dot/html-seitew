@@ -8,7 +8,7 @@ import { MediaBackdrop } from "@/components/ui/media-backdrop";
 import { PLANS } from "@/lib/constants";
 import { asset } from "@/lib/asset";
 
-const BG = [asset("/videos/reel-1.mp4"), asset("/videos/reel-3.mp4")];
+const BG = [asset("/videos/brand-gold-flow.mp4"), asset("/videos/brand-particles.mp4")];
 
 type Plan = (typeof PLANS)[number];
 
