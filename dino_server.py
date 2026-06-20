@@ -32,6 +32,7 @@ def status_payload():
     return {
         "ready": d.is_ready(),
         "brain": d.provider_label(),
+        "provider": d.config["provider"],
         "assistant_name": p["assistant_name"],
         "user_name": p["user_name"],
         "facts": len(d.memory.get("facts", [])),
@@ -202,6 +203,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(customers_payload())
         elif path == "/api/memory":
             self._send_json(handle_memory())
+        elif path == "/api/ollama":
+            self._send_json(d.ollama_status())
         elif path == "/favicon.ico":
             self.send_response(204); self.end_headers()
         else:

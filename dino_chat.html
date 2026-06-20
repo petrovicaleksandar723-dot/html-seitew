@@ -62,10 +62,26 @@ body::before{
   text-shadow:0 0 24px rgba(56,189,248,.35);
   filter:drop-shadow(0 0 10px rgba(34,211,238,.4));
 }
-.statusline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut);margin-top:2px}
+.tagline{
+  font-size:11px;letter-spacing:1.5px;margin-top:1px;font-weight:600;
+  background:linear-gradient(90deg,#67e8f9,#60a5fa);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 12px rgba(56,189,248,.25);opacity:.92;
+}
+.statusline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut);margin-top:3px;flex-wrap:wrap}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--mut);box-shadow:0 0 8px currentColor;transition:.3s}
 .dot.ok{background:var(--green);color:var(--green)}
 .dot.bad{background:var(--rose);color:var(--rose)}
+/* kleiner Ollama-Indikator oben */
+.ollama-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:2px 9px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(8px);color:var(--mut)}
+.ollama-pill .opdot{width:7px;height:7px;border-radius:50%;background:var(--mut);box-shadow:0 0 7px currentColor;transition:.3s}
+.ollama-pill.ok{color:#bff4ff;border-color:rgba(52,211,153,.5)}
+.ollama-pill.ok .opdot{background:var(--green);color:var(--green)}
+.ollama-pill.warn{color:#ffe9b8;border-color:rgba(251,191,36,.5)}
+.ollama-pill.warn .opdot{background:var(--amber);color:var(--amber)}
+.ollama-pill.bad{color:#ffd9df;border-color:rgba(251,113,133,.5)}
+.ollama-pill.bad .opdot{background:var(--rose);color:var(--rose)}
 .header .spacer{flex:1}
 .iconbtns{display:flex;gap:8px}
 .iconbtn{
@@ -146,6 +162,47 @@ body::before{
 .typing span:nth-child(2){animation-delay:.18s}
 .typing span:nth-child(3){animation-delay:.36s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+/* ================= Dino-Setup-Karte ================= */
+.setup-card{
+  align-self:stretch;max-width:100%;
+  border:1px solid var(--cyan);border-radius:16px;padding:18px 20px;
+  background:linear-gradient(150deg,rgba(34,211,238,.10),rgba(129,140,248,.08));
+  backdrop-filter:blur(12px);box-shadow:0 0 30px rgba(34,211,238,.18),0 6px 28px rgba(0,0,0,.4);
+  animation:fadein .4s ease both;
+}
+.setup-card .sc-title{font-size:17px;font-weight:800;letter-spacing:.4px;
+  background:linear-gradient(90deg,#bff4ff,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 18px rgba(56,189,248,.3);margin-bottom:6px}
+.setup-card .sc-sub{font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:14px}
+.setup-card .sc-step{margin:12px 0}
+.setup-card .sc-step-h{font-size:13.5px;font-weight:700;color:var(--txt);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.setup-card .sc-step-h .num{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-size:12px;background:rgba(34,211,238,.16);border:1px solid var(--line);color:var(--cyan)}
+.setup-card a.sc-link{color:var(--blue2);text-decoration:none;border-bottom:1px dotted rgba(96,165,250,.5)}
+.setup-card a.sc-link:hover{color:#bff4ff;border-bottom-color:var(--cyan)}
+.setup-card .sc-codebox{display:flex;align-items:center;gap:8px;margin-top:6px}
+.setup-card .sc-code{
+  flex:1;font-family:"Consolas","SF Mono",ui-monospace,monospace;font-size:13.5px;color:#bff4ff;
+  background:rgba(2,8,20,.7);border:1px solid var(--line);border-radius:10px;padding:9px 12px;
+  white-space:nowrap;overflow-x:auto;box-shadow:inset 0 0 14px rgba(34,211,238,.08);
+}
+.setup-card .sc-copy{flex:none;padding:9px 11px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font:inherit;font-size:13px;cursor:pointer;transition:.16s}
+.setup-card .sc-copy:hover{border-color:var(--cyan);box-shadow:var(--glow)}
+.setup-card .sc-models{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.setup-card .sc-model{padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font:inherit;font-size:12.5px;cursor:pointer;transition:.16s}
+.setup-card .sc-model:hover{border-color:var(--cyan);box-shadow:var(--glow);color:#bff4ff}
+.setup-card .sc-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.setup-card .sc-recheck{padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--cyan),var(--blue2));color:#04101f;box-shadow:0 0 18px rgba(34,211,238,.4);transition:.16s}
+.setup-card .sc-recheck:hover{filter:brightness(1.1)}
+.setup-card .sc-recheck:disabled{opacity:.55;cursor:wait;box-shadow:none}
+.setup-card .sc-settings{font-size:12.5px;color:var(--mut);background:none;border:none;cursor:pointer;font:inherit;
+  text-decoration:underline;text-decoration-style:dotted;padding:0}
+.setup-card .sc-settings:hover{color:var(--blue2)}
+.setup-card .sc-state{font-size:12.5px;color:var(--cyan);min-height:1em}
 
 /* ================= Quick-Chips ================= */
 .chips{display:flex;flex-wrap:wrap;gap:8px;padding:10px 4px 8px}
@@ -272,9 +329,11 @@ body::before{
     <div class="brand">
       <div>
         <div class="wordmark">DINO</div>
+        <div class="tagline">dein eigener Jarvis · läuft lokal</div>
         <div class="statusline">
           <span id="statusDot" class="dot"></span>
           <span id="brainText">verbinde…</span>
+          <span id="ollamaPill" class="ollama-pill" style="display:none"><span class="opdot"></span><span id="ollamaPillText">lokal</span></span>
         </div>
       </div>
     </div>
@@ -353,6 +412,8 @@ const state = {
   busy: false,
   voiceOn: false,        // Sprachausgabe an/aus
   statusValues: ["Lead","Angebot","Aktiv","Bezahlt","Pausiert","Beendet"],
+  provider: null,        // "ollama" | "claude" | "openai" | "gemini"
+  autoRecheckDone: false,// einmaliges Auto-Recheck beim ersten Laden
 };
 
 // ---- DOM-Kurzhelfer ----
@@ -457,8 +518,17 @@ async function loadStatus(){
     state.ready = !!s.ready;
     state.assistantName = s.assistant_name || "Dino";
     state.userName = s.user_name || "Boss";
+    state.provider = s.provider || null;
     markStatus(s.ready, s.brain || "—");
 
+    if (state.provider === "ollama"){
+      // Lokales Gehirn -> eigene Onboarding-/Setup-Logik (kümmert sich um Begrüßung/Karte)
+      await checkOllama();
+      return;
+    }
+
+    // Andere Anbieter (Claude etc.): Verhalten wie bisher
+    hideOllamaPill();
     if (!state.ready){
       // Nicht bereit -> freundliche Startnachricht + Einstellungen öffnen
       if (chatEl.children.length === 0)
@@ -466,7 +536,7 @@ async function loadStatus(){
       openPanel("settings");
     } else if (chatEl.children.length === 0){
       // Bereit -> Begrüßung
-      addBubble("dino", `Bin online, ${state.userName}. Worauf hast du Bock? ⚡`);
+      greet();
     }
   }catch(e){
     markStatus(false, "offline");
@@ -478,6 +548,273 @@ function markStatus(ready, brain){
   const dot = $("statusDot");
   dot.className = "dot " + (ready ? "ok" : "bad");
   $("brainText").textContent = brain + (ready ? "  ·  online" : "  ·  offline");
+}
+
+// Begrüßung (nur falls Chat noch leer) — zentral, damit überall wiederverwendbar
+function greet(){
+  if (chatEl.children.length === 0)
+    addBubble("dino", `Dino ist online, ${state.userName}! Worauf hast du Bock? ⚡`);
+}
+
+// ============================================================
+//  Ollama-Onboarding (lokales Gehirn)
+// ============================================================
+const OLLAMA_DEFAULT_MODEL = "llama3.2";
+let setupCardEl = null;
+
+// Tolerant: gilt current_model als installiert? (z.B. "llama3.2" matcht "llama3.2:latest")
+function modelInstalled(models, current){
+  if (!Array.isArray(models) || !models.length) return false;
+  if (!current) return false;
+  return models.some(m => {
+    const a = String(m), b = String(current);
+    return a === b || a.startsWith(b) || b.startsWith(a);
+  });
+}
+
+// kleiner Status-Indikator oben
+function setOllamaPill(kind, label){
+  const pill = $("ollamaPill");
+  if (!pill) return;
+  pill.style.display = "inline-flex";
+  pill.className = "ollama-pill " + (kind || "");
+  $("ollamaPillText").textContent = label;
+}
+function hideOllamaPill(){
+  const pill = $("ollamaPill");
+  if (pill) pill.style.display = "none";
+}
+
+// Entfernt eine ggf. vorhandene Setup-Karte
+function removeSetupCard(){
+  if (setupCardEl){ setupCardEl.remove(); setupCardEl = null; }
+}
+
+// Prüft /api/ollama und entscheidet über Karte/Begrüßung
+async function checkOllama(){
+  let o;
+  try{
+    o = await api("/api/ollama");
+  }catch(e){
+    // Konnte Ollama-Info nicht laden -> behandeln wie "läuft nicht"
+    o = { running:false, models:[], current_model:OLLAMA_DEFAULT_MODEL };
+  }
+  if (o && o.error){ o = { running:false, models:[], current_model:OLLAMA_DEFAULT_MODEL }; }
+
+  const running = !!(o && o.running);
+  const models = (o && Array.isArray(o.models)) ? o.models : [];
+  const current = (o && o.current_model) || OLLAMA_DEFAULT_MODEL;
+  const hasModel = modelInstalled(models, current);
+
+  if (running && hasModel){
+    // Alles bereit -> keine Karte, normale Begrüßung
+    setOllamaPill("ok", "lokal aktiv");
+    removeSetupCard();
+    greet();
+    return true;
+  }
+
+  if (!running){
+    setOllamaPill("bad", "Setup nötig");
+    showSetupCard("not-running", { models, current });
+  } else {
+    // läuft, aber kein passendes Modell
+    setOllamaPill("warn", "Modell fehlt");
+    showSetupCard("no-model", { models, current });
+  }
+
+  // Einmaliges Auto-Recheck nach ~2s beim ersten Laden (kein Dauer-Polling)
+  if (!state.autoRecheckDone){
+    state.autoRecheckDone = true;
+    setTimeout(()=>{ if (setupCardEl) recheckOllama(); }, 2000);
+  }
+  return false;
+}
+
+// Baut/aktualisiert die Setup-Karte (statisches Markup = innerHTML; dynamische Texte via textContent)
+function showSetupCard(mode, info){
+  removeSetupCard();
+  const card = document.createElement("div");
+  card.className = "setup-card";
+
+  if (mode === "no-model"){
+    card.innerHTML = `
+      <div class="sc-title">🧠 Dino fehlt noch ein Modell</div>
+      <div class="sc-sub">Ollama läuft schon — Dino braucht nur noch ein Sprachmodell. Hol dir das Standardmodell oder wähl eins der installierten.</div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">↓</span><span>Modell laden (gratis)</span></div>
+        <div class="sc-codebox">
+          <code class="sc-code" id="sc-cmd"></code>
+          <button class="sc-copy" id="sc-copy">📋 Kopieren</button>
+        </div>
+        <div class="sc-models" id="sc-models"></div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-recheck" id="sc-recheck">🔄 Nochmal prüfen</button>
+        <span class="sc-state" id="sc-state"></span>
+      </div>
+    `;
+  } else {
+    card.innerHTML = `
+      <div class="sc-title">🦖 Fast fertig — Dino braucht noch sein Gehirn</div>
+      <div class="sc-sub">Dino läuft standardmäßig gratis und lokal über Ollama. Zwei kurze Schritte, dann geht's los.</div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">1</span><span>Ollama installieren (gratis)</span></div>
+        <div class="sc-sub" style="margin:0">
+          Lade es hier herunter: <a class="sc-link" id="sc-dl" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">ollama.com/download</a>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">2</span><span>Dieses Kommando im Terminal / in der Eingabeaufforderung ausführen:</span></div>
+        <div class="sc-codebox">
+          <code class="sc-code" id="sc-cmd"></code>
+          <button class="sc-copy" id="sc-copy">📋 Kopieren</button>
+        </div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-recheck" id="sc-recheck">🔄 Nochmal prüfen</button>
+        <button class="sc-settings" id="sc-settings">Lieber den starken Claude nutzen? → ⚙ Einstellungen</button>
+        <span class="sc-state" id="sc-state"></span>
+      </div>
+    `;
+  }
+
+  // Karte oben im Chat platzieren, damit sie gut sichtbar ist
+  chatEl.prepend(card);
+  setupCardEl = card;
+  scrollDown();
+
+  // Kommando-Text (dynamisch -> textContent, kein innerHTML)
+  const cmd = (mode === "no-model")
+    ? ("ollama pull " + (info && info.current ? info.current : OLLAMA_DEFAULT_MODEL))
+    : ("ollama run " + OLLAMA_DEFAULT_MODEL);
+  const cmdEl = card.querySelector("#sc-cmd");
+  if (cmdEl) cmdEl.textContent = cmd;
+
+  // Kopieren-Button
+  const copyBtn = card.querySelector("#sc-copy");
+  if (copyBtn) copyBtn.onclick = ()=> copyToClipboard(cmd, copyBtn);
+
+  // Recheck-Button
+  const recheckBtn = card.querySelector("#sc-recheck");
+  if (recheckBtn) recheckBtn.onclick = recheckOllama;
+
+  // Einstellungen-Link
+  const setBtn = card.querySelector("#sc-settings");
+  if (setBtn) setBtn.onclick = ()=> openPanel("settings");
+
+  // Installierte Modelle als Buttons (nur im no-model-Fall und wenn vorhanden)
+  if (mode === "no-model"){
+    const wrap = card.querySelector("#sc-models");
+    const models = (info && Array.isArray(info.models)) ? info.models : [];
+    if (wrap && models.length){
+      const lbl = document.createElement("span");
+      lbl.style.cssText = "font-size:12px;color:var(--mut);align-self:center;margin-right:2px";
+      lbl.textContent = "Schon installiert:";
+      wrap.appendChild(lbl);
+      models.forEach(m=>{
+        const b = document.createElement("button");
+        b.className = "sc-model";
+        b.textContent = m;                 // dynamisch -> textContent
+        b.onclick = ()=> pickOllamaModel(m, b);
+        wrap.appendChild(b);
+      });
+    }
+  }
+}
+
+// In Zwischenablage kopieren (mit Fallback)
+function copyToClipboard(text, btn){
+  const done = ()=>{
+    if (!btn) return;
+    const old = btn.textContent;
+    btn.textContent = "✓ Kopiert";
+    setTimeout(()=>{ btn.textContent = old; }, 1500);
+  };
+  try{
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, ()=>fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }catch(e){ fallbackCopy(text, done); }
+}
+function fallbackCopy(text, done){
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    done && done();
+  }catch(e){ /* still */ }
+}
+
+// Installiertes Modell wählen -> setzen, Status neu laden, Karte ausblenden
+async function pickOllamaModel(name, btn){
+  const stateEl = setupCardEl ? setupCardEl.querySelector("#sc-state") : null;
+  if (btn) btn.disabled = true;
+  if (stateEl) stateEl.textContent = "setze Modell …";
+  try{
+    const r = await api("/api/settings", "POST", { ollama_model: name });
+    if (r && r.error){
+      if (stateEl) stateEl.textContent = "⚠ " + r.error;
+      if (btn) btn.disabled = false;
+      return;
+    }
+    removeSetupCard();
+    await loadStatus();          // lädt Status + Ollama neu, begrüßt bei Erfolg
+  }catch(e){
+    if (stateEl) stateEl.textContent = "⚠ " + e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+
+// "Nochmal prüfen" — robust, kein Dauer-Polling
+async function recheckOllama(){
+  if (!setupCardEl) return;
+  const recheckBtn = setupCardEl.querySelector("#sc-recheck");
+  const stateEl = setupCardEl.querySelector("#sc-state");
+  if (recheckBtn) recheckBtn.disabled = true;
+  if (stateEl) stateEl.textContent = "prüfe …";
+  let o;
+  try{
+    o = await api("/api/ollama");
+  }catch(e){
+    if (stateEl) stateEl.textContent = "Noch nicht erreichbar — starte Ollama und versuch's gleich nochmal.";
+    if (recheckBtn) recheckBtn.disabled = false;
+    setOllamaPill("bad", "Setup nötig");
+    return;
+  }
+  if (o && o.error){
+    if (stateEl) stateEl.textContent = "⚠ " + o.error;
+    if (recheckBtn) recheckBtn.disabled = false;
+    return;
+  }
+
+  const running = !!(o && o.running);
+  const models = (o && Array.isArray(o.models)) ? o.models : [];
+  const current = (o && o.current_model) || OLLAMA_DEFAULT_MODEL;
+  const hasModel = modelInstalled(models, current);
+
+  if (running && hasModel){
+    setOllamaPill("ok", "lokal aktiv");
+    removeSetupCard();
+    state.ready = true;
+    addBubble("dino", `Dino ist online, ${state.userName}! Worauf hast du Bock? ⚡`);
+    return;
+  }
+
+  // Noch nicht fertig -> Karte passend aktualisieren
+  if (!running){
+    setOllamaPill("bad", "Setup nötig");
+    showSetupCard("not-running", { models, current });
+  } else {
+    setOllamaPill("warn", "Modell fehlt");
+    showSetupCard("no-model", { models, current });
+  }
+  const ns = setupCardEl ? setupCardEl.querySelector("#sc-state") : null;
+  if (ns) ns.textContent = running ? "Läuft — aber es fehlt noch das Modell." : "Ollama läuft noch nicht.";
 }
 
 // ============================================================
@@ -769,9 +1106,7 @@ async function saveSettings(){
     if (r.error){ msg.textContent = "⚠ "+r.error; msg.style.color="var(--rose)"; }
     else{
       msg.textContent = "Gespeichert ✓"; msg.style.color="var(--green)";
-      await loadStatus();            // Status oben neu laden
-      if (state.ready && chatEl.children.length === 0)
-        addBubble("dino", `Bin online, ${state.userName}. Worauf hast du Bock? ⚡`);
+      await loadStatus();            // Status oben neu laden (kümmert sich um Begrüßung/Setup-Karte)
     }
   }catch(e){ msg.textContent = "⚠ "+e.message; msg.style.color="var(--rose)"; }
   finally{ btn.disabled = false; }

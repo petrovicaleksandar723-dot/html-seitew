@@ -26,33 +26,37 @@ Es gibt Dino in **drei Varianten** — nimm die, die dir passt:
 - Bei der Installation **unbedingt den Haken „Add Python to PATH"** setzen.
 - (Auf den meisten Macs ist Python schon dabei.)
 
-### 2) Einen API-Schlüssel holen (das ist „das Gehirn")
-Such dir **mindestens einen** aus — Claude wird empfohlen:
+### 2) Dinos Gehirn: GRATIS auf Ollama (ab Werk eingestellt) 🆓
+Dino läuft **standardmäßig kostenlos & lokal** über **Ollama** — **kein
+Schlüssel, keine Bezahlung**. Du musst Ollama nur einmal installieren:
 
-| KI | Schlüssel holen | Hinweis |
-|----|------------------|---------|
-| **Claude** (empfohlen) | https://console.anthropic.com/ → *API Keys* | Stärkstes Standard-Gehirn |
-| ChatGPT (OpenAI) | https://platform.openai.com/api-keys | Optional, zweites Gehirn |
-| Gemini (Google) | https://aistudio.google.com/apikey | Optional, drittes Gehirn |
+1. **Ollama installieren** (gratis): https://ollama.com/download
+2. **Dinos Gehirn laden** — Terminal / Eingabeaufforderung öffnen und eintippen:
+   ```
+   ollama run llama3.2
+   ```
+   (lädt das Modell einmalig herunter — dann läuft Dino offline)
 
-> Der Schlüssel ist gratis zu erstellen. Du zahlst nur deine Nutzung
-> (Cent-Beträge pro Gespräch). Der Schlüssel bleibt **nur lokal** auf deinem PC
-> (in `dino_config.json`) und wird **nie** hochgeladen.
+> Beim Start prüft Dino selbst, ob Ollama bereit ist. Falls nicht, zeigt er dir
+> im Fenster genau diese 2 Schritte mit Kopier-Knopf. Easy. 🦖
 
-> **🆓 Lieber komplett gratis ohne Schlüssel?** Geht auch! Siehe Abschnitt
-> **„Gratis-Modus (Ollama)"** weiter unten.
+**Optional — stärkeres Gehirn (Claude/ChatGPT/Gemini):** Wenn du später mehr
+Power willst, trag in **⚙ Einstellungen** einen API-Schlüssel ein und wähl den
+Anbieter. Kostet dann Cent-Beträge pro Gespräch. Schlüssel holen:
+`console.anthropic.com` · `platform.openai.com/api-keys` · `aistudio.google.com/apikey`
+(bleiben nur lokal auf deinem PC).
 
 ### 3) Dino starten
 - ⚡ **Jarvis-Chatfenster (empfohlen):** Doppelklick auf **`Dino-KI-Start.bat`**
   - oder im Terminal:  `python3 dino_server.py`
   - Es öffnet sich automatisch das Chat-Fenster im Browser (Adresse `127.0.0.1`,
-    läuft nur lokal auf deinem PC). **Das Fenster, das im Hintergrund aufgeht,
-    offen lassen** — das ist Dinos Motor. Schließen = Dino aus.
+    läuft nur lokal auf deinem PC). **Das schwarze Fenster, das im Hintergrund
+    aufgeht, offen lassen** — das ist Dinos Motor. Schließen = Dino aus.
 - 🖱️ **Klassisches Fenster:** `python3 dino_app.py`
 - ⌨️ **Terminal:** Doppelklick auf **`Dino-KI-Terminal.bat`**  (oder `python3 dino.py`)
 
-Beim ersten Start trägst du deinen Schlüssel ein (unter **»⚙ Einstellungen«**),
-dann kann's losgehen. 🦖
+Beim allerersten Start sagt dir Dino direkt im Fenster, ob noch was fehlt
+(z.B. Ollama starten). 🦖
 
 ---
 

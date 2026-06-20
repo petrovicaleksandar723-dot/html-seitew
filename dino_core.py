@@ -33,7 +33,7 @@ CUSTOMER_STATUS = ["Lead", "Angebot", "Aktiv", "Bezahlt", "Pausiert", "Beendet"]
 ACTIVE_STATUS = {"Aktiv", "Bezahlt"}  # zählt zum laufenden Umsatz
 
 DEFAULT_CONFIG = {
-    "provider": "claude",
+    "provider": "ollama",  # ab Werk gratis & lokal (kein Schlüssel nötig)
     "claude_model": "claude-opus-4-8",
     "openai_model": "",
     "gemini_model": "gemini-2.5-pro",
@@ -127,6 +127,21 @@ class Dino:
         if prov == "gemini":
             return bool(self.config["keys"]["gemini"])
         return bool(self.config["keys"]["claude"])
+
+    def ollama_status(self):
+        """Läuft Ollama lokal? Welche Modelle sind installiert? (für das Setup im Fenster)"""
+        url = self.config.get("ollama_url", "http://127.0.0.1:11434").rstrip("/") + "/api/tags"
+        current = self.config.get("ollama_model", "llama3.2")
+        try:
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=4) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            models = [m.get("name", "") for m in data.get("models", []) if m.get("name")]
+            return {"running": True, "models": models, "current_model": current,
+                    "url": self.config.get("ollama_url", "http://127.0.0.1:11434")}
+        except Exception:
+            return {"running": False, "models": [], "current_model": current,
+                    "url": self.config.get("ollama_url", "http://127.0.0.1:11434")}
 
     def provider_label(self):
         prov = self.config["provider"]
