@@ -1,0 +1,7 @@
+# Dino KI – lokale Dateien NIEMALS hochladen (enthalten API-Schlüssel & Gedächtnis)
+dino_config.json
+dino_memory.json
+
+# Python
+__pycache__/
+*.pyc
