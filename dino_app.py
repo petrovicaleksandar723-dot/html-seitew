@@ -54,13 +54,42 @@ class DinoApp:
         self.refresh_memory()
         self.load_settings_into_form()
 
-        if not self.d.is_ready():
-            self.append_chat("info", "Willkommen! 🦖 Trage zuerst deinen API-Schlüssel unter "
-                                     "»⚙ Einstellungen« ein (Claude empfohlen), dann können wir loslegen.")
+        try:
+            root.lift()
+            root.attributes("-topmost", True)
+            root.after(800, lambda: root.attributes("-topmost", False))
+        except Exception:
+            pass
+
+        p = self.d.config["persona"]
+        self.append_chat("dino", f"Hi {p['user_name']}! Ich bin {p['assistant_name']}. 🦖")
+        if self.d.config["provider"] == "ollama":
+            self.append_chat("info", "Ich richte mein lokales Gehirn ein — beim ersten Mal lade "
+                                     "ich das KI-Modell (~2 GB, ein paar Minuten). Bitte warten…")
+            self.root.after(400, self._startup_setup)
+        elif not self.d.is_ready():
+            self.append_chat("info", "Trag deinen API-Schlüssel unter »⚙ Einstellungen« ein, dann geht's los.")
         else:
-            p = self.d.config["persona"]
-            self.append_chat("dino", f"Bin bereit, {p['user_name']}! Frag mich was, oder klick auf "
-                                     f"»📅 Wochenplan« bzw. »☀️ Heute«. 🦖")
+            self.append_chat("dino", "Bin bereit — frag mich was! 🦖")
+
+    # ── Start-Einrichtung (Ollama im Hintergrund) ──────────────────────
+    def _log_to_chat(self, msg):
+        self.root.after(0, lambda m=str(msg).strip(): self.append_chat("info", m) if m else None)
+
+    def _startup_setup(self):
+        def work():
+            try:
+                self.d.ensure_ollama(log=self._log_to_chat)
+            except Exception as e:
+                self._log_to_chat(f"Hinweis beim Einrichten: {e}")
+            self.root.after(0, self._after_setup)
+        threading.Thread(target=work, daemon=True).start()
+
+    def _after_setup(self):
+        self.update_brain_label()
+        self.load_settings_into_form()
+        self.append_chat("dino", f"So, alles bereit! Frag mich was, "
+                                 f"{self.d.config['persona']['user_name']}. 🦖")
 
     # ── Style ──────────────────────────────────────────────────────────
     def _setup_style(self):
