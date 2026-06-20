@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 🦖 DINO KI — EINE Datei. Doppelklick (oder: python Dino-KI.py) und es
-öffnet sich dein Jarvis-Chatfenster im Browser.
+oeffnet sich dein Jarvis-Chatfenster im Browser.
 
-Dino läuft ab Werk GRATIS & lokal über Ollama (kein Schlüssel).
-Voraussetzungen: Python + Ollama (ollama.com) mit 'ollama run llama3.2'.
-Reine Standardbibliothek — nichts zu installieren ausser Python.
+Dino laeuft ab Werk GRATIS & lokal ueber Ollama (kein Schluessel) und richtet
+sich beim Start selbst ein (Ollama starten + Modell laden).
+Reine Standardbibliothek. Voraussetzung: Python + Ollama (ollama.com).
 """
 
 # -*- coding: utf-8 -*-
@@ -24,6 +24,9 @@ Reines Python (Standardbibliothek) — keine Extra-Pakete nötig.
 
 import json
 import os
+import shutil
+import subprocess
+import time
 import datetime
 import urllib.request
 import urllib.error
@@ -153,6 +156,51 @@ class Dino:
         except Exception:
             return {"running": False, "models": [], "current_model": current,
                     "url": self.config.get("ollama_url", "http://127.0.0.1:11434")}
+
+    def ensure_ollama(self, log=print):
+        """Auto-Setup: startet Ollama falls nötig und lädt das Modell, wenn es fehlt.
+        Läuft beim Start der App, damit der Nutzer nichts von Hand tippen muss."""
+        if self.config["provider"] != "ollama":
+            return
+        exe = shutil.which("ollama")
+        if not exe:
+            log("  ⚠ Ollama ist noch nicht installiert (gratis: https://ollama.com/download).")
+            log("    Dino startet trotzdem — installier Ollama und starte Dino neu.")
+            return
+        # Server erreichbar? Sonst im Hintergrund starten.
+        if not self.ollama_status()["running"]:
+            log("  🦖 Starte das lokale Gehirn (Ollama)…")
+            try:
+                kwargs = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+                if os.name == "nt":
+                    kwargs["creationflags"] = 0x00000008  # DETACHED_PROCESS
+                subprocess.Popen([exe, "serve"], **kwargs)
+            except Exception:
+                pass
+            for _ in range(20):
+                time.sleep(1)
+                if self.ollama_status()["running"]:
+                    break
+        st = self.ollama_status()
+        if not st["running"]:
+            log("  ⚠ Ollama startet nicht automatisch — öffne die Ollama-App einmal manuell.")
+            return
+        # Modell vorhanden? Sonst automatisch herunterladen.
+        model = self.config.get("ollama_model", "llama3.2")
+        if ":" in model:
+            have = model in st["models"]
+        else:
+            have = any(m == model or m.split(":")[0] == model for m in st["models"])
+        if have:
+            log(f"  ✓ Dinos Gehirn ist bereit: {model}")
+            return
+        log(f"  🦖 Lade Dinos Gehirn herunter: {model}  (einmalig — kann ein paar Minuten dauern)…")
+        try:
+            subprocess.run([exe, "pull", model])
+            log("  ✓ Modell geladen. Los geht's!")
+        except Exception as e:
+            log(f"  ⚠ Konnte das Modell nicht automatisch laden: {e}")
+            log(f"    Tipp: im Terminal  ollama pull {model}")
 
     def provider_label(self):
         prov = self.config["provider"]
@@ -735,10 +783,16 @@ def main():
     if httpd is None:
         print("Konnte keinen freien Port finden (8765–8799)."); sys.exit(1)
 
+    print("\n  🦖  DINO wird gestartet — richte mich kurz selbst ein…\n")
+    try:
+        d.ensure_ollama()
+    except Exception as e:
+        print(f"  (Auto-Setup übersprungen: {e})")
+
     url = f"http://{HOST}:{httpd.server_address[1]}/"
     print("\n  🦖  DINO KI läuft!")
-    print(f"  ➜  Öffne im Browser:  {url}")
-    print("  (Fenster offen lassen — schließen beendet Dino. Stoppen: Strg+C)\n")
+    print(f"  ➜  Dein Chat-Fenster öffnet sich jetzt:  {url}")
+    print("  (Dieses Fenster offen lassen — schließen beendet Dino. Stoppen: Strg+C)\n")
     try:
         webbrowser.open(url)
     except Exception:

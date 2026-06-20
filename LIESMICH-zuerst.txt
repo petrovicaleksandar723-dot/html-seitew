@@ -1,0 +1,10 @@
+🦖 Dino starten
+
+So einfach geht's:
+1. Doppelklick auf Dino-Start.bat - fertig! Dino öffnet sich von selbst im Browser.
+2. Beim ersten Mal installiert und lädt sich alles automatisch. Das kann ein paar Minuten dauern - lass das Fenster einfach offen.
+3. Kommt eine Meldung "bitte nochmal starten"? Dann einfach Dino-Start.bat nochmal doppelklicken.
+
+Dino läuft gratis und komplett lokal auf deinem PC - ganz ohne Schlüssel oder Anmeldung.
+
+Viel Spaß! 🦖

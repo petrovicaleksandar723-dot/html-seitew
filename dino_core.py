@@ -13,6 +13,9 @@ Reines Python (Standardbibliothek) — keine Extra-Pakete nötig.
 
 import json
 import os
+import shutil
+import subprocess
+import time
 import datetime
 import urllib.request
 import urllib.error
@@ -142,6 +145,51 @@ class Dino:
         except Exception:
             return {"running": False, "models": [], "current_model": current,
                     "url": self.config.get("ollama_url", "http://127.0.0.1:11434")}
+
+    def ensure_ollama(self, log=print):
+        """Auto-Setup: startet Ollama falls nötig und lädt das Modell, wenn es fehlt.
+        Läuft beim Start der App, damit der Nutzer nichts von Hand tippen muss."""
+        if self.config["provider"] != "ollama":
+            return
+        exe = shutil.which("ollama")
+        if not exe:
+            log("  ⚠ Ollama ist noch nicht installiert (gratis: https://ollama.com/download).")
+            log("    Dino startet trotzdem — installier Ollama und starte Dino neu.")
+            return
+        # Server erreichbar? Sonst im Hintergrund starten.
+        if not self.ollama_status()["running"]:
+            log("  🦖 Starte das lokale Gehirn (Ollama)…")
+            try:
+                kwargs = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+                if os.name == "nt":
+                    kwargs["creationflags"] = 0x00000008  # DETACHED_PROCESS
+                subprocess.Popen([exe, "serve"], **kwargs)
+            except Exception:
+                pass
+            for _ in range(20):
+                time.sleep(1)
+                if self.ollama_status()["running"]:
+                    break
+        st = self.ollama_status()
+        if not st["running"]:
+            log("  ⚠ Ollama startet nicht automatisch — öffne die Ollama-App einmal manuell.")
+            return
+        # Modell vorhanden? Sonst automatisch herunterladen.
+        model = self.config.get("ollama_model", "llama3.2")
+        if ":" in model:
+            have = model in st["models"]
+        else:
+            have = any(m == model or m.split(":")[0] == model for m in st["models"])
+        if have:
+            log(f"  ✓ Dinos Gehirn ist bereit: {model}")
+            return
+        log(f"  🦖 Lade Dinos Gehirn herunter: {model}  (einmalig — kann ein paar Minuten dauern)…")
+        try:
+            subprocess.run([exe, "pull", model])
+            log("  ✓ Modell geladen. Los geht's!")
+        except Exception as e:
+            log(f"  ⚠ Konnte das Modell nicht automatisch laden: {e}")
+            log(f"    Tipp: im Terminal  ollama pull {model}")
 
     def provider_label(self):
         prov = self.config["provider"]

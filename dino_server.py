@@ -247,10 +247,16 @@ def main():
     if httpd is None:
         print("Konnte keinen freien Port finden (8765–8799)."); sys.exit(1)
 
+    print("\n  🦖  DINO wird gestartet — richte mich kurz selbst ein…\n")
+    try:
+        d.ensure_ollama()
+    except Exception as e:
+        print(f"  (Auto-Setup übersprungen: {e})")
+
     url = f"http://{HOST}:{httpd.server_address[1]}/"
     print("\n  🦖  DINO KI läuft!")
-    print(f"  ➜  Öffne im Browser:  {url}")
-    print("  (Fenster offen lassen — schließen beendet Dino. Stoppen: Strg+C)\n")
+    print(f"  ➜  Dein Chat-Fenster öffnet sich jetzt:  {url}")
+    print("  (Dieses Fenster offen lassen — schließen beendet Dino. Stoppen: Strg+C)\n")
     try:
         webbrowser.open(url)
     except Exception:
