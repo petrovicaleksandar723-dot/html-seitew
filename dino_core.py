@@ -82,17 +82,30 @@ def _save(path, data):
 
 
 def _http_msg(e):
+    """Holt die ECHTE Fehlermeldung aus der Antwort (auch wenn 'error' ein String ist,
+    wie bei Ollama). Vorher wurde nur 'Fehler 500' angezeigt — jetzt der echte Grund."""
+    msg = ""
     try:
         body = e.read().decode("utf-8")
-        info = json.loads(body)
-        msg = info.get("error", {}).get("message") or info.get("error", {}).get("type") or body
+        try:
+            info = json.loads(body)
+            err = info.get("error")
+            if isinstance(err, dict):
+                msg = err.get("message") or err.get("type") or json.dumps(err, ensure_ascii=False)
+            elif isinstance(err, str):
+                msg = err
+            else:
+                msg = body
+        except Exception:
+            msg = body
     except Exception:
         msg = str(e)
-    if e.code == 401:
+    code = getattr(e, "code", "?")
+    if code == 401:
         return f"Schlüssel ungültig (401). Prüf ihn in den Einstellungen.  [{msg}]"
-    if e.code == 429:
+    if code == 429:
         return f"Zu viele Anfragen / Guthaben leer (429).  [{msg}]"
-    return f"Fehler {e.code}: {msg}"
+    return f"Fehler {code}: {msg}"
 
 
 def euro(x):
@@ -180,6 +193,14 @@ class Dino:
             have = any(m == model or m.split(":")[0] == model for m in st["models"])
         if have:
             log(f"  ✓ Dinos Gehirn ist bereit: {model}")
+            return
+        # Konfiguriertes Modell fehlt — wenn schon ein anderes installiert ist, das nehmen.
+        if st["models"]:
+            light = ("llama3.2", "qwen3", "gemma4", "phi3", "llama3.1", "mistral")
+            pick = next((m for m in st["models"] if m.split(":")[0] in light), st["models"][0])
+            log(f"  Modell '{model}' ist nicht installiert — nutze stattdessen: {pick}")
+            self.config["ollama_model"] = pick
+            self.save_config()
             return
         log(f"  Lade Dinos Gehirn herunter: {model}")
         log("  (einmalig, ein paar Minuten — bitte dieses Fenster offen lassen)…")
@@ -430,25 +451,38 @@ Ziel planen."""
             return None, f"Verbindungsfehler: {e}"
 
     def ask_ollama(self, system, messages, max_tokens=4096):
-        """Gratis-Gehirn: ein KI-Modell, das lokal über Ollama läuft (kein Schlüssel)."""
+        """Gratis-Gehirn: ein KI-Modell, das lokal über Ollama läuft (kein Schlüssel).
+        Robust: wartet beim ersten Laden des Modells und versucht es bei 5xx nochmal."""
         url = self.config.get("ollama_url", "http://127.0.0.1:11434").rstrip("/") + "/api/chat"
         model = self.config.get("ollama_model", "llama3.2")
         msgs = [{"role": "system", "content": system}] + messages
         body = {"model": model, "messages": msgs, "stream": False,
                 "options": {"num_predict": max_tokens}}
-        try:
-            data = self._post(url, {"content-type": "application/json"}, body, timeout=600)
-            return (data.get("message", {}).get("content", "") or "").strip(), None
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                return None, (f"Modell »{model}« ist noch nicht da. Lade es im Terminal: "
-                              f"ollama pull {model}")
-            return None, _http_msg(e)
-        except urllib.error.URLError:
-            return None, ("Ollama läuft nicht. Installiere es gratis von ollama.com und starte "
-                          "im Terminal ein Modell, z.B.:  ollama run llama3.2")
-        except Exception as e:
-            return None, f"Verbindungsfehler zu Ollama: {e}"
+        headers = {"content-type": "application/json"}
+        last_err = None
+        for attempt in range(3):
+            try:
+                data = self._post(url, headers, body, timeout=600)
+                return (data.get("message", {}).get("content", "") or "").strip(), None
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    return None, (f"Modell »{model}« ist nicht installiert. Wähl in ⚙ Einstellungen "
+                                  f"ein vorhandenes Modell — oder im Terminal:  ollama pull {model}")
+                last_err = _http_msg(e)
+                low = last_err.lower()
+                if ("memory" in low or "out of" in low) and model.split(":")[0] != "llama3.2":
+                    return None, (last_err + "  →  Das Modell ist zu groß für deinen Speicher. "
+                                  "Stell in ⚙ Einstellungen das Modell auf  llama3.2  (klein) und speichere.")
+                if e.code >= 500 and attempt < 2:
+                    time.sleep(2.5)  # Modell lädt evtl. gerade — kurz warten und nochmal
+                    continue
+                return None, last_err
+            except urllib.error.URLError:
+                return None, ("Ollama läuft nicht. Öffne die Ollama-App einmal — "
+                              "oder installier es gratis: https://ollama.com/download")
+            except Exception as e:
+                return None, f"Verbindungsfehler zu Ollama: {e}"
+        return None, (last_err or "Unbekannter Fehler beim lokalen Modell.")
 
     def ask_provider(self, system, messages, max_tokens=4096, effort="medium"):
         prov = self.config["provider"]
@@ -462,7 +496,30 @@ Ziel planen."""
 
     # ── Hohe Funktionen ────────────────────────────────────────────────
     def chat(self, history, max_tokens=4096, effort="medium"):
-        return self.ask_provider(self.build_system(), history, max_tokens, effort)
+        text, err = self.ask_provider(self.build_system(), history, max_tokens, effort)
+        # Selbstheilung: bei Speicher-Fehler im Gratis-Modus auf ein kleineres
+        # installiertes Modell wechseln und nochmal versuchen.
+        if err and self.config["provider"] == "ollama" and \
+                ("memory" in err.lower() or "out of" in err.lower() or "too large" in err.lower()):
+            st = self.ollama_status()
+            cur = self.config.get("ollama_model", "")
+            order = ("llama3.2", "phi3", "qwen3", "gemma4", "llama3.1")
+            smaller = None
+            for base in order:
+                smaller = next((m for m in st["models"]
+                                if m.split(":")[0] == base and m != cur), None)
+                if smaller:
+                    break
+            if smaller:
+                self.config["ollama_model"] = smaller
+                self.save_config()
+                text2, err2 = self.ask_provider(self.build_system(), history, max_tokens, effort)
+                if not err2:
+                    note = ("(Hinweis: Dino ist automatisch auf das kleinere Modell " + smaller +
+                            " umgestiegen, weil das andere zu groß für deinen Speicher war.)\n\n")
+                    return note + text2, None
+                return text2, err2
+        return text, err
 
     def learn(self, history):
         """Gespräch zu dauerhaftem Wissen verdichten. -> (anzahl_fakten, fehler)"""
