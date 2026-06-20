@@ -9,9 +9,12 @@ KIs der Welt benutzt** (Claude, ChatGPT, Gemini), sich **jeden Tag dein Wissen
 merkt** und dadurch schlauer wird, deinen **Humor** übernimmt, deine **Kunden &
 Aufträge verwaltet** und dir **realistische Geld-Pläne** für CleanLines baut.
 
-Es gibt Dino in **zwei Varianten** — nimm die, die dir passt:
+Es gibt Dino in **drei Varianten** — nimm die, die dir passt:
 
-- 🖱️ **Fenster (Klick-Oberfläche)** — kein Tippen von Befehlen, alles per Klick. **Empfohlen.**
+- ⚡ **Jarvis-Chatfenster (App)** — du startest die App, ein edles dunkles
+  Chat-Fenster öffnet sich automatisch im Browser. **Mit Mikro (reden) und
+  Sprachausgabe.** Das ist die Hauptversion. **Empfohlen.**
+- 🖱️ **Klassisches Fenster** — einfache Klick-Oberfläche (tkinter).
 - ⌨️ **Terminal** — die schnelle Tastatur-Variante.
 
 ---
@@ -37,28 +40,34 @@ Such dir **mindestens einen** aus — Claude wird empfohlen:
 > (in `dino_config.json`) und wird **nie** hochgeladen.
 
 ### 3) Dino starten
-- 🖱️ **Fenster (empfohlen):** Doppelklick auf **`Dino-KI-Start.bat`**
-  - oder im Terminal:  `python3 dino_app.py`
-- ⌨️ **Terminal:** Doppelklick auf **`Dino-KI-Terminal.bat`**
-  - oder:  `python3 dino.py`
+- ⚡ **Jarvis-Chatfenster (empfohlen):** Doppelklick auf **`Dino-KI-Start.bat`**
+  - oder im Terminal:  `python3 dino_server.py`
+  - Es öffnet sich automatisch das Chat-Fenster im Browser (Adresse `127.0.0.1`,
+    läuft nur lokal auf deinem PC). **Das Fenster, das im Hintergrund aufgeht,
+    offen lassen** — das ist Dinos Motor. Schließen = Dino aus.
+- 🖱️ **Klassisches Fenster:** `python3 dino_app.py`
+- ⌨️ **Terminal:** Doppelklick auf **`Dino-KI-Terminal.bat`**  (oder `python3 dino.py`)
 
-Beim ersten Start trägst du deinen Schlüssel ein (im Fenster unter **»⚙ Einstellungen«**),
+Beim ersten Start trägst du deinen Schlüssel ein (unter **»⚙ Einstellungen«**),
 dann kann's losgehen. 🦖
 
 ---
 
-## Das Fenster (Klick-Oberfläche)
+## Das Jarvis-Chatfenster (App)
 
-Oben gibt es Reiter:
+Ein edles, dunkles Chat-Fenster — wie ein echter KI-Assistent:
 
-- **💬 Chat** — ganz normal mit Dino reden. Buttons: *Lernen* und *Rat der KIs*.
-- **👥 Kunden** — deine **Kunden & Aufträge verwalten**: anlegen, bearbeiten,
-  löschen. Dino sieht unten direkt deinen **Monatsumsatz** und kennt deine
-  Kundenliste beim Planen.
-- **📈 Plan & Heute** — Knopf für den **Wochen-Geldplan** und den
-  **Tages-Check-in** (3 wichtigste Aktionen für heute).
+- **💬 Chat in der Mitte** — einfach reden, Dino antwortet. Mit Tipp-Animation
+  und leuchtendem „Core", der pulsiert während Dino denkt.
+- **🎤 Mikro** — reinsprechen statt tippen (Spracherkennung im Browser).
+- **🔊 Sprachausgabe** — Dino liest seine Antworten vor (an-/ausschaltbar).
+- **Schnell-Knöpfe:** 📅 Wochenplan · ☀️ Heute · 🧠 Lernen · 🧠🧠🧠 Rat der KIs.
+- **👥 Kunden** — Kunden & Aufträge verwalten, Umsatz im Blick.
 - **🧠 Gedächtnis** — was Dino über dich weiß.
 - **⚙ Einstellungen** — Schlüssel, Gehirn (Claude/ChatGPT/Gemini), Humor, Ziel.
+
+> Hinweis: Mikro & Sprachausgabe brauchen einen modernen Browser (Chrome/Edge).
+> Beim ersten Mikro-Klick fragt der Browser nach der Mikrofon-Erlaubnis.
 
 ---
 
@@ -99,10 +108,12 @@ Das ist die ehrliche, echte Version von „lernt jeden Tag dazu". 💪
 ## Deine Dateien (bleiben lokal bei dir)
 | Datei | Was es ist |
 |-------|------------|
-| `dino_app.py` | die Fenster-Version (Klick-Oberfläche) |
+| `dino_server.py` | die Jarvis-App (startet Server + Chat-Fenster) |
+| `dino_chat.html` | das Jarvis-Chatfenster (Oberfläche) |
+| `dino_app.py` | klassisches Fenster (tkinter) |
 | `dino.py` | die Terminal-Version |
-| `dino_core.py` | das gemeinsame Gehirn (von beiden genutzt) |
-| `Dino-KI-Start.bat` | Doppelklick-Start fürs Fenster |
+| `dino_core.py` | das gemeinsame Gehirn (von allen genutzt) |
+| `Dino-KI-Start.bat` | Doppelklick-Start für die Jarvis-App |
 | `Dino-KI-Terminal.bat` | Doppelklick-Start fürs Terminal |
 | `dino_config.json` | deine Einstellungen + API-Schlüssel *(wird nicht hochgeladen)* |
 | `dino_memory.json` | Dinos Gedächtnis + Kunden *(wird nicht hochgeladen)* |
