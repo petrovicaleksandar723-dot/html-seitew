@@ -54,7 +54,7 @@ class DinoApp:
         self.refresh_memory()
         self.load_settings_into_form()
 
-        if not self.d.has_any_key():
+        if not self.d.is_ready():
             self.append_chat("info", "Willkommen! 🦖 Trage zuerst deinen API-Schlüssel unter "
                                      "»⚙ Einstellungen« ein (Claude empfohlen), dann können wir loslegen.")
         else:
@@ -163,7 +163,7 @@ class DinoApp:
         msg = self.entry.get().strip()
         if not msg:
             return
-        if not self.d.has_any_key():
+        if not self.d.is_ready():
             self.append_chat("error", "Kein API-Schlüssel. Geh auf »⚙ Einstellungen« und trag einen ein.")
             return
         self.entry.delete(0, "end")
@@ -336,7 +336,7 @@ class DinoApp:
     def on_plan(self):
         if self.busy:
             return
-        if not self.d.has_any_key():
+        if not self.d.is_ready():
             messagebox.showinfo("Plan", "Trag zuerst einen Schlüssel unter Einstellungen ein.")
             return
         self._plan_out("🦖 Dino baut deinen Wochenplan…")
@@ -345,7 +345,7 @@ class DinoApp:
     def on_today(self):
         if self.busy:
             return
-        if not self.d.has_any_key():
+        if not self.d.is_ready():
             messagebox.showinfo("Heute", "Trag zuerst einen Schlüssel unter Einstellungen ein.")
             return
         self._plan_out("🦖 Dino schaut auf heute…")
@@ -430,7 +430,7 @@ class DinoApp:
         tk.Label(prow, text="Anbieter", bg=BG, fg=MUT, font=FONT, width=22, anchor="w").pack(side="left")
         self.prov_var = tk.StringVar(value="claude")
         prov_box = ttk.Combobox(prow, textvariable=self.prov_var, state="readonly",
-                                values=["claude", "openai", "gemini"], width=14)
+                                values=["claude", "ollama", "openai", "gemini"], width=14)
         prov_box.pack(side="left")
         mrow = tk.Frame(wrap, bg=BG); mrow.pack(fill="x", pady=2)
         tk.Label(mrow, text="Claude-Modell", bg=BG, fg=MUT, font=FONT, width=22, anchor="w").pack(side="left")
@@ -439,6 +439,7 @@ class DinoApp:
                      values=[m[0] for m in core.CLAUDE_MODELS.values()]).pack(side="left")
         field("OpenAI-Modell (z.B. gpt-5.1)", "openai_model", width=30)
         field("Gemini-Modell", "gemini_model", width=30)
+        field("Gratis-Modell (Ollama)", "ollama_model", width=30)
 
         section("🎭 Persönlichkeit & Humor")
         field("Name der KI", "assistant_name", width=30)
@@ -461,6 +462,7 @@ class DinoApp:
         v["key_gemini"].set(cfg["keys"]["gemini"])
         v["openai_model"].set(cfg["openai_model"])
         v["gemini_model"].set(cfg["gemini_model"])
+        v["ollama_model"].set(cfg.get("ollama_model", "llama3.2"))
         v["assistant_name"].set(cfg["persona"]["assistant_name"])
         v["user_name"].set(cfg["persona"]["user_name"])
         v["business"].set(cfg["persona"]["business"])
@@ -477,6 +479,7 @@ class DinoApp:
         cfg["keys"]["gemini"] = v["key_gemini"].get().strip()
         cfg["openai_model"] = v["openai_model"].get().strip()
         cfg["gemini_model"] = v["gemini_model"].get().strip() or "gemini-2.5-pro"
+        cfg["ollama_model"] = v["ollama_model"].get().strip() or "llama3.2"
         cfg["claude_model"] = self.cmodel_var.get() or "claude-opus-4-8"
         cfg["provider"] = self.prov_var.get() or "claude"
         cfg["persona"]["assistant_name"] = v["assistant_name"].get().strip() or "Dino"

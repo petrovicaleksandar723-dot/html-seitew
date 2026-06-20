@@ -39,6 +39,9 @@ Such dir **mindestens einen** aus — Claude wird empfohlen:
 > (Cent-Beträge pro Gespräch). Der Schlüssel bleibt **nur lokal** auf deinem PC
 > (in `dino_config.json`) und wird **nie** hochgeladen.
 
+> **🆓 Lieber komplett gratis ohne Schlüssel?** Geht auch! Siehe Abschnitt
+> **„Gratis-Modus (Ollama)"** weiter unten.
+
 ### 3) Dino starten
 - ⚡ **Jarvis-Chatfenster (empfohlen):** Doppelklick auf **`Dino-KI-Start.bat`**
   - oder im Terminal:  `python3 dino_server.py`
@@ -87,6 +90,26 @@ Ein edles, dunkles Chat-Fenster — wie ein echter KI-Assistent:
 | `/modell` | Gehirn wählen |
 | `/key` | API-Schlüssel eintragen |
 | `/ende` | beenden (Dino lernt beim Beenden dazu) |
+
+---
+
+## 🆓 Gratis-Modus (Ollama) — ohne Schlüssel, ohne Bezahlung
+
+Wenn du **keinen API-Schlüssel** nutzen willst, kann Dino ein KI-Modell
+**direkt auf deinem PC** laufen lassen — gratis und offline.
+
+1. **Ollama installieren** (kostenlos): https://ollama.com/download
+2. **Ein Modell laden** — Terminal/Eingabeaufforderung öffnen und eintippen:
+   ```
+   ollama run llama3.2
+   ```
+   (lädt das Modell einmalig herunter und startet es)
+3. **In Dino umschalten:** Dino starten → **⚙ Einstellungen** → Anbieter
+   **„🆓 Gratis lokal (Ollama)"** wählen → **Speichern**. Fertig. 🦖
+
+**Ehrlich:** Das Gratis-Modell ist **schwächer und langsamer** als Claude und
+dein PC sollte halbwegs aktuell sein (am besten 8 GB RAM+). Für den Anfang
+reicht es — und du kannst jederzeit auf den starken Claude umschalten.
 
 ---
 

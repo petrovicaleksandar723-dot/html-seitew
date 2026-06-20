@@ -77,12 +77,17 @@ def cmd_modell():
     for k, (mid, desc) in core.CLAUDE_MODELS.items():
         mark = "✓" if mid == d.config["claude_model"] else " "
         print(f"       {k}) {mark} {desc}")
+    print(col("   [a] 🆓 Gratis lokal (Ollama, ohne Schlüssel)", C.B))
     print(col("   [o] ChatGPT     [g] Gemini", C.B))
-    choice = input("   Wähle (c/o/g) oder Claude-Nummer 1-3: ").strip().lower()
+    choice = input("   Wähle (c/a/o/g) oder Claude-Nummer 1-3: ").strip().lower()
     if choice in core.CLAUDE_MODELS:
         d.config["claude_model"] = core.CLAUDE_MODELS[choice][0]; d.config["provider"] = "claude"
     elif choice in ("c", "claude"):
         d.config["provider"] = "claude"
+    elif choice in ("a", "ollama", "gratis"):
+        d.config["provider"] = "ollama"
+        m = input(f"   Ollama-Modell [{d.config.get('ollama_model', 'llama3.2')}]: ").strip()
+        if m: d.config["ollama_model"] = m
     elif choice in ("o", "openai", "chatgpt"):
         d.config["provider"] = "openai"
         m = input(f"   OpenAI-Modell [{d.config['openai_model'] or 'z.B. gpt-5.1'}]: ").strip()
@@ -270,12 +275,12 @@ def main():
     print(col("  /hilfe für alle Befehle  ·  Tipp: Fenster-Version → python dino_app.py", C.DIM))
     line()
 
-    if not d.has_any_key():
-        dino_say("Hi! Ich bin Dino, deine eigene KI. 🦖 Ich brauche EINEN API-Schlüssel (am besten "
-                 "Claude), sonst kann ich nicht denken.")
-        if input(col("   Jetzt eintragen? (j/n): ", C.AMBER)).strip().lower() in ("j", "ja", "y", ""):
+    if not d.is_ready():
+        dino_say("Hi! Ich bin Dino, deine eigene KI. 🦖 Ich brauche EIN Gehirn: entweder einen "
+                 "API-Schlüssel (am besten Claude) — oder den GRATIS-Modus über /modell → [a] Ollama.")
+        if input(col("   Jetzt Schlüssel eintragen? (j/n): ", C.AMBER)).strip().lower() in ("j", "ja", "y", ""):
             cmd_key()
-    if d.has_any_key():
+    if d.is_ready():
         dino_say(f"Bin bereit, {d.config['persona']['user_name']}. (/plan, /tag, /kunden …)")
 
     history = []
@@ -329,7 +334,7 @@ def main():
                 dino_say(text)
                 history.append({"role": "assistant", "content": text})
 
-    if history and d.config["keys"]["claude"]:
+    if history and d.is_ready():
         try:
             print(col("   🦖 Dino merkt sich kurz, was er heute gelernt hat…", C.DIM))
             cmd_lernen(history)

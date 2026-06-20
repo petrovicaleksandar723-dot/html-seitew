@@ -37,6 +37,8 @@ DEFAULT_CONFIG = {
     "claude_model": "claude-opus-4-8",
     "openai_model": "",
     "gemini_model": "gemini-2.5-pro",
+    "ollama_model": "llama3.2",
+    "ollama_url": "http://127.0.0.1:11434",
     "keys": {"claude": "", "openai": "", "gemini": ""},
     "persona": {
         "user_name": "Boss",
@@ -115,13 +117,26 @@ class Dino:
     def has_any_key(self):
         return any(self.config["keys"].values())
 
+    def is_ready(self):
+        """Kann Dino jetzt denken? (Ollama braucht keinen Schlüssel.)"""
+        prov = self.config["provider"]
+        if prov == "ollama":
+            return True
+        if prov == "openai":
+            return bool(self.config["keys"]["openai"] and self.config["openai_model"])
+        if prov == "gemini":
+            return bool(self.config["keys"]["gemini"])
+        return bool(self.config["keys"]["claude"])
+
     def provider_label(self):
         prov = self.config["provider"]
-        if prov == "claude":
-            return f"Claude · {self.config['claude_model']}"
         if prov == "openai":
             return f"ChatGPT · {self.config['openai_model'] or '(kein Modell)'}"
-        return f"Gemini · {self.config['gemini_model']}"
+        if prov == "gemini":
+            return f"Gemini · {self.config['gemini_model']}"
+        if prov == "ollama":
+            return f"Gratis lokal · {self.config.get('ollama_model', 'llama3.2')}"
+        return f"Claude · {self.config['claude_model']}"
 
     # ── Kunden / Aufträge ──────────────────────────────────────────────
     def customers(self):
@@ -319,12 +334,35 @@ Ziel planen."""
         except Exception as e:
             return None, f"Verbindungsfehler: {e}"
 
+    def ask_ollama(self, system, messages, max_tokens=4096):
+        """Gratis-Gehirn: ein KI-Modell, das lokal über Ollama läuft (kein Schlüssel)."""
+        url = self.config.get("ollama_url", "http://127.0.0.1:11434").rstrip("/") + "/api/chat"
+        model = self.config.get("ollama_model", "llama3.2")
+        msgs = [{"role": "system", "content": system}] + messages
+        body = {"model": model, "messages": msgs, "stream": False,
+                "options": {"num_predict": max_tokens}}
+        try:
+            data = self._post(url, {"content-type": "application/json"}, body, timeout=600)
+            return (data.get("message", {}).get("content", "") or "").strip(), None
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None, (f"Modell »{model}« ist noch nicht da. Lade es im Terminal: "
+                              f"ollama pull {model}")
+            return None, _http_msg(e)
+        except urllib.error.URLError:
+            return None, ("Ollama läuft nicht. Installiere es gratis von ollama.com und starte "
+                          "im Terminal ein Modell, z.B.:  ollama run llama3.2")
+        except Exception as e:
+            return None, f"Verbindungsfehler zu Ollama: {e}"
+
     def ask_provider(self, system, messages, max_tokens=4096, effort="medium"):
         prov = self.config["provider"]
         if prov == "openai":
             return self.ask_openai(system, messages, max_tokens)
         if prov == "gemini":
             return self.ask_gemini(system, messages, max_tokens)
+        if prov == "ollama":
+            return self.ask_ollama(system, messages, max_tokens)
         return self.ask_claude(system, messages, max_tokens, effort)
 
     # ── Hohe Funktionen ────────────────────────────────────────────────
@@ -393,21 +431,25 @@ Ziel planen."""
             brains.append(("ChatGPT", lambda: self.ask_openai(sys_p, msgs, 1500)))
         if self.config["keys"]["gemini"]:
             brains.append(("Gemini", lambda: self.ask_gemini(sys_p, msgs, 1500)))
+        if self.config["provider"] == "ollama":
+            brains.append(("Dino lokal", lambda: self.ask_ollama(sys_p, msgs, 1500)))
         if not brains:
-            return {}, None, "Kein KI-Gehirn eingerichtet (Einstellungen → Schlüssel)."
+            return {}, None, "Kein KI-Gehirn eingerichtet (Einstellungen → Schlüssel oder Gratis-Modus)."
         answers = {}
         for name, fn in brains:
             text, err = fn()
             answers[name] = text if text else f"(Fehler: {err})"
         synthese = None
-        if len(answers) > 1 and self.config["keys"]["claude"]:
+        if len(answers) > 1:
             joined = "\n\n".join(f"### {k}\n{v}" for k, v in answers.items())
             syn_p = ("Hier sind Antworten mehrerer KIs auf dieselbe Frage. Fasse das BESTE aus allen "
                      "zu einer einzigen, klaren Empfehlung zusammen. Sag, worin sie sich einig sind und "
                      "was die stärkste Idee ist. Im Stil des Nutzers.")
-            synthese, _ = self.ask_claude(
-                sys_p, [{"role": "user", "content": f"FRAGE: {frage}\n\n{joined}\n\n{syn_p}"}],
-                1500, "high")
+            syn_msgs = [{"role": "user", "content": f"FRAGE: {frage}\n\n{joined}\n\n{syn_p}"}]
+            if self.config["keys"]["claude"]:
+                synthese, _ = self.ask_claude(sys_p, syn_msgs, 1500, "high")
+            else:
+                synthese, _ = self.ask_provider(sys_p, syn_msgs, 1500)
         return answers, synthese, None
 
 

@@ -30,7 +30,7 @@ _lock = threading.Lock()  # Schreibzugriffe auf Gedächtnis/Config absichern
 def status_payload():
     p = d.config["persona"]
     return {
-        "ready": d.has_any_key(),
+        "ready": d.is_ready(),
         "brain": d.provider_label(),
         "assistant_name": p["assistant_name"],
         "user_name": p["user_name"],
@@ -52,6 +52,8 @@ def settings_payload():
         "claude_model": cfg["claude_model"],
         "openai_model": cfg["openai_model"],
         "gemini_model": cfg["gemini_model"],
+        "ollama_model": cfg.get("ollama_model", "llama3.2"),
+        "ollama_url": cfg.get("ollama_url", "http://127.0.0.1:11434"),
         "keys": dict(cfg["keys"]),
         "persona": dict(cfg["persona"]),
         "goal": cfg["goal"],
@@ -138,6 +140,10 @@ def handle_settings_post(body):
         cfg["openai_model"] = (body["openai_model"] or "").strip()
     if "gemini_model" in body:
         cfg["gemini_model"] = (body["gemini_model"] or "").strip() or "gemini-2.5-pro"
+    if "ollama_model" in body:
+        cfg["ollama_model"] = (body["ollama_model"] or "").strip() or "llama3.2"
+    if "ollama_url" in body:
+        cfg["ollama_url"] = (body["ollama_url"] or "").strip() or "http://127.0.0.1:11434"
     if "goal" in body:
         cfg["goal"] = (body["goal"] or "").strip()
     persona = body.get("persona", {})
@@ -145,7 +151,7 @@ def handle_settings_post(body):
         if k in persona:
             cfg["persona"][k] = (persona[k] or "").strip() or cfg["persona"][k]
     d.save_config()
-    return {"ok": True, "brain": d.provider_label(), "ready": d.has_any_key()}
+    return {"ok": True, "brain": d.provider_label(), "ready": d.is_ready()}
 
 
 # ── HTTP-Handler ───────────────────────────────────────────────────────

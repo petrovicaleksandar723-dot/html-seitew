@@ -702,11 +702,15 @@ async function loadSettings(){
 
     <div class="sect">🧠 Welches Gehirn?</div>
     <div class="field"><label>Anbieter</label><select id="st-provider">
-      ${provSel("claude")}Claude</option>${provSel("openai")}ChatGPT / OpenAI</option>${provSel("gemini")}Gemini</option>
+      ${provSel("claude")}Claude</option>${provSel("ollama")}🆓 Gratis lokal (Ollama)</option>${provSel("openai")}ChatGPT / OpenAI</option>${provSel("gemini")}Gemini</option>
     </select></div>
     <div class="field"><label>Claude-Modell</label><select id="st-claude-model">${cmOpts}</select></div>
     <div class="field"><label>OpenAI-Modell</label><input id="st-openai-model" placeholder="z.B. gpt-5.1"></div>
     <div class="field"><label>Gemini-Modell</label><input id="st-gemini-model" placeholder="z.B. gemini-2.5-pro"></div>
+
+    <div class="sect">🆓 Gratis lokal (Ollama) — ohne Schlüssel</div>
+    <div class="field"><label>Gratis-Modell</label><input id="st-ollama-model" placeholder="z.B. llama3.2"></div>
+    <div class="hint">Komplett gratis, ohne Schlüssel: installiere <code>Ollama</code> von <code>ollama.com</code>, dann im Terminal <code>ollama run llama3.2</code> ausführen und oben Anbieter <b>🆓 Gratis lokal</b> wählen. (Schwächer als Claude, läuft dafür offline auf deinem PC.)</div>
 
     <div class="sect">🎭 Persona</div>
     <div class="field"><label>Name der KI</label><input id="st-assistant"></div>
@@ -728,6 +732,7 @@ async function loadSettings(){
   $("st-key-gemini").value = keys.gemini || "";
   $("st-openai-model").value = s.openai_model || "";
   $("st-gemini-model").value = s.gemini_model || "";
+  $("st-ollama-model").value = s.ollama_model || "";
   $("st-assistant").value = persona.assistant_name || "";
   $("st-user").value = persona.user_name || "";
   $("st-business").value = persona.business || "";
@@ -744,6 +749,7 @@ async function saveSettings(){
     claude_model: $("st-claude-model").value,
     openai_model: $("st-openai-model").value.trim(),
     gemini_model: $("st-gemini-model").value.trim(),
+    ollama_model: $("st-ollama-model").value.trim(),
     keys: {
       claude: $("st-key-claude").value.trim(),
       openai: $("st-key-openai").value.trim(),
