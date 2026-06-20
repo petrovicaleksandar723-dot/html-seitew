@@ -115,6 +115,21 @@ def euro(x):
         return "0 €"
 
 
+def _model_too_big(name):
+    """Grobe Einschätzung: Modelle ab ~20 Mrd. Parametern sind für normale PCs zu groß."""
+    import re
+    n = (name or "").lower()
+    if "qwen3.6" in n or ":70b" in n or ":72b" in n or ":405b" in n:
+        return True
+    for num in re.findall(r"(\d+)\s*b", n):
+        try:
+            if int(num) >= 20:
+                return True
+        except ValueError:
+            pass
+    return False
+
+
 class Dino:
     """Das Gehirn. Hält Einstellungen + Gedächtnis und kann mit den KIs reden."""
 
@@ -187,20 +202,20 @@ class Dino:
                 "oder installier es: https://ollama.com/download")
             return
         model = self.config.get("ollama_model", "llama3.2")
+        # Zu großes Modell? Automatisch auf das kleine, sichere llama3.2 wechseln.
+        if _model_too_big(model):
+            log(f"  Modell '{model}' ist zu groß für die meisten PCs —")
+            log("  wechsle automatisch auf das kleine 'llama3.2' (läuft auf deinem PC).")
+            model = "llama3.2"
+            self.config["ollama_model"] = model
+            self.save_config()
+
         if ":" in model:
             have = model in st["models"]
         else:
             have = any(m == model or m.split(":")[0] == model for m in st["models"])
         if have:
             log(f"  ✓ Dinos Gehirn ist bereit: {model}")
-            return
-        # Konfiguriertes Modell fehlt — wenn schon ein anderes installiert ist, das nehmen.
-        if st["models"]:
-            light = ("llama3.2", "qwen3", "gemma4", "phi3", "llama3.1", "mistral")
-            pick = next((m for m in st["models"] if m.split(":")[0] in light), st["models"][0])
-            log(f"  Modell '{model}' ist nicht installiert — nutze stattdessen: {pick}")
-            self.config["ollama_model"] = pick
-            self.save_config()
             return
         log(f"  Lade Dinos Gehirn herunter: {model}")
         log("  (einmalig, ein paar Minuten — bitte dieses Fenster offen lassen)…")
