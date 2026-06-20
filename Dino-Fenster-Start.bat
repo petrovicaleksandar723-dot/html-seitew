@@ -2,11 +2,8 @@
 title Dino KI
 cd /d "%~dp0"
 
-rem Stoer-Variablen entfernen - haeufige Ursache fuer
-rem "could not find platform independent libraries" / Sofort-Absturz
 set "PYTHONHOME="
 set "PYTHONPATH="
-set "PYTHONSTARTUP="
 
 echo.
 echo  ============================================
@@ -14,30 +11,33 @@ echo    Dino wird gestartet...
 echo  ============================================
 echo.
 
-rem --- Python suchen ---
+rem --- ECHTEN Python ueber vollen Pfad finden (umgeht den Windows-Fake) ---
 set "PYCMD="
+for /d %%D in ("%LOCALAPPDATA%\Programs\Python\Python3*") do if exist "%%D\python.exe" set "PYCMD=%%D\python.exe"
+if defined PYCMD goto python_ok
+for /d %%D in ("%ProgramFiles%\Python3*") do if exist "%%D\python.exe" set "PYCMD=%%D\python.exe"
+if defined PYCMD goto python_ok
+for /d %%D in ("%ProgramFiles(x86)%\Python3*") do if exist "%%D\python.exe" set "PYCMD=%%D\python.exe"
+if defined PYCMD goto python_ok
+
+rem --- Fallback: py / python ---
 where py >nul 2>&1
 if %errorlevel%==0 set "PYCMD=py"
 if defined PYCMD goto python_ok
 where python >nul 2>&1
 if %errorlevel%==0 set "PYCMD=python"
 if defined PYCMD goto python_ok
-where python3 >nul 2>&1
-if %errorlevel%==0 set "PYCMD=python3"
-if defined PYCMD goto python_ok
 
-echo  [!] Python nicht gefunden.
-echo      Gratis laden: https://www.python.org/downloads/
-echo      WICHTIG: Haken bei "Add Python to PATH" setzen, dann PC neu starten.
+echo  [!] Kein Python gefunden.
+echo      Gratis: https://www.python.org/downloads/  (Haken "Add Python to PATH")
 start https://www.python.org/downloads/
-echo.
 pause
 exit /b
 
 :python_ok
-echo  Python gefunden: %PYCMD%
+echo  Python: %PYCMD%
 
-rem --- Dino-Fenster-Datei suchen ---
+rem --- Dino-Datei finden ---
 set "PYFILE="
 if exist "Dino-Fenster.py" set "PYFILE=Dino-Fenster.py"
 if not defined PYFILE if exist "DinoFenster.py" set "PYFILE=DinoFenster.py"
@@ -45,19 +45,13 @@ if not defined PYFILE for %%F in (*.py) do if not defined PYFILE set "PYFILE=%%F
 if not defined PYFILE goto no_pyfile
 
 echo  Starte: %PYFILE%
-echo  (Ein Dino-Fenster geht gleich auf. Dieses Fenster bitte offen lassen.)
+echo  (Ein Dino-Fenster geht gleich auf. Dieses Fenster offen lassen.)
 echo.
-
-rem -E = alle Python-Stoervariablen ignorieren (heilt den Absturz)
-rem Fehler werden in Dino-Fehler.txt geschrieben
-%PYCMD% -E "%PYFILE%" 2> "Dino-Fehler.txt"
+"%PYCMD%" -E "%PYFILE%" 2> "Dino-Fehler.txt"
 
 echo.
 echo  --- Dino wurde beendet ---
-echo.
-echo  Falls KEIN Dino-Fenster aufging:
-echo  Oeffne die Datei  Dino-Fehler.txt  in diesem Ordner (Doppelklick)
-echo  und schick mir, was drin steht.
+echo  Falls KEIN Fenster kam: oeffne Dino-Fehler.txt und schick mir den Inhalt.
 echo.
 pause
 exit /b
