@@ -12,7 +12,9 @@ Reines Python (Standardbibliothek). Starten:  python dino_server.py
 """
 
 import json
+import os
 import sys
+import subprocess
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -243,6 +245,25 @@ class Handler(BaseHTTPRequestHandler):
         self._send_json(out)
 
 
+def _open_browser(url):
+    """Öffnet das Chat-Fenster mit mehreren Methoden (eine davon klappt fast immer)."""
+    try:
+        if webbrowser.open(url):
+            return
+    except Exception:
+        pass
+    if os.name == "nt":
+        try:
+            os.startfile(url)  # Windows-Standardbrowser
+            return
+        except Exception:
+            pass
+        try:
+            subprocess.Popen(["cmd", "/c", "start", "", url])
+        except Exception:
+            pass
+
+
 def main():
     httpd = None
     for port in PORT_RANGE:
@@ -252,26 +273,36 @@ def main():
         except OSError:
             continue
     if httpd is None:
-        print("Konnte keinen freien Port finden (8765–8799)."); sys.exit(1)
+        print("Konnte keinen freien Port finden (8765-8799)."); sys.exit(1)
 
-    print("\n  🦖  DINO wird gestartet — richte mich kurz selbst ein…\n")
+    print("\n  Dino wird gestartet - richte mich kurz selbst ein...\n")
     try:
         d.ensure_ollama()
     except Exception as e:
-        print(f"  (Auto-Setup übersprungen: {e})")
+        print(f"  (Auto-Setup uebersprungen: {e})")
 
     url = f"http://{HOST}:{httpd.server_address[1]}/"
-    print("\n  🦖  DINO KI läuft!")
-    print(f"  ➜  Dein Chat-Fenster öffnet sich jetzt:  {url}")
-    print("  (Dieses Fenster offen lassen — schließen beendet Dino. Stoppen: Strg+C)\n")
+    # Log schreiben, falls das Fenster zu schnell weg ist
     try:
-        webbrowser.open(url)
+        with open(os.path.join(core.HERE, "Dino-Log.txt"), "w", encoding="utf-8") as lf:
+            lf.write("Dino laeuft.\n")
+            lf.write("Oeffne diese Adresse im Browser, falls kein Fenster aufgeht:\n")
+            lf.write("   " + url + "\n")
     except Exception:
         pass
+
+    print("\n" + "=" * 52)
+    print("   DINO KI LAEUFT!")
+    print("   Falls KEIN Browser-Fenster aufgeht, oeffne deinen")
+    print("   Browser und tippe oben rein:")
+    print("   >>>   " + url)
+    print("=" * 52)
+    print("  (Dieses Fenster offen lassen. Stoppen: Strg+C)\n")
+    _open_browser(url)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\n  🦖  Dino macht Feierabend. Bis später!")
+        print("\n  Dino macht Feierabend. Bis spaeter!")
         httpd.shutdown()
 
 
