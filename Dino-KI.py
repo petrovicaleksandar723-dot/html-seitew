@@ -6,7 +6,6 @@ oeffnet sich dein Jarvis-Chatfenster im Browser.
 
 Dino laeuft ab Werk GRATIS & lokal ueber Ollama (kein Schluessel) und
 richtet sich beim Start selbst ein (Ollama starten + Modell laden).
-Reine Standardbibliothek. Voraussetzung: Python + Ollama (ollama.com).
 """
 
 # -*- coding: utf-8 -*-
@@ -159,33 +158,31 @@ class Dino:
 
     def ensure_ollama(self, log=print):
         """Auto-Setup: startet Ollama falls nötig und lädt das Modell, wenn es fehlt.
-        Läuft beim Start der App, damit der Nutzer nichts von Hand tippen muss."""
+        Der Modell-Download läuft über die Ollama-HTTP-Schnittstelle — unabhängig
+        davon, ob das 'ollama'-Kommando im PATH liegt."""
         if self.config["provider"] != "ollama":
             return
-        exe = shutil.which("ollama")
-        if not exe:
-            log("  ⚠ Ollama ist noch nicht installiert (gratis: https://ollama.com/download).")
-            log("    Dino startet trotzdem — installier Ollama und starte Dino neu.")
-            return
-        # Server erreichbar? Sonst im Hintergrund starten.
-        if not self.ollama_status()["running"]:
-            log("  🦖 Starte das lokale Gehirn (Ollama)…")
-            try:
-                kwargs = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
-                if os.name == "nt":
-                    kwargs["creationflags"] = 0x00000008  # DETACHED_PROCESS
-                subprocess.Popen([exe, "serve"], **kwargs)
-            except Exception:
-                pass
-            for _ in range(20):
-                time.sleep(1)
-                if self.ollama_status()["running"]:
-                    break
         st = self.ollama_status()
         if not st["running"]:
-            log("  ⚠ Ollama startet nicht automatisch — öffne die Ollama-App einmal manuell.")
+            exe = shutil.which("ollama")
+            if exe:
+                log("  Starte das lokale Gehirn (Ollama)…")
+                try:
+                    kwargs = {"stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+                    if os.name == "nt":
+                        kwargs["creationflags"] = 0x00000008  # DETACHED_PROCESS
+                    subprocess.Popen([exe, "serve"], **kwargs)
+                except Exception:
+                    pass
+                for _ in range(20):
+                    time.sleep(1)
+                    if self.ollama_status()["running"]:
+                        break
+            st = self.ollama_status()
+        if not st["running"]:
+            log("  ⚠ Ollama läuft noch nicht. Öffne die Ollama-App einmal — "
+                "oder installier es: https://ollama.com/download")
             return
-        # Modell vorhanden? Sonst automatisch herunterladen.
         model = self.config.get("ollama_model", "llama3.2")
         if ":" in model:
             have = model in st["models"]
@@ -194,13 +191,47 @@ class Dino:
         if have:
             log(f"  ✓ Dinos Gehirn ist bereit: {model}")
             return
-        log(f"  🦖 Lade Dinos Gehirn herunter: {model}  (einmalig — kann ein paar Minuten dauern)…")
-        try:
-            subprocess.run([exe, "pull", model])
+        log(f"  Lade Dinos Gehirn herunter: {model}")
+        log("  (einmalig, ein paar Minuten — bitte dieses Fenster offen lassen)…")
+        if self._ollama_pull_http(model, log):
             log("  ✓ Modell geladen. Los geht's!")
+        else:
+            log(f"    Falls es klemmt, im Terminal:  ollama pull {model}")
+
+    def _ollama_pull_http(self, model, log=print):
+        """Lädt ein Modell über die Ollama-HTTP-API und zeigt den Fortschritt in %."""
+        url = self.config.get("ollama_url", "http://127.0.0.1:11434").rstrip("/") + "/api/pull"
+        body = json.dumps({"name": model, "stream": True}).encode("utf-8")
+        req = urllib.request.Request(url, data=body,
+                                     headers={"content-type": "application/json"}, method="POST")
+        last_status, last_pct = "", -10
+        try:
+            with urllib.request.urlopen(req, timeout=3600) as resp:
+                for raw in resp:
+                    raw = raw.strip()
+                    if not raw:
+                        continue
+                    try:
+                        obj = json.loads(raw.decode("utf-8"))
+                    except Exception:
+                        continue
+                    if obj.get("error"):
+                        log("    Fehler: " + str(obj["error"]))
+                        return False
+                    status = obj.get("status", "")
+                    total, completed = obj.get("total"), obj.get("completed")
+                    if total and completed:
+                        pct = int(completed * 100 / total)
+                        if pct >= last_pct + 5:
+                            log(f"    … {pct}%")
+                            last_pct = pct
+                    elif status and status != last_status:
+                        log("    … " + status)
+                        last_status = status
+            return True
         except Exception as e:
-            log(f"  ⚠ Konnte das Modell nicht automatisch laden: {e}")
-            log(f"    Tipp: im Terminal  ollama pull {model}")
+            log("    Konnte das Modell nicht laden: " + str(e))
+            return False
 
     def provider_label(self):
         prov = self.config["provider"]
