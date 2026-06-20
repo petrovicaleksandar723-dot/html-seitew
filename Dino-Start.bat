@@ -2,164 +2,120 @@
 chcp 65001 >nul
 title Dino KI
 cd /d "%~dp0"
-setlocal enabledelayedexpansion
 
 echo.
 echo  ============================================
-echo   🦖 Dino wird gestartet...
+echo    Dino wird gestartet...
 echo  ============================================
 echo.
 
-rem ----------------------------------------------------------------
-rem 1) Python suchen (python -> py -> python3)
-rem ----------------------------------------------------------------
+rem --- 1) Python suchen ---
 set "PYCMD="
-
 where python >nul 2>&1
-if %errorlevel%==0 (
-    set "PYCMD=python"
-    goto :python_ok
-)
-
+if %errorlevel%==0 set "PYCMD=python"
+if defined PYCMD goto python_ok
 where py >nul 2>&1
-if %errorlevel%==0 (
-    set "PYCMD=py"
-    goto :python_ok
-)
-
+if %errorlevel%==0 set "PYCMD=py"
+if defined PYCMD goto python_ok
 where python3 >nul 2>&1
-if %errorlevel%==0 (
-    set "PYCMD=python3"
-    goto :python_ok
-)
+if %errorlevel%==0 set "PYCMD=python3"
+if defined PYCMD goto python_ok
 
-rem --- Kein Python gefunden ---
-echo  ⚠️  Python wurde nicht gefunden.
+echo  [!] Python wurde nicht gefunden.
 echo.
-
 where winget >nul 2>&1
-if %errorlevel%==0 goto :python_install_winget
-goto :python_install_manual
+if %errorlevel%==0 goto python_winget
+goto python_manual
 
-:python_install_winget
-echo  📥 Ich installiere Python jetzt automatisch (winget)...
+:python_winget
+echo  Installiere Python automatisch (winget)...
 echo.
 winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements
 echo.
-echo  ✅ Python installiert.
-echo.
-echo  Bitte schließe dieses Fenster und starte Dino-Start.bat NOCHMAL.
-echo  (Python ist erst in einem neuen Fenster aktiv.)
+echo  Python installiert. Bitte dieses Fenster schliessen und
+echo  Dino-Start.bat NOCHMAL doppelklicken.
 echo.
 pause
 exit /b
 
-:python_install_manual
-echo  Ich öffne jetzt die Download-Seite für Python...
+:python_manual
+echo  Ich oeffne die Download-Seite fuer Python...
 start https://www.python.org/downloads/
 echo.
-echo  WICHTIG: bei der Installation Haken bei 'Add Python to PATH' setzen!
-echo  Danach starte Dino-Start.bat nochmal.
+echo  WICHTIG: bei der Installation Haken bei "Add Python to PATH" setzen!
+echo  Danach Dino-Start.bat nochmal starten.
 echo.
 pause
 exit /b
 
 :python_ok
-echo  ✅ Python da (!PYCMD!).
+echo  Python gefunden: %PYCMD%
 echo.
 
-rem ----------------------------------------------------------------
-rem 2) Ollama suchen
-rem ----------------------------------------------------------------
+rem --- 2) Ollama suchen ---
 where ollama >nul 2>&1
-if %errorlevel%==0 goto :ollama_ok
+if %errorlevel%==0 goto ollama_ok
 
-echo  ⚠️  Ollama wurde nicht gefunden.
+echo  [!] Ollama wurde nicht gefunden.
 echo.
-
 where winget >nul 2>&1
-if %errorlevel%==0 goto :ollama_install_winget
-goto :ollama_install_manual
+if %errorlevel%==0 goto ollama_winget
+goto ollama_manual
 
-:ollama_install_winget
-echo  📥 Ich installiere Ollama jetzt automatisch (winget)...
+:ollama_winget
+echo  Installiere Ollama automatisch (winget)...
 echo.
 winget install -e --id Ollama.Ollama --accept-source-agreements --accept-package-agreements
 echo.
-echo  ✅ Ollama installiert.
-echo  ⏳ Kurz warten, damit der Ollama-Dienst startet...
+echo  Ollama installiert. Warte kurz, bis der Dienst startet...
 timeout /t 5 >nul
-
 where ollama >nul 2>&1
-if %errorlevel%==0 (
-    echo  ✅ Ollama bereit.
-    echo.
-    goto :start_dino
-)
-
+if %errorlevel%==0 goto start_dino
 echo.
 echo  Hinweis: Ollama ist installiert, aber in diesem Fenster noch nicht aktiv.
-echo  Bitte starte Dino-Start.bat einmal neu - dann läuft alles durch.
+echo  Bitte Dino-Start.bat einmal neu starten - dann laeuft alles durch.
 echo.
 pause
 exit /b
 
-:ollama_install_manual
-echo  Ich öffne jetzt die Download-Seite für Ollama...
+:ollama_manual
+echo  Ich oeffne die Download-Seite fuer Ollama...
 start https://ollama.com/download
 echo.
-echo  Installier Ollama, dann starte Dino-Start.bat nochmal.
+echo  Installier Ollama, dann Dino-Start.bat nochmal starten.
 echo.
 pause
 exit /b
 
 :ollama_ok
-echo  ✅ Ollama da.
+echo  Ollama gefunden.
 echo.
 
-rem ----------------------------------------------------------------
-rem 3) Dino-Python-Datei finden
-rem ----------------------------------------------------------------
+rem --- 3) Dino-Datei finden ---
 :start_dino
 set "PYFILE="
-
-if exist "Dino-KI.py" (
-    set "PYFILE=Dino-KI.py"
-    goto :pyfile_ok
-)
-
-if exist "DinoKI.py" (
-    set "PYFILE=DinoKI.py"
-    goto :pyfile_ok
-)
-
-for %%F in (*.py) do (
-    if not defined PYFILE set "PYFILE=%%F"
-)
-
-if not defined PYFILE goto :no_pyfile
-goto :pyfile_ok
+if exist "Dino-KI.py" set "PYFILE=Dino-KI.py"
+if defined PYFILE goto pyfile_ok
+if exist "DinoKI.py" set "PYFILE=DinoKI.py"
+if defined PYFILE goto pyfile_ok
+for %%F in (*.py) do if not defined PYFILE set "PYFILE=%%F"
+if not defined PYFILE goto no_pyfile
+goto pyfile_ok
 
 :no_pyfile
-echo  ❌ Keine Dino-Datei gefunden - leg Dino-KI.py in denselben Ordner.
+echo  [X] Keine Dino-Datei gefunden.
+echo      Leg Dino-KI.py in denselben Ordner wie diese .bat.
 echo.
 pause
 exit /b
 
 :pyfile_ok
-echo  🚀 Starte Dino: !PYFILE!
-echo  (Das Browser-Fenster öffnet sich gleich von selbst.)
+echo  Starte Dino: %PYFILE%
+echo  (Das Chat-Fenster oeffnet sich gleich von selbst im Browser.)
 echo.
-
-rem ----------------------------------------------------------------
-rem 4) App starten
-rem ----------------------------------------------------------------
-%PYCMD% "!PYFILE!"
+%PYCMD% "%PYFILE%"
 
 echo.
-echo  ============================================
-echo   Dino wurde beendet.
-echo  ============================================
+echo  Dino wurde beendet.
 echo.
 pause
-endlocal

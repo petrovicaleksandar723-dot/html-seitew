@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🦖 DINO KI — EINE Datei. Doppelklick (oder: python Dino-KI.py) und es
+DINO KI - EINE Datei. Doppelklick (oder: python Dino-KI.py) und es
 oeffnet sich dein Jarvis-Chatfenster im Browser.
 
-Dino laeuft ab Werk GRATIS & lokal ueber Ollama (kein Schluessel) und richtet
-sich beim Start selbst ein (Ollama starten + Modell laden).
+Dino laeuft ab Werk GRATIS & lokal ueber Ollama (kein Schluessel) und
+richtet sich beim Start selbst ein (Ollama starten + Modell laden).
 Reine Standardbibliothek. Voraussetzung: Python + Ollama (ollama.com).
 """
 
@@ -545,6 +545,13 @@ import sys
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+# Konsole auf UTF-8 stellen, damit Emojis/Umlaute in Windows nie crashen
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 
 HOST = "127.0.0.1"

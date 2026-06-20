@@ -17,6 +17,13 @@ import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+# Konsole auf UTF-8 stellen, damit Emojis/Umlaute in Windows nie crashen
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 import dino_core as core
 
 HOST = "127.0.0.1"
