@@ -6,8 +6,13 @@ Dino KI ist **dein eigener KI-Assistent** — ein echtes Programm auf deinem PC.
 Fable 5 kann niemand auf einem normalen PC bauen — das braucht Rechenzentren für
 hunderte Millionen €). Dino ist **deine eigene KI, die das Wissen der stärksten
 KIs der Welt benutzt** (Claude, ChatGPT, Gemini), sich **jeden Tag dein Wissen
-merkt** und dadurch schlauer wird, deinen **Humor** übernimmt und dir
-**realistische Geld-Pläne** für CleanLines baut.
+merkt** und dadurch schlauer wird, deinen **Humor** übernimmt, deine **Kunden &
+Aufträge verwaltet** und dir **realistische Geld-Pläne** für CleanLines baut.
+
+Es gibt Dino in **zwei Varianten** — nimm die, die dir passt:
+
+- 🖱️ **Fenster (Klick-Oberfläche)** — kein Tippen von Befehlen, alles per Klick. **Empfohlen.**
+- ⌨️ **Terminal** — die schnelle Tastatur-Variante.
 
 ---
 
@@ -29,54 +34,75 @@ Such dir **mindestens einen** aus — Claude wird empfohlen:
 
 > Der Schlüssel ist gratis zu erstellen. Du zahlst nur deine Nutzung
 > (Cent-Beträge pro Gespräch). Der Schlüssel bleibt **nur lokal** auf deinem PC
-> (in `dino_config.json`).
+> (in `dino_config.json`) und wird **nie** hochgeladen.
 
 ### 3) Dino starten
-- **Windows:** Doppelklick auf **`Dino-KI-Start.bat`**
-- **Mac/Linux / sonst:** Terminal im Ordner öffnen und eingeben:
-  ```
-  python3 dino.py
-  ```
+- 🖱️ **Fenster (empfohlen):** Doppelklick auf **`Dino-KI-Start.bat`**
+  - oder im Terminal:  `python3 dino_app.py`
+- ⌨️ **Terminal:** Doppelklick auf **`Dino-KI-Terminal.bat`**
+  - oder:  `python3 dino.py`
 
-Beim ersten Start fragt Dino nach deinem Schlüssel — eintragen, fertig. 🦖
+Beim ersten Start trägst du deinen Schlüssel ein (im Fenster unter **»⚙ Einstellungen«**),
+dann kann's losgehen. 🦖
 
 ---
 
-## Was Dino kann (einfach im Chat tippen)
+## Das Fenster (Klick-Oberfläche)
+
+Oben gibt es Reiter:
+
+- **💬 Chat** — ganz normal mit Dino reden. Buttons: *Lernen* und *Rat der KIs*.
+- **👥 Kunden** — deine **Kunden & Aufträge verwalten**: anlegen, bearbeiten,
+  löschen. Dino sieht unten direkt deinen **Monatsumsatz** und kennt deine
+  Kundenliste beim Planen.
+- **📈 Plan & Heute** — Knopf für den **Wochen-Geldplan** und den
+  **Tages-Check-in** (3 wichtigste Aktionen für heute).
+- **🧠 Gedächtnis** — was Dino über dich weiß.
+- **⚙ Einstellungen** — Schlüssel, Gehirn (Claude/ChatGPT/Gemini), Humor, Ziel.
+
+---
+
+## Terminal-Befehle (für die ⌨️-Variante)
 
 | Befehl | Was passiert |
 |--------|--------------|
-| *einfach schreiben* | ganz normal mit Dino reden |
-| `/plan` | **realistischer Wochen-Geldplan** zu deinem Ziel |
-| `/tag` | Tages-Check-in: die **3 wichtigsten Geld-Aktionen** für heute |
-| `/rat <frage>` | **alle KIs gleichzeitig fragen** (Claude+ChatGPT+Gemini) + Fazit |
+| *einfach schreiben* | normal mit Dino reden |
+| `/plan` | realistischer Wochen-Geldplan |
+| `/tag` | Tages-Check-in (3 Aktionen für heute) |
+| `/kunden` | Kunden & Aufträge verwalten |
+| `/rat <frage>` | alle KIs fragen + Fazit |
 | `/lernen` | Dino merkt sich dauerhaft, was er gelernt hat 🧠 |
-| `/gedächtnis` | zeigt, was Dino über dich & dein Business weiß |
-| `/persona` | Dinos Name, **Humor** & Business einstellen |
-| `/ziel` | dein Geld-Ziel festlegen (z. B. 5000 €/Woche) |
-| `/modell` | Gehirn wählen (Claude / ChatGPT / Gemini) |
-| `/key` | API-Schlüssel eintragen/ändern |
-| `/hilfe` | alle Befehle |
-| `/ende` | beenden (Dino lernt beim Beenden automatisch dazu) |
+| `/gedächtnis` | zeigt, was Dino weiß |
+| `/persona` | Name, Humor & Business einstellen |
+| `/ziel` | Geld-Ziel festlegen |
+| `/modell` | Gehirn wählen |
+| `/key` | API-Schlüssel eintragen |
+| `/ende` | beenden (Dino lernt beim Beenden dazu) |
 
 ---
 
 ## Wie Dino „jeden Tag schlauer wird"
 
 Echte KI-Modelle trainiert man nicht auf einem PC neu — aber Dino wird trotzdem
-mit der Zeit besser, weil er ein **wachsendes Gedächtnis** hat:
+besser, weil er ein **wachsendes Gedächtnis** hat:
 
-- Jedes Gespräch landet als kurze Notiz im **Tagebuch** (`dino_memory.json`).
-- Mit `/lernen` (oder automatisch beim Beenden) macht Dino daraus **dauerhaftes
-  Wissen** über dich, dein Business, deine Ziele und deinen Stil.
-- Dieses Wissen steckt Dino bei **jeder** Antwort wieder mit rein — je länger du
-  ihn nutzt, desto persönlicher und treffsicherer wird er.
+- Jedes Gespräch landet als Notiz im **Tagebuch** (`dino_memory.json`).
+- Mit **Lernen** (oder automatisch beim Beenden) macht Dino daraus **dauerhaftes
+  Wissen** über dich, dein Business, deine Kunden und deinen Stil.
+- Dieses Wissen + deine **Kundenliste** steckt Dino bei **jeder** Antwort wieder
+  mit rein — je länger du ihn nutzt, desto persönlicher und treffsicherer.
 
 Das ist die ehrliche, echte Version von „lernt jeden Tag dazu". 💪
 
 ---
 
 ## Deine Dateien (bleiben lokal bei dir)
-- `dino.py` — das Programm
-- `dino_config.json` — deine Einstellungen + API-Schlüssel
-- `dino_memory.json` — Dinos Gedächtnis (wächst mit der Zeit)
+| Datei | Was es ist |
+|-------|------------|
+| `dino_app.py` | die Fenster-Version (Klick-Oberfläche) |
+| `dino.py` | die Terminal-Version |
+| `dino_core.py` | das gemeinsame Gehirn (von beiden genutzt) |
+| `Dino-KI-Start.bat` | Doppelklick-Start fürs Fenster |
+| `Dino-KI-Terminal.bat` | Doppelklick-Start fürs Terminal |
+| `dino_config.json` | deine Einstellungen + API-Schlüssel *(wird nicht hochgeladen)* |
+| `dino_memory.json` | Dinos Gedächtnis + Kunden *(wird nicht hochgeladen)* |

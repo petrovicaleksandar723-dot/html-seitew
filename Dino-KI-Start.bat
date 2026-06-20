@@ -4,13 +4,13 @@ title Dino KI
 cd /d "%~dp0"
 
 echo.
-echo   Starte Dino KI...
+echo   Starte Dino KI (Fenster)...
 echo.
 
-REM Python finden (egal ob "python", "py" oder "python3")
-where python >nul 2>nul && (python dino.py & goto ende)
-where py >nul 2>nul && (py dino.py & goto ende)
-where python3 >nul 2>nul && (python3 dino.py & goto ende)
+REM Python finden und die Fenster-Version starten
+where python  >nul 2>nul && (python  dino_app.py & goto ende)
+where py      >nul 2>nul && (py      dino_app.py & goto ende)
+where python3 >nul 2>nul && (python3 dino_app.py & goto ende)
 
 echo.
 echo   [!] Python wurde nicht gefunden.
