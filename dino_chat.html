@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="dino-csrf" content="__DINO_CSRF__">
+<title>🦖 Dino KI</title>
+<style>
+/* ============================================================
+   DINO KI — Jarvis/Sci-Fi Frontend (eine eigenständige Datei)
+   Reines HTML/CSS/JS, keine externen Bibliotheken.
+   ============================================================ */
+
+/* ---- Design-Variablen ---- */
+:root{
+  --bg:#04060d;            /* fast schwarz */
+  --bg2:#060a16;
+  --panel:rgba(14,22,42,.62);   /* Glasmorphismus-Panel */
+  --panel-solid:#0a1124;
+  --line:rgba(56,189,248,.22);  /* leuchtender dünner Rand */
+  --cyan:#22d3ee;
+  --blue:#38bdf8;
+  --blue2:#60a5fa;
+  --txt:#e8f1ff;
+  --mut:#7c8db5;
+  --green:#34d399;
+  --rose:#fb7185;
+  --amber:#fbbf24;
+  --glow:0 0 18px rgba(34,211,238,.55);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  color:var(--txt);
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, rgba(96,165,250,.08), transparent 60%),
+    var(--bg);
+  overflow:hidden;
+}
+/* dezentes Grid im Hintergrund */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:
+    linear-gradient(rgba(56,189,248,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,.06) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 80%);
+}
+
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;max-width:1180px;margin:0 auto;padding:14px 18px 16px}
+
+/* ================= Kopfzeile ================= */
+.header{display:flex;align-items:center;gap:18px;padding:6px 4px 12px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.wordmark{
+  font-size:26px;font-weight:800;letter-spacing:5px;
+  background:linear-gradient(90deg,#67e8f9,#38bdf8,#818cf8);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 24px rgba(56,189,248,.35);
+  filter:drop-shadow(0 0 10px rgba(34,211,238,.4));
+}
+.tagline{
+  font-size:11px;letter-spacing:1.5px;margin-top:1px;font-weight:600;
+  background:linear-gradient(90deg,#67e8f9,#60a5fa);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 12px rgba(56,189,248,.25);opacity:.92;
+}
+.statusline{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut);margin-top:3px;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mut);box-shadow:0 0 8px currentColor;transition:.3s}
+.dot.ok{background:var(--green);color:var(--green)}
+.dot.bad{background:var(--rose);color:var(--rose)}
+/* kleiner Ollama-Indikator oben */
+.ollama-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:2px 9px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(8px);color:var(--mut)}
+.ollama-pill .opdot{width:7px;height:7px;border-radius:50%;background:var(--mut);box-shadow:0 0 7px currentColor;transition:.3s}
+.ollama-pill.ok{color:#bff4ff;border-color:rgba(52,211,153,.5)}
+.ollama-pill.ok .opdot{background:var(--green);color:var(--green)}
+.ollama-pill.warn{color:#ffe9b8;border-color:rgba(251,191,36,.5)}
+.ollama-pill.warn .opdot{background:var(--amber);color:var(--amber)}
+.ollama-pill.bad{color:#ffd9df;border-color:rgba(251,113,133,.5)}
+.ollama-pill.bad .opdot{background:var(--rose);color:var(--rose)}
+.header .spacer{flex:1}
+.iconbtns{display:flex;gap:8px}
+.iconbtn{
+  width:42px;height:42px;border-radius:12px;border:1px solid var(--line);
+  background:var(--panel);backdrop-filter:blur(8px);
+  color:var(--txt);font-size:18px;cursor:pointer;display:grid;place-items:center;
+  transition:.18s;
+}
+.iconbtn:hover{border-color:var(--cyan);box-shadow:var(--glow);transform:translateY(-1px)}
+
+/* ================= Core / Orb ================= */
+.core-wrap{display:flex;justify-content:center;align-items:center;height:118px;margin:-4px 0 6px;position:relative}
+.core{position:relative;width:96px;height:96px;display:grid;place-items:center}
+.core .ring{
+  position:absolute;border-radius:50%;border:2px solid rgba(56,189,248,.35);
+  animation:spin 6s linear infinite;
+}
+.core .r1{inset:0;border-top-color:var(--cyan);border-right-color:transparent}
+.core .r2{inset:12px;border-bottom-color:var(--blue2);border-left-color:transparent;animation-duration:4s;animation-direction:reverse}
+.core .r3{inset:24px;border-top-color:var(--blue);border-left-color:transparent;animation-duration:8s}
+.core .nucleus{
+  width:38px;height:38px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#bff4ff,#22d3ee 45%,#1d4ed8 100%);
+  box-shadow:0 0 26px 6px rgba(34,211,238,.65),0 0 60px 12px rgba(56,189,248,.25);
+  animation:pulse 2.6s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.16);opacity:1}}
+/* Zustände: nachdenken (schneller) / sprechen */
+.core.thinking .ring{animation-duration:1.4s!important}
+.core.thinking .r2{animation-duration:1s!important}
+.core.thinking .nucleus{animation-duration:.8s}
+.core.speaking .nucleus{animation:speak .5s ease-in-out infinite}
+@keyframes speak{0%,100%{transform:scale(1)}50%{transform:scale(1.28);box-shadow:0 0 34px 10px rgba(34,211,238,.85)}}
+
+/* ================= Chat ================= */
+.chat{
+  flex:1;overflow-y:auto;padding:10px 6px 4px;display:flex;flex-direction:column;gap:14px;
+  scrollbar-width:thin;scrollbar-color:rgba(56,189,248,.4) transparent;
+}
+.chat::-webkit-scrollbar{width:8px}
+.chat::-webkit-scrollbar-thumb{background:rgba(56,189,248,.35);border-radius:8px}
+
+.msg{display:flex;gap:10px;max-width:82%;animation:fadein .35s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.avatar{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;
+  background:var(--panel);border:1px solid var(--line)}
+.bubble{
+  padding:11px 14px;border-radius:14px;font-size:14.5px;line-height:1.5;
+  white-space:pre-wrap;word-break:break-word;
+}
+/* Dino: Glas-Bubble */
+.msg.dino .bubble{
+  background:var(--panel);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-top-left-radius:4px;
+  box-shadow:0 4px 22px rgba(0,0,0,.35);
+}
+/* Nutzer: Akzent-Bubble */
+.msg.user .bubble{
+  background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(96,165,250,.20));
+  border:1px solid rgba(34,211,238,.45);border-top-right-radius:4px;
+  box-shadow:0 0 18px rgba(34,211,238,.18);
+}
+/* Info / Fehler / Label / Synthese */
+.msg.info .bubble{background:transparent;border:1px dashed rgba(124,141,181,.4);color:var(--mut);font-style:italic;font-size:13px}
+.msg.error .bubble{background:rgba(251,113,133,.12);border:1px solid var(--rose);color:#ffd9df}
+.msg.error .avatar{border-color:var(--rose)}
+.label{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:3px;font-weight:700;opacity:.9}
+.msg.synth .bubble{
+  background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(129,140,248,.14));
+  border:1px solid var(--cyan);box-shadow:var(--glow);
+}
+
+/* Tipp-Indikator */
+.typing{display:flex;gap:5px;align-items:center;padding:13px 16px}
+.typing span{width:8px;height:8px;border-radius:50%;background:var(--cyan);opacity:.5;animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.18s}
+.typing span:nth-child(3){animation-delay:.36s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+/* ================= Dino-Setup-Karte ================= */
+.setup-card{
+  align-self:stretch;max-width:100%;
+  border:1px solid var(--cyan);border-radius:16px;padding:18px 20px;
+  background:linear-gradient(150deg,rgba(34,211,238,.10),rgba(129,140,248,.08));
+  backdrop-filter:blur(12px);box-shadow:0 0 30px rgba(34,211,238,.18),0 6px 28px rgba(0,0,0,.4);
+  animation:fadein .4s ease both;
+}
+.setup-card .sc-title{font-size:17px;font-weight:800;letter-spacing:.4px;
+  background:linear-gradient(90deg,#bff4ff,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 18px rgba(56,189,248,.3);margin-bottom:6px}
+.setup-card .sc-sub{font-size:13px;color:var(--mut);line-height:1.6;margin-bottom:14px}
+.setup-card .sc-step{margin:12px 0}
+.setup-card .sc-step-h{font-size:13.5px;font-weight:700;color:var(--txt);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.setup-card .sc-step-h .num{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-size:12px;background:rgba(34,211,238,.16);border:1px solid var(--line);color:var(--cyan)}
+.setup-card a.sc-link{color:var(--blue2);text-decoration:none;border-bottom:1px dotted rgba(96,165,250,.5)}
+.setup-card a.sc-link:hover{color:#bff4ff;border-bottom-color:var(--cyan)}
+.setup-card .sc-codebox{display:flex;align-items:center;gap:8px;margin-top:6px}
+.setup-card .sc-code{
+  flex:1;font-family:"Consolas","SF Mono",ui-monospace,monospace;font-size:13.5px;color:#bff4ff;
+  background:rgba(2,8,20,.7);border:1px solid var(--line);border-radius:10px;padding:9px 12px;
+  white-space:nowrap;overflow-x:auto;box-shadow:inset 0 0 14px rgba(34,211,238,.08);
+}
+.setup-card .sc-copy{flex:none;padding:9px 11px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font:inherit;font-size:13px;cursor:pointer;transition:.16s}
+.setup-card .sc-copy:hover{border-color:var(--cyan);box-shadow:var(--glow)}
+.setup-card .sc-models{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.setup-card .sc-model{padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font:inherit;font-size:12.5px;cursor:pointer;transition:.16s}
+.setup-card .sc-model:hover{border-color:var(--cyan);box-shadow:var(--glow);color:#bff4ff}
+.setup-card .sc-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.setup-card .sc-recheck{padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;
+  background:linear-gradient(135deg,var(--cyan),var(--blue2));color:#04101f;box-shadow:0 0 18px rgba(34,211,238,.4);transition:.16s}
+.setup-card .sc-recheck:hover{filter:brightness(1.1)}
+.setup-card .sc-recheck:disabled{opacity:.55;cursor:wait;box-shadow:none}
+.setup-card .sc-settings{font-size:12.5px;color:var(--mut);background:none;border:none;cursor:pointer;font:inherit;
+  text-decoration:underline;text-decoration-style:dotted;padding:0}
+.setup-card .sc-settings:hover{color:var(--blue2)}
+.setup-card .sc-state{font-size:12.5px;color:var(--cyan);min-height:1em}
+
+/* ================= Quick-Chips ================= */
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:10px 4px 8px}
+.chip{
+  padding:7px 13px;border-radius:999px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font-size:13px;cursor:pointer;transition:.16s;
+  backdrop-filter:blur(8px);
+}
+.chip:hover{border-color:var(--cyan);box-shadow:var(--glow);color:#bff4ff}
+.chip:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+
+/* ================= Eingabeleiste ================= */
+.inputbar{
+  display:flex;align-items:flex-end;gap:9px;padding:10px;border-radius:16px;
+  border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(12px);
+  box-shadow:0 0 26px rgba(34,211,238,.10);
+}
+#input{
+  flex:1;resize:none;max-height:140px;min-height:24px;border:none;outline:none;
+  background:transparent;color:var(--txt);font:inherit;font-size:14.5px;line-height:1.45;
+  padding:6px 4px;
+}
+#input::placeholder{color:var(--mut)}
+.ibtn{
+  flex:none;width:42px;height:42px;border-radius:11px;border:1px solid var(--line);
+  background:rgba(255,255,255,.03);color:var(--txt);font-size:18px;cursor:pointer;
+  display:grid;place-items:center;transition:.16s;
+}
+.ibtn:hover{border-color:var(--cyan);box-shadow:var(--glow)}
+.ibtn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.12);box-shadow:var(--glow)}
+.ibtn.mic.listening{color:var(--rose);border-color:var(--rose);box-shadow:0 0 16px rgba(251,113,133,.6);animation:micpulse 1s infinite}
+@keyframes micpulse{50%{background:rgba(251,113,133,.18)}}
+.ibtn.send{
+  background:linear-gradient(135deg,var(--cyan),var(--blue2));color:#04101f;border:none;
+  box-shadow:0 0 18px rgba(34,211,238,.5);
+}
+.ibtn.send:hover{filter:brightness(1.1)}
+.ibtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+
+/* ================= Panels (Slide-Over) ================= */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(2,4,10,.6);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:.25s}
+.overlay.open{opacity:1;pointer-events:auto}
+.panel{
+  position:fixed;top:0;right:0;height:100%;width:min(460px,94vw);z-index:41;
+  background:linear-gradient(180deg,var(--bg2),var(--bg));
+  border-left:1px solid var(--line);box-shadow:-20px 0 60px rgba(0,0,0,.55);
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.4,.0,.2,1);
+  display:flex;flex-direction:column;
+}
+.panel.open{transform:none}
+.panel-head{display:flex;align-items:center;gap:10px;padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+.panel-head h2{margin:0;font-size:17px;font-weight:700;letter-spacing:.5px}
+.panel-head .close{margin-left:auto;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+  background:transparent;color:var(--txt);font-size:18px;cursor:pointer}
+.panel-head .close:hover{border-color:var(--rose);color:var(--rose)}
+.panel-body{flex:1;overflow-y:auto;padding:16px 20px 28px;scrollbar-width:thin;scrollbar-color:rgba(56,189,248,.4) transparent}
+.panel-body::-webkit-scrollbar{width:8px}
+.panel-body::-webkit-scrollbar-thumb{background:rgba(56,189,248,.35);border-radius:8px}
+
+.sect{color:var(--cyan);font-size:12px;letter-spacing:.6px;text-transform:uppercase;font-weight:700;margin:18px 0 8px}
+.sect:first-child{margin-top:0}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.03);color:var(--txt);font:inherit;font-size:13.5px;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(34,211,238,.18)}
+.field select option{background:var(--panel-solid)}
+.field textarea{resize:vertical;min-height:54px}
+.hint{font-size:11.5px;color:var(--mut);line-height:1.6;margin-top:6px}
+.hint code{color:var(--blue2);background:rgba(56,189,248,.08);padding:1px 5px;border-radius:5px}
+
+.btn{
+  padding:10px 16px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--txt);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:.16s;
+}
+.btn:hover{border-color:var(--cyan);box-shadow:var(--glow)}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--blue2));color:#04101f;border:none;box-shadow:0 0 18px rgba(34,211,238,.4)}
+.btn.danger{border-color:rgba(251,113,133,.5);color:#ffd9df}
+.btn.danger:hover{border-color:var(--rose);box-shadow:0 0 14px rgba(251,113,133,.4)}
+.btn.sm{padding:6px 11px;font-size:12px}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+
+/* Umsatz-Banner (Kunden) */
+.revenue{
+  border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-bottom:14px;
+  background:linear-gradient(135deg,rgba(52,211,153,.10),rgba(34,211,238,.06));
+}
+.revenue .big{font-size:24px;font-weight:800;color:var(--green);text-shadow:0 0 16px rgba(52,211,153,.35)}
+.revenue .sub{font-size:12px;color:var(--mut);margin-top:3px}
+
+/* Kunden-Karten */
+.cust{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--panel)}
+.cust .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cust .name{font-weight:700;font-size:14.5px}
+.cust .badge{font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--cyan)}
+.cust .meta{font-size:12.5px;color:var(--mut);margin-top:4px;line-height:1.5}
+.cust .price{color:var(--green);font-weight:600}
+.cust .actions{display:flex;gap:7px;margin-top:9px}
+
+/* Gedächtnis */
+.factlist{list-style:none;margin:0;padding:0}
+.factlist li{padding:8px 11px;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;font-size:13.5px;background:var(--panel)}
+.factlist li::before{content:"• ";color:var(--cyan)}
+.journal{font-size:12.5px;color:var(--mut);line-height:1.7}
+.journal .d{color:var(--blue2)}
+.empty{color:var(--mut);font-style:italic;font-size:13px;padding:6px 0}
+
+@media(max-width:560px){
+  .wordmark{font-size:22px;letter-spacing:3px}
+  .msg{max-width:92%}
+  .core-wrap{height:96px}
+  .core{width:78px;height:78px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Kopfzeile -->
+  <div class="header">
+    <div class="brand">
+      <div>
+        <div class="wordmark">DINO</div>
+        <div class="tagline">dein eigener Jarvis · läuft lokal</div>
+        <div class="statusline">
+          <span id="statusDot" class="dot"></span>
+          <span id="brainText">verbinde…</span>
+          <span id="ollamaPill" class="ollama-pill" style="display:none"><span class="opdot"></span><span id="ollamaPillText">lokal</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="iconbtns">
+      <button class="iconbtn" title="PC-Steuerung" onclick="openPanel('pc')">🖥️</button>
+      <button class="iconbtn" title="Kunden" onclick="openPanel('customers')">👥</button>
+      <button class="iconbtn" title="Gedächtnis" onclick="openPanel('memory')">🧠</button>
+      <button class="iconbtn" title="Einstellungen" onclick="openPanel('settings')">⚙</button>
+    </div>
+  </div>
+
+  <!-- Core / Orb -->
+  <div class="core-wrap">
+    <div class="core" id="core">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="nucleus"></div>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat" id="chat"></div>
+
+  <!-- Quick-Chips -->
+  <div class="chips">
+    <button class="chip" onclick="quickPlan()">📅 Wochenplan</button>
+    <button class="chip" onclick="quickToday()">☀️ Heute</button>
+    <button class="chip" onclick="quickTeam()">🤖 Team-Auftrag</button>
+    <button class="chip" onclick="quickWeb()">🔎 Web-Recherche</button>
+    <button class="chip" onclick="quickLearn()">🧠 Lernen</button>
+    <button class="chip" onclick="quickCouncil()">🧠🧠🧠 Rat der KIs</button>
+  </div>
+
+  <!-- Eingabeleiste -->
+  <div class="inputbar">
+    <textarea id="input" rows="1" placeholder="Schreib Dino was… (Enter senden · Shift+Enter neue Zeile)"></textarea>
+    <button class="ibtn mic" id="micBtn" title="Sprechen (einmal)" onclick="toggleMic()">🎤</button>
+    <button class="ibtn mic" id="hfBtn" title="Freisprech-Modus: Dauer-Mikro + »Hey Dino«" onclick="toggleHandsFree()">🎧</button>
+    <button class="ibtn" id="voiceBtn" title="Sprachausgabe an/aus" onclick="toggleVoice()">🔊</button>
+    <select id="voiceSelect" title="Stimme wählen — Standard: automatisch die beste, flüssige deutsche Stimme" onchange="onVoiceSelect()" style="max-width:160px;background:#0b1526;color:#bfe9f5;border:1px solid rgba(120,200,230,.28);border-radius:9px;font-size:11px;padding:5px 6px;outline:none;"></select>
+    <button class="ibtn send" id="sendBtn" title="Senden" onclick="send()">➤</button>
+  </div>
+</div>
+
+<!-- ===================== Panels ===================== -->
+<div class="overlay" id="overlay" onclick="closePanels()"></div>
+
+<!-- Einstellungen -->
+<aside class="panel" id="panel-settings">
+  <div class="panel-head"><span>⚙</span><h2>Einstellungen</h2><button class="close" onclick="closePanels()">✕</button></div>
+  <div class="panel-body" id="settingsBody"><div class="empty">lädt…</div></div>
+</aside>
+
+<!-- Kunden -->
+<aside class="panel" id="panel-customers">
+  <div class="panel-head"><span>👥</span><h2>Kunden</h2><button class="close" onclick="closePanels()">✕</button></div>
+  <div class="panel-body" id="customersBody"><div class="empty">lädt…</div></div>
+</aside>
+
+<!-- Gedächtnis -->
+<aside class="panel" id="panel-memory">
+  <div class="panel-head"><span>🧠</span><h2>Gedächtnis</h2><button class="close" onclick="closePanels()">✕</button></div>
+  <div class="panel-body" id="memoryBody"><div class="empty">lädt…</div></div>
+</aside>
+
+<!-- PC-Steuerung -->
+<aside class="panel" id="panel-pc">
+  <div class="panel-head"><span>🖥️</span><h2>PC-Steuerung</h2><button class="close" onclick="closePanels()">✕</button></div>
+  <div class="panel-body" id="pcBody"><div class="empty">lädt…</div></div>
+</aside>
+
+<script>
+"use strict";
+/* ============================================================
+   DINO KI — Frontend-Logik
+   Spricht per fetch() mit dem lokalen Server (gleicher Origin).
+   ============================================================ */
+
+// ---- Zustand ----
+const state = {
+  messages: [],          // Chat-Historie {role, content}
+  ready: false,
+  assistantName: "Dino",
+  userName: "Boss",
+  busy: false,
+  voiceOn: false,        // Sprachausgabe an/aus
+  statusValues: ["Lead","Angebot","Aktiv","Bezahlt","Pausiert","Beendet"],
+  provider: null,        // "ollama" | "claude" | "openai" | "gemini"
+  autoRecheckDone: false,// einmaliges Auto-Recheck beim ersten Laden
+  pcControl: true,       // darf Dino PC-Aktionen vorschlagen?
+  goveeChecked: false,   // Govee-Verbindung beim Start schon geprüft?
+};
+
+// ---- DOM-Kurzhelfer ----
+const $ = (id) => document.getElementById(id);
+const chatEl = $("chat");
+const coreEl = $("core");
+const inputEl = $("input");
+
+// ---- Hilfsfunktionen ----
+function euro(x){
+  const n = Number(x) || 0;
+  return n.toLocaleString("de-DE",{maximumFractionDigits:0}) + " €";
+}
+function esc(s){ // wir nutzen ohnehin textContent, dies nur für sichere Attribut-freie Anzeige
+  return String(s == null ? "" : s);
+}
+
+// ---- Core-Animationen ----
+function setThinking(on){ coreEl.classList.toggle("thinking", on); }
+function setSpeaking(on){ coreEl.classList.toggle("speaking", on); }
+
+// ============================================================
+//  Chat-Anzeige
+// ============================================================
+/**
+ * Fügt eine Bubble hinzu. Inhalt wird via textContent gesetzt (kein XSS).
+ * kind: "dino" | "user" | "info" | "error" | "synth" | "council"
+ * label: optionales Label (z.B. KI-Name)
+ */
+function addBubble(kind, text, label){
+  const wrap = document.createElement("div");
+  const cls = (kind === "synth" || kind === "council") ? "dino" : kind;
+  wrap.className = "msg " + (kind === "synth" ? "dino synth" : cls);
+
+  // Avatar nur für Dino-/Nutzer-/Fehler-Bubbles
+  if (kind === "dino" || kind === "synth" || kind === "council"){
+    const a = document.createElement("div"); a.className="avatar"; a.textContent="🦖"; wrap.appendChild(a);
+  } else if (kind === "user"){
+    const a = document.createElement("div"); a.className="avatar"; a.textContent="🧑"; wrap.appendChild(a);
+  } else if (kind === "error"){
+    const a = document.createElement("div"); a.className="avatar"; a.textContent="⚠️"; wrap.appendChild(a);
+  }
+
+  const b = document.createElement("div"); b.className="bubble";
+  if (label){
+    const l = document.createElement("div"); l.className="label"; l.textContent = label;
+    b.appendChild(l);
+    const t = document.createElement("div"); t.textContent = text; b.appendChild(t);
+  } else {
+    b.textContent = text;
+  }
+  wrap.appendChild(b);
+  chatEl.appendChild(wrap);
+  scrollDown();
+  return wrap;
+}
+
+function scrollDown(){ requestAnimationFrame(()=>{ chatEl.scrollTop = chatEl.scrollHeight; }); }
+
+// Tipp-Indikator
+let typingEl = null;
+function showTyping(){
+  if (typingEl) return;
+  typingEl = document.createElement("div");
+  typingEl.className = "msg dino";
+  typingEl.innerHTML = '<div class="avatar">🦖</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  chatEl.appendChild(typingEl);
+  scrollDown();
+}
+function hideTyping(){ if (typingEl){ typingEl.remove(); typingEl = null; } }
+
+// ============================================================
+//  Netzwerk
+// ============================================================
+const DINO_CSRF = (document.querySelector('meta[name="dino-csrf"]') || {}).content || "";
+async function api(path, method, body){
+  const opt = { method: method || "GET", headers:{ "X-Dino-Token": DINO_CSRF } };
+  if (body !== undefined){ opt.headers["Content-Type"]="application/json"; opt.body = JSON.stringify(body); }
+  const res = await fetch(path, opt);
+  // Versuche JSON zu lesen – auch bei 4xx/5xx kann ein {error} kommen
+  let data;
+  try { data = await res.json(); }
+  catch(e){ throw new Error("Ungültige Antwort vom Server (kein JSON)."); }
+  return data;
+}
+
+// Busy-Zustand (sperrt Senden + Chips während einer Anfrage)
+function setBusy(on){
+  state.busy = on;
+  setThinking(on);
+  $("sendBtn").disabled = on;
+  document.querySelectorAll(".chip").forEach(c => c.disabled = on);
+  if (on) showTyping(); else hideTyping();
+}
+
+// ============================================================
+//  Start: Status laden
+// ============================================================
+async function loadStatus(){
+  try{
+    const s = await api("/api/status");
+    if (s.error){ markStatus(false, "Fehler: "+s.error); return; }
+    state.ready = !!s.ready;
+    state.assistantName = s.assistant_name || "Dino";
+    state.userName = s.user_name || "Boss";
+    state.provider = s.provider || null;
+    state.pcControl = (s.pc_control !== false);
+    markStatus(s.ready, s.brain || "—");
+    if (s.govee_set && !state.goveeChecked){ state.goveeChecked = true; checkGovee(); }
+
+    if (state.provider === "ollama"){
+      // Lokales Gehirn -> eigene Onboarding-/Setup-Logik (kümmert sich um Begrüßung/Karte)
+      await checkOllama();
+      return;
+    }
+
+    // Andere Anbieter (Claude etc.): Verhalten wie bisher
+    hideOllamaPill();
+    if (!state.ready){
+      // Nicht bereit -> freundliche Startnachricht + Einstellungen öffnen
+      if (chatEl.children.length === 0)
+        addBubble("dino", "Trag zuerst deinen API-Schlüssel unter ⚙ ein, dann lege ich los. 🦖");
+      openPanel("settings");
+    } else if (chatEl.children.length === 0){
+      // Bereit -> Begrüßung
+      greet();
+    }
+  }catch(e){
+    markStatus(false, "offline");
+    addBubble("error", "Komme nicht an den Dino-Server ran ("+e.message+"). Läuft der lokale Server?");
+  }
+}
+
+function markStatus(ready, brain){
+  const dot = $("statusDot");
+  dot.className = "dot " + (ready ? "ok" : "bad");
+  $("brainText").textContent = brain + (ready ? "  ·  online" : "  ·  offline");
+}
+
+// Begrüßung (nur falls Chat noch leer) — zentral, damit überall wiederverwendbar
+function greet(){
+  if (chatEl.children.length === 0)
+    addBubble("dino", `Dino ist online, ${state.userName}! Worauf hast du Bock? ⚡`);
+}
+
+// ============================================================
+//  Ollama-Onboarding (lokales Gehirn)
+// ============================================================
+const OLLAMA_DEFAULT_MODEL = "qwen2.5:7b";
+let setupCardEl = null;
+
+// Tolerant: gilt current_model als installiert? (z.B. "llama3.2" matcht "llama3.2:latest")
+function modelInstalled(models, current){
+  if (!Array.isArray(models) || !models.length) return false;
+  if (!current) return false;
+  return models.some(m => {
+    const a = String(m), b = String(current);
+    return a === b || a.startsWith(b) || b.startsWith(a);
+  });
+}
+
+// kleiner Status-Indikator oben
+function setOllamaPill(kind, label){
+  const pill = $("ollamaPill");
+  if (!pill) return;
+  pill.style.display = "inline-flex";
+  pill.className = "ollama-pill " + (kind || "");
+  $("ollamaPillText").textContent = label;
+}
+function hideOllamaPill(){
+  const pill = $("ollamaPill");
+  if (pill) pill.style.display = "none";
+}
+
+// Entfernt eine ggf. vorhandene Setup-Karte
+function removeSetupCard(){
+  if (setupCardEl){ setupCardEl.remove(); setupCardEl = null; }
+}
+
+// Prüft /api/ollama und entscheidet über Karte/Begrüßung
+async function checkOllama(){
+  let o;
+  try{
+    o = await api("/api/ollama");
+  }catch(e){
+    // Konnte Ollama-Info nicht laden -> behandeln wie "läuft nicht"
+    o = { running:false, models:[], current_model:OLLAMA_DEFAULT_MODEL };
+  }
+  if (o && o.error){ o = { running:false, models:[], current_model:OLLAMA_DEFAULT_MODEL }; }
+
+  const running = !!(o && o.running);
+  const models = (o && Array.isArray(o.models)) ? o.models : [];
+  const current = (o && o.current_model) || OLLAMA_DEFAULT_MODEL;
+  const hasModel = modelInstalled(models, current);
+
+  if (running && hasModel){
+    // Alles bereit -> keine Karte, normale Begrüßung
+    setOllamaPill("ok", "lokal aktiv");
+    removeSetupCard();
+    greet();
+    return true;
+  }
+
+  if (!running){
+    setOllamaPill("bad", "Setup nötig");
+    showSetupCard("not-running", { models, current });
+  } else {
+    // läuft, aber kein passendes Modell
+    setOllamaPill("warn", "Modell fehlt");
+    showSetupCard("no-model", { models, current });
+  }
+
+  // Einmaliges Auto-Recheck nach ~2s beim ersten Laden (kein Dauer-Polling)
+  if (!state.autoRecheckDone){
+    state.autoRecheckDone = true;
+    setTimeout(()=>{ if (setupCardEl) recheckOllama(); }, 2000);
+  }
+  return false;
+}
+
+// Baut/aktualisiert die Setup-Karte (statisches Markup = innerHTML; dynamische Texte via textContent)
+function showSetupCard(mode, info){
+  removeSetupCard();
+  const card = document.createElement("div");
+  card.className = "setup-card";
+
+  if (mode === "no-model"){
+    card.innerHTML = `
+      <div class="sc-title">🧠 Dino fehlt noch ein Modell</div>
+      <div class="sc-sub">Ollama läuft schon — Dino braucht nur noch ein Sprachmodell. Hol dir das Standardmodell oder wähl eins der installierten.</div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">↓</span><span>Modell laden (gratis)</span></div>
+        <div class="sc-codebox">
+          <code class="sc-code" id="sc-cmd"></code>
+          <button class="sc-copy" id="sc-copy">📋 Kopieren</button>
+        </div>
+        <div class="sc-models" id="sc-models"></div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-recheck" id="sc-recheck">🔄 Nochmal prüfen</button>
+        <span class="sc-state" id="sc-state"></span>
+      </div>
+    `;
+  } else {
+    card.innerHTML = `
+      <div class="sc-title">🦖 Fast fertig — Dino braucht noch sein Gehirn</div>
+      <div class="sc-sub">Dino läuft standardmäßig gratis und lokal über Ollama. Zwei kurze Schritte, dann geht's los.</div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">1</span><span>Ollama installieren (gratis)</span></div>
+        <div class="sc-sub" style="margin:0">
+          Lade es hier herunter: <a class="sc-link" id="sc-dl" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">ollama.com/download</a>
+        </div>
+      </div>
+      <div class="sc-step">
+        <div class="sc-step-h"><span class="num">2</span><span>Dieses Kommando im Terminal / in der Eingabeaufforderung ausführen:</span></div>
+        <div class="sc-codebox">
+          <code class="sc-code" id="sc-cmd"></code>
+          <button class="sc-copy" id="sc-copy">📋 Kopieren</button>
+        </div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-recheck" id="sc-recheck">🔄 Nochmal prüfen</button>
+        <button class="sc-settings" id="sc-settings">Lieber den starken Claude nutzen? → ⚙ Einstellungen</button>
+        <span class="sc-state" id="sc-state"></span>
+      </div>
+    `;
+  }
+
+  // Karte oben im Chat platzieren, damit sie gut sichtbar ist
+  chatEl.prepend(card);
+  setupCardEl = card;
+  scrollDown();
+
+  // Kommando-Text (dynamisch -> textContent, kein innerHTML)
+  const cmd = (mode === "no-model")
+    ? ("ollama pull " + (info && info.current ? info.current : OLLAMA_DEFAULT_MODEL))
+    : ("ollama run " + OLLAMA_DEFAULT_MODEL);
+  const cmdEl = card.querySelector("#sc-cmd");
+  if (cmdEl) cmdEl.textContent = cmd;
+
+  // Kopieren-Button
+  const copyBtn = card.querySelector("#sc-copy");
+  if (copyBtn) copyBtn.onclick = ()=> copyToClipboard(cmd, copyBtn);
+
+  // Recheck-Button
+  const recheckBtn = card.querySelector("#sc-recheck");
+  if (recheckBtn) recheckBtn.onclick = recheckOllama;
+
+  // Einstellungen-Link
+  const setBtn = card.querySelector("#sc-settings");
+  if (setBtn) setBtn.onclick = ()=> openPanel("settings");
+
+  // Installierte Modelle als Buttons (nur im no-model-Fall und wenn vorhanden)
+  if (mode === "no-model"){
+    const wrap = card.querySelector("#sc-models");
+    const models = (info && Array.isArray(info.models)) ? info.models : [];
+    if (wrap && models.length){
+      const lbl = document.createElement("span");
+      lbl.style.cssText = "font-size:12px;color:var(--mut);align-self:center;margin-right:2px";
+      lbl.textContent = "Schon installiert:";
+      wrap.appendChild(lbl);
+      models.forEach(m=>{
+        const b = document.createElement("button");
+        b.className = "sc-model";
+        b.textContent = m;                 // dynamisch -> textContent
+        b.onclick = ()=> pickOllamaModel(m, b);
+        wrap.appendChild(b);
+      });
+    }
+  }
+}
+
+// In Zwischenablage kopieren (mit Fallback)
+function copyToClipboard(text, btn){
+  const done = ()=>{
+    if (!btn) return;
+    const old = btn.textContent;
+    btn.textContent = "✓ Kopiert";
+    setTimeout(()=>{ btn.textContent = old; }, 1500);
+  };
+  try{
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, ()=>fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }catch(e){ fallbackCopy(text, done); }
+}
+function fallbackCopy(text, done){
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    done && done();
+  }catch(e){ /* still */ }
+}
+
+// Installiertes Modell wählen -> setzen, Status neu laden, Karte ausblenden
+async function pickOllamaModel(name, btn){
+  const stateEl = setupCardEl ? setupCardEl.querySelector("#sc-state") : null;
+  if (btn) btn.disabled = true;
+  if (stateEl) stateEl.textContent = "setze Modell …";
+  try{
+    const r = await api("/api/settings", "POST", { ollama_model: name });
+    if (r && r.error){
+      if (stateEl) stateEl.textContent = "⚠ " + r.error;
+      if (btn) btn.disabled = false;
+      return;
+    }
+    removeSetupCard();
+    await loadStatus();          // lädt Status + Ollama neu, begrüßt bei Erfolg
+  }catch(e){
+    if (stateEl) stateEl.textContent = "⚠ " + e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+
+// "Nochmal prüfen" — robust, kein Dauer-Polling
+async function recheckOllama(){
+  if (!setupCardEl) return;
+  const recheckBtn = setupCardEl.querySelector("#sc-recheck");
+  const stateEl = setupCardEl.querySelector("#sc-state");
+  if (recheckBtn) recheckBtn.disabled = true;
+  if (stateEl) stateEl.textContent = "prüfe …";
+  let o;
+  try{
+    o = await api("/api/ollama");
+  }catch(e){
+    if (stateEl) stateEl.textContent = "Noch nicht erreichbar — starte Ollama und versuch's gleich nochmal.";
+    if (recheckBtn) recheckBtn.disabled = false;
+    setOllamaPill("bad", "Setup nötig");
+    return;
+  }
+  if (o && o.error){
+    if (stateEl) stateEl.textContent = "⚠ " + o.error;
+    if (recheckBtn) recheckBtn.disabled = false;
+    return;
+  }
+
+  const running = !!(o && o.running);
+  const models = (o && Array.isArray(o.models)) ? o.models : [];
+  const current = (o && o.current_model) || OLLAMA_DEFAULT_MODEL;
+  const hasModel = modelInstalled(models, current);
+
+  if (running && hasModel){
+    setOllamaPill("ok", "lokal aktiv");
+    removeSetupCard();
+    state.ready = true;
+    addBubble("dino", `Dino ist online, ${state.userName}! Worauf hast du Bock? ⚡`);
+    return;
+  }
+
+  // Noch nicht fertig -> Karte passend aktualisieren
+  if (!running){
+    setOllamaPill("bad", "Setup nötig");
+    showSetupCard("not-running", { models, current });
+  } else {
+    setOllamaPill("warn", "Modell fehlt");
+    showSetupCard("no-model", { models, current });
+  }
+  const ns = setupCardEl ? setupCardEl.querySelector("#sc-state") : null;
+  if (ns) ns.textContent = running ? "Läuft — aber es fehlt noch das Modell." : "Ollama läuft noch nicht.";
+}
+
+// ============================================================
+//  Chat senden
+// ============================================================
+async function send(){
+  if (state.busy) return;
+  const text = inputEl.value.trim();
+  if (!text) return;
+  inputEl.value = ""; autoGrow();
+
+  addBubble("user", text);
+  state.messages.push({ role:"user", content:text });
+
+  setBusy(true);
+  try{
+    const data = await api("/api/chat", "POST", { messages: state.messages });
+    hideTyping();
+    if (data.error){
+      addBubble("error", data.error);
+      // letzte Nutzer-Nachricht nicht dauerhaft behalten
+      state.messages.pop();
+    } else {
+      const reply = data.reply || "";
+      const shown = stripActionLines(reply) || reply;
+      addBubble("dino", shown);
+      state.messages.push({ role:"assistant", content:reply });
+      speak(shown);
+      renderActions(data.actions, reply);
+    }
+  }catch(e){
+    hideTyping();
+    addBubble("error", "Netzwerkfehler: "+e.message);
+    state.messages.pop();
+  }finally{
+    setBusy(false);
+    inputEl.focus();
+  }
+}
+
+// ============================================================
+//  PC-Steuerung: Dinos vorgeschlagene Aktionen als Bestätigungs-Knöpfe
+// ============================================================
+const ACTION_META = {
+  app_oeffnen:     { emoji:"📂", label:"Programm öffnen" },
+  web_oeffnen:     { emoji:"🌐", label:"Webseite öffnen" },
+  ordner_oeffnen:  { emoji:"🗂️", label:"Ordner öffnen" },
+  datei_schreiben: { emoji:"📝", label:"Datei schreiben" },
+  datei_lesen:     { emoji:"📖", label:"Datei lesen" },
+  dateien_liste:   { emoji:"📋", label:"Dateien auflisten" },
+  system_info:     { emoji:"💻", label:"System-Info" },
+  befehl:          { emoji:"⚡", label:"Befehl ausführen" },
+  licht_an:        { emoji:"💡", label:"Licht an", auto:true },
+  licht_aus:       { emoji:"🌙", label:"Licht aus", auto:true },
+  licht_farbe:     { emoji:"🎨", label:"Lichtfarbe", auto:true },
+  licht_helligkeit:{ emoji:"🔆", label:"Helligkeit", auto:true },
+};
+const ACTION_WARN = { befehl:true };
+
+// Die [AKTION]-Zeilen aus dem Anzeige-Text entfernen (werden zu Knöpfen)
+const ACTION_RE = /\[?\s*AKTION\s*\]?\s*[:\-]?\s*[a-zA-Z_äöü]+\s*\|/i;
+function stripActionLines(text){
+  return (text || "").split("\n").filter(ln => !ACTION_RE.test(ln))
+    .join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+// Aktionen aus Dinos Text erkennen (falls der Server keine mitgibt)
+function parseActions(text){
+  const out = [];
+  (text || "").split("\n").forEach(ln => {
+    const m = ln.match(/\[?\s*AKTION\s*\]?\s*[:\-]?\s*([a-zA-Z_äöü]+)\s*\|\s*(.*)$/i);
+    if (!m) return;
+    const name = m[1].trim().toLowerCase();
+    if (!ACTION_META[name]) return;
+    out.push({ name, arg: m[2].trim(), warn: !!ACTION_WARN[name] });
+  });
+  return out;
+}
+
+function renderActions(actions, replyText){
+  let list = (actions && actions.length) ? actions : parseActions(replyText);
+  if (!list || !list.length) return;
+  list.forEach(a => {
+    const meta = ACTION_META[a.name] || {};
+    if (meta.auto) autoRunAction(a);          // z.B. Govee-Licht: sofort, ohne Klick
+    else if (state.pcControl) addActionCard(a); // PC-Aktionen: mit Bestätigung
+  });
+}
+
+// Auto-Aktion (harmlos, z.B. Licht): sofort ausführen, Ergebnis als kleine Zeile zeigen
+async function autoRunAction(a){
+  const meta = ACTION_META[a.name] || { emoji:"💡", label:a.name };
+  const wrap = document.createElement("div");
+  wrap.className = "msg dino";
+  wrap.innerHTML = '<div class="avatar">'+meta.emoji+'</div>';
+  const b = document.createElement("div"); b.className = "bubble";
+  const t = document.createElement("div");
+  t.style.cssText = "font-size:13px;color:#bfe9f5";
+  t.textContent = meta.label + (a.arg ? " · " + a.arg : "") + " …";
+  b.appendChild(t); wrap.appendChild(b); chatEl.appendChild(wrap); scrollDown();
+  try{
+    const data = await api("/api/action", "POST", { name:a.name, arg:a.arg });
+    t.style.color = data.ok ? "#34d399" : "#fb7185";
+    t.textContent = (data.ok ? "✓ " : "✖ ") + meta.label + (a.arg ? " · " + a.arg : "") +
+                    (data.output ? " — " + data.output : "");
+  }catch(e){ t.style.color = "#fb7185"; t.textContent = "✖ " + meta.label + ": " + e.message; }
+  scrollDown();
+}
+
+function addActionCard(a){
+  const meta = ACTION_META[a.name] || { emoji:"🛠️", label:a.name };
+  const wrap = document.createElement("div");
+  wrap.className = "msg dino";
+  wrap.innerHTML = '<div class="avatar">🖥️</div>';
+  const card = document.createElement("div");
+  card.className = "bubble";
+  card.style.borderColor = a.warn ? "rgba(251,113,133,.5)" : "rgba(56,189,248,.35)";
+
+  const title = document.createElement("div");
+  title.className = "label";
+  title.textContent = (a.warn ? "⚠️ " : "") + meta.emoji + " " + meta.label;
+  card.appendChild(title);
+
+  const arg = document.createElement("div");
+  arg.style.cssText = "font-size:13px;color:#bfe9f5;margin:2px 0 8px;word-break:break-word;white-space:pre-wrap";
+  arg.textContent = a.arg || "(ohne Wert)";
+  card.appendChild(arg);
+
+  const row = document.createElement("div");
+  row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap";
+  const run = document.createElement("button");
+  run.className = "btn primary";
+  run.textContent = a.warn ? "▶ Trotzdem ausführen" : "▶ Ausführen";
+  run.onclick = () => runAction(a, run, card);
+  const skip = document.createElement("button");
+  skip.className = "btn";
+  skip.textContent = "✖ Verwerfen";
+  skip.onclick = () => { card.removeChild(row); status.textContent = "Verworfen."; };
+  row.appendChild(run); row.appendChild(skip);
+  card.appendChild(row);
+
+  const status = document.createElement("div");
+  status.style.cssText = "font-size:12px;color:#7c8db5;margin-top:7px;white-space:pre-wrap;word-break:break-word";
+  card.appendChild(status);
+
+  wrap.appendChild(card);
+  chatEl.appendChild(wrap);
+  scrollDown();
+  card._status = status; card._row = row;
+}
+
+async function runAction(a, btn, card){
+  if (a.warn){
+    const ok = window.confirm("Dino will diesen Befehl auf deinem PC ausführen:\n\n" + a.arg +
+                              "\n\nNur bestätigen, wenn du genau weißt, was er tut. Ausführen?");
+    if (!ok) return;
+  }
+  btn.disabled = true;
+  const status = card._status;
+  status.textContent = "läuft…";
+  try{
+    const data = await api("/api/action", "POST", { name:a.name, arg:a.arg });
+    if (data.ok){
+      status.style.color = "#34d399";
+      status.textContent = "✓ " + (data.output || "Erledigt.");
+      if (card._row) card._row.style.display = "none";
+      // Ergebnis in den Gesprächs-Kontext geben, damit Dino es kennt
+      state.messages.push({ role:"user", content:"[PC-Ergebnis "+a.name+"]: " + (data.output||"ok").slice(0,1500) });
+    } else {
+      status.style.color = "#fb7185";
+      status.textContent = "✖ " + (data.output || "Fehlgeschlagen.");
+      btn.disabled = false;
+    }
+  }catch(e){
+    status.style.color = "#fb7185";
+    status.textContent = "✖ Netzwerkfehler: " + e.message;
+    btn.disabled = false;
+  }
+  scrollDown();
+}
+
+// ============================================================
+//  Quick-Actions
+// ============================================================
+// Generischer Helfer für /plan und /tag (Body {} -> {text})
+async function simpleAction(path){
+  if (state.busy) return;
+  setBusy(true);
+  try{
+    const data = await api(path, "POST", {});
+    hideTyping();
+    if (data.error) addBubble("error", data.error);
+    else{
+      const txt = data.text || "";
+      addBubble("dino", txt);
+      state.messages.push({ role:"assistant", content:txt });
+      speak(txt);
+      renderActions(null, txt);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+function quickPlan(){ simpleAction("/api/plan"); }
+function quickToday(){ simpleAction("/api/tag"); }
+
+// Lernen -> verdichtet Gespräch zu Fakten
+async function quickLearn(){
+  if (state.busy) return;
+  if (!state.messages.length){ addBubble("info","Wir haben noch nicht geredet — nichts zu lernen. 😉"); return; }
+  setBusy(true);
+  try{
+    const data = await api("/api/learn", "POST", { messages: state.messages });
+    hideTyping();
+    if (data.error) addBubble("error", data.error);
+    else addBubble("info", `Gemerkt! Dino kennt jetzt ${data.count ?? 0} Fakten. 🧠`);
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
+// Rat der KIs -> nimmt aktuellen Eingabetext als Frage
+async function quickCouncil(){
+  if (state.busy) return;
+  const frage = inputEl.value.trim();
+  if (!frage){ addBubble("info","Schreib zuerst deine Frage ins Feld, dann »Rat der KIs«. 🧠"); return; }
+  inputEl.value=""; autoGrow();
+  addBubble("user", frage);
+
+  setBusy(true);
+  try{
+    const data = await api("/api/council", "POST", { messages: state.messages, frage });
+    hideTyping();
+    if (data.error){ addBubble("error", data.error); setBusy(false); return; }
+    const answers = data.answers || {};
+    // Reihenfolge: Claude, ChatGPT, Gemini (falls vorhanden)
+    ["Claude","ChatGPT","Gemini"].forEach(name=>{
+      if (answers[name] != null) addBubble("council", answers[name], "▸ "+name);
+    });
+    // evtl. weitere unbekannte Schlüssel
+    Object.keys(answers).forEach(name=>{
+      if (!["Claude","ChatGPT","Gemini"].includes(name)) addBubble("council", answers[name], "▸ "+name);
+    });
+    if (data.synthese){
+      addBubble("synth", data.synthese, "✦ Dinos Fazit");
+      state.messages.push({ role:"assistant", content:data.synthese });
+      speak(data.synthese);
+      renderActions(null, data.synthese);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
+// Team-Auftrag -> Planer + Spezialisten + Dinos Plan (nimmt Eingabetext als Aufgabe)
+async function quickTeam(){
+  if (state.busy) return;
+  const task = inputEl.value.trim();
+  if (!task){ addBubble("info","Schreib deine Aufgabe ins Feld (z.B. »hol mir 3 neue Kunden diese Woche«), dann »Team-Auftrag«. 🤖"); return; }
+  inputEl.value=""; autoGrow();
+  addBubble("user", task);
+  addBubble("info","Dino ruft sein Team zusammen 🤖 — Planer, Spezialisten und am Ende Dinos Plan. Das dauert einen Moment, weil mehrere nacheinander arbeiten…");
+
+  setBusy(true);
+  try{
+    const data = await api("/api/team", "POST", { task, messages: state.messages });
+    hideTyping();
+    if (data.error && !(data.steps && data.steps.length)){ addBubble("error", data.error); setBusy(false); return; }
+    (data.steps || []).forEach(s=>{
+      addBubble("council", s.output, (s.emoji||"•")+" "+s.name+" — "+s.task);
+    });
+    if (data.final){
+      addBubble("synth", data.final, "✦ Dinos Plan (Team-Ergebnis)");
+      state.messages.push({ role:"assistant", content:data.final });
+      speak(data.final);
+      renderActions(null, data.final);
+    } else if (data.error){
+      addBubble("error", data.error);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
+// Beim Start: prüfen, ob die Govee-Lampen verbunden sind
+async function checkGovee(){
+  try{
+    const g = await api("/api/govee");
+    if (g.connected){
+      addBubble("info", `💡 Govee verbunden — ${g.count} Lampe(n) bereit: ${(g.names||[]).join(", ")}`);
+    } else {
+      addBubble("info", "💡 Govee-Schlüssel ist da, aber die Verbindung klemmt: " + (g.error || "unbekannt"));
+    }
+  }catch(e){ /* still */ }
+}
+
+// Web-Recherche -> Dino schaut im Internet nach (nimmt Eingabetext als Frage)
+async function quickWeb(){
+  if (state.busy) return;
+  const frage = inputEl.value.trim();
+  if (!frage){ addBubble("info","Schreib deine Frage ins Feld, dann »Web-Recherche«. 🔎"); return; }
+  inputEl.value=""; autoGrow();
+  addBubble("user", frage);
+  addBubble("info","Dino schaut im Web nach… 🔎");
+  setBusy(true);
+  try{
+    const data = await api("/api/web", "POST", { frage });
+    hideTyping();
+    if (data.error){ addBubble("error", data.error); }
+    else {
+      const txt = data.text || "";
+      const shown = stripActionLines(txt) || txt;
+      addBubble("dino", shown);
+      state.messages.push({ role:"assistant", content:txt });
+      speak(shown);
+      renderActions(null, txt);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
+// ============================================================
+//  Eingabefeld: Auto-Grow + Tastatur
+// ============================================================
+function autoGrow(){
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+}
+inputEl.addEventListener("input", autoGrow);
+inputEl.addEventListener("keydown", (e)=>{
+  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+});
+
+// ============================================================
+//  Sprachausgabe (speechSynthesis)
+// ============================================================
+let allVoices = [];
+let voiceDE = null;        // beste deutsche Stimme (Dino spricht Deutsch)
+let voiceEN = null;        // beste englische Stimme
+let selectedVoice = null;  // manuell gewaehlte Stimme (sonst automatisch)
+let voiceManual = false;
+
+// Bewertung: wie natuerlich/hochwertig ist die Stimme in der gewuenschten Sprache?
+// Wichtig: eine ENGLISCHE Stimme, die DEUTSCH liest, klingt abgehackt -> harte Strafe.
+function voiceRank(v, want){
+  const lang = (v.lang || "").toLowerCase().replace("_", "-");
+  const name = (v.name || "").toLowerCase();
+  let s = 0;
+  if (lang.startsWith(want)) s += 140;          // richtige Sprache = fluessig
+  else s -= 120;                                // falsche Sprache = abgehackt
+  if (/natural|neural/.test(name)) s += 120;    // Edge-Neural-Stimmen: am natuerlichsten
+  if (/online/.test(name))        s += 70;      // Online-Stimmen klingen natuerlicher
+  if (/google/.test(name))        s += 35;      // Google-Stimmen besser als alte lokale
+  if (want === "de" && /(katja|seraphina|hedda|gisela|amala|marlene|christel|petra|female|frau)/.test(name)) s += 45;
+  if (want === "en" && /(sonia|libby|hazel|aria|jenny|emma|female)/.test(name)) s += 45;
+  return s;
+}
+
+function bestVoice(want){
+  let best = null, bs = -1e9;
+  allVoices.forEach(v => { const r = voiceRank(v, want); if (r > bs){ bs = r; best = v; } });
+  return best;
+}
+
+function buildVoiceList(){
+  if (!("speechSynthesis" in window)) return;
+  allVoices = speechSynthesis.getVoices() || [];
+  if (!allVoices.length) return;
+  voiceDE = bestVoice("de");
+  voiceEN = bestVoice("en");
+  // Dropdown: beste (deutsche, natuerliche) Stimmen zuerst; "Automatisch" ganz oben
+  const sorted = allVoices.slice().sort((a, b) =>
+    Math.max(voiceRank(b,"de"), voiceRank(b,"en")) - Math.max(voiceRank(a,"de"), voiceRank(a,"en")));
+  const sel = $("voiceSelect");
+  if (sel){
+    sel.innerHTML = "";
+    const auto = document.createElement("option");
+    auto.value = "__auto__"; auto.textContent = "Automatisch (beste Stimme)";
+    sel.appendChild(auto);
+    sorted.forEach(v => {
+      const o = document.createElement("option");
+      o.value = v.voiceURI;
+      o.textContent = v.name + " (" + v.lang + ")";
+      sel.appendChild(o);
+    });
+  }
+  const saved = localStorage.getItem("dino_voice");
+  if (saved && saved !== "__auto__"){
+    selectedVoice = allVoices.find(v => v.voiceURI === saved) || null;
+    voiceManual = !!selectedVoice;
+  } else {
+    selectedVoice = null; voiceManual = false;
+  }
+  if (sel) sel.value = (voiceManual && selectedVoice) ? selectedVoice.voiceURI : "__auto__";
+}
+
+function onVoiceSelect(){
+  const sel = $("voiceSelect");
+  if (sel.value === "__auto__"){
+    selectedVoice = null; voiceManual = false;
+    localStorage.setItem("dino_voice", "__auto__");
+  } else {
+    selectedVoice = allVoices.find(v => v.voiceURI === sel.value) || null;
+    voiceManual = !!selectedVoice;
+    if (selectedVoice) localStorage.setItem("dino_voice", selectedVoice.voiceURI);
+  }
+  const prev = state.voiceOn; state.voiceOn = true;
+  speak("Hallo, ich bin Dino, deine eigene KI.");
+  state.voiceOn = prev;
+}
+
+if ("speechSynthesis" in window){
+  buildVoiceList();
+  speechSynthesis.onvoiceschanged = buildVoiceList;
+} else {
+  $("voiceBtn").style.display = "none";
+  const vs = $("voiceSelect"); if (vs) vs.style.display = "none";
+}
+
+function toggleVoice(){
+  state.voiceOn = !state.voiceOn;
+  $("voiceBtn").classList.toggle("active", state.voiceOn);
+  if (!state.voiceOn && "speechSynthesis" in window){ speechSynthesis.cancel(); return; }
+  if (state.voiceOn) speak("Sprachausgabe aktiv.");
+}
+
+// Sprache des Textes grob erkennen (Dino spricht standardmaessig Deutsch).
+function detectLang(text){
+  const t = (text || "").toLowerCase();
+  if (/[äöüß]/.test(t)) return "de";
+  if (/\b(und|ich|nicht|der|die|das|ist|ein|mit|für|auf|dein|deine|wir|hast|mach|kunden|geld|woche|heute)\b/.test(t)) return "de";
+  if (/\b(the|you|and|your|with|for|this|that|are|let|make|money)\b/.test(t)) return "en";
+  return "de";
+}
+
+// Text vorlesefreundlich machen: Emojis, Markdown, Links & Symbole raus.
+function cleanForSpeech(text){
+  let t = text || "";
+  t = t.split("\n").filter(ln => !/\[?\s*AKTION\s*\]?\s*[:\-]?\s*[a-zA-Z_äöü]+\s*\|/i.test(ln)).join("\n"); // AKTION-Zeilen nicht vorlesen
+  t = t.replace(/```[\s\S]*?```/g, " ");                 // Codebloecke
+  t = t.replace(/`([^`]*)`/g, "$1");                      // Inline-Code
+  t = t.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1");        // Markdown-Links -> nur Text
+  t = t.replace(/https?:\/\/\S+/g, " ");                  // nackte URLs
+  t = t.replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}️⃣]/gu, " "); // Emojis
+  t = t.replace(/[*_#>~|]/g, " ");                        // Markdown-Zeichen
+  t = t.replace(/(^|\n)[ \t]*[\-–•·]+[ \t]/g, "$1");      // Aufzaehlungspunkte
+  t = t.replace(/€/g, " Euro");                           // Symbol sauber aussprechen
+  t = t.replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, ". ").trim();
+  return t;
+}
+
+// In kurze Haeppchen teilen -> kein Abschneiden bei langen Texten (sonst "abgehackt").
+function splitSpeech(text){
+  const parts = text.split(/(?<=[\.\!\?\:\;])\s+/);
+  const out = []; let buf = "";
+  parts.forEach(p => {
+    p = p.trim(); if (!p) return;
+    if ((buf + " " + p).trim().length <= 180) buf = buf ? buf + " " + p : p;
+    else { if (buf) out.push(buf); buf = p; }
+  });
+  if (buf) out.push(buf);
+  return out;
+}
+
+function speak(text, onDone){
+  const done = () => { try{ onDone && onDone(); }catch(e){} };
+  if (!state.voiceOn || !text || !("speechSynthesis" in window)){ done(); return; }
+  const clean = cleanForSpeech(text);
+  if (!clean){ done(); return; }
+  // Automatisch die zur Sprache passende Stimme nehmen (engl. Stimme + dt. Text = abgehackt!)
+  let voice = selectedVoice;
+  if (!voiceManual || !voice){
+    voice = (detectLang(clean) === "en") ? (voiceEN || voiceDE) : (voiceDE || voiceEN);
+  }
+  try{
+    speechSynthesis.cancel();
+    const chunks = splitSpeech(clean);
+    if (!chunks.length){ done(); return; }
+    chunks.forEach((c, i) => {
+      const u = new SpeechSynthesisUtterance(c);
+      if (voice){ u.voice = voice; u.lang = voice.lang; }
+      else { u.lang = detectLang(clean) === "en" ? "en-GB" : "de-DE"; }
+      u.rate = 1.0;     // natuerliches Tempo
+      u.pitch = 1.03;   // leicht hoeher -> ruhige KI-Assistentin
+      if (i === 0) u.onstart = () => setSpeaking(true);
+      if (i === chunks.length - 1) u.onend = () => { setSpeaking(false); done(); };
+      u.onerror = () => { setSpeaking(false); if (i === chunks.length - 1) done(); };
+      speechSynthesis.speak(u);
+    });
+  }catch(e){ done(); }
+}
+
+// ============================================================
+//  Spracherkennung (SpeechRecognition)
+// ============================================================
+let recog = null, listening = false;
+(function initMic(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ $("micBtn").style.display = "none"; return; } // nicht unterstützt -> elegant ausblenden
+  recog = new SR();
+  recog.lang = "de-DE";
+  recog.interimResults = false;
+  recog.maxAlternatives = 1;
+  recog.onresult = (e)=>{
+    const t = e.results[0][0].transcript;
+    inputEl.value = (inputEl.value ? inputEl.value+" " : "") + t;
+    autoGrow(); inputEl.focus();
+  };
+  recog.onerror = ()=> stopMic();
+  recog.onend = ()=> stopMic();
+})();
+function toggleMic(){
+  if (!recog) return;
+  if (listening){ recog.stop(); stopMic(); }
+  else { try{ recog.start(); listening = true; $("micBtn").classList.add("listening"); }catch(e){ stopMic(); } }
+}
+function stopMic(){ listening = false; $("micBtn").classList.remove("listening"); }
+
+// ============================================================
+//  Freisprech-Modus (Dauer-Mikro + Weckwort "Hey Dino")
+// ============================================================
+const hf = { on:false, recog:null, speaking:false };
+const WAKE_RE = /\b(hey|hej|he|ok|okay|hallo|hi|yo)\s+(dino|dyno|deino|tino|dina)\b/i;
+function wakeOnly(){ return localStorage.getItem("dino_wake") !== "0"; } // Standard: nur auf "Hey Dino"
+
+function buildHFRecog(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.lang = "de-DE"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = onHFResult;
+  r.onerror = ()=>{};   // bei Fehler einfach weiter (onend startet neu)
+  r.onend = ()=>{ if (hf.on && !hf.speaking){ try{ r.start(); }catch(e){} } };
+  return r;
+}
+
+function toggleHandsFree(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ addBubble("info","Dein Browser kann kein Dauer-Mikro. Nimm Chrome oder Edge. 🎧"); return; }
+  hf.on = !hf.on;
+  $("hfBtn").classList.toggle("listening", hf.on);
+  if (hf.on){
+    if (!hf.recog) hf.recog = buildHFRecog();
+    state.voiceOn = true; $("voiceBtn").classList.add("active");  // Antwort kommt per Sprache
+    hf.speaking = false;
+    try{ hf.recog.start(); }catch(e){}
+    addBubble("info", wakeOnly()
+      ? "Freisprech-Modus AN 🎧 — sag »Hey Dino« und dann deine Frage."
+      : "Freisprech-Modus AN 🎧 — sprich einfach, ich höre durchgehend zu.");
+    speak("Freisprech an. Ich höre zu.");
+  } else {
+    try{ hf.recog && hf.recog.stop(); }catch(e){}
+    addBubble("info","Freisprech-Modus aus. 🎤");
+  }
+}
+
+function onHFResult(e){
+  if (!hf.on || hf.speaking || state.busy) return;
+  let finalText = "";
+  for (let i=e.resultIndex; i<e.results.length; i++){
+    if (e.results[i].isFinal) finalText += e.results[i][0].transcript + " ";
+  }
+  finalText = finalText.trim();
+  if (finalText.length < 2) return;
+  const m = finalText.match(WAKE_RE);
+  let cmd = finalText;
+  if (wakeOnly() && !m) return;   // ohne "Hey Dino" ignorieren
+  if (m){ cmd = finalText.slice(finalText.toLowerCase().indexOf(m[0].toLowerCase()) + m[0].length); }
+  cmd = cmd.replace(/^[\s,:.!?–-]+/, "").trim();
+  if (!cmd){ if (m){ hf.speaking = true; try{ hf.recog.stop(); }catch(_){} speak("Ja, Boss?", resumeHF); } return; }
+  voiceSend(cmd);
+}
+
+function resumeHF(){
+  hf.speaking = false;
+  if (hf.on){ try{ hf.recog.start(); }catch(e){} }
+}
+
+async function voiceSend(text){
+  if (state.busy) return;
+  hf.speaking = true;                          // Mic-Verarbeitung pausieren
+  try{ hf.recog && hf.recog.stop(); }catch(e){}
+  addBubble("user", text);
+  state.messages.push({ role:"user", content:text });
+  setBusy(true);
+  let resumed = false;
+  const resumeOnce = ()=>{ if (!resumed){ resumed = true; resumeHF(); } };
+  setTimeout(resumeOnce, 20000);               // Sicherheitsnetz: spaetestens nach 20s wieder zuhoeren
+  try{
+    const data = await api("/api/chat", "POST", { messages: state.messages });
+    hideTyping();
+    if (data.error){ addBubble("error", data.error); state.messages.pop(); resumeOnce(); }
+    else {
+      const reply = data.reply || "";
+      const shown = stripActionLines(reply) || reply;
+      addBubble("dino", shown);
+      state.messages.push({ role:"assistant", content:reply });
+      renderActions(data.actions, reply);
+      speak(shown, resumeOnce);                // sprechen, danach wieder zuhoeren
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); state.messages.pop(); resumeOnce(); }
+  finally{ setBusy(false); }
+}
+
+// ============================================================
+//  Panels (Slide-Over)
+// ============================================================
+function openPanel(name){
+  closePanels();
+  $("overlay").classList.add("open");
+  const p = $("panel-"+name);
+  if (p) p.classList.add("open");
+  if (name === "settings") loadSettings();
+  if (name === "customers") loadCustomers();
+  if (name === "memory") loadMemory();
+  if (name === "pc") loadPC();
+}
+function closePanels(){
+  $("overlay").classList.remove("open");
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePanels(); });
+
+// ---------- Einstellungen ----------
+async function loadSettings(){
+  const body = $("settingsBody");
+  body.innerHTML = '<div class="empty">lädt…</div>';
+  let s;
+  try { s = await api("/api/settings"); }
+  catch(e){ body.innerHTML = ""; body.appendChild(errBox("Konnte Einstellungen nicht laden: "+e.message)); return; }
+  if (s.error){ body.innerHTML=""; body.appendChild(errBox(s.error)); return; }
+
+  const keys = s.keys || {};
+  const persona = s.persona || {};
+  const claudeModels = s.claude_models || [];
+
+  // Claude-Modell-Optionen
+  const cmOpts = claudeModels.map(m =>
+    `<option value="${esc(m[0])}" ${m[0]===s.claude_model?"selected":""}>${esc(m[1])}</option>`).join("");
+
+  // Gratis-Modell-Optionen (Ollama). Aktuelles Modell aufnehmen, falls eigenes.
+  const ollamaModels = s.ollama_models || [];
+  const omCur = s.ollama_model || "";
+  let omItems = ollamaModels.slice();
+  if (omCur && !omItems.some(m => m[0] === omCur)) omItems = [[omCur, omCur + " (eigenes)"]].concat(omItems);
+  const omOpts = omItems.map(m =>
+    `<option value="${esc(m[0])}" ${m[0]===omCur?"selected":""}>${esc(m[1])}</option>`).join("");
+
+  const provSel = (p)=> `<option value="${p}" ${s.provider===p?"selected":""}>`;
+
+  body.innerHTML = `
+    <div class="sect">🔑 API-Schlüssel</div>
+    <div class="field"><label>Claude (empfohlen)</label><input id="st-key-claude" type="password" placeholder="sk-ant-…"></div>
+    <div class="field"><label>ChatGPT / OpenAI</label><input id="st-key-openai" type="password" placeholder="sk-…"></div>
+    <div class="field"><label>Google Gemini</label><input id="st-key-gemini" type="password" placeholder="AIza…"></div>
+    <div class="hint">Schlüssel holen: <code>console.anthropic.com</code> · <code>platform.openai.com/api-keys</code> · <code>aistudio.google.com/apikey</code><br>Sie bleiben lokal auf deinem PC.</div>
+
+    <div class="sect">🧠 Welches Gehirn?</div>
+    <div class="field"><label>Anbieter</label><select id="st-provider">
+      ${provSel("claude")}Claude</option>${provSel("ollama")}🆓 Gratis lokal (Ollama)</option>${provSel("openai")}ChatGPT / OpenAI</option>${provSel("gemini")}Gemini</option>
+    </select></div>
+    <div class="field"><label>Claude-Modell</label><select id="st-claude-model">${cmOpts}</select></div>
+    <div class="field"><label>OpenAI-Modell</label><input id="st-openai-model" placeholder="z.B. gpt-5.1"></div>
+    <div class="field"><label>Gemini-Modell</label><input id="st-gemini-model" placeholder="z.B. gemini-2.5-pro"></div>
+
+    <div class="sect">🆓 Gratis lokal (Ollama) — ohne Schlüssel</div>
+    <div class="field"><label>Gratis-Modell</label><select id="st-ollama-model">${omOpts}</select></div>
+    <div class="hint">Such dir das Modell nach deinem PC aus. <b>qwen2.5:7b</b> ist für deine 12-GB-Grafikkarte empfohlen — deutlich schlauer als das kleine llama3.2 und trotzdem flott. Wenn du auf ein neues Modell wechselst, lädt Dino es beim nächsten Start <b>einmalig</b> herunter (ein paar Minuten). Komplett gratis & offline.</div>
+
+    <div class="sect">💡 Govee-Lampen (Licht steuern)</div>
+    <div class="field"><label>Govee-Schlüssel</label><input id="st-govee-key" type="password" placeholder="Govee-API-Key"></div>
+    <div class="hint">Damit steuert Dino dein Licht (»mach das Licht blau«). Schlüssel holen: <b>Govee-App → Profil → Einstellungen → Apply for API Key</b> — kommt per E-Mail. Danach hier einfügen & speichern.</div>
+
+    <div class="sect">🎧 Freisprech (Dauer-Mikro)</div>
+    <div class="field" style="display:flex;align-items:center;gap:10px;justify-content:space-between"><label style="margin:0">Nur auf „Hey Dino" reagieren</label><input type="checkbox" id="st-wake" style="width:20px;height:20px"></div>
+    <div class="hint"><b>An</b> (empfohlen): Dino reagiert nur, wenn du mit »Hey Dino« anfängst. <b>Aus</b>: Dino antwortet auf alles, was du sagst. Den 🎧-Knopf unten drücken startet den Dauer-Modus.</div>
+
+    <div class="sect">🎭 Persona</div>
+    <div class="field"><label>Name der KI</label><input id="st-assistant"></div>
+    <div class="field"><label>Wie Dino dich nennt</label><input id="st-user"></div>
+    <div class="field"><label>Dein Business</label><textarea id="st-business"></textarea></div>
+    <div class="field"><label>Stil / Humor</label><textarea id="st-humor"></textarea></div>
+
+    <div class="sect">🎯 Ziel</div>
+    <div class="field"><textarea id="st-goal"></textarea></div>
+
+    <div class="btnrow">
+      <button class="btn primary" id="st-save">💾 Speichern</button>
+      <span id="st-msg" class="hint" style="align-self:center"></span>
+    </div>
+  `;
+  // Werte einsetzen (per .value, nicht in innerHTML -> sicher)
+  $("st-key-claude").value = keys.claude || "";
+  $("st-key-openai").value = keys.openai || "";
+  $("st-key-gemini").value = keys.gemini || "";
+  $("st-openai-model").value = s.openai_model || "";
+  $("st-gemini-model").value = s.gemini_model || "";
+  $("st-ollama-model").value = s.ollama_model || "";
+  $("st-govee-key").value = s.govee_key || "";
+  $("st-wake").checked = (localStorage.getItem("dino_wake") !== "0");
+  $("st-assistant").value = persona.assistant_name || "";
+  $("st-user").value = persona.user_name || "";
+  $("st-business").value = persona.business || "";
+  $("st-humor").value = persona.humor || "";
+  $("st-goal").value = s.goal || "";
+
+  $("st-save").onclick = saveSettings;
+}
+
+async function saveSettings(){
+  const btn = $("st-save"); btn.disabled = true;
+  const wk = $("st-wake"); if (wk) localStorage.setItem("dino_wake", wk.checked ? "1" : "0");
+  const payload = {
+    provider: $("st-provider").value,
+    claude_model: $("st-claude-model").value,
+    openai_model: $("st-openai-model").value.trim(),
+    gemini_model: $("st-gemini-model").value.trim(),
+    ollama_model: $("st-ollama-model").value.trim(),
+    govee_key: $("st-govee-key").value.trim(),
+    keys: {
+      claude: $("st-key-claude").value.trim(),
+      openai: $("st-key-openai").value.trim(),
+      gemini: $("st-key-gemini").value.trim(),
+    },
+    persona: {
+      assistant_name: $("st-assistant").value.trim(),
+      user_name: $("st-user").value.trim(),
+      business: $("st-business").value.trim(),
+      humor: $("st-humor").value.trim(),
+    },
+    goal: $("st-goal").value.trim(),
+  };
+  const msg = $("st-msg");
+  try{
+    const r = await api("/api/settings", "POST", payload);
+    if (r.error){ msg.textContent = "⚠ "+r.error; msg.style.color="var(--rose)"; }
+    else{
+      msg.textContent = "Gespeichert ✓"; msg.style.color="var(--green)";
+      await loadStatus();            // Status oben neu laden (kümmert sich um Begrüßung/Setup-Karte)
+    }
+  }catch(e){ msg.textContent = "⚠ "+e.message; msg.style.color="var(--rose)"; }
+  finally{ btn.disabled = false; }
+}
+
+// ---------- Kunden ----------
+async function loadCustomers(){
+  const body = $("customersBody");
+  body.innerHTML = '<div class="empty">lädt…</div>';
+  let d;
+  try { d = await api("/api/customers"); }
+  catch(e){ body.innerHTML=""; body.appendChild(errBox("Konnte Kunden nicht laden: "+e.message)); return; }
+  if (d.error){ body.innerHTML=""; body.appendChild(errBox(d.error)); return; }
+  renderCustomers(d);
+}
+
+function renderCustomers(d){
+  const body = $("customersBody");
+  body.innerHTML = "";
+  const r = d.revenue || {};
+  const custs = d.customers || [];
+
+  // Umsatz-Banner
+  const rev = document.createElement("div");
+  rev.className = "revenue";
+  rev.innerHTML =
+    `<div class="big">${euro(r.monthly)}</div>`+
+    `<div class="sub">Monatsumsatz · ~${euro(r.weekly)}/Woche · ${r.active||0} aktiv · ${r.leads||0} Leads · ${r.total||0} gesamt</div>`;
+  body.appendChild(rev);
+
+  // "Neuer Kunde"
+  const newBtn = document.createElement("button");
+  newBtn.className = "btn primary"; newBtn.style.marginBottom="14px"; newBtn.textContent = "➕ Neuer Kunde";
+  newBtn.onclick = ()=> showCustomerForm(null);
+  body.appendChild(newBtn);
+
+  if (!custs.length){
+    const e = document.createElement("div"); e.className="empty"; e.textContent="Noch keine Kunden. Leg einen an. 👥";
+    body.appendChild(e);
+    return;
+  }
+  custs.forEach(c => body.appendChild(custCard(c)));
+}
+
+function custCard(c){
+  const card = document.createElement("div"); card.className = "cust";
+  const top = document.createElement("div"); top.className="top";
+  const nm = document.createElement("span"); nm.className="name"; nm.textContent = c.name || "—";
+  const bd = document.createElement("span"); bd.className="badge"; bd.textContent = c.status || "—";
+  top.appendChild(nm); top.appendChild(bd); card.appendChild(top);
+
+  const meta = document.createElement("div"); meta.className="meta";
+  const parts = [];
+  if (c.branche) parts.push(c.branche);
+  if (c.paket) parts.push(c.paket);
+  meta.textContent = parts.join(" · ");
+  if (c.preis){
+    const p = document.createElement("span"); p.className="price"; p.textContent = (parts.length?" · ":"") + euro(c.preis)+"/Monat";
+    meta.appendChild(p);
+  }
+  card.appendChild(meta);
+
+  if (c.naechster_schritt){
+    const ns = document.createElement("div"); ns.className="meta"; ns.textContent = "→ " + c.naechster_schritt;
+    card.appendChild(ns);
+  }
+  if (c.kontakt){
+    const k = document.createElement("div"); k.className="meta"; k.textContent = "✉ " + c.kontakt;
+    card.appendChild(k);
+  }
+
+  const act = document.createElement("div"); act.className="actions";
+  const edit = document.createElement("button"); edit.className="btn sm"; edit.textContent="✏️ Bearbeiten";
+  edit.onclick = ()=> showCustomerForm(c);
+  const del = document.createElement("button"); del.className="btn sm danger"; del.textContent="🗑 Löschen";
+  del.onclick = ()=> deleteCustomer(c);
+  act.appendChild(edit); act.appendChild(del);
+  card.appendChild(act);
+  return card;
+}
+
+// Inline-Formular (neu/bearbeiten) als Karte
+function showCustomerForm(c){
+  const isEdit = !!c;
+  c = c || {};
+  const body = $("customersBody");
+  const form = document.createElement("div"); form.className="cust";
+  const statusOpts = state.statusValues.map(s =>
+    `<option value="${s}" ${ (c.status||"Lead")===s ? "selected":"" }>${s}</option>`).join("");
+  form.innerHTML = `
+    <div class="sect" style="margin-top:0">${isEdit ? "✏️ Kunde bearbeiten" : "➕ Neuer Kunde"}</div>
+    <div class="field"><label>Name *</label><input id="cf-name"></div>
+    <div class="field"><label>Branche</label><input id="cf-branche"></div>
+    <div class="field"><label>Kontakt</label><input id="cf-kontakt"></div>
+    <div class="field"><label>Paket</label><input id="cf-paket"></div>
+    <div class="field"><label>Preis € / Monat</label><input id="cf-preis" type="number" step="any"></div>
+    <div class="field"><label>Status</label><select id="cf-status">${statusOpts}</select></div>
+    <div class="field"><label>Nächster Schritt</label><input id="cf-schritt"></div>
+    <div class="field"><label>Notizen</label><textarea id="cf-notizen"></textarea></div>
+    <div class="btnrow">
+      <button class="btn primary" id="cf-save">✓ Speichern</button>
+      <button class="btn" id="cf-cancel">Abbrechen</button>
+      <span id="cf-msg" class="hint" style="align-self:center"></span>
+    </div>
+  `;
+  body.prepend(form);
+  // Werte einsetzen (sicher, via .value)
+  $("cf-name").value = c.name || "";
+  $("cf-branche").value = c.branche || "";
+  $("cf-kontakt").value = c.kontakt || "";
+  $("cf-paket").value = c.paket || "";
+  $("cf-preis").value = c.preis != null ? c.preis : "";
+  $("cf-schritt").value = c.naechster_schritt || "";
+  $("cf-notizen").value = c.notizen || "";
+  form.scrollIntoView({behavior:"smooth", block:"start"});
+
+  $("cf-cancel").onclick = ()=> loadCustomers();
+  $("cf-save").onclick = async ()=>{
+    const name = $("cf-name").value.trim();
+    const msg = $("cf-msg");
+    if (!name){ msg.textContent="Name fehlt."; msg.style.color="var(--rose)"; return; }
+    const fields = {
+      name,
+      branche: $("cf-branche").value.trim(),
+      kontakt: $("cf-kontakt").value.trim(),
+      paket: $("cf-paket").value.trim(),
+      preis: $("cf-preis").value.trim(),
+      status: $("cf-status").value,
+      naechster_schritt: $("cf-schritt").value.trim(),
+      notizen: $("cf-notizen").value.trim(),
+    };
+    const payload = isEdit ? Object.assign({ op:"update", id:c.id }, fields) : Object.assign({ op:"add" }, fields);
+    $("cf-save").disabled = true;
+    try{
+      const r = await api("/api/customers", "POST", payload);
+      if (r.error){ msg.textContent="⚠ "+r.error; msg.style.color="var(--rose)"; $("cf-save").disabled=false; }
+      else renderCustomers(r);     // Antwort enthält customers + revenue
+    }catch(e){ msg.textContent="⚠ "+e.message; msg.style.color="var(--rose)"; $("cf-save").disabled=false; }
+  };
+}
+
+async function deleteCustomer(c){
+  if (!confirm(`Kunde »${c.name}« wirklich löschen?`)) return;
+  try{
+    const r = await api("/api/customers", "POST", { op:"delete", id:c.id });
+    if (r.error){ const b=$("customersBody"); b.prepend(errBox(r.error)); }
+    else renderCustomers(r);
+  }catch(e){ $("customersBody").prepend(errBox("Netzwerkfehler: "+e.message)); }
+}
+
+// ---------- Gedächtnis ----------
+async function loadMemory(){
+  const body = $("memoryBody");
+  body.innerHTML = '<div class="empty">lädt…</div>';
+  let d;
+  try { d = await api("/api/memory"); }
+  catch(e){ body.innerHTML=""; body.appendChild(errBox("Konnte Gedächtnis nicht laden: "+e.message)); return; }
+  if (d.error){ body.innerHTML=""; body.appendChild(errBox(d.error)); return; }
+
+  body.innerHTML = "";
+  const facts = d.facts || [];
+  const journal = d.journal || [];
+
+  const h1 = document.createElement("div"); h1.className="sect"; h1.textContent="🧠 Was Dino über dich weiß";
+  body.appendChild(h1);
+  if (facts.length){
+    const ul = document.createElement("ul"); ul.className="factlist";
+    facts.forEach(f => { const li=document.createElement("li"); li.textContent=f; ul.appendChild(li); });
+    body.appendChild(ul);
+  } else {
+    const e=document.createElement("div"); e.className="empty"; e.textContent="Noch leer — klick im Chat auf »🧠 Lernen«.";
+    body.appendChild(e);
+  }
+
+  const h2 = document.createElement("div"); h2.className="sect"; h2.textContent="📓 Letzte Notizen (Tagebuch)";
+  body.appendChild(h2);
+  const jWrap = document.createElement("div"); jWrap.className="journal";
+  const last = journal.slice(-15).reverse();
+  if (last.length){
+    last.forEach(j=>{
+      const line = document.createElement("div");
+      const d2 = document.createElement("span"); d2.className="d"; d2.textContent = "["+(j.date||"")+"] ";
+      line.appendChild(d2);
+      line.appendChild(document.createTextNode(j.note||""));
+      jWrap.appendChild(line);
+    });
+  } else {
+    jWrap.innerHTML = '<div class="empty">(leer)</div>';
+  }
+  body.appendChild(jWrap);
+}
+
+// ---------- PC-Steuerung ----------
+async function loadPC(){
+  const body = $("pcBody");
+  body.innerHTML = "";
+
+  const intro = document.createElement("div"); intro.className = "hint";
+  intro.innerHTML = "Dino steuert deinen PC wie ein Co-Pilot: Programme &amp; Ordner öffnen, Dateien schreiben/lesen, Befehle ausführen. <b>Du bestätigst jede Aktion per Klick</b> — Dino macht nichts ungefragt. Sag ihm im Chat einfach, was er tun soll (z.B. »öffne den Editor« oder »schreib mir die Ideen in eine Datei«) — dann erscheinen Bestätigungs-Knöpfe.";
+  body.appendChild(intro);
+
+  const sw = document.createElement("div"); sw.className = "field";
+  sw.style.cssText = "display:flex;align-items:center;gap:10px;justify-content:space-between";
+  const swl = document.createElement("label"); swl.textContent = "PC-Steuerung erlauben"; swl.style.margin = "0";
+  const swb = document.createElement("button");
+  swb.className = "btn" + (state.pcControl ? " primary" : "");
+  swb.textContent = state.pcControl ? "AN" : "AUS";
+  swb.onclick = async () => {
+    const nv = !state.pcControl;
+    try{
+      await api("/api/settings", "POST", { pc_control: nv });
+      state.pcControl = nv;
+      swb.textContent = nv ? "AN" : "AUS";
+      swb.className = "btn" + (nv ? " primary" : "");
+    }catch(e){ /* still */ }
+  };
+  sw.appendChild(swl); sw.appendChild(swb); body.appendChild(sw);
+
+  const h = document.createElement("div"); h.className = "sect"; h.textContent = "⚡ Schnell-Aktionen"; body.appendChild(h);
+  const grid = document.createElement("div");
+  grid.style.cssText = "display:flex;flex-wrap:wrap;gap:8px";
+  const out = document.createElement("div");
+  out.style.cssText = "font-size:12px;color:#bfe9f5;white-space:pre-wrap;word-break:break-word;background:#0b1526;border:1px solid rgba(120,200,230,.18);border-radius:9px;padding:8px;margin:8px 0;min-height:20px";
+  out.textContent = "(Ergebnisse erscheinen hier)";
+  const quick = [
+    ["📝 Editor", "app_oeffnen", "notepad"],
+    ["🧮 Rechner", "app_oeffnen", "rechner"],
+    ["🗂️ Explorer", "app_oeffnen", "explorer"],
+    ["🌐 Browser", "app_oeffnen", "browser"],
+    ["💻 System-Info", "system_info", ""],
+    ["📋 Dino-Dateien", "dateien_liste", ""],
+  ];
+  quick.forEach(([lbl, name, arg]) => {
+    const b = document.createElement("button"); b.className = "chip"; b.textContent = lbl;
+    b.onclick = () => panelRun(name, arg, out, b);
+    grid.appendChild(b);
+  });
+  body.appendChild(grid);
+  body.appendChild(out);
+
+  const hl = document.createElement("div"); hl.className = "sect"; hl.textContent = "💡 Govee-Licht"; body.appendChild(hl);
+  const lgrid = document.createElement("div");
+  lgrid.style.cssText = "display:flex;flex-wrap:wrap;gap:8px";
+  const lights = [
+    ["💡 An", "licht_an", ""], ["🌙 Aus", "licht_aus", ""],
+    ["🔵 Blau", "licht_farbe", "blau"], ["🔴 Rot", "licht_farbe", "rot"],
+    ["🟢 Grün", "licht_farbe", "grün"], ["🟣 Lila", "licht_farbe", "lila"],
+    ["🟠 Warm", "licht_farbe", "warm"], ["🔆 100%", "licht_helligkeit", "100"],
+  ];
+  lights.forEach(([lbl, name, arg]) => {
+    const b = document.createElement("button"); b.className = "chip"; b.textContent = lbl;
+    b.onclick = () => panelRun(name, arg, out, b);
+    lgrid.appendChild(b);
+  });
+  body.appendChild(lgrid);
+  const lhint = document.createElement("div"); lhint.className = "hint";
+  lhint.innerHTML = "Funktioniert, sobald dein <b>Govee-Schlüssel</b> in ⚙ Einstellungen steht. Dann reicht im Chat auch: »mach das Licht blau«.";
+  body.appendChild(lhint);
+
+  const h2 = document.createElement("div"); h2.className = "sect"; h2.textContent = "⌨️ Eigener Befehl"; body.appendChild(h2);
+  const ci = document.createElement("input");
+  ci.placeholder = "z.B. echo hallo   oder   dir";
+  ci.style.cssText = "width:100%;background:#0b1526;color:#e8f1ff;border:1px solid rgba(120,200,230,.28);border-radius:9px;padding:9px;outline:none";
+  body.appendChild(ci);
+  const cb = document.createElement("button"); cb.className = "btn"; cb.textContent = "▶ Befehl ausführen";
+  cb.style.marginTop = "8px";
+  cb.onclick = () => {
+    const cmd = ci.value.trim(); if (!cmd) return;
+    if (!window.confirm("Diesen Befehl wirklich auf deinem PC ausführen?\n\n" + cmd)) return;
+    panelRun("befehl", cmd, out, cb);
+  };
+  body.appendChild(cb);
+  const warn = document.createElement("div"); warn.className = "hint";
+  warn.style.color = "#fbbf24";
+  warn.textContent = "Vorsicht: Befehle laufen echt auf deinem PC. Nur ausführen, wenn du weißt, was sie tun.";
+  body.appendChild(warn);
+}
+
+async function panelRun(name, arg, out, btn){
+  const isLight = name.indexOf("licht_") === 0;
+  if (!state.pcControl && !isLight){ out.style.color = "#fbbf24"; out.textContent = "PC-Steuerung ist AUS — oben einschalten."; return; }
+  if (btn) btn.disabled = true;
+  out.style.color = "#bfe9f5"; out.textContent = "läuft…";
+  try{
+    const data = await api("/api/action", "POST", { name, arg });
+    out.style.color = data.ok ? "#34d399" : "#fb7185";
+    out.textContent = (data.ok ? "✓ " : "✖ ") + (data.output || "");
+  }catch(e){ out.style.color = "#fb7185"; out.textContent = "✖ Netzwerkfehler: " + e.message; }
+  if (btn) btn.disabled = false;
+}
+
+// kleine rote Fehlerbox für Panels
+function errBox(text){
+  const e = document.createElement("div");
+  e.className = "msg error"; e.style.maxWidth="100%";
+  const b = document.createElement("div"); b.className="bubble"; b.textContent = text;
+  e.appendChild(b);
+  return e;
+}
+
+// ============================================================
+//  Start
+// ============================================================
+loadStatus();
+inputEl.focus();
+</script>
+</body>
+</html>
