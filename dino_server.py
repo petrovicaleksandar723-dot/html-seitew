@@ -68,6 +68,7 @@ def settings_payload():
         "persona": dict(cfg["persona"]),
         "goal": cfg["goal"],
         "claude_models": [[mid, desc] for mid, desc in core.CLAUDE_MODELS.values()],
+        "ollama_models": [[mid, desc] for mid, desc in core.OLLAMA_MODELS.values()],
     }
 
 
@@ -166,6 +167,7 @@ def handle_settings_post(body):
         cfg["gemini_model"] = (body["gemini_model"] or "").strip() or "gemini-2.5-pro"
     if "ollama_model" in body:
         cfg["ollama_model"] = (body["ollama_model"] or "").strip() or "llama3.2"
+        cfg["ollama_locked"] = True  # eigene Wahl -> Auto-Upgrade nicht mehr überschreiben
     if "ollama_url" in body:
         cfg["ollama_url"] = (body["ollama_url"] or "").strip() or "http://127.0.0.1:11434"
     if "goal" in body:

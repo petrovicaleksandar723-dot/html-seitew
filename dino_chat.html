@@ -561,7 +561,7 @@ function greet(){
 // ============================================================
 //  Ollama-Onboarding (lokales Gehirn)
 // ============================================================
-const OLLAMA_DEFAULT_MODEL = "llama3.2";
+const OLLAMA_DEFAULT_MODEL = "qwen2.5:7b";
 let setupCardEl = null;
 
 // Tolerant: gilt current_model als installiert? (z.B. "llama3.2" matcht "llama3.2:latest")
@@ -1105,6 +1105,14 @@ async function loadSettings(){
   const cmOpts = claudeModels.map(m =>
     `<option value="${esc(m[0])}" ${m[0]===s.claude_model?"selected":""}>${esc(m[1])}</option>`).join("");
 
+  // Gratis-Modell-Optionen (Ollama). Aktuelles Modell aufnehmen, falls eigenes.
+  const ollamaModels = s.ollama_models || [];
+  const omCur = s.ollama_model || "";
+  let omItems = ollamaModels.slice();
+  if (omCur && !omItems.some(m => m[0] === omCur)) omItems = [[omCur, omCur + " (eigenes)"]].concat(omItems);
+  const omOpts = omItems.map(m =>
+    `<option value="${esc(m[0])}" ${m[0]===omCur?"selected":""}>${esc(m[1])}</option>`).join("");
+
   const provSel = (p)=> `<option value="${p}" ${s.provider===p?"selected":""}>`;
 
   body.innerHTML = `
@@ -1123,8 +1131,8 @@ async function loadSettings(){
     <div class="field"><label>Gemini-Modell</label><input id="st-gemini-model" placeholder="z.B. gemini-2.5-pro"></div>
 
     <div class="sect">🆓 Gratis lokal (Ollama) — ohne Schlüssel</div>
-    <div class="field"><label>Gratis-Modell</label><input id="st-ollama-model" placeholder="z.B. llama3.2"></div>
-    <div class="hint">Komplett gratis, ohne Schlüssel: installiere <code>Ollama</code> von <code>ollama.com</code>, dann im Terminal <code>ollama run llama3.2</code> ausführen und oben Anbieter <b>🆓 Gratis lokal</b> wählen. (Schwächer als Claude, läuft dafür offline auf deinem PC.)</div>
+    <div class="field"><label>Gratis-Modell</label><select id="st-ollama-model">${omOpts}</select></div>
+    <div class="hint">Such dir das Modell nach deinem PC aus. <b>qwen2.5:7b</b> ist für deine 12-GB-Grafikkarte empfohlen — deutlich schlauer als das kleine llama3.2 und trotzdem flott. Wenn du auf ein neues Modell wechselst, lädt Dino es beim nächsten Start <b>einmalig</b> herunter (ein paar Minuten). Komplett gratis & offline.</div>
 
     <div class="sect">🎭 Persona</div>
     <div class="field"><label>Name der KI</label><input id="st-assistant"></div>

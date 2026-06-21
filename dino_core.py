@@ -32,6 +32,16 @@ CLAUDE_MODELS = {
     "3": ("claude-sonnet-4-6", "Claude Sonnet 4.6 — schnell & günstig"),
 }
 
+# Gratis lokale Modelle (Ollama). Empfehlung richtet sich nach PC-Stärke.
+OLLAMA_MODELS = {
+    "1": ("llama3.2",     "Klein & flott (3B) — für schwächere PCs"),
+    "2": ("qwen2.5:7b",   "Stark & ausgewogen (7B) — EMPFOHLEN für deinen PC"),
+    "3": ("llama3.1:8b",  "Stark, sehr gut auf Deutsch (8B)"),
+    "4": ("qwen2.5:14b",  "Am schlausten (14B) — braucht ~12 GB Grafikkarte"),
+}
+# Das empfohlene, stärkere Standard-Modell (läuft gut auf 12-GB-Grafikkarten).
+RECOMMENDED_OLLAMA = "qwen2.5:7b"
+
 # ── Dinos Team aus Spezial-Agenten ─────────────────────────────────────
 # Jeder Agent ist eine Rolle, die Dino bei einer Aufgabe einnehmen kann.
 # (emoji, anzeigename, rollen-anweisung)
@@ -74,7 +84,7 @@ DEFAULT_CONFIG = {
     "claude_model": "claude-opus-4-8",
     "openai_model": "",
     "gemini_model": "gemini-2.5-pro",
-    "ollama_model": "llama3.2",
+    "ollama_model": "qwen2.5:7b",
     "ollama_url": "http://127.0.0.1:11434",
     "keys": {"claude": "", "openai": "", "gemini": ""},
     "persona": {
@@ -235,7 +245,14 @@ class Dino:
             log("  ⚠ Ollama läuft noch nicht. Öffne die Ollama-App einmal — "
                 "oder installier es: https://ollama.com/download")
             return
-        model = self.config.get("ollama_model", "llama3.2")
+        model = self.config.get("ollama_model", RECOMMENDED_OLLAMA)
+        # Auto-Upgrade: das schwache Auto-Fallback llama3.2 auf das empfohlene,
+        # stärkere Modell heben — außer der Nutzer hat selbst eins gewählt.
+        if model in ("llama3.2", "llama3.2:latest", "") and not self.config.get("ollama_locked"):
+            log(f"  Rüste Dino auf ein stärkeres Modell auf: {RECOMMENDED_OLLAMA}")
+            model = RECOMMENDED_OLLAMA
+            self.config["ollama_model"] = model
+            self.save_config()
         # Zu großes Modell? Automatisch auf das kleine, sichere llama3.2 wechseln.
         if _model_too_big(model):
             log(f"  Modell '{model}' ist zu groß für die meisten PCs —")
@@ -505,8 +522,11 @@ Ziel planen."""
         url = self.config.get("ollama_url", "http://127.0.0.1:11434").rstrip("/") + "/api/chat"
         model = self.config.get("ollama_model", "llama3.2")
         msgs = [{"role": "system", "content": system}] + messages
+        # Tempo: Modell 30 Min geladen halten (kein Neu-Laden zwischen den Team-Runden)
+        # und einen schlanken, aber ausreichenden Kontext nutzen.
         body = {"model": model, "messages": msgs, "stream": False,
-                "options": {"num_predict": max_tokens}}
+                "keep_alive": "30m",
+                "options": {"num_predict": max_tokens, "num_ctx": 4096}}
         headers = {"content-type": "application/json"}
         last_err = None
         for attempt in range(3):
@@ -732,10 +752,11 @@ Ziel planen."""
             "nichts davor, nichts danach:\n"
             f"AGENT: <schluessel aus: {keys}> | AUFGABE: <konkrete teilaufgabe>")
         plan_txt, err = self.ask_provider(
-            plan_sys, [{"role": "user", "content": f"AUFGABE: {task}"}], max_tokens=500)
+            plan_sys, [{"role": "user", "content": f"AUFGABE: {task}"}], max_tokens=300)
         chosen = self._parse_plan(plan_txt) if (plan_txt and not err) else []
         if not chosen:
             chosen = self._fallback_agents(task)
+        chosen = chosen[:2]  # Tempo: 2 Spezialisten reichen für einen klaren Plan
 
         # 2) Spezialisten arbeiten nacheinander
         steps = []
@@ -745,7 +766,7 @@ Ziel planen."""
             sys_p = base + (f"\n\nDEINE ROLLE GERADE: {name}. {role}\n"
                             "Antworte kurz, konkret und sofort umsetzbar — keine Theorie, kein Geschwafel.")
             usr = f"Gesamt-Aufgabe vom Boss: {task}\n\nDeine Teilaufgabe: {subtask}"
-            out, e2 = self.ask_provider(sys_p, [{"role": "user", "content": usr}], max_tokens=900)
+            out, e2 = self.ask_provider(sys_p, [{"role": "user", "content": usr}], max_tokens=700)
             steps.append({"key": key, "emoji": emoji, "name": name,
                           "task": subtask, "output": out if out else f"(Fehler: {e2})"})
 
@@ -760,7 +781,7 @@ Ziel planen."""
             "kein Geschwafel — sag dem Boss klipp und klar, was er als Nächstes tut.")
         syn_usr = (f"AUFGABE: {task}\n\nBEITRÄGE DEINES TEAMS:\n{joined}\n\n"
                    "Dein zusammengefasster Plan (mit nummerierten nächsten Schritten):")
-        final, e3 = self.ask_provider(syn_sys, [{"role": "user", "content": syn_usr}], max_tokens=1600)
+        final, e3 = self.ask_provider(syn_sys, [{"role": "user", "content": syn_usr}], max_tokens=1300)
         if not e3 and final:
             self.add_journal(f"Team-Auftrag bearbeitet: {task[:120]}")
         return steps, (final if not e3 else None), (e3 if e3 else None)
