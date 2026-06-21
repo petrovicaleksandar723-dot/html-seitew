@@ -482,7 +482,13 @@ Beispiele:
 WICHTIG: Du FÜHRST nichts selbst aus. {self.config['persona']['user_name']} sieht jede
 Aktion als Knopf und bestätigt sie per Klick. Schlag die Aktion vor, erklär in einem
 kurzen Satz, was sie bewirkt, und behaupte NIE, etwas sei schon erledigt, bevor die
-Bestätigung kam. Schlag bei heiklen Befehlen lieber den kleinsten, sichersten Schritt vor."""
+Bestätigung kam. Schlag bei heiklen Befehlen lieber den kleinsten, sichersten Schritt vor.
+
+NUR-AUF-BEFEHL-REGEL: Schlag das Öffnen von Webseiten oder Programmen (web_oeffnen,
+app_oeffnen, ordner_oeffnen) AUSSCHLIESSLICH dann vor, wenn {self.config['persona']['user_name']}
+dich ausdrücklich darum bittet (z.B. »öffne …«, »mach … auf«, »starte …«, »zeig mir …«).
+Niemals ungefragt von dir aus. Ohne klare Bitte: keine Öffnen-Aktion vorschlagen, sondern
+einfach normal antworten."""
 
     # ── Die drei Gehirne ───────────────────────────────────────────────
     @staticmethod
