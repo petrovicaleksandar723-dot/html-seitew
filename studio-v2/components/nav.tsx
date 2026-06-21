@@ -21,7 +21,7 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (pathname?.startsWith("/atelier")) return null;
+  if (pathname?.startsWith("/atelier") || pathname?.startsWith("/studio")) return null;
 
   return (
     <header
