@@ -24,7 +24,8 @@ export function Nav() {
   if (
     pathname?.startsWith("/atelier") ||
     pathname?.startsWith("/studio") ||
-    pathname?.startsWith("/award")
+    pathname?.startsWith("/award") ||
+    pathname?.startsWith("/experience")
   )
     return null;
 
