@@ -948,7 +948,9 @@ function gideonRank(v){
   if (lang.startsWith("en-gb")) s += 100;          // britisches Englisch
   else if (lang.startsWith("en")) s += 45;          // sonst Englisch
   if (/female|sonia|libby|hazel|susan|maisie|olivia|aria|jenny|emma|charlotte|amy|google uk english female/.test(name)) s += 55;
-  if (/natural|online|neural/.test(name)) s += 12;  // natuerlichere Edge-Stimmen
+  if (/natural|neural/.test(name)) s += 120;        // cineastische Neural-Stimmen (Edge) -> klar bevorzugt
+  if (/online/.test(name)) s += 80;                 // Online-Stimmen klingen natuerlicher
+  if (/sonia/.test(name)) s += 40;                  // Sonia = am naechsten an "Gideon"
   return s;
 }
 
@@ -1004,8 +1006,8 @@ function speak(text){
     const u = new SpeechSynthesisUtterance(text);
     if (selectedVoice){ u.voice = selectedVoice; u.lang = selectedVoice.lang; }
     else { u.lang = "de-DE"; }
-    u.rate = 1.0;
-    u.pitch = 1.06;   // leicht hoeher -> klingt mehr nach KI-Assistentin
+    u.rate = 0.96;    // einen Tick ruhiger -> cineastischer, wie eine Film-KI
+    u.pitch = 1.02;   // leicht hoeher -> klingt nach kuehler KI-Assistentin (Gideon-Vibe)
     u.onstart = ()=> setSpeaking(true);
     u.onend   = ()=> setSpeaking(false);
     u.onerror = ()=> setSpeaking(false);
