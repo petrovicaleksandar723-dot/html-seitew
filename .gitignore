@@ -4,3 +4,4 @@
 /clean-lines-studios-15s.mp4
 *.render.mp4
 *.zip
+__pycache__/
