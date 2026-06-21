@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
-import { RoundedBox, useVideoTexture, Float } from "@react-three/drei";
+import { RoundedBox, Float } from "@react-three/drei";
 import { asset } from "@/lib/asset";
 
 const REELS = [
@@ -54,6 +54,37 @@ export function CameraRig() {
   return null;
 }
 
+/* ---- non-blocking video texture (never suspends the whole scene) ---- */
+function useManualVideoTexture(src: string) {
+  const [tex, setTex] = useState<THREE.VideoTexture | null>(null);
+  useEffect(() => {
+    const v = document.createElement("video");
+    v.crossOrigin = "anonymous";
+    v.muted = true;
+    v.loop = true;
+    v.playsInline = true;
+    v.preload = "auto";
+    v.src = src;
+    const t = new THREE.VideoTexture(v);
+    t.colorSpace = THREE.SRGBColorSpace;
+    const onCanPlay = () => {
+      v.play().catch(() => {});
+      setTex(t);
+    };
+    v.addEventListener("canplay", onCanPlay, { once: true });
+    v.load();
+    // also try immediately in case it's cached
+    v.play().catch(() => {});
+    return () => {
+      v.removeEventListener("canplay", onCanPlay);
+      v.pause();
+      v.src = "";
+      t.dispose();
+    };
+  }, [src]);
+  return tex;
+}
+
 /* ---- a floating phone playing a brand reel ---- */
 function FloatingPhone({
   src,
@@ -66,7 +97,7 @@ function FloatingPhone({
   rotation?: [number, number, number];
   scale?: number;
 }) {
-  const tex = useVideoTexture(src, { muted: true, loop: true, start: true, crossOrigin: "anonymous" });
+  const tex = useManualVideoTexture(src);
   return (
     <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.5}>
       <group position={position} rotation={rotation as unknown as THREE.Euler} scale={scale}>
@@ -77,10 +108,10 @@ function FloatingPhone({
         <RoundedBox args={[1.1, 2.15, 0.1]} radius={0.1} smoothness={4} position={[0, 0, -0.02]}>
           <meshStandardMaterial color="#d8b274" roughness={0.3} metalness={0.9} emissive="#a87f3e" emissiveIntensity={0.25} />
         </RoundedBox>
-        {/* screen */}
+        {/* screen (dark until its reel is ready — never blocks the scene) */}
         <mesh position={[0, 0, 0.066]}>
           <planeGeometry args={[0.9, 1.92]} />
-          <meshBasicMaterial map={tex} toneMapped={false} />
+          <meshBasicMaterial map={tex ?? null} color={tex ? "#ffffff" : "#0a0a0c"} toneMapped={false} />
         </mesh>
         {/* screen glow */}
         <pointLight position={[0, 0, 0.6]} intensity={2.4} distance={3.4} color="#bfe6ff" />
