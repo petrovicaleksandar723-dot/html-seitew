@@ -5,3 +5,7 @@
 *.render.mp4
 *.zip
 __pycache__/
+/record.js
+/cleanlines-animationen/
+*.mp4
+*.webm
