@@ -48,6 +48,7 @@ def status_payload():
         "customers": len(d.customers()),
         "goal": d.config["goal"],
         "revenue": d.revenue(),
+        "pc_control": d.config.get("pc_control", True),
     }
 
 
@@ -67,6 +68,7 @@ def settings_payload():
         "keys": dict(cfg["keys"]),
         "persona": dict(cfg["persona"]),
         "goal": cfg["goal"],
+        "pc_control": cfg.get("pc_control", True),
         "claude_models": [[mid, desc] for mid, desc in core.CLAUDE_MODELS.values()],
         "ollama_models": [[mid, desc] for mid, desc in core.OLLAMA_MODELS.values()],
     }
@@ -81,7 +83,20 @@ def handle_chat(body):
     if last.get("role") == "user":
         d.add_journal(f"hat geschrieben: {last.get('content', '')}")
     text, err = d.chat(messages)
-    return {"error": err} if err else {"reply": text}
+    if err:
+        return {"error": err}
+    # PC-Aktionen erkennen (werden im Browser als Bestätigungs-Knöpfe gezeigt)
+    actions = core.Dino.parse_actions(text) if d.config.get("pc_control", True) else []
+    return {"reply": text, "actions": actions}
+
+
+def handle_action(body):
+    name = (body.get("name") or "").strip()
+    arg = body.get("arg", "")
+    ok, output = d.run_action(name, arg)
+    if ok:
+        d.add_journal(f"PC-Aktion ausgeführt: {name} | {str(arg)[:80]}")
+    return {"ok": ok, "output": output}
 
 
 def handle_plan(_body):
@@ -172,6 +187,8 @@ def handle_settings_post(body):
         cfg["ollama_url"] = (body["ollama_url"] or "").strip() or "http://127.0.0.1:11434"
     if "goal" in body:
         cfg["goal"] = (body["goal"] or "").strip()
+    if "pc_control" in body:
+        cfg["pc_control"] = bool(body["pc_control"])
     persona = body.get("persona", {})
     for k in ("assistant_name", "user_name", "business", "humor"):
         if k in persona:
@@ -235,8 +252,24 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.send_response(404); self.end_headers()
 
+    def _origin_ok(self):
+        """Schützt vor fremden Webseiten, die heimlich PC-Aktionen auslösen wollen
+        (CSRF / DNS-Rebinding). Nur Anfragen von Dinos eigener, lokaler Seite erlaubt."""
+        origin = self.headers.get("Origin")
+        if origin:
+            o = origin.lower()
+            if not (o.startswith("http://127.0.0.1") or o.startswith("http://localhost")):
+                return False
+        host = (self.headers.get("Host") or "").split(":")[0].lower()
+        if host and host not in ("127.0.0.1", "localhost", ""):
+            return False
+        return True
+
     def do_POST(self):
         path = self.path.split("?")[0]
+        if not self._origin_ok():
+            self._send_json({"error": "Abgelehnt: Anfrage kommt nicht von Dinos lokaler Seite."}, code=403)
+            return
         body = self._body()
         with _lock:
             try:
@@ -252,6 +285,8 @@ class Handler(BaseHTTPRequestHandler):
                     out = handle_council(body)
                 elif path == "/api/team":
                     out = handle_team(body)
+                elif path == "/api/action":
+                    out = handle_action(body)
                 elif path == "/api/customers":
                     out = handle_customers_post(body)
                 elif path == "/api/settings":

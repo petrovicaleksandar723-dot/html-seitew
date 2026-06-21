@@ -18,6 +18,7 @@ import shutil
 import subprocess
 import time
 import datetime
+import webbrowser
 import urllib.request
 import urllib.error
 
@@ -75,6 +76,22 @@ _AGENT_ALIASES = {
     "critic": "kritiker", "kritik": "kritiker",
 }
 
+# ── PC-Steuerung (Dino als Jarvis — Ausführung NUR nach Klick-Bestätigung) ─
+# Sicherer Arbeitsordner für Datei-Aktionen (kein Zugriff ausserhalb davon).
+DINO_FILES_DIR = os.path.join(os.path.expanduser("~"), "Dino-Dateien")
+
+# Aktion -> (Anzeigename, Kurzbeschreibung für den Prompt, braucht_extra_warnung)
+ACTIONS = {
+    "app_oeffnen":     ("Programm öffnen", "öffnet ein Programm (z.B. notepad, rechner, explorer, browser)", False),
+    "web_oeffnen":     ("Webseite öffnen", "öffnet eine Webseite im Browser", False),
+    "ordner_oeffnen":  ("Ordner öffnen", "öffnet einen Ordner im Datei-Explorer", False),
+    "datei_schreiben": ("Datei schreiben", "legt eine Textdatei in 'Dino-Dateien' an (Format: name ::: inhalt)", False),
+    "datei_lesen":     ("Datei lesen", "liest eine Textdatei aus 'Dino-Dateien'", False),
+    "dateien_liste":   ("Dateien auflisten", "listet Dateien in 'Dino-Dateien' (oder einem Unterordner)", False),
+    "system_info":     ("System-Info", "zeigt PC-Infos (Betriebssystem, CPU, Speicher, Festplatte)", False),
+    "befehl":          ("Befehl ausführen", "führt einen beliebigen Konsolen-Befehl aus — mit Vorsicht", True),
+}
+
 # ── Kunden ─────────────────────────────────────────────────────────────
 CUSTOMER_STATUS = ["Lead", "Angebot", "Aktiv", "Bezahlt", "Pausiert", "Beendet"]
 ACTIVE_STATUS = {"Aktiv", "Bezahlt"}  # zählt zum laufenden Umsatz
@@ -94,6 +111,7 @@ DEFAULT_CONFIG = {
         "humor": "locker, direkt, mit Humor, Du-Form, gelegentlich Emojis, motivierend statt geschwollen",
     },
     "goal": "Mindestens 5000 € pro Woche mit CleanLines Studio — realistisch über Wochen aufgebaut",
+    "pc_control": True,  # Dino darf PC-Aktionen vorschlagen (Ausführung nur mit Klick-Bestätigung)
 }
 
 DEFAULT_MEMORY = {
@@ -439,7 +457,32 @@ LETZTE NOTIZEN:
 Wichtig: Du handelst nie eigenmächtig nach außen (keine Mails/Posts ohne Freigabe).
 Du machst Vorschläge und {p['user_name']} entscheidet. Du kennst die Kundenliste oben
 und kannst damit rechnen, Inhalte für einzelne Kunden schreiben und den Weg zum
-Ziel planen."""
+Ziel planen.
+{self._pc_help()}"""
+
+    def _pc_help(self):
+        """Erklärt Dino, wie er PC-Aktionen vorschlägt (Ausführung nur nach Klick)."""
+        if not self.config.get("pc_control", True):
+            return ""
+        lines = "\n".join(f"  [AKTION] {name} | <wert>   — {desc}"
+                          for name, (_t, desc, _w) in ACTIONS.items())
+        return f"""
+
+DU KANNST {self.config['persona']['user_name'].upper()}S PC STEUERN (wie Jarvis).
+Wenn eine Aufgabe eine Aktion am Computer braucht, schreib sie in einer EIGENEN Zeile
+in GENAU diesem Format (eine Aktion pro Zeile):
+  [AKTION] <name> | <wert>
+Verfügbare Aktionen:
+{lines}
+Beispiele:
+  [AKTION] app_oeffnen | notepad
+  [AKTION] web_oeffnen | youtube.com
+  [AKTION] datei_schreiben | ideen.txt ::: Meine 3 besten Content-Ideen ...
+  [AKTION] befehl | echo hallo
+WICHTIG: Du FÜHRST nichts selbst aus. {self.config['persona']['user_name']} sieht jede
+Aktion als Knopf und bestätigt sie per Klick. Schlag die Aktion vor, erklär in einem
+kurzen Satz, was sie bewirkt, und behaupte NIE, etwas sei schon erledigt, bevor die
+Bestätigung kam. Schlag bei heiklen Befehlen lieber den kleinsten, sichersten Schritt vor."""
 
     # ── Die drei Gehirne ───────────────────────────────────────────────
     @staticmethod
@@ -785,6 +828,146 @@ Ziel planen."""
         if not e3 and final:
             self.add_journal(f"Team-Auftrag bearbeitet: {task[:120]}")
         return steps, (final if not e3 else None), (e3 if e3 else None)
+
+    # ── PC-Steuerung: Aktionen erkennen & (nach Bestätigung) ausführen ──
+    @staticmethod
+    def parse_actions(text):
+        """Findet '[AKTION] name | wert'-Zeilen in Dinos Antwort.
+        -> Liste von dicts {name, arg, label, warn}. (Wird NICHT ausgeführt.)"""
+        out = []
+        for ln in (text or "").splitlines():
+            m = re.search(r"\[?\s*AKTION\s*\]?\s*[:\-]?\s*([a-zA-Z_äöü]+)\s*\|\s*(.*)$", ln, re.I)
+            if not m:
+                continue
+            name = m.group(1).strip().lower()
+            arg = m.group(2).strip()
+            if name not in ACTIONS:
+                continue
+            label, _desc, warn = ACTIONS[name]
+            out.append({"name": name, "arg": arg, "label": label, "warn": bool(warn)})
+        return out
+
+    def _safe_path(self, name):
+        """Begrenzt Datei-Aktionen sicher auf den Ordner 'Dino-Dateien'."""
+        base = os.path.abspath(DINO_FILES_DIR)
+        os.makedirs(base, exist_ok=True)
+        target = os.path.abspath(os.path.join(base, (name or "").strip().lstrip("/\\")))
+        if target != base and not target.startswith(base + os.sep):
+            return None
+        return target
+
+    def run_action(self, name, arg):
+        """Führt EINE Aktion aus (wird nur nach Klick-Bestätigung aufgerufen).
+        -> (ok: bool, ausgabe: str)."""
+        if not self.config.get("pc_control", True):
+            return False, "PC-Steuerung ist in den Einstellungen ausgeschaltet."
+        name = (name or "").strip().lower()
+        arg = (arg or "").strip()
+        if name not in ACTIONS:
+            return False, f"Unbekannte Aktion: {name}"
+        try:
+            if name == "app_oeffnen":
+                return self._act_open_app(arg)
+            if name == "web_oeffnen":
+                url = arg if re.match(r"^https?://", arg, re.I) else "https://" + arg
+                webbrowser.open(url)
+                return True, f"Webseite geöffnet: {url}"
+            if name == "ordner_oeffnen":
+                path = os.path.expanduser(arg or "~")
+                if not os.path.isdir(path):
+                    return False, f"Ordner gibt es nicht: {path}"
+                self._os_open(path)
+                return True, f"Ordner geöffnet: {path}"
+            if name == "datei_schreiben":
+                if ":::" in arg:
+                    fname, content = arg.split(":::", 1)
+                else:
+                    fname, content = arg, ""
+                target = self._safe_path(fname.strip())
+                if not target:
+                    return False, "Ungültiger Dateiname (nur im Ordner 'Dino-Dateien' erlaubt)."
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with open(target, "w", encoding="utf-8") as f:
+                    f.write(content.strip("\n"))
+                return True, f"Datei gespeichert: {target}"
+            if name == "datei_lesen":
+                target = self._safe_path(arg)
+                if not target or not os.path.isfile(target):
+                    return False, "Datei nicht gefunden in 'Dino-Dateien'."
+                with open(target, "r", encoding="utf-8", errors="replace") as f:
+                    return True, f.read()[:4000]
+            if name == "dateien_liste":
+                base = self._safe_path(arg or "")
+                if not base or not os.path.isdir(base):
+                    base = os.path.abspath(DINO_FILES_DIR)
+                    os.makedirs(base, exist_ok=True)
+                items = sorted(os.listdir(base))
+                return True, ("Inhalt von " + base + ":\n" +
+                              ("\n".join("- " + i for i in items) if items else "(leer)"))
+            if name == "system_info":
+                return True, self._system_info()
+            if name == "befehl":
+                if not arg:
+                    return False, "Kein Befehl angegeben."
+                proc = subprocess.run(arg, shell=True, capture_output=True, text=True,
+                                      timeout=60, cwd=os.path.expanduser("~"))
+                out = (proc.stdout or "") + (("\n" + proc.stderr) if proc.stderr else "")
+                out = out.strip() or f"(fertig, Code {proc.returncode})"
+                return (proc.returncode == 0), out[:4000]
+        except subprocess.TimeoutExpired:
+            return False, "Befehl hat zu lange gebraucht (über 60s) und wurde gestoppt."
+        except Exception as e:
+            return False, f"Fehler bei der Aktion: {e}"
+        return False, "Aktion nicht umgesetzt."
+
+    def _os_open(self, path):
+        if os.name == "nt":
+            os.startfile(path)  # type: ignore[attr-defined]
+        elif sys_platform() == "darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
+
+    def _act_open_app(self, arg):
+        alias = {
+            "editor": "notepad", "texteditor": "notepad", "notizen": "notepad",
+            "rechner": "calc", "taschenrechner": "calc",
+            "explorer": "explorer", "dateien": "explorer", "datei-explorer": "explorer",
+            "browser": "__browser__", "internet": "__browser__",
+            "paint": "mspaint", "kamera": "microsoft.windows.camera:",
+            "einstellungen": "ms-settings:",
+        }
+        prog = alias.get(arg.lower(), arg)
+        if prog == "__browser__":
+            webbrowser.open("https://www.google.com")
+            return True, "Browser geöffnet."
+        try:
+            if os.name == "nt":
+                os.startfile(prog)  # type: ignore[attr-defined]
+            else:
+                subprocess.Popen([prog])
+            return True, f"Programm gestartet: {prog}"
+        except Exception as e:
+            return False, f"Konnte '{prog}' nicht starten: {e}"
+
+    def _system_info(self):
+        import platform
+        lines = [f"Betriebssystem: {platform.system()} {platform.release()}",
+                 f"Rechnername: {platform.node()}",
+                 f"Prozessor: {platform.processor() or '—'}",
+                 f"CPU-Kerne: {os.cpu_count()}"]
+        try:
+            total, used, free = shutil.disk_usage(os.path.expanduser("~"))
+            gb = 1024 ** 3
+            lines.append(f"Festplatte: {free // gb} GB frei von {total // gb} GB")
+        except Exception:
+            pass
+        return "\n".join(lines)
+
+
+def sys_platform():
+    import sys as _sys
+    return _sys.platform
 
 
 def _to_float(x):

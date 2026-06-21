@@ -339,6 +339,7 @@ body::before{
     </div>
     <div class="spacer"></div>
     <div class="iconbtns">
+      <button class="iconbtn" title="PC-Steuerung" onclick="openPanel('pc')">🖥️</button>
       <button class="iconbtn" title="Kunden" onclick="openPanel('customers')">👥</button>
       <button class="iconbtn" title="Gedächtnis" onclick="openPanel('memory')">🧠</button>
       <button class="iconbtn" title="Einstellungen" onclick="openPanel('settings')">⚙</button>
@@ -398,6 +399,12 @@ body::before{
   <div class="panel-body" id="memoryBody"><div class="empty">lädt…</div></div>
 </aside>
 
+<!-- PC-Steuerung -->
+<aside class="panel" id="panel-pc">
+  <div class="panel-head"><span>🖥️</span><h2>PC-Steuerung</h2><button class="close" onclick="closePanels()">✕</button></div>
+  <div class="panel-body" id="pcBody"><div class="empty">lädt…</div></div>
+</aside>
+
 <script>
 "use strict";
 /* ============================================================
@@ -416,6 +423,7 @@ const state = {
   statusValues: ["Lead","Angebot","Aktiv","Bezahlt","Pausiert","Beendet"],
   provider: null,        // "ollama" | "claude" | "openai" | "gemini"
   autoRecheckDone: false,// einmaliges Auto-Recheck beim ersten Laden
+  pcControl: true,       // darf Dino PC-Aktionen vorschlagen?
 };
 
 // ---- DOM-Kurzhelfer ----
@@ -521,6 +529,7 @@ async function loadStatus(){
     state.assistantName = s.assistant_name || "Dino";
     state.userName = s.user_name || "Boss";
     state.provider = s.provider || null;
+    state.pcControl = (s.pc_control !== false);
     markStatus(s.ready, s.brain || "—");
 
     if (state.provider === "ollama"){
@@ -841,9 +850,11 @@ async function send(){
       state.messages.pop();
     } else {
       const reply = data.reply || "";
-      addBubble("dino", reply);
+      const shown = stripActionLines(reply) || reply;
+      addBubble("dino", shown);
       state.messages.push({ role:"assistant", content:reply });
-      speak(reply);
+      speak(shown);
+      renderActions(data.actions, reply);
     }
   }catch(e){
     hideTyping();
@@ -853,6 +864,120 @@ async function send(){
     setBusy(false);
     inputEl.focus();
   }
+}
+
+// ============================================================
+//  PC-Steuerung: Dinos vorgeschlagene Aktionen als Bestätigungs-Knöpfe
+// ============================================================
+const ACTION_META = {
+  app_oeffnen:     { emoji:"📂", label:"Programm öffnen" },
+  web_oeffnen:     { emoji:"🌐", label:"Webseite öffnen" },
+  ordner_oeffnen:  { emoji:"🗂️", label:"Ordner öffnen" },
+  datei_schreiben: { emoji:"📝", label:"Datei schreiben" },
+  datei_lesen:     { emoji:"📖", label:"Datei lesen" },
+  dateien_liste:   { emoji:"📋", label:"Dateien auflisten" },
+  system_info:     { emoji:"💻", label:"System-Info" },
+  befehl:          { emoji:"⚡", label:"Befehl ausführen" },
+};
+const ACTION_WARN = { befehl:true };
+
+// Die [AKTION]-Zeilen aus dem Anzeige-Text entfernen (werden zu Knöpfen)
+const ACTION_RE = /\[?\s*AKTION\s*\]?\s*[:\-]?\s*[a-zA-Z_äöü]+\s*\|/i;
+function stripActionLines(text){
+  return (text || "").split("\n").filter(ln => !ACTION_RE.test(ln))
+    .join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+// Aktionen aus Dinos Text erkennen (falls der Server keine mitgibt)
+function parseActions(text){
+  const out = [];
+  (text || "").split("\n").forEach(ln => {
+    const m = ln.match(/\[?\s*AKTION\s*\]?\s*[:\-]?\s*([a-zA-Z_äöü]+)\s*\|\s*(.*)$/i);
+    if (!m) return;
+    const name = m[1].trim().toLowerCase();
+    if (!ACTION_META[name]) return;
+    out.push({ name, arg: m[2].trim(), warn: !!ACTION_WARN[name] });
+  });
+  return out;
+}
+
+function renderActions(actions, replyText){
+  if (!state.pcControl) return;
+  let list = (actions && actions.length) ? actions : parseActions(replyText);
+  if (!list || !list.length) return;
+  list.forEach(a => addActionCard(a));
+}
+
+function addActionCard(a){
+  const meta = ACTION_META[a.name] || { emoji:"🛠️", label:a.name };
+  const wrap = document.createElement("div");
+  wrap.className = "msg dino";
+  wrap.innerHTML = '<div class="avatar">🖥️</div>';
+  const card = document.createElement("div");
+  card.className = "bubble";
+  card.style.borderColor = a.warn ? "rgba(251,113,133,.5)" : "rgba(56,189,248,.35)";
+
+  const title = document.createElement("div");
+  title.className = "label";
+  title.textContent = (a.warn ? "⚠️ " : "") + meta.emoji + " " + meta.label;
+  card.appendChild(title);
+
+  const arg = document.createElement("div");
+  arg.style.cssText = "font-size:13px;color:#bfe9f5;margin:2px 0 8px;word-break:break-word;white-space:pre-wrap";
+  arg.textContent = a.arg || "(ohne Wert)";
+  card.appendChild(arg);
+
+  const row = document.createElement("div");
+  row.style.cssText = "display:flex;gap:8px;flex-wrap:wrap";
+  const run = document.createElement("button");
+  run.className = "btn primary";
+  run.textContent = a.warn ? "▶ Trotzdem ausführen" : "▶ Ausführen";
+  run.onclick = () => runAction(a, run, card);
+  const skip = document.createElement("button");
+  skip.className = "btn";
+  skip.textContent = "✖ Verwerfen";
+  skip.onclick = () => { card.removeChild(row); status.textContent = "Verworfen."; };
+  row.appendChild(run); row.appendChild(skip);
+  card.appendChild(row);
+
+  const status = document.createElement("div");
+  status.style.cssText = "font-size:12px;color:#7c8db5;margin-top:7px;white-space:pre-wrap;word-break:break-word";
+  card.appendChild(status);
+
+  wrap.appendChild(card);
+  chatEl.appendChild(wrap);
+  scrollDown();
+  card._status = status; card._row = row;
+}
+
+async function runAction(a, btn, card){
+  if (a.warn){
+    const ok = window.confirm("Dino will diesen Befehl auf deinem PC ausführen:\n\n" + a.arg +
+                              "\n\nNur bestätigen, wenn du genau weißt, was er tut. Ausführen?");
+    if (!ok) return;
+  }
+  btn.disabled = true;
+  const status = card._status;
+  status.textContent = "läuft…";
+  try{
+    const data = await api("/api/action", "POST", { name:a.name, arg:a.arg });
+    if (data.ok){
+      status.style.color = "#34d399";
+      status.textContent = "✓ " + (data.output || "Erledigt.");
+      if (card._row) card._row.style.display = "none";
+      // Ergebnis in den Gesprächs-Kontext geben, damit Dino es kennt
+      state.messages.push({ role:"user", content:"[PC-Ergebnis "+a.name+"]: " + (data.output||"ok").slice(0,1500) });
+    } else {
+      status.style.color = "#fb7185";
+      status.textContent = "✖ " + (data.output || "Fehlgeschlagen.");
+      btn.disabled = false;
+    }
+  }catch(e){
+    status.style.color = "#fb7185";
+    status.textContent = "✖ Netzwerkfehler: " + e.message;
+    btn.disabled = false;
+  }
+  scrollDown();
 }
 
 // ============================================================
@@ -871,6 +996,7 @@ async function simpleAction(path){
       addBubble("dino", txt);
       state.messages.push({ role:"assistant", content:txt });
       speak(txt);
+      renderActions(null, txt);
     }
   }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
   finally{ setBusy(false); }
@@ -918,6 +1044,7 @@ async function quickCouncil(){
       addBubble("synth", data.synthese, "✦ Dinos Fazit");
       state.messages.push({ role:"assistant", content:data.synthese });
       speak(data.synthese);
+      renderActions(null, data.synthese);
     }
   }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
   finally{ setBusy(false); }
@@ -944,6 +1071,7 @@ async function quickTeam(){
       addBubble("synth", data.final, "✦ Dinos Plan (Team-Ergebnis)");
       state.messages.push({ role:"assistant", content:data.final });
       speak(data.final);
+      renderActions(null, data.final);
     } else if (data.error){
       addBubble("error", data.error);
     }
@@ -1068,6 +1196,7 @@ function detectLang(text){
 // Text vorlesefreundlich machen: Emojis, Markdown, Links & Symbole raus.
 function cleanForSpeech(text){
   let t = text || "";
+  t = t.split("\n").filter(ln => !/\[?\s*AKTION\s*\]?\s*[:\-]?\s*[a-zA-Z_äöü]+\s*\|/i.test(ln)).join("\n"); // AKTION-Zeilen nicht vorlesen
   t = t.replace(/```[\s\S]*?```/g, " ");                 // Codebloecke
   t = t.replace(/`([^`]*)`/g, "$1");                      // Inline-Code
   t = t.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1");        // Markdown-Links -> nur Text
@@ -1156,6 +1285,7 @@ function openPanel(name){
   if (name === "settings") loadSettings();
   if (name === "customers") loadCustomers();
   if (name === "memory") loadMemory();
+  if (name === "pc") loadPC();
 }
 function closePanels(){
   $("overlay").classList.remove("open");
@@ -1457,6 +1587,85 @@ async function loadMemory(){
     jWrap.innerHTML = '<div class="empty">(leer)</div>';
   }
   body.appendChild(jWrap);
+}
+
+// ---------- PC-Steuerung ----------
+async function loadPC(){
+  const body = $("pcBody");
+  body.innerHTML = "";
+
+  const intro = document.createElement("div"); intro.className = "hint";
+  intro.innerHTML = "Dino steuert deinen PC wie ein Co-Pilot: Programme &amp; Ordner öffnen, Dateien schreiben/lesen, Befehle ausführen. <b>Du bestätigst jede Aktion per Klick</b> — Dino macht nichts ungefragt. Sag ihm im Chat einfach, was er tun soll (z.B. »öffne den Editor« oder »schreib mir die Ideen in eine Datei«) — dann erscheinen Bestätigungs-Knöpfe.";
+  body.appendChild(intro);
+
+  const sw = document.createElement("div"); sw.className = "field";
+  sw.style.cssText = "display:flex;align-items:center;gap:10px;justify-content:space-between";
+  const swl = document.createElement("label"); swl.textContent = "PC-Steuerung erlauben"; swl.style.margin = "0";
+  const swb = document.createElement("button");
+  swb.className = "btn" + (state.pcControl ? " primary" : "");
+  swb.textContent = state.pcControl ? "AN" : "AUS";
+  swb.onclick = async () => {
+    const nv = !state.pcControl;
+    try{
+      await api("/api/settings", "POST", { pc_control: nv });
+      state.pcControl = nv;
+      swb.textContent = nv ? "AN" : "AUS";
+      swb.className = "btn" + (nv ? " primary" : "");
+    }catch(e){ /* still */ }
+  };
+  sw.appendChild(swl); sw.appendChild(swb); body.appendChild(sw);
+
+  const h = document.createElement("div"); h.className = "sect"; h.textContent = "⚡ Schnell-Aktionen"; body.appendChild(h);
+  const grid = document.createElement("div");
+  grid.style.cssText = "display:flex;flex-wrap:wrap;gap:8px";
+  const out = document.createElement("div");
+  out.style.cssText = "font-size:12px;color:#bfe9f5;white-space:pre-wrap;word-break:break-word;background:#0b1526;border:1px solid rgba(120,200,230,.18);border-radius:9px;padding:8px;margin:8px 0;min-height:20px";
+  out.textContent = "(Ergebnisse erscheinen hier)";
+  const quick = [
+    ["📝 Editor", "app_oeffnen", "notepad"],
+    ["🧮 Rechner", "app_oeffnen", "rechner"],
+    ["🗂️ Explorer", "app_oeffnen", "explorer"],
+    ["🌐 Browser", "app_oeffnen", "browser"],
+    ["💻 System-Info", "system_info", ""],
+    ["📋 Dino-Dateien", "dateien_liste", ""],
+  ];
+  quick.forEach(([lbl, name, arg]) => {
+    const b = document.createElement("button"); b.className = "chip"; b.textContent = lbl;
+    b.onclick = () => panelRun(name, arg, out, b);
+    grid.appendChild(b);
+  });
+  body.appendChild(grid);
+  body.appendChild(out);
+
+  const h2 = document.createElement("div"); h2.className = "sect"; h2.textContent = "⌨️ Eigener Befehl"; body.appendChild(h2);
+  const ci = document.createElement("input");
+  ci.placeholder = "z.B. echo hallo   oder   dir";
+  ci.style.cssText = "width:100%;background:#0b1526;color:#e8f1ff;border:1px solid rgba(120,200,230,.28);border-radius:9px;padding:9px;outline:none";
+  body.appendChild(ci);
+  const cb = document.createElement("button"); cb.className = "btn"; cb.textContent = "▶ Befehl ausführen";
+  cb.style.marginTop = "8px";
+  cb.onclick = () => {
+    const cmd = ci.value.trim(); if (!cmd) return;
+    if (!window.confirm("Diesen Befehl wirklich auf deinem PC ausführen?\n\n" + cmd)) return;
+    panelRun("befehl", cmd, out, cb);
+  };
+  body.appendChild(cb);
+  const warn = document.createElement("div"); warn.className = "hint";
+  warn.style.color = "#fbbf24";
+  warn.textContent = "Vorsicht: Befehle laufen echt auf deinem PC. Nur ausführen, wenn du weißt, was sie tun.";
+  body.appendChild(warn);
+}
+
+async function panelRun(name, arg, out, btn){
+  if (!state.pcControl){ out.style.color = "#fbbf24"; out.textContent = "PC-Steuerung ist AUS — oben einschalten."; return; }
+  if (btn) btn.disabled = true;
+  out.style.color = "#bfe9f5"; out.textContent = "läuft…";
+  try{
+    const data = await api("/api/action", "POST", { name, arg });
+    out.style.color = data.ok ? "#34d399" : "#fb7185";
+    out.textContent = (data.ok ? "✓ " : "✖ ") + (data.output || "");
+  }catch(e){ out.style.color = "#fb7185"; out.textContent = "✖ Netzwerkfehler: " + e.message; }
+  if (btn) btn.disabled = false;
 }
 
 // kleine rote Fehlerbox für Panels
