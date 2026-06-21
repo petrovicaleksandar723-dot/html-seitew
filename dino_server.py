@@ -108,6 +108,20 @@ def handle_council(body):
     return {"error": err} if err else {"answers": answers, "synthese": synthese}
 
 
+def handle_team(body):
+    task = (body.get("task") or "").strip()
+    if not task:
+        messages = body.get("messages", [])
+        if messages and messages[-1].get("role") == "user":
+            task = (messages[-1].get("content") or "").strip()
+    if not task:
+        return {"error": "Keine Aufgabe angegeben."}
+    steps, final, err = d.team(task)
+    if err and not steps:
+        return {"error": err}
+    return {"steps": steps, "final": final, "error": err}
+
+
 def handle_memory():
     return {
         "facts": d.memory.get("facts", []),
@@ -234,6 +248,8 @@ class Handler(BaseHTTPRequestHandler):
                     out = handle_learn(body)
                 elif path == "/api/council":
                     out = handle_council(body)
+                elif path == "/api/team":
+                    out = handle_team(body)
                 elif path == "/api/customers":
                     out = handle_customers_post(body)
                 elif path == "/api/settings":

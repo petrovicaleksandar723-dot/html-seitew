@@ -362,6 +362,7 @@ body::before{
   <div class="chips">
     <button class="chip" onclick="quickPlan()">📅 Wochenplan</button>
     <button class="chip" onclick="quickToday()">☀️ Heute</button>
+    <button class="chip" onclick="quickTeam()">🤖 Team-Auftrag</button>
     <button class="chip" onclick="quickLearn()">🧠 Lernen</button>
     <button class="chip" onclick="quickCouncil()">🧠🧠🧠 Rat der KIs</button>
   </div>
@@ -917,6 +918,34 @@ async function quickCouncil(){
       addBubble("synth", data.synthese, "✦ Dinos Fazit");
       state.messages.push({ role:"assistant", content:data.synthese });
       speak(data.synthese);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
+// Team-Auftrag -> Planer + Spezialisten + Dinos Plan (nimmt Eingabetext als Aufgabe)
+async function quickTeam(){
+  if (state.busy) return;
+  const task = inputEl.value.trim();
+  if (!task){ addBubble("info","Schreib deine Aufgabe ins Feld (z.B. »hol mir 3 neue Kunden diese Woche«), dann »Team-Auftrag«. 🤖"); return; }
+  inputEl.value=""; autoGrow();
+  addBubble("user", task);
+  addBubble("info","Dino ruft sein Team zusammen 🤖 — Planer, Spezialisten und am Ende Dinos Plan. Das dauert einen Moment, weil mehrere nacheinander arbeiten…");
+
+  setBusy(true);
+  try{
+    const data = await api("/api/team", "POST", { task, messages: state.messages });
+    hideTyping();
+    if (data.error && !(data.steps && data.steps.length)){ addBubble("error", data.error); setBusy(false); return; }
+    (data.steps || []).forEach(s=>{
+      addBubble("council", s.output, (s.emoji||"•")+" "+s.name+" — "+s.task);
+    });
+    if (data.final){
+      addBubble("synth", data.final, "✦ Dinos Plan (Team-Ergebnis)");
+      state.messages.push({ role:"assistant", content:data.final });
+      speak(data.final);
+    } else if (data.error){
+      addBubble("error", data.error);
     }
   }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
   finally{ setBusy(false); }

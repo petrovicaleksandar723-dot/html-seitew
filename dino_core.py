@@ -13,6 +13,7 @@ Reines Python (Standardbibliothek) — keine Extra-Pakete nötig.
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -29,6 +30,39 @@ CLAUDE_MODELS = {
     "1": ("claude-opus-4-8", "Claude Opus 4.8 — stark & schnell (empfohlen)"),
     "2": ("claude-fable-5",  "Claude Fable 5 — das STÄRKSTE Modell der Welt (langsamer)"),
     "3": ("claude-sonnet-4-6", "Claude Sonnet 4.6 — schnell & günstig"),
+}
+
+# ── Dinos Team aus Spezial-Agenten ─────────────────────────────────────
+# Jeder Agent ist eine Rolle, die Dino bei einer Aufgabe einnehmen kann.
+# (emoji, anzeigename, rollen-anweisung)
+AGENTS = {
+    "stratege":    ("🧭", "Stratege",
+                    "Du bist Dinos Stratege. Du setzt Prioritäten, baust den klaren Weg zum "
+                    "Ziel und erkennst, was ZUERST den meisten Hebel hat. Denk in Schritten."),
+    "verkaeufer":  ("📈", "Verkäufer",
+                    "Du bist Dinos Akquise- & Verkaufs-Profi: neue Kunden finden, anschreiben, "
+                    "Einwände entkräften, Abschlüsse holen. Liefer FERTIGE Nachrichten/Skripte."),
+    "content":     ("🎬", "Content-Creator",
+                    "Du bist Dinos Content-Profi: Hooks, kurze Skripte, Captions und Post-Ideen "
+                    "für CleanLines, die Kunden anziehen. Liefer fertige, sofort nutzbare Texte."),
+    "geld":        ("💰", "Geld-Manager",
+                    "Du bist Dinos Geld-Manager: Preise, Pakete, Umsatz-Mathe und der realistische "
+                    "Weg zum Geld-Ziel. Rechne mit ECHTEN Zahlen — keine Luftschlösser."),
+    "rechercheur": ("🔎", "Rechercheur",
+                    "Du bist Dinos Rechercheur: Ideen, Marktwinkel, Zielgruppen und was gerade "
+                    "funktioniert. Konkrete, umsetzbare Vorschläge statt Theorie."),
+    "kritiker":    ("🛡️", "Kritiker",
+                    "Du bist Dinos ehrlicher Kritiker: du findest Schwachstellen, Risiken und "
+                    "unrealistische Annahmen — und sagst klar, wie man sie behebt."),
+}
+# Wortvarianten -> Agenten-Schlüssel (falls das Modell anders schreibt)
+_AGENT_ALIASES = {
+    "sales": "verkaeufer", "verkauf": "verkaeufer", "verkäufer": "verkaeufer", "vertrieb": "verkaeufer",
+    "strategy": "stratege", "strateg": "stratege", "planer": "stratege",
+    "money": "geld", "geld-manager": "geld", "finanzen": "geld", "finance": "geld",
+    "content-creator": "content", "creator": "content", "marketing": "content",
+    "research": "rechercheur", "recherche": "rechercheur", "researcher": "rechercheur",
+    "critic": "kritiker", "kritik": "kritiker",
 }
 
 # ── Kunden ─────────────────────────────────────────────────────────────
@@ -618,6 +652,118 @@ Ziel planen."""
             else:
                 synthese, _ = self.ask_provider(sys_p, syn_msgs, 1500)
         return answers, synthese, None
+
+    # ── Agenten-Team: Planer → Spezialisten → Dinos Synthese ───────────
+    def _parse_plan(self, text):
+        """Liest die Planer-Antwort (Zeilen 'AGENT: x | AUFGABE: y') -> [(key, teilaufgabe)]."""
+        chosen, seen = [], set()
+        for ln in (text or "").splitlines():
+            if "agent:" not in ln.lower():
+                continue
+            m = re.search(r"agent:\s*([a-zA-Zäöü\-]+)", ln, re.I)
+            if not m:
+                continue
+            key = m.group(1).strip().lower()
+            key = _AGENT_ALIASES.get(key, key)
+            if key not in AGENTS or key in seen:
+                continue
+            tm = re.search(r"aufgabe:\s*(.+)$", ln, re.I)
+            subtask = (tm.group(1).strip() if tm else "Hilf konkret bei dieser Aufgabe.")
+            chosen.append((key, subtask))
+            seen.add(key)
+            if len(chosen) >= 3:
+                break
+        return chosen
+
+    def _fallback_agents(self, task):
+        """Wenn der Planer nichts Brauchbares liefert: Agenten per Stichworten wählen."""
+        t = (task or "").lower()
+        picked = []
+
+        def add(k, why):
+            if k not in [p[0] for p in picked]:
+                picked.append((k, why))
+        if any(w in t for w in ("kunde", "akquise", "verkauf", "lead", "anschreib",
+                                "kalt", "outreach", "dm", "angebot", "abschluss")):
+            add("verkaeufer", "Hol oder aktiviere passende Kunden für diese Aufgabe.")
+        if any(w in t for w in ("content", "video", "reel", "post", "hook", "script",
+                                "caption", "tiktok", "insta", "clip", "thumbnail")):
+            add("content", "Liefer fertige Inhalte/Texte für diese Aufgabe.")
+        if any(w in t for w in ("geld", "preis", "umsatz", "einnahm", "5000", "rechn",
+                                "kalkul", "paket", "euro", "budget")):
+            add("geld", "Rechne den realistischen Geld-Weg für diese Aufgabe.")
+        if any(w in t for w in ("idee", "recherche", "markt", "konkurrenz", "zielgrupp", "nische")):
+            add("rechercheur", "Liefer Ideen und Marktwinkel für diese Aufgabe.")
+        if not picked:
+            picked = [("stratege", "Plane den besten Weg."),
+                      ("verkaeufer", "Hol/aktiviere Kunden."),
+                      ("geld", "Rechne den Weg zum Ziel.")]
+        if "stratege" not in [p[0] for p in picked]:
+            picked = [("stratege", "Setz Prioritäten und den Weg zum Ziel.")] + picked
+        return picked[:3]
+
+    def team(self, task, progress=None):
+        """Dinos Agenten-Team bearbeitet eine Aufgabe gemeinsam.
+        Ablauf: 1) Planer wählt 2–3 Spezialisten + Teilaufgaben, 2) jeder Spezialist
+        liefert seinen Beitrag, 3) Dino fasst alles zu EINEM Plan zusammen.
+        -> (steps, final_oder_None, fehler_oder_None).  steps = Liste von dicts."""
+        task = (task or "").strip()
+        if not task:
+            return [], None, "Keine Aufgabe angegeben."
+
+        def tick(msg):
+            if progress:
+                try:
+                    progress(msg)
+                except Exception:
+                    pass
+
+        base = self.build_system()
+
+        # 1) Planer
+        tick("Dino plant, wer im Team ran muss…")
+        keys = ", ".join(AGENTS.keys())
+        roster = "\n".join(f"  - {k}: {v[1]}" for k, v in AGENTS.items())
+        plan_sys = base + (
+            "\n\nDU BIST GERADE DER PLANER von Dinos Team. Wähle die 2–3 Spezialisten, die für "
+            "die Aufgabe am meisten bringen, und gib jedem eine klare, konkrete Teilaufgabe.\n"
+            f"Verfügbare Spezialisten (benutze GENAU diese Schlüssel):\n{roster}\n\n"
+            "Antworte AUSSCHLIESSLICH in genau diesem Format — eine Zeile pro Spezialist, "
+            "nichts davor, nichts danach:\n"
+            f"AGENT: <schluessel aus: {keys}> | AUFGABE: <konkrete teilaufgabe>")
+        plan_txt, err = self.ask_provider(
+            plan_sys, [{"role": "user", "content": f"AUFGABE: {task}"}], max_tokens=500)
+        chosen = self._parse_plan(plan_txt) if (plan_txt and not err) else []
+        if not chosen:
+            chosen = self._fallback_agents(task)
+
+        # 2) Spezialisten arbeiten nacheinander
+        steps = []
+        for key, subtask in chosen:
+            emoji, name, role = AGENTS[key]
+            tick(f"{emoji} {name} arbeitet…")
+            sys_p = base + (f"\n\nDEINE ROLLE GERADE: {name}. {role}\n"
+                            "Antworte kurz, konkret und sofort umsetzbar — keine Theorie, kein Geschwafel.")
+            usr = f"Gesamt-Aufgabe vom Boss: {task}\n\nDeine Teilaufgabe: {subtask}"
+            out, e2 = self.ask_provider(sys_p, [{"role": "user", "content": usr}], max_tokens=900)
+            steps.append({"key": key, "emoji": emoji, "name": name,
+                          "task": subtask, "output": out if out else f"(Fehler: {e2})"})
+
+        # 3) Dino fasst zusammen
+        tick("Dino fasst den Plan zusammen…")
+        joined = "\n\n".join(
+            f"### {s['emoji']} {s['name']} (Auftrag: {s['task']})\n{s['output']}" for s in steps)
+        syn_sys = base + (
+            "\n\nDu bist jetzt wieder DINO, der Chef des Teams. Fasse die Beiträge deiner "
+            "Spezialisten zu EINEM klaren Plan zusammen: die wichtigsten konkreten Schritte in "
+            "der richtigen Reihenfolge, in deiner Sprache und deinem Humor. Keine Wiederholungen, "
+            "kein Geschwafel — sag dem Boss klipp und klar, was er als Nächstes tut.")
+        syn_usr = (f"AUFGABE: {task}\n\nBEITRÄGE DEINES TEAMS:\n{joined}\n\n"
+                   "Dein zusammengefasster Plan (mit nummerierten nächsten Schritten):")
+        final, e3 = self.ask_provider(syn_sys, [{"role": "user", "content": syn_usr}], max_tokens=1600)
+        if not e3 and final:
+            self.add_journal(f"Team-Auftrag bearbeitet: {task[:120]}")
+        return steps, (final if not e3 else None), (e3 if e3 else None)
 
 
 def _to_float(x):
