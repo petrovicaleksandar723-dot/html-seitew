@@ -17,6 +17,7 @@ import re
 import shutil
 import subprocess
 import time
+import uuid
 import datetime
 import webbrowser
 import urllib.request
@@ -92,6 +93,27 @@ ACTIONS = {
     "befehl":          ("Befehl ausführen", "führt einen beliebigen Konsolen-Befehl aus — mit Vorsicht", True),
 }
 
+# ── Govee-Lampen (offizielle API — Dino steuert das Licht) ─────────────
+GOVEE_BASE = "https://openapi.api.govee.com/router/api/v1"
+GOVEE_ACTIONS = {
+    "licht_an":         ("Licht an", "schaltet die Govee-Lampen an", False),
+    "licht_aus":        ("Licht aus", "schaltet die Govee-Lampen aus", False),
+    "licht_farbe":      ("Lichtfarbe", "setzt die Farbe der Lampen (z.B. blau, rot, warm)", False),
+    "licht_helligkeit": ("Helligkeit", "setzt die Helligkeit der Lampen (0–100)", False),
+}
+# Farbnamen (deutsch) -> RGB
+GOVEE_COLORS = {
+    "rot": (255, 0, 0), "grün": (0, 255, 0), "gruen": (0, 255, 0), "blau": (0, 0, 255),
+    "weiß": (255, 255, 255), "weiss": (255, 255, 255), "gelb": (255, 220, 0),
+    "orange": (255, 110, 0), "lila": (150, 0, 255), "violett": (150, 0, 255),
+    "pink": (255, 0, 150), "rosa": (255, 105, 180), "türkis": (0, 230, 200),
+    "tuerkis": (0, 230, 200), "cyan": (0, 255, 255), "magenta": (255, 0, 255),
+    "warm": (255, 170, 90), "warmweiß": (255, 170, 90), "warmweiss": (255, 170, 90),
+    "kalt": (200, 220, 255), "kaltweiß": (200, 220, 255), "grün-gelb": (180, 255, 0),
+}
+# Alle Aktionen zusammen (für Erkennung/Ausführung)
+ALL_ACTIONS = {**ACTIONS, **GOVEE_ACTIONS}
+
 # ── Kunden ─────────────────────────────────────────────────────────────
 CUSTOMER_STATUS = ["Lead", "Angebot", "Aktiv", "Bezahlt", "Pausiert", "Beendet"]
 ACTIVE_STATUS = {"Aktiv", "Bezahlt"}  # zählt zum laufenden Umsatz
@@ -112,6 +134,7 @@ DEFAULT_CONFIG = {
     },
     "goal": "Mindestens 5000 € pro Woche mit CleanLines Studio — realistisch über Wochen aufgebaut",
     "pc_control": True,  # Dino darf PC-Aktionen vorschlagen (Ausführung nur mit Klick-Bestätigung)
+    "govee_key": "",     # Schlüssel für die Govee-Lampen (Licht steuern)
 }
 
 DEFAULT_MEMORY = {
@@ -458,7 +481,7 @@ Wichtig: Du handelst nie eigenmächtig nach außen (keine Mails/Posts ohne Freig
 Du machst Vorschläge und {p['user_name']} entscheidet. Du kennst die Kundenliste oben
 und kannst damit rechnen, Inhalte für einzelne Kunden schreiben und den Weg zum
 Ziel planen.
-{self._pc_help()}"""
+{self._pc_help()}{self._govee_help()}"""
 
     def _pc_help(self):
         """Erklärt Dino, wie er PC-Aktionen vorschlägt (Ausführung nur nach Klick)."""
@@ -489,6 +512,24 @@ app_oeffnen, ordner_oeffnen) AUSSCHLIESSLICH dann vor, wenn {self.config['person
 dich ausdrücklich darum bittet (z.B. »öffne …«, »mach … auf«, »starte …«, »zeig mir …«).
 Niemals ungefragt von dir aus. Ohne klare Bitte: keine Öffnen-Aktion vorschlagen, sondern
 einfach normal antworten."""
+
+    def _govee_help(self):
+        """Govee-Licht-Aktionen — nur wenn ein Govee-Schlüssel hinterlegt ist."""
+        if not self.config.get("govee_key", "").strip():
+            return ""
+        gl = "\n".join(f"  [AKTION] {name} | <wert>   — {desc}"
+                       for name, (_t, desc, _w) in GOVEE_ACTIONS.items())
+        return f"""
+
+DU STEUERST AUCH {self.config['persona']['user_name'].upper()}S GOVEE-LAMPEN.
+Wenn {self.config['persona']['user_name']} das Licht ändern will, nutze diese Aktionen:
+{gl}
+Beispiele:
+  [AKTION] licht_an |
+  [AKTION] licht_aus |
+  [AKTION] licht_farbe | blau
+  [AKTION] licht_helligkeit | 60
+Diese Licht-Aktionen sind harmlos und laufen sofort (ohne extra Bestätigung)."""
 
     # ── Die drei Gehirne ───────────────────────────────────────────────
     @staticmethod
@@ -847,9 +888,9 @@ einfach normal antworten."""
                 continue
             name = m.group(1).strip().lower()
             arg = m.group(2).strip()
-            if name not in ACTIONS:
+            if name not in ALL_ACTIONS:
                 continue
-            label, _desc, warn = ACTIONS[name]
+            label, _desc, warn = ALL_ACTIONS[name]
             out.append({"name": name, "arg": arg, "label": label, "warn": bool(warn)})
         return out
 
@@ -867,12 +908,15 @@ einfach normal antworten."""
     def run_action(self, name, arg):
         """Führt EINE Aktion aus (wird nur nach Klick-Bestätigung aufgerufen).
         -> (ok: bool, ausgabe: str)."""
-        if not self.config.get("pc_control", True):
-            return False, "PC-Steuerung ist in den Einstellungen ausgeschaltet."
         name = (name or "").strip().lower()
         arg = (arg or "").strip()
-        if name not in ACTIONS:
+        if name not in ALL_ACTIONS:
             return False, f"Unbekannte Aktion: {name}"
+        # Govee-Licht: unabhängig von der PC-Steuerung
+        if name in GOVEE_ACTIONS:
+            return self._run_govee(name, arg)
+        if not self.config.get("pc_control", True):
+            return False, "PC-Steuerung ist in den Einstellungen ausgeschaltet."
         try:
             if name == "app_oeffnen":
                 return self._act_open_app(arg)
@@ -971,6 +1015,94 @@ einfach normal antworten."""
         except Exception:
             pass
         return "\n".join(lines)
+
+    # ── Govee-Lampen (Licht steuern über die offizielle Govee-API) ─────
+    def govee_devices(self):
+        """Holt die Govee-Geräte des Nutzers. -> (liste, fehler)."""
+        key = self.config.get("govee_key", "").strip()
+        if not key:
+            return None, ("Kein Govee-Schlüssel. Hol ihn dir in der Govee-App "
+                          "(Profil → Einstellungen → »Apply for API Key«) und trag ihn in ⚙ ein.")
+        req = urllib.request.Request(GOVEE_BASE + "/user/devices",
+                                     headers={"Govee-API-Key": key,
+                                              "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            return None, _http_msg(e)
+        except Exception as e:
+            return None, f"Verbindungsfehler zu Govee: {e}"
+        return (data.get("data") or []), None
+
+    def _govee_send(self, instance, captype, value):
+        """Schickt einen Befehl an ALLE passenden Govee-Geräte. -> (ok, text)."""
+        devs, err = self.govee_devices()
+        if err:
+            return False, err
+        if not devs:
+            return False, "Keine Govee-Geräte gefunden (in der Govee-App eingerichtet?)."
+        key = self.config.get("govee_key", "").strip()
+        ok, names, last_err = 0, [], None
+        for dv in devs:
+            caps = {c.get("instance") for c in (dv.get("capabilities") or [])}
+            if caps and instance not in caps:
+                continue  # Gerät kann das nicht (z.B. kein Farb-Licht)
+            body = {"requestId": str(uuid.uuid4()),
+                    "payload": {"sku": dv.get("sku"), "device": dv.get("device"),
+                                "capability": {"type": captype, "instance": instance, "value": value}}}
+            req = urllib.request.Request(GOVEE_BASE + "/device/control",
+                                         data=json.dumps(body).encode("utf-8"), method="POST",
+                                         headers={"Govee-API-Key": key, "Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    rd = json.loads(r.read().decode("utf-8"))
+                if rd.get("code") == 200:
+                    ok += 1
+                    names.append(dv.get("deviceName") or dv.get("sku") or "Lampe")
+                else:
+                    last_err = rd.get("message") or str(rd)
+            except urllib.error.HTTPError as e:
+                last_err = _http_msg(e)
+            except Exception as e:
+                last_err = str(e)
+        if ok:
+            return True, "Licht gesteuert: " + ", ".join(names)
+        return False, last_err or "Govee-Steuerung hat nicht geklappt."
+
+    def _run_govee(self, name, arg):
+        a = (arg or "").strip().lower()
+        if name == "licht_an":
+            return self._govee_send("powerSwitch", "devices.capabilities.on_off", 1)
+        if name == "licht_aus":
+            return self._govee_send("powerSwitch", "devices.capabilities.on_off", 0)
+        if name == "licht_helligkeit":
+            m = re.search(r"\d+", a)
+            if not m:
+                return False, "Sag eine Zahl von 0 bis 100 (z.B. 60)."
+            val = max(0, min(100, int(m.group(0))))
+            return self._govee_send("brightness", "devices.capabilities.range", val)
+        if name == "licht_farbe":
+            rgb = self._parse_color(a)
+            if not rgb:
+                return False, f"Farbe »{arg}« kenn ich nicht. Probier z.B. blau, rot, grün, warm, pink."
+            r, g, b = rgb
+            return self._govee_send("colorRgb", "devices.capabilities.color_setting",
+                                    (r << 16) | (g << 8) | b)
+        return False, "Unbekannte Licht-Aktion."
+
+    @staticmethod
+    def _parse_color(text):
+        t = (text or "").strip().lower()
+        if t in GOVEE_COLORS:
+            return GOVEE_COLORS[t]
+        for nm, rgb in GOVEE_COLORS.items():  # Teiltreffer ("mach blau")
+            if nm in t:
+                return rgb
+        m = re.match(r"^\s*(\d{1,3})[,\s]+(\d{1,3})[,\s]+(\d{1,3})\s*$", t)  # "255,0,0"
+        if m:
+            return tuple(max(0, min(255, int(x))) for x in m.groups())
+        return None
 
 
 def sys_platform():

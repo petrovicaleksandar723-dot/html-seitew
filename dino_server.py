@@ -74,6 +74,7 @@ def settings_payload():
         "persona": dict(cfg["persona"]),
         "goal": cfg["goal"],
         "pc_control": cfg.get("pc_control", True),
+        "govee_key": cfg.get("govee_key", ""),
         "claude_models": [[mid, desc] for mid, desc in core.CLAUDE_MODELS.values()],
         "ollama_models": [[mid, desc] for mid, desc in core.OLLAMA_MODELS.values()],
     }
@@ -194,6 +195,8 @@ def handle_settings_post(body):
         cfg["goal"] = (body["goal"] or "").strip()
     if "pc_control" in body:
         cfg["pc_control"] = bool(body["pc_control"])
+    if "govee_key" in body:
+        cfg["govee_key"] = (body["govee_key"] or "").strip()
     persona = body.get("persona", {})
     for k in ("assistant_name", "user_name", "business", "humor"):
         if k in persona:

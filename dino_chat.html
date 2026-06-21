@@ -880,6 +880,10 @@ const ACTION_META = {
   dateien_liste:   { emoji:"📋", label:"Dateien auflisten" },
   system_info:     { emoji:"💻", label:"System-Info" },
   befehl:          { emoji:"⚡", label:"Befehl ausführen" },
+  licht_an:        { emoji:"💡", label:"Licht an", auto:true },
+  licht_aus:       { emoji:"🌙", label:"Licht aus", auto:true },
+  licht_farbe:     { emoji:"🎨", label:"Lichtfarbe", auto:true },
+  licht_helligkeit:{ emoji:"🔆", label:"Helligkeit", auto:true },
 };
 const ACTION_WARN = { befehl:true };
 
@@ -904,10 +908,33 @@ function parseActions(text){
 }
 
 function renderActions(actions, replyText){
-  if (!state.pcControl) return;
   let list = (actions && actions.length) ? actions : parseActions(replyText);
   if (!list || !list.length) return;
-  list.forEach(a => addActionCard(a));
+  list.forEach(a => {
+    const meta = ACTION_META[a.name] || {};
+    if (meta.auto) autoRunAction(a);          // z.B. Govee-Licht: sofort, ohne Klick
+    else if (state.pcControl) addActionCard(a); // PC-Aktionen: mit Bestätigung
+  });
+}
+
+// Auto-Aktion (harmlos, z.B. Licht): sofort ausführen, Ergebnis als kleine Zeile zeigen
+async function autoRunAction(a){
+  const meta = ACTION_META[a.name] || { emoji:"💡", label:a.name };
+  const wrap = document.createElement("div");
+  wrap.className = "msg dino";
+  wrap.innerHTML = '<div class="avatar">'+meta.emoji+'</div>';
+  const b = document.createElement("div"); b.className = "bubble";
+  const t = document.createElement("div");
+  t.style.cssText = "font-size:13px;color:#bfe9f5";
+  t.textContent = meta.label + (a.arg ? " · " + a.arg : "") + " …";
+  b.appendChild(t); wrap.appendChild(b); chatEl.appendChild(wrap); scrollDown();
+  try{
+    const data = await api("/api/action", "POST", { name:a.name, arg:a.arg });
+    t.style.color = data.ok ? "#34d399" : "#fb7185";
+    t.textContent = (data.ok ? "✓ " : "✖ ") + meta.label + (a.arg ? " · " + a.arg : "") +
+                    (data.output ? " — " + data.output : "");
+  }catch(e){ t.style.color = "#fb7185"; t.textContent = "✖ " + meta.label + ": " + e.message; }
+  scrollDown();
 }
 
 function addActionCard(a){
@@ -1341,6 +1368,10 @@ async function loadSettings(){
     <div class="field"><label>Gratis-Modell</label><select id="st-ollama-model">${omOpts}</select></div>
     <div class="hint">Such dir das Modell nach deinem PC aus. <b>qwen2.5:7b</b> ist für deine 12-GB-Grafikkarte empfohlen — deutlich schlauer als das kleine llama3.2 und trotzdem flott. Wenn du auf ein neues Modell wechselst, lädt Dino es beim nächsten Start <b>einmalig</b> herunter (ein paar Minuten). Komplett gratis & offline.</div>
 
+    <div class="sect">💡 Govee-Lampen (Licht steuern)</div>
+    <div class="field"><label>Govee-Schlüssel</label><input id="st-govee-key" type="password" placeholder="Govee-API-Key"></div>
+    <div class="hint">Damit steuert Dino dein Licht (»mach das Licht blau«). Schlüssel holen: <b>Govee-App → Profil → Einstellungen → Apply for API Key</b> — kommt per E-Mail. Danach hier einfügen & speichern.</div>
+
     <div class="sect">🎭 Persona</div>
     <div class="field"><label>Name der KI</label><input id="st-assistant"></div>
     <div class="field"><label>Wie Dino dich nennt</label><input id="st-user"></div>
@@ -1362,6 +1393,7 @@ async function loadSettings(){
   $("st-openai-model").value = s.openai_model || "";
   $("st-gemini-model").value = s.gemini_model || "";
   $("st-ollama-model").value = s.ollama_model || "";
+  $("st-govee-key").value = s.govee_key || "";
   $("st-assistant").value = persona.assistant_name || "";
   $("st-user").value = persona.user_name || "";
   $("st-business").value = persona.business || "";
@@ -1379,6 +1411,7 @@ async function saveSettings(){
     openai_model: $("st-openai-model").value.trim(),
     gemini_model: $("st-gemini-model").value.trim(),
     ollama_model: $("st-ollama-model").value.trim(),
+    govee_key: $("st-govee-key").value.trim(),
     keys: {
       claude: $("st-key-claude").value.trim(),
       openai: $("st-key-openai").value.trim(),
@@ -1639,6 +1672,25 @@ async function loadPC(){
   body.appendChild(grid);
   body.appendChild(out);
 
+  const hl = document.createElement("div"); hl.className = "sect"; hl.textContent = "💡 Govee-Licht"; body.appendChild(hl);
+  const lgrid = document.createElement("div");
+  lgrid.style.cssText = "display:flex;flex-wrap:wrap;gap:8px";
+  const lights = [
+    ["💡 An", "licht_an", ""], ["🌙 Aus", "licht_aus", ""],
+    ["🔵 Blau", "licht_farbe", "blau"], ["🔴 Rot", "licht_farbe", "rot"],
+    ["🟢 Grün", "licht_farbe", "grün"], ["🟣 Lila", "licht_farbe", "lila"],
+    ["🟠 Warm", "licht_farbe", "warm"], ["🔆 100%", "licht_helligkeit", "100"],
+  ];
+  lights.forEach(([lbl, name, arg]) => {
+    const b = document.createElement("button"); b.className = "chip"; b.textContent = lbl;
+    b.onclick = () => panelRun(name, arg, out, b);
+    lgrid.appendChild(b);
+  });
+  body.appendChild(lgrid);
+  const lhint = document.createElement("div"); lhint.className = "hint";
+  lhint.innerHTML = "Funktioniert, sobald dein <b>Govee-Schlüssel</b> in ⚙ Einstellungen steht. Dann reicht im Chat auch: »mach das Licht blau«.";
+  body.appendChild(lhint);
+
   const h2 = document.createElement("div"); h2.className = "sect"; h2.textContent = "⌨️ Eigener Befehl"; body.appendChild(h2);
   const ci = document.createElement("input");
   ci.placeholder = "z.B. echo hallo   oder   dir";
@@ -1659,7 +1711,8 @@ async function loadPC(){
 }
 
 async function panelRun(name, arg, out, btn){
-  if (!state.pcControl){ out.style.color = "#fbbf24"; out.textContent = "PC-Steuerung ist AUS — oben einschalten."; return; }
+  const isLight = name.indexOf("licht_") === 0;
+  if (!state.pcControl && !isLight){ out.style.color = "#fbbf24"; out.textContent = "PC-Steuerung ist AUS — oben einschalten."; return; }
   if (btn) btn.disabled = true;
   out.style.color = "#bfe9f5"; out.textContent = "läuft…";
   try{
