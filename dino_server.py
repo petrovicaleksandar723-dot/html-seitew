@@ -54,6 +54,7 @@ def status_payload():
         "goal": d.config["goal"],
         "revenue": d.revenue(),
         "pc_control": d.config.get("pc_control", True),
+        "govee_set": bool(d.config.get("govee_key", "").strip()),
     }
 
 
@@ -103,6 +104,26 @@ def handle_action(body):
     if ok:
         d.add_journal(f"PC-Aktion ausgeführt: {name} | {str(arg)[:80]}")
     return {"ok": ok, "output": output}
+
+
+def handle_web(body):
+    frage = (body.get("frage") or "").strip()
+    if not frage:
+        msgs = body.get("messages", [])
+        if msgs and msgs[-1].get("role") == "user":
+            frage = (msgs[-1].get("content") or "").strip()
+    if not frage:
+        return {"error": "Keine Frage angegeben."}
+    text, err = d.web_answer(frage)
+    return {"error": err} if err else {"text": text}
+
+
+def govee_payload():
+    devs, err = d.govee_devices()
+    if err:
+        return {"connected": False, "count": 0, "error": err}
+    names = [x.get("deviceName") or x.get("sku") or "Lampe" for x in devs]
+    return {"connected": True, "count": len(devs), "names": names[:12]}
 
 
 def handle_plan(_body):
@@ -256,6 +277,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(handle_memory())
         elif path == "/api/ollama":
             self._send_json(d.ollama_status())
+        elif path == "/api/govee":
+            self._send_json(govee_payload())
         elif path == "/favicon.ico":
             self.send_response(204); self.end_headers()
         else:
@@ -304,6 +327,8 @@ class Handler(BaseHTTPRequestHandler):
                     out = handle_council(body)
                 elif path == "/api/team":
                     out = handle_team(body)
+                elif path == "/api/web":
+                    out = handle_web(body)
                 elif path == "/api/action":
                     out = handle_action(body)
                 elif path == "/api/customers":

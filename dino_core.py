@@ -93,6 +93,10 @@ ACTIONS = {
     "befehl":          ("Befehl ausführen", "führt einen beliebigen Konsolen-Befehl aus — mit Vorsicht", True),
 }
 
+# ── Web-Recherche (frisches Wissen aus dem Internet) ──────────────────
+WEB_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+
 # ── Govee-Lampen (offizielle API — Dino steuert das Licht) ─────────────
 GOVEE_BASE = "https://openapi.api.govee.com/router/api/v1"
 GOVEE_ACTIONS = {
@@ -461,6 +465,8 @@ DEIN STIL / HUMOR (genau so antworten):
 {p['humor']}
 Sprache: Deutsch. Sei konkret und ehrlich. Keine leeren Versprechen, kein Geschwafel.
 Wenn du etwas nicht sicher weißt, sag es. Bei Geld/Erfolg: realistisch bleiben.
+Denk bei kniffligen Fragen erst kurz Schritt für Schritt durch, bevor du antwortest —
+gib dann eine klare, gut durchdachte Antwort. Lieber richtig als schnell.
 
 DAS BUSINESS:
 {p['business']}
@@ -1015,6 +1021,50 @@ Diese Licht-Aktionen sind harmlos und laufen sofort (ohne extra Bestätigung).""
         except Exception:
             pass
         return "\n".join(lines)
+
+    # ── Web-Recherche (Dino schaut im Internet nach -> frisches Wissen) ─
+    def web_search(self, query, n=5):
+        """Sucht im Web über DuckDuckGo. -> (treffer_liste, fehler)."""
+        import urllib.parse
+        import html as _html
+        query = (query or "").strip()
+        if not query:
+            return [], "Keine Suchanfrage."
+        url = "https://html.duckduckgo.com/html/?q=" + urllib.parse.quote(query)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": WEB_UA})
+            with urllib.request.urlopen(req, timeout=12) as r:
+                page = r.read().decode("utf-8", "replace")
+        except Exception as e:
+            return [], f"Konnte das Web gerade nicht erreichen ({e})."
+
+        def clean(s):
+            return re.sub(r"<.*?>", "", _html.unescape(s or "")).strip()
+        links = re.findall(r'result__a"[^>]*href="([^"]+)"[^>]*>(.*?)</a>', page, re.S)
+        snips = re.findall(r'result__snippet"[^>]*>(.*?)</a>', page, re.S)
+        out = []
+        for i, (href, title) in enumerate(links[:n]):
+            out.append({"title": clean(title),
+                        "snippet": clean(snips[i]) if i < len(snips) else "",
+                        "url": href})
+        return out, None
+
+    def web_answer(self, query):
+        """Sucht im Web und lässt Dino mit den frischen Treffern antworten.
+        -> (text, fehler)."""
+        results, err = self.web_search(query)
+        if not results:
+            return None, (err or "Keine Web-Treffer gefunden.")
+        ctx = "\n\n".join(f"[{i + 1}] {r['title']}\n{r['snippet']}\n{r['url']}"
+                          for i, r in enumerate(results))
+        usr = (f"FRAGE: {query}\n\nFRISCHE WEB-TREFFER (gerade aus dem Internet):\n{ctx}\n\n"
+               "Beantworte die Frage in deinem Stil mit Hilfe dieser Treffer. Nenn die "
+               "wichtigsten Fakten ehrlich und kurz. Wenn die Treffer nichts taugen, sag es offen.")
+        text, e2 = self.ask_provider(self.build_system(),
+                                     [{"role": "user", "content": usr}], max_tokens=1200)
+        if not e2:
+            self.add_journal(f"Web-Recherche: {query[:120]}")
+        return text, e2
 
     # ── Govee-Lampen (Licht steuern über die offizielle Govee-API) ─────
     def govee_devices(self):

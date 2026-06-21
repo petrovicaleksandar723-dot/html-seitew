@@ -365,6 +365,7 @@ body::before{
     <button class="chip" onclick="quickPlan()">📅 Wochenplan</button>
     <button class="chip" onclick="quickToday()">☀️ Heute</button>
     <button class="chip" onclick="quickTeam()">🤖 Team-Auftrag</button>
+    <button class="chip" onclick="quickWeb()">🔎 Web-Recherche</button>
     <button class="chip" onclick="quickLearn()">🧠 Lernen</button>
     <button class="chip" onclick="quickCouncil()">🧠🧠🧠 Rat der KIs</button>
   </div>
@@ -372,7 +373,8 @@ body::before{
   <!-- Eingabeleiste -->
   <div class="inputbar">
     <textarea id="input" rows="1" placeholder="Schreib Dino was… (Enter senden · Shift+Enter neue Zeile)"></textarea>
-    <button class="ibtn mic" id="micBtn" title="Sprechen" onclick="toggleMic()">🎤</button>
+    <button class="ibtn mic" id="micBtn" title="Sprechen (einmal)" onclick="toggleMic()">🎤</button>
+    <button class="ibtn mic" id="hfBtn" title="Freisprech-Modus: Dauer-Mikro + »Hey Dino«" onclick="toggleHandsFree()">🎧</button>
     <button class="ibtn" id="voiceBtn" title="Sprachausgabe an/aus" onclick="toggleVoice()">🔊</button>
     <select id="voiceSelect" title="Stimme wählen — Standard: automatisch die beste, flüssige deutsche Stimme" onchange="onVoiceSelect()" style="max-width:160px;background:#0b1526;color:#bfe9f5;border:1px solid rgba(120,200,230,.28);border-radius:9px;font-size:11px;padding:5px 6px;outline:none;"></select>
     <button class="ibtn send" id="sendBtn" title="Senden" onclick="send()">➤</button>
@@ -425,6 +427,7 @@ const state = {
   provider: null,        // "ollama" | "claude" | "openai" | "gemini"
   autoRecheckDone: false,// einmaliges Auto-Recheck beim ersten Laden
   pcControl: true,       // darf Dino PC-Aktionen vorschlagen?
+  goveeChecked: false,   // Govee-Verbindung beim Start schon geprüft?
 };
 
 // ---- DOM-Kurzhelfer ----
@@ -533,6 +536,7 @@ async function loadStatus(){
     state.provider = s.provider || null;
     state.pcControl = (s.pc_control !== false);
     markStatus(s.ready, s.brain || "—");
+    if (s.govee_set && !state.goveeChecked){ state.goveeChecked = true; checkGovee(); }
 
     if (state.provider === "ollama"){
       // Lokales Gehirn -> eigene Onboarding-/Setup-Logik (kümmert sich um Begrüßung/Karte)
@@ -1108,6 +1112,43 @@ async function quickTeam(){
   finally{ setBusy(false); }
 }
 
+// Beim Start: prüfen, ob die Govee-Lampen verbunden sind
+async function checkGovee(){
+  try{
+    const g = await api("/api/govee");
+    if (g.connected){
+      addBubble("info", `💡 Govee verbunden — ${g.count} Lampe(n) bereit: ${(g.names||[]).join(", ")}`);
+    } else {
+      addBubble("info", "💡 Govee-Schlüssel ist da, aber die Verbindung klemmt: " + (g.error || "unbekannt"));
+    }
+  }catch(e){ /* still */ }
+}
+
+// Web-Recherche -> Dino schaut im Internet nach (nimmt Eingabetext als Frage)
+async function quickWeb(){
+  if (state.busy) return;
+  const frage = inputEl.value.trim();
+  if (!frage){ addBubble("info","Schreib deine Frage ins Feld, dann »Web-Recherche«. 🔎"); return; }
+  inputEl.value=""; autoGrow();
+  addBubble("user", frage);
+  addBubble("info","Dino schaut im Web nach… 🔎");
+  setBusy(true);
+  try{
+    const data = await api("/api/web", "POST", { frage });
+    hideTyping();
+    if (data.error){ addBubble("error", data.error); }
+    else {
+      const txt = data.text || "";
+      const shown = stripActionLines(txt) || txt;
+      addBubble("dino", shown);
+      state.messages.push({ role:"assistant", content:txt });
+      speak(shown);
+      renderActions(null, txt);
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); }
+  finally{ setBusy(false); }
+}
+
 // ============================================================
 //  Eingabefeld: Auto-Grow + Tastatur
 // ============================================================
@@ -1251,10 +1292,11 @@ function splitSpeech(text){
   return out;
 }
 
-function speak(text){
-  if (!state.voiceOn || !text || !("speechSynthesis" in window)) return;
+function speak(text, onDone){
+  const done = () => { try{ onDone && onDone(); }catch(e){} };
+  if (!state.voiceOn || !text || !("speechSynthesis" in window)){ done(); return; }
   const clean = cleanForSpeech(text);
-  if (!clean) return;
+  if (!clean){ done(); return; }
   // Automatisch die zur Sprache passende Stimme nehmen (engl. Stimme + dt. Text = abgehackt!)
   let voice = selectedVoice;
   if (!voiceManual || !voice){
@@ -1263,6 +1305,7 @@ function speak(text){
   try{
     speechSynthesis.cancel();
     const chunks = splitSpeech(clean);
+    if (!chunks.length){ done(); return; }
     chunks.forEach((c, i) => {
       const u = new SpeechSynthesisUtterance(c);
       if (voice){ u.voice = voice; u.lang = voice.lang; }
@@ -1270,11 +1313,11 @@ function speak(text){
       u.rate = 1.0;     // natuerliches Tempo
       u.pitch = 1.03;   // leicht hoeher -> ruhige KI-Assistentin
       if (i === 0) u.onstart = () => setSpeaking(true);
-      if (i === chunks.length - 1) u.onend = () => setSpeaking(false);
-      u.onerror = () => setSpeaking(false);
+      if (i === chunks.length - 1) u.onend = () => { setSpeaking(false); done(); };
+      u.onerror = () => { setSpeaking(false); if (i === chunks.length - 1) done(); };
       speechSynthesis.speak(u);
     });
-  }catch(e){ /* still */ }
+  }catch(e){ done(); }
 }
 
 // ============================================================
@@ -1302,6 +1345,92 @@ function toggleMic(){
   else { try{ recog.start(); listening = true; $("micBtn").classList.add("listening"); }catch(e){ stopMic(); } }
 }
 function stopMic(){ listening = false; $("micBtn").classList.remove("listening"); }
+
+// ============================================================
+//  Freisprech-Modus (Dauer-Mikro + Weckwort "Hey Dino")
+// ============================================================
+const hf = { on:false, recog:null, speaking:false };
+const WAKE_RE = /\b(hey|hej|he|ok|okay|hallo|hi|yo)\s+(dino|dyno|deino|tino|dina)\b/i;
+function wakeOnly(){ return localStorage.getItem("dino_wake") !== "0"; } // Standard: nur auf "Hey Dino"
+
+function buildHFRecog(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.lang = "de-DE"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = onHFResult;
+  r.onerror = ()=>{};   // bei Fehler einfach weiter (onend startet neu)
+  r.onend = ()=>{ if (hf.on && !hf.speaking){ try{ r.start(); }catch(e){} } };
+  return r;
+}
+
+function toggleHandsFree(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ addBubble("info","Dein Browser kann kein Dauer-Mikro. Nimm Chrome oder Edge. 🎧"); return; }
+  hf.on = !hf.on;
+  $("hfBtn").classList.toggle("listening", hf.on);
+  if (hf.on){
+    if (!hf.recog) hf.recog = buildHFRecog();
+    state.voiceOn = true; $("voiceBtn").classList.add("active");  // Antwort kommt per Sprache
+    hf.speaking = false;
+    try{ hf.recog.start(); }catch(e){}
+    addBubble("info", wakeOnly()
+      ? "Freisprech-Modus AN 🎧 — sag »Hey Dino« und dann deine Frage."
+      : "Freisprech-Modus AN 🎧 — sprich einfach, ich höre durchgehend zu.");
+    speak("Freisprech an. Ich höre zu.");
+  } else {
+    try{ hf.recog && hf.recog.stop(); }catch(e){}
+    addBubble("info","Freisprech-Modus aus. 🎤");
+  }
+}
+
+function onHFResult(e){
+  if (!hf.on || hf.speaking || state.busy) return;
+  let finalText = "";
+  for (let i=e.resultIndex; i<e.results.length; i++){
+    if (e.results[i].isFinal) finalText += e.results[i][0].transcript + " ";
+  }
+  finalText = finalText.trim();
+  if (finalText.length < 2) return;
+  const m = finalText.match(WAKE_RE);
+  let cmd = finalText;
+  if (wakeOnly() && !m) return;   // ohne "Hey Dino" ignorieren
+  if (m){ cmd = finalText.slice(finalText.toLowerCase().indexOf(m[0].toLowerCase()) + m[0].length); }
+  cmd = cmd.replace(/^[\s,:.!?–-]+/, "").trim();
+  if (!cmd){ if (m){ hf.speaking = true; try{ hf.recog.stop(); }catch(_){} speak("Ja, Boss?", resumeHF); } return; }
+  voiceSend(cmd);
+}
+
+function resumeHF(){
+  hf.speaking = false;
+  if (hf.on){ try{ hf.recog.start(); }catch(e){} }
+}
+
+async function voiceSend(text){
+  if (state.busy) return;
+  hf.speaking = true;                          // Mic-Verarbeitung pausieren
+  try{ hf.recog && hf.recog.stop(); }catch(e){}
+  addBubble("user", text);
+  state.messages.push({ role:"user", content:text });
+  setBusy(true);
+  let resumed = false;
+  const resumeOnce = ()=>{ if (!resumed){ resumed = true; resumeHF(); } };
+  setTimeout(resumeOnce, 20000);               // Sicherheitsnetz: spaetestens nach 20s wieder zuhoeren
+  try{
+    const data = await api("/api/chat", "POST", { messages: state.messages });
+    hideTyping();
+    if (data.error){ addBubble("error", data.error); state.messages.pop(); resumeOnce(); }
+    else {
+      const reply = data.reply || "";
+      const shown = stripActionLines(reply) || reply;
+      addBubble("dino", shown);
+      state.messages.push({ role:"assistant", content:reply });
+      renderActions(data.actions, reply);
+      speak(shown, resumeOnce);                // sprechen, danach wieder zuhoeren
+    }
+  }catch(e){ hideTyping(); addBubble("error","Netzwerkfehler: "+e.message); state.messages.pop(); resumeOnce(); }
+  finally{ setBusy(false); }
+}
 
 // ============================================================
 //  Panels (Slide-Over)
@@ -1372,6 +1501,10 @@ async function loadSettings(){
     <div class="field"><label>Govee-Schlüssel</label><input id="st-govee-key" type="password" placeholder="Govee-API-Key"></div>
     <div class="hint">Damit steuert Dino dein Licht (»mach das Licht blau«). Schlüssel holen: <b>Govee-App → Profil → Einstellungen → Apply for API Key</b> — kommt per E-Mail. Danach hier einfügen & speichern.</div>
 
+    <div class="sect">🎧 Freisprech (Dauer-Mikro)</div>
+    <div class="field" style="display:flex;align-items:center;gap:10px;justify-content:space-between"><label style="margin:0">Nur auf „Hey Dino" reagieren</label><input type="checkbox" id="st-wake" style="width:20px;height:20px"></div>
+    <div class="hint"><b>An</b> (empfohlen): Dino reagiert nur, wenn du mit »Hey Dino« anfängst. <b>Aus</b>: Dino antwortet auf alles, was du sagst. Den 🎧-Knopf unten drücken startet den Dauer-Modus.</div>
+
     <div class="sect">🎭 Persona</div>
     <div class="field"><label>Name der KI</label><input id="st-assistant"></div>
     <div class="field"><label>Wie Dino dich nennt</label><input id="st-user"></div>
@@ -1394,6 +1527,7 @@ async function loadSettings(){
   $("st-gemini-model").value = s.gemini_model || "";
   $("st-ollama-model").value = s.ollama_model || "";
   $("st-govee-key").value = s.govee_key || "";
+  $("st-wake").checked = (localStorage.getItem("dino_wake") !== "0");
   $("st-assistant").value = persona.assistant_name || "";
   $("st-user").value = persona.user_name || "";
   $("st-business").value = persona.business || "";
@@ -1405,6 +1539,7 @@ async function loadSettings(){
 
 async function saveSettings(){
   const btn = $("st-save"); btn.disabled = true;
+  const wk = $("st-wake"); if (wk) localStorage.setItem("dino_wake", wk.checked ? "1" : "0");
   const payload = {
     provider: $("st-provider").value,
     claude_model: $("st-claude-model").value,
