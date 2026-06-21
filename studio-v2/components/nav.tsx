@@ -21,7 +21,12 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (pathname?.startsWith("/atelier") || pathname?.startsWith("/studio")) return null;
+  if (
+    pathname?.startsWith("/atelier") ||
+    pathname?.startsWith("/studio") ||
+    pathname?.startsWith("/award")
+  )
+    return null;
 
   return (
     <header

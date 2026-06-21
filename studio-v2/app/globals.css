@@ -85,9 +85,30 @@ html.lenis body {
   scrollbar-width: none;
 }
 
+/* award: seamless marquee (two copies, shift one copy width) */
+@keyframes cl-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* award: hover-gated lift utility (touch devices fire false :hover on tap) */
+@media (hover: hover) and (pointer: fine) {
+  .hov-lift {
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease;
+  }
+  .hov-lift:hover {
+    transform: translateY(-6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
 }
