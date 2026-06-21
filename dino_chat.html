@@ -370,7 +370,8 @@ body::before{
   <div class="inputbar">
     <textarea id="input" rows="1" placeholder="Schreib Dino was… (Enter senden · Shift+Enter neue Zeile)"></textarea>
     <button class="ibtn mic" id="micBtn" title="Sprechen" onclick="toggleMic()">🎤</button>
-    <button class="ibtn" id="voiceBtn" title="Sprachausgabe" onclick="toggleVoice()">🔊</button>
+    <button class="ibtn" id="voiceBtn" title="Sprachausgabe an/aus (Gideon-Stimme)" onclick="toggleVoice()">🔊</button>
+    <select id="voiceSelect" title="Stimme wählen — Gideon = britisch & weiblich" onchange="onVoiceSelect()" style="max-width:160px;background:#0b1526;color:#bfe9f5;border:1px solid rgba(120,200,230,.28);border-radius:9px;font-size:11px;padding:5px 6px;outline:none;"></select>
     <button class="ibtn send" id="sendBtn" title="Senden" onclick="send()">➤</button>
   </div>
 </div>
@@ -936,30 +937,75 @@ inputEl.addEventListener("keydown", (e)=>{
 // ============================================================
 //  Sprachausgabe (speechSynthesis)
 // ============================================================
-let deVoice = null;
-function pickVoice(){
+let allVoices = [];
+let selectedVoice = null;
+
+// Wie "Gideon" (britisch, weiblich) ist eine Stimme? Hoeher = naeher.
+function gideonRank(v){
+  const lang = (v.lang || "").toLowerCase().replace("_", "-");
+  const name = (v.name || "").toLowerCase();
+  let s = 0;
+  if (lang.startsWith("en-gb")) s += 100;          // britisches Englisch
+  else if (lang.startsWith("en")) s += 45;          // sonst Englisch
+  if (/female|sonia|libby|hazel|susan|maisie|olivia|aria|jenny|emma|charlotte|amy|google uk english female/.test(name)) s += 55;
+  if (/natural|online|neural/.test(name)) s += 12;  // natuerlichere Edge-Stimmen
+  return s;
+}
+
+function buildVoiceList(){
   if (!("speechSynthesis" in window)) return;
-  const vs = speechSynthesis.getVoices();
-  deVoice = vs.find(v => v.lang === "de-DE") || vs.find(v => /^de/i.test(v.lang)) || null;
+  allVoices = speechSynthesis.getVoices() || [];
+  if (!allVoices.length) return;
+  const sorted = allVoices.slice().sort((a,b) => gideonRank(b) - gideonRank(a));
+  const sel = $("voiceSelect");
+  if (sel){
+    sel.innerHTML = "";
+    sorted.forEach(v => {
+      const o = document.createElement("option");
+      o.value = v.voiceURI;
+      o.textContent = v.name + " (" + v.lang + ")";
+      sel.appendChild(o);
+    });
+  }
+  const saved = localStorage.getItem("dino_voice");
+  selectedVoice = (saved && allVoices.find(v => v.voiceURI === saved)) || sorted[0] || null;
+  if (sel && selectedVoice) sel.value = selectedVoice.voiceURI;
 }
+
+function onVoiceSelect(){
+  const sel = $("voiceSelect");
+  selectedVoice = allVoices.find(v => v.voiceURI === sel.value) || null;
+  if (selectedVoice) localStorage.setItem("dino_voice", selectedVoice.voiceURI);
+  // kurze Hoer-Probe
+  const prev = state.voiceOn; state.voiceOn = true;
+  speak("Hallo, ich bin Dino.");
+  state.voiceOn = prev;
+}
+
 if ("speechSynthesis" in window){
-  pickVoice();
-  speechSynthesis.onvoiceschanged = pickVoice;
+  buildVoiceList();
+  speechSynthesis.onvoiceschanged = buildVoiceList;
 } else {
-  $("voiceBtn").style.display = "none"; // kein TTS -> Button ausblenden
+  $("voiceBtn").style.display = "none";
+  const vs = $("voiceSelect"); if (vs) vs.style.display = "none";
 }
+
 function toggleVoice(){
   state.voiceOn = !state.voiceOn;
   $("voiceBtn").classList.toggle("active", state.voiceOn);
-  if (!state.voiceOn && "speechSynthesis" in window) speechSynthesis.cancel();
+  if (!state.voiceOn && "speechSynthesis" in window){ speechSynthesis.cancel(); return; }
+  if (state.voiceOn) speak("Sprachausgabe aktiv.");  // Gideon meldet sich
 }
+
 function speak(text){
   if (!state.voiceOn || !text || !("speechSynthesis" in window)) return;
   try{
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = "de-DE";
-    if (deVoice) u.voice = deVoice;
+    if (selectedVoice){ u.voice = selectedVoice; u.lang = selectedVoice.lang; }
+    else { u.lang = "de-DE"; }
+    u.rate = 1.0;
+    u.pitch = 1.06;   // leicht hoeher -> klingt mehr nach KI-Assistentin
     u.onstart = ()=> setSpeaking(true);
     u.onend   = ()=> setSpeaking(false);
     u.onerror = ()=> setSpeaking(false);
