@@ -371,8 +371,8 @@ body::before{
   <div class="inputbar">
     <textarea id="input" rows="1" placeholder="Schreib Dino was… (Enter senden · Shift+Enter neue Zeile)"></textarea>
     <button class="ibtn mic" id="micBtn" title="Sprechen" onclick="toggleMic()">🎤</button>
-    <button class="ibtn" id="voiceBtn" title="Sprachausgabe an/aus (Gideon-Stimme)" onclick="toggleVoice()">🔊</button>
-    <select id="voiceSelect" title="Stimme wählen — Gideon = britisch & weiblich" onchange="onVoiceSelect()" style="max-width:160px;background:#0b1526;color:#bfe9f5;border:1px solid rgba(120,200,230,.28);border-radius:9px;font-size:11px;padding:5px 6px;outline:none;"></select>
+    <button class="ibtn" id="voiceBtn" title="Sprachausgabe an/aus" onclick="toggleVoice()">🔊</button>
+    <select id="voiceSelect" title="Stimme wählen — Standard: automatisch die beste, flüssige deutsche Stimme" onchange="onVoiceSelect()" style="max-width:160px;background:#0b1526;color:#bfe9f5;border:1px solid rgba(120,200,230,.28);border-radius:9px;font-size:11px;padding:5px 6px;outline:none;"></select>
     <button class="ibtn send" id="sendBtn" title="Senden" onclick="send()">➤</button>
   </div>
 </div>
@@ -967,30 +967,48 @@ inputEl.addEventListener("keydown", (e)=>{
 //  Sprachausgabe (speechSynthesis)
 // ============================================================
 let allVoices = [];
-let selectedVoice = null;
+let voiceDE = null;        // beste deutsche Stimme (Dino spricht Deutsch)
+let voiceEN = null;        // beste englische Stimme
+let selectedVoice = null;  // manuell gewaehlte Stimme (sonst automatisch)
+let voiceManual = false;
 
-// Wie "Gideon" (britisch, weiblich) ist eine Stimme? Hoeher = naeher.
-function gideonRank(v){
+// Bewertung: wie natuerlich/hochwertig ist die Stimme in der gewuenschten Sprache?
+// Wichtig: eine ENGLISCHE Stimme, die DEUTSCH liest, klingt abgehackt -> harte Strafe.
+function voiceRank(v, want){
   const lang = (v.lang || "").toLowerCase().replace("_", "-");
   const name = (v.name || "").toLowerCase();
   let s = 0;
-  if (lang.startsWith("en-gb")) s += 100;          // britisches Englisch
-  else if (lang.startsWith("en")) s += 45;          // sonst Englisch
-  if (/female|sonia|libby|hazel|susan|maisie|olivia|aria|jenny|emma|charlotte|amy|google uk english female/.test(name)) s += 55;
-  if (/natural|neural/.test(name)) s += 120;        // cineastische Neural-Stimmen (Edge) -> klar bevorzugt
-  if (/online/.test(name)) s += 80;                 // Online-Stimmen klingen natuerlicher
-  if (/sonia/.test(name)) s += 40;                  // Sonia = am naechsten an "Gideon"
+  if (lang.startsWith(want)) s += 140;          // richtige Sprache = fluessig
+  else s -= 120;                                // falsche Sprache = abgehackt
+  if (/natural|neural/.test(name)) s += 120;    // Edge-Neural-Stimmen: am natuerlichsten
+  if (/online/.test(name))        s += 70;      // Online-Stimmen klingen natuerlicher
+  if (/google/.test(name))        s += 35;      // Google-Stimmen besser als alte lokale
+  if (want === "de" && /(katja|seraphina|hedda|gisela|amala|marlene|christel|petra|female|frau)/.test(name)) s += 45;
+  if (want === "en" && /(sonia|libby|hazel|aria|jenny|emma|female)/.test(name)) s += 45;
   return s;
+}
+
+function bestVoice(want){
+  let best = null, bs = -1e9;
+  allVoices.forEach(v => { const r = voiceRank(v, want); if (r > bs){ bs = r; best = v; } });
+  return best;
 }
 
 function buildVoiceList(){
   if (!("speechSynthesis" in window)) return;
   allVoices = speechSynthesis.getVoices() || [];
   if (!allVoices.length) return;
-  const sorted = allVoices.slice().sort((a,b) => gideonRank(b) - gideonRank(a));
+  voiceDE = bestVoice("de");
+  voiceEN = bestVoice("en");
+  // Dropdown: beste (deutsche, natuerliche) Stimmen zuerst; "Automatisch" ganz oben
+  const sorted = allVoices.slice().sort((a, b) =>
+    Math.max(voiceRank(b,"de"), voiceRank(b,"en")) - Math.max(voiceRank(a,"de"), voiceRank(a,"en")));
   const sel = $("voiceSelect");
   if (sel){
     sel.innerHTML = "";
+    const auto = document.createElement("option");
+    auto.value = "__auto__"; auto.textContent = "Automatisch (beste Stimme)";
+    sel.appendChild(auto);
     sorted.forEach(v => {
       const o = document.createElement("option");
       o.value = v.voiceURI;
@@ -999,17 +1017,27 @@ function buildVoiceList(){
     });
   }
   const saved = localStorage.getItem("dino_voice");
-  selectedVoice = (saved && allVoices.find(v => v.voiceURI === saved)) || sorted[0] || null;
-  if (sel && selectedVoice) sel.value = selectedVoice.voiceURI;
+  if (saved && saved !== "__auto__"){
+    selectedVoice = allVoices.find(v => v.voiceURI === saved) || null;
+    voiceManual = !!selectedVoice;
+  } else {
+    selectedVoice = null; voiceManual = false;
+  }
+  if (sel) sel.value = (voiceManual && selectedVoice) ? selectedVoice.voiceURI : "__auto__";
 }
 
 function onVoiceSelect(){
   const sel = $("voiceSelect");
-  selectedVoice = allVoices.find(v => v.voiceURI === sel.value) || null;
-  if (selectedVoice) localStorage.setItem("dino_voice", selectedVoice.voiceURI);
-  // kurze Hoer-Probe
+  if (sel.value === "__auto__"){
+    selectedVoice = null; voiceManual = false;
+    localStorage.setItem("dino_voice", "__auto__");
+  } else {
+    selectedVoice = allVoices.find(v => v.voiceURI === sel.value) || null;
+    voiceManual = !!selectedVoice;
+    if (selectedVoice) localStorage.setItem("dino_voice", selectedVoice.voiceURI);
+  }
   const prev = state.voiceOn; state.voiceOn = true;
-  speak("Hallo, ich bin Dino.");
+  speak("Hallo, ich bin Dino, deine eigene KI.");
   state.voiceOn = prev;
 }
 
@@ -1025,22 +1053,69 @@ function toggleVoice(){
   state.voiceOn = !state.voiceOn;
   $("voiceBtn").classList.toggle("active", state.voiceOn);
   if (!state.voiceOn && "speechSynthesis" in window){ speechSynthesis.cancel(); return; }
-  if (state.voiceOn) speak("Sprachausgabe aktiv.");  // Gideon meldet sich
+  if (state.voiceOn) speak("Sprachausgabe aktiv.");
+}
+
+// Sprache des Textes grob erkennen (Dino spricht standardmaessig Deutsch).
+function detectLang(text){
+  const t = (text || "").toLowerCase();
+  if (/[äöüß]/.test(t)) return "de";
+  if (/\b(und|ich|nicht|der|die|das|ist|ein|mit|für|auf|dein|deine|wir|hast|mach|kunden|geld|woche|heute)\b/.test(t)) return "de";
+  if (/\b(the|you|and|your|with|for|this|that|are|let|make|money)\b/.test(t)) return "en";
+  return "de";
+}
+
+// Text vorlesefreundlich machen: Emojis, Markdown, Links & Symbole raus.
+function cleanForSpeech(text){
+  let t = text || "";
+  t = t.replace(/```[\s\S]*?```/g, " ");                 // Codebloecke
+  t = t.replace(/`([^`]*)`/g, "$1");                      // Inline-Code
+  t = t.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1");        // Markdown-Links -> nur Text
+  t = t.replace(/https?:\/\/\S+/g, " ");                  // nackte URLs
+  t = t.replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}️⃣]/gu, " "); // Emojis
+  t = t.replace(/[*_#>~|]/g, " ");                        // Markdown-Zeichen
+  t = t.replace(/(^|\n)[ \t]*[\-–•·]+[ \t]/g, "$1");      // Aufzaehlungspunkte
+  t = t.replace(/€/g, " Euro");                           // Symbol sauber aussprechen
+  t = t.replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, ". ").trim();
+  return t;
+}
+
+// In kurze Haeppchen teilen -> kein Abschneiden bei langen Texten (sonst "abgehackt").
+function splitSpeech(text){
+  const parts = text.split(/(?<=[\.\!\?\:\;])\s+/);
+  const out = []; let buf = "";
+  parts.forEach(p => {
+    p = p.trim(); if (!p) return;
+    if ((buf + " " + p).trim().length <= 180) buf = buf ? buf + " " + p : p;
+    else { if (buf) out.push(buf); buf = p; }
+  });
+  if (buf) out.push(buf);
+  return out;
 }
 
 function speak(text){
   if (!state.voiceOn || !text || !("speechSynthesis" in window)) return;
+  const clean = cleanForSpeech(text);
+  if (!clean) return;
+  // Automatisch die zur Sprache passende Stimme nehmen (engl. Stimme + dt. Text = abgehackt!)
+  let voice = selectedVoice;
+  if (!voiceManual || !voice){
+    voice = (detectLang(clean) === "en") ? (voiceEN || voiceDE) : (voiceDE || voiceEN);
+  }
   try{
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    if (selectedVoice){ u.voice = selectedVoice; u.lang = selectedVoice.lang; }
-    else { u.lang = "de-DE"; }
-    u.rate = 0.96;    // einen Tick ruhiger -> cineastischer, wie eine Film-KI
-    u.pitch = 1.02;   // leicht hoeher -> klingt nach kuehler KI-Assistentin (Gideon-Vibe)
-    u.onstart = ()=> setSpeaking(true);
-    u.onend   = ()=> setSpeaking(false);
-    u.onerror = ()=> setSpeaking(false);
-    speechSynthesis.speak(u);
+    const chunks = splitSpeech(clean);
+    chunks.forEach((c, i) => {
+      const u = new SpeechSynthesisUtterance(c);
+      if (voice){ u.voice = voice; u.lang = voice.lang; }
+      else { u.lang = detectLang(clean) === "en" ? "en-GB" : "de-DE"; }
+      u.rate = 1.0;     // natuerliches Tempo
+      u.pitch = 1.03;   // leicht hoeher -> ruhige KI-Assistentin
+      if (i === 0) u.onstart = () => setSpeaking(true);
+      if (i === chunks.length - 1) u.onend = () => setSpeaking(false);
+      u.onerror = () => setSpeaking(false);
+      speechSynthesis.speak(u);
+    });
   }catch(e){ /* still */ }
 }
 
