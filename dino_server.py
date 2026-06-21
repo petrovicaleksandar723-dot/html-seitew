@@ -14,10 +14,15 @@ Reines Python (Standardbibliothek). Starten:  python dino_server.py
 import json
 import os
 import sys
+import secrets
 import subprocess
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+# Geheimes Token gegen fremde Webseiten: wird in Dinos eigene Seite eingebaut.
+# Eine fremde Seite kann es nicht lesen -> kann keine PC-Aktionen auslösen.
+CSRF_TOKEN = secrets.token_hex(16)
 
 # Konsole auf UTF-8 stellen, damit Emojis/Umlaute in Windows nie crashen
 try:
@@ -218,6 +223,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(404); self.end_headers()
             self.wfile.write(b"dino_chat.html fehlt.")
             return
+        data = data.replace(b"__DINO_CSRF__", CSRF_TOKEN.encode("ascii"))
         self.send_response(200)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(data)))
@@ -227,7 +233,7 @@ class Handler(BaseHTTPRequestHandler):
     def _body(self):
         try:
             length = int(self.headers.get("Content-Length", 0))
-            if length:
+            if 0 < length <= 4_000_000:  # Obergrenze gegen Speicher-Überlauf
                 return json.loads(self.rfile.read(length).decode("utf-8"))
         except Exception:
             pass
@@ -252,22 +258,32 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.send_response(404); self.end_headers()
 
-    def _origin_ok(self):
-        """Schützt vor fremden Webseiten, die heimlich PC-Aktionen auslösen wollen
-        (CSRF / DNS-Rebinding). Nur Anfragen von Dinos eigener, lokaler Seite erlaubt."""
-        origin = self.headers.get("Origin")
-        if origin:
-            o = origin.lower()
-            if not (o.startswith("http://127.0.0.1") or o.startswith("http://localhost")):
-                return False
+    def _request_ok(self):
+        """Schützt vor fremden Webseiten, die heimlich (PC-)Aktionen auslösen wollen
+        (CSRF / DNS-Rebinding). Drei Schichten:
+          1) geheimes Token, das nur in Dinos eigener Seite steht (fremde Seite kennt es nicht),
+          2) Herkunft (Origin) muss lokal sein,
+          3) Inhaltstyp muss JSON sein (verhindert simple Formular-POSTs)."""
+        # 1) Token — die eigentliche Sperre
+        if self.headers.get("X-Dino-Token") != CSRF_TOKEN:
+            return False
+        # 2) Origin (falls vorhanden) muss lokal sein
+        origin = (self.headers.get("Origin") or "").lower()
+        if origin and not (origin.startswith("http://127.0.0.1") or origin.startswith("http://localhost")):
+            return False
+        # 3) Host muss lokal sein (gegen DNS-Rebinding)
         host = (self.headers.get("Host") or "").split(":")[0].lower()
-        if host and host not in ("127.0.0.1", "localhost", ""):
+        if host and host not in ("127.0.0.1", "localhost"):
+            return False
+        # 4) nur JSON-Anfragen
+        ctype = (self.headers.get("Content-Type") or "").lower()
+        if "application/json" not in ctype:
             return False
         return True
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if not self._origin_ok():
+        if not self._request_ok():
             self._send_json({"error": "Abgelehnt: Anfrage kommt nicht von Dinos lokaler Seite."}, code=403)
             return
         body = self._body()

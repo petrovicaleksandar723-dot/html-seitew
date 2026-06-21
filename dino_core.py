@@ -848,10 +848,12 @@ Bestätigung kam. Schlag bei heiklen Befehlen lieber den kleinsten, sichersten S
         return out
 
     def _safe_path(self, name):
-        """Begrenzt Datei-Aktionen sicher auf den Ordner 'Dino-Dateien'."""
-        base = os.path.abspath(DINO_FILES_DIR)
-        os.makedirs(base, exist_ok=True)
-        target = os.path.abspath(os.path.join(base, (name or "").strip().lstrip("/\\")))
+        """Begrenzt Datei-Aktionen sicher auf den Ordner 'Dino-Dateien'.
+        Nutzt realpath -> löst auch Symlinks auf, damit man nicht über einen
+        Link aus dem Ordner ausbrechen kann."""
+        os.makedirs(DINO_FILES_DIR, exist_ok=True)
+        base = os.path.realpath(DINO_FILES_DIR)
+        target = os.path.realpath(os.path.join(base, (name or "").strip().lstrip("/\\")))
         if target != base and not target.startswith(base + os.sep):
             return None
         return target

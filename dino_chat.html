@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="dino-csrf" content="__DINO_CSRF__">
 <title>🦖 Dino KI</title>
 <style>
 /* ============================================================
@@ -498,8 +499,9 @@ function hideTyping(){ if (typingEl){ typingEl.remove(); typingEl = null; } }
 // ============================================================
 //  Netzwerk
 // ============================================================
+const DINO_CSRF = (document.querySelector('meta[name="dino-csrf"]') || {}).content || "";
 async function api(path, method, body){
-  const opt = { method: method || "GET", headers:{} };
+  const opt = { method: method || "GET", headers:{ "X-Dino-Token": DINO_CSRF } };
   if (body !== undefined){ opt.headers["Content-Type"]="application/json"; opt.body = JSON.stringify(body); }
   const res = await fetch(path, opt);
   // Versuche JSON zu lesen – auch bei 4xx/5xx kann ein {error} kommen
