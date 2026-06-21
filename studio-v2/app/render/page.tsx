@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Overlay } from "@/components/cosmos/overlay";
+import { Overlay } from "@/components/render/overlay";
 import { Cursor } from "@/components/cosmos/cursor";
 import { Preloader } from "@/components/cosmos/preloader";
 
-const CosmosScene = dynamic(
-  () => import("@/components/cosmos/scene").then((m) => m.CosmosScene),
+const RenderScene = dynamic(
+  () => import("@/components/render/scene").then((m) => m.RenderScene),
   { ssr: false }
 );
 
@@ -22,41 +22,32 @@ function useWebGLCapable() {
     } catch {
       gl = false;
     }
-    // full WebGL flight on capable desktops; lighter experience elsewhere
     setOk(gl && !reduce && !coarse);
   }, []);
   return ok;
 }
 
-export default function ExperiencePage() {
+export default function RenderPage() {
   const capable = useWebGLCapable();
   const [entered, setEntered] = useState(false);
 
-  // lock scroll until the user enters the experience
   useEffect(() => {
-    if (capable && !entered) {
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.documentElement.style.overflow = "";
-    }
+    document.documentElement.style.overflow = capable && !entered ? "hidden" : "";
     return () => {
       document.documentElement.style.overflow = "";
     };
   }, [capable, entered]);
 
-  if (capable === null) {
-    return <div className="min-h-screen bg-bg" />;
-  }
+  if (capable === null) return <div className="min-h-screen bg-bg" />;
 
   return (
     <main className="relative">
       {capable ? (
         <>
-          <CosmosScene />
+          <RenderScene />
           <Preloader onEnter={() => setEntered(true)} />
         </>
       ) : (
-        // mobile / reduced-motion fallback: static premium backdrop, full content
         <div
           aria-hidden
           className="pointer-events-none fixed inset-0 -z-10"
