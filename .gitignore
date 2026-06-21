@@ -5,3 +5,7 @@ dino_memory.json
 # Python
 __pycache__/
 *.pyc
+
+# Stimmen-Proben / generierte Audio-Artefakte (gehoeren nicht ins Repo)
+*.mp3
+Dino-Log.txt
