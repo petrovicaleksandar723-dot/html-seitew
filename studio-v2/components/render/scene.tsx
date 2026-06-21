@@ -18,19 +18,19 @@ const CAM = [
   new THREE.Vector3(0, 1.5, 9),
   new THREE.Vector3(7, 2, 3),
   new THREE.Vector3(4, -1.5, -2),
-  new THREE.Vector3(-6, 1, -7),
-  new THREE.Vector3(3, 2.5, -12),
-  new THREE.Vector3(0, 1.5, -17),
-  new THREE.Vector3(0, 1, -22),
+  new THREE.Vector3(-6, 1, -6),
+  new THREE.Vector3(-3, 1.6, -10),
+  new THREE.Vector3(2.4, 1.8, -10),
+  new THREE.Vector3(0, 1.8, -8.5),
 ];
 const LOOK = [
   new THREE.Vector3(0, 0.5, 0),
   new THREE.Vector3(0, 0.5, -2),
   new THREE.Vector3(0, 0, -5),
-  new THREE.Vector3(0, 0.8, -10),
+  new THREE.Vector3(0, 0.9, -11),
   new THREE.Vector3(0, 1, -14),
-  new THREE.Vector3(0, 1, -16),
-  new THREE.Vector3(0, 1, -22),
+  new THREE.Vector3(0, 1, -14.5),
+  new THREE.Vector3(0, 1, -15),
 ];
 
 function CameraRig() {
@@ -115,23 +115,23 @@ function Contents() {
       <Shards />
       <Monoliths />
 
-      {/* gold core at journey's end */}
-      <mesh position={[0, 1, -22]}>
+      {/* gold core glowing behind the monoliths at journey's end */}
+      <mesh position={[0, 1, -19.5]}>
         <icosahedronGeometry args={[0.9, 0]} />
         <meshStandardMaterial color="#f1d6a0" emissive="#d8b274" emissiveIntensity={2.4} flatShading metalness={0.7} roughness={0.2} />
       </mesh>
-      <pointLight position={[0, 1, -22]} intensity={7} distance={16} color="#f1d6a0" />
+      <pointLight position={[0, 1, -19.5]} intensity={7} distance={16} color="#f1d6a0" />
     </>
   );
 }
 
 export function RenderScene() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
+    <div className="pointer-events-none fixed inset-0 z-0">
       <Canvas
         dpr={[1, 1.6]}
         performance={{ min: 0.5 }}
-        gl={{ antialias: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
+        gl={{ antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance", toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
         camera={{ fov: 38, position: [0, 1.5, 9], near: 0.1, far: 80 }}
       >
         <Suspense fallback={null}>

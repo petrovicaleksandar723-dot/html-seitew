@@ -9,7 +9,7 @@ import { Experience } from "@/components/cosmos/experience";
 
 export function CosmosScene() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
+    <div className="pointer-events-none fixed inset-0 z-0">
       <Canvas
         dpr={[1, 1.6]}
         performance={{ min: 0.5 }}
