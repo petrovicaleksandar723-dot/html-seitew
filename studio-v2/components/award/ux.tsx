@@ -9,7 +9,9 @@ import {
   useInView,
   useScroll,
   useTransform,
+  useVelocity,
   animate,
+  type MotionValue,
   type MotionProps,
 } from "framer-motion";
 
@@ -351,3 +353,137 @@ export const stagger = (i: number, base = 0): MotionProps => ({
   viewport: { once: true, margin: "-8% 0px" },
   transition: { duration: 0.6, delay: base + i * 0.06, ease: EASE_OUT },
 });
+
+/* ======================================================================
+   SCROLL-LINKED MOTION — continuous, tied to scroll position (not once).
+   These keep the page alive while scrolling. All GPU (transform/opacity),
+   all reduced-motion safe.
+   ====================================================================== */
+
+/** Vertical parallax: child drifts as its frame crosses the viewport.
+ *  `amount` in px (total travel ≈ 2×amount). dir -1 reverses. */
+export function ParallaxY({
+  children,
+  amount = 60,
+  dir = 1,
+  className,
+}: {
+  children: ReactNode;
+  amount?: number;
+  dir?: 1 | -1;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [amount * dir, -amount * dir]);
+  return (
+    <div ref={ref} className={className}>
+      <motion.div className="will-change-transform" style={reduce ? undefined : { y }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+/** Image with built-in parallax + gentle scale — overscanned so no gap shows.
+ *  Drop-in for any cover image; the frame keeps its own aspect via className. */
+export function ParallaxImage({
+  src,
+  alt = "",
+  amount = 14,
+  zoom = 1.12,
+  className = "",
+  imgClassName = "",
+}: {
+  src: string;
+  alt?: string;
+  amount?: number;
+  zoom?: number;
+  className?: string;
+  imgClassName?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [`-${amount}%`, `${amount}%`]);
+  return (
+    <div ref={ref} className={`overflow-hidden ${className}`}>
+      <motion.img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        style={reduce ? { transform: `scale(${zoom})` } : { y, scale: zoom }}
+        className={`absolute left-1/2 top-1/2 h-[124%] w-[124%] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover will-change-transform ${imgClassName}`}
+      />
+    </div>
+  );
+}
+
+/** Scroll-scrubbed reveal: opacity + y + optional scale driven directly by
+ *  scroll position over the element's entry — so it animates *as you scroll*,
+ *  not in a single fire-and-forget tween. */
+export function ScrollScrub({
+  children,
+  className,
+  from = 60,
+  scaleFrom = 0.96,
+}: {
+  children: ReactNode;
+  className?: string;
+  from?: number;
+  scaleFrom?: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.45"] });
+  const y = useTransform(scrollYProgress, [0, 1], [from, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const scale = useTransform(scrollYProgress, [0, 1], [scaleFrom, 1]);
+  return (
+    <div ref={ref} className={className}>
+      <motion.div className="will-change-transform" style={reduce ? undefined : { y, opacity, scale }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+/** Pin a block and scale/fade it out as the user scrolls past — gives the
+ *  hero a cinematic "settle" instead of a hard cut. Wrap the hero inner. */
+export function useExitOnScroll(targetRef: React.RefObject<HTMLElement>) {
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: targetRef, offset: ["start start", "end start"] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  return reduce ? {} : { scale, opacity, y };
+}
+
+/** Scroll-velocity skew — content leans into fast scrolls, settles on stop.
+ *  The signature "alive" award effect. Use on a wrapper around a section. */
+export function useVelocitySkew(max = 4): MotionValue<number> | number {
+  const reduce = useReducedMotion();
+  const { scrollY } = useScroll();
+  const v = useVelocity(scrollY);
+  const smooth = useSpring(v, { stiffness: 280, damping: 60, mass: 0.4 });
+  const skew = useTransform(smooth, [-2500, 0, 2500], [-max, 0, max], { clamp: true });
+  return reduce ? 0 : skew;
+}
+
+export function VelocitySkew({
+  children,
+  max = 4,
+  className,
+}: {
+  children: ReactNode;
+  max?: number;
+  className?: string;
+}) {
+  const skewY = useVelocitySkew(max);
+  return (
+    <motion.div style={{ skewY }} className={className}>
+      {children}
+    </motion.div>
+  );
+}

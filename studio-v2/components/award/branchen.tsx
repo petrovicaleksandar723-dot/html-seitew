@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { AnimatedHeading, EASE_OUT } from "@/components/award/ux";
+import { AnimatedHeading, EASE_OUT, ParallaxY } from "@/components/award/ux";
 import { BRANCHES } from "@/lib/cl-data";
 
 export function AwBranchen() {
@@ -36,6 +36,7 @@ export function AwBranchen() {
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] items-start">
           {/* LEFT — vertical tab list */}
+          <ParallaxY amount={14}>
           <div role="tablist" aria-label="Branchen" className="flex flex-col">
             {BRANCHES.map((x, i) => {
               const isActive = i === active;
@@ -79,8 +80,10 @@ export function AwBranchen() {
               );
             })}
           </div>
+          </ParallaxY>
 
           {/* RIGHT — visual + content panel */}
+          <ParallaxY amount={38}>
           <div>
             {/* Visual */}
             <div className="relative aspect-[4/5] overflow-hidden rounded-[24px] border border-line bg-surface">
@@ -163,6 +166,7 @@ export function AwBranchen() {
               </AnimatePresence>
             </div>
           </div>
+          </ParallaxY>
         </div>
       </div>
     </section>

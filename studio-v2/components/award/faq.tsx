@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { Reveal, AnimatedHeading, EASE_OUT } from "@/components/award/ux";
+import { Reveal, AnimatedHeading, EASE_OUT, ParallaxY } from "@/components/award/ux";
 import { Icon } from "@/components/cl/icons";
 import { FAQ, MAIL } from "@/lib/cl-data";
 
@@ -43,7 +43,7 @@ export function AwFaq() {
           </div>
 
           {/* RIGHT — accordion */}
-          <div className="flex flex-col gap-3">
+          <ParallaxY amount={24} className="flex flex-col gap-3">
             {FAQ.map(({ q, a }, i) => {
               const isOpen = open === i;
               return (
@@ -88,7 +88,7 @@ export function AwFaq() {
                 </div>
               );
             })}
-          </div>
+          </ParallaxY>
         </div>
       </div>
     </section>

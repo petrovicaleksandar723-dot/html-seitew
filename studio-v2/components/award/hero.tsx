@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Reveal,
@@ -8,7 +9,8 @@ import {
   CountUp,
   LazyVideo,
   Phone,
-  Parallax,
+  ParallaxY,
+  useExitOnScroll,
   stagger,
   EASE_IN_OUT,
 } from "@/components/award/ux";
@@ -17,6 +19,8 @@ import { STATS, HERO_VIDEO, MAIL } from "@/lib/cl-data";
 
 export function AwHero() {
   const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const exit = useExitOnScroll(sectionRef);
 
   const float = (distance: number, duration: number) =>
     reduce
@@ -27,16 +31,22 @@ export function AwHero() {
         };
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden pt-32 pb-20">
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-screen items-center overflow-hidden pt-32 pb-20"
+    >
       {/* ambient backdrop */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-1/4 right-[-10%] h-[80vh] w-[80vh] rounded-full bg-gold/[0.07] blur-[140px]"
       />
 
-      <div className="mx-auto grid w-full max-w-[1320px] grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+      <motion.div
+        style={exit}
+        className="mx-auto grid w-full max-w-[1320px] grid-cols-1 items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8"
+      >
         {/* ---------------------------------------------------------- LEFT */}
-        <div className="relative z-[2]">
+        <ParallaxY amount={26} className="relative z-[2]">
           <Reveal y={10}>
             <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-gold">
               Content-Studio für lokale Betriebe
@@ -100,17 +110,23 @@ export function AwHero() {
               </motion.div>
             ))}
           </div>
-        </div>
+        </ParallaxY>
 
         {/* --------------------------------------------------------- RIGHT */}
         <div className="relative grid place-items-center">
           {/* gold radial glow */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute h-[120%] w-[120%] rounded-full bg-[radial-gradient(circle,rgba(216,178,116,0.18),transparent_62%)] blur-2xl"
-          />
+          <ParallaxY
+            amount={120}
+            dir={-1}
+            className="pointer-events-none absolute h-[120%] w-[120%]"
+          >
+            <div
+              aria-hidden
+              className="h-full w-full rounded-full bg-[radial-gradient(circle,rgba(216,178,116,0.18),transparent_62%)] blur-2xl"
+            />
+          </ParallaxY>
 
-          <Parallax amount={40} className="relative">
+          <ParallaxY amount={70} className="relative">
             <motion.div {...(float(12, 5) ?? {})}>
               <Phone width={300} live>
                 <LazyVideo
@@ -120,38 +136,41 @@ export function AwHero() {
                 />
               </Phone>
             </motion.div>
-          </Parallax>
+          </ParallaxY>
 
           {/* floating glass chips */}
-          <Reveal
-            delay={0.55}
-            y={14}
+          <ParallaxY
+            amount={110}
+            dir={-1}
             className="absolute left-0 top-10 z-[3] sm:-left-2 lg:left-[-4%]"
           >
-            <motion.div
-              {...(float(8, 6) ?? {})}
-              className="flex items-center gap-2 rounded-2xl border border-line bg-bg/70 px-4 py-2.5 text-[13px] font-semibold text-ink shadow-xl backdrop-blur"
-            >
-              <Icon name="growth" className="h-4 w-4 text-gold-bright" />
-              +128% Reichweite
-            </motion.div>
-          </Reveal>
+            <Reveal y={14} delay={0.55}>
+              <motion.div
+                {...(float(8, 6) ?? {})}
+                className="flex items-center gap-2 rounded-2xl border border-line bg-bg/70 px-4 py-2.5 text-[13px] font-semibold text-ink shadow-xl backdrop-blur"
+              >
+                <Icon name="growth" className="h-4 w-4 text-gold-bright" />
+                +128% Reichweite
+              </motion.div>
+            </Reveal>
+          </ParallaxY>
 
-          <Reveal
-            delay={0.7}
-            y={14}
+          <ParallaxY
+            amount={50}
             className="absolute bottom-12 right-0 z-[3] sm:-right-2 lg:right-[-4%]"
           >
-            <motion.div
-              {...(float(10, 6.8) ?? {})}
-              className="flex items-center gap-2 rounded-2xl border border-line bg-bg/70 px-4 py-2.5 text-[13px] font-semibold text-ink shadow-xl backdrop-blur"
-            >
-              <Icon name="check" className="h-4 w-4 text-gold-bright" />
-              Reel-Idee
-            </motion.div>
-          </Reveal>
+            <Reveal y={14} delay={0.7}>
+              <motion.div
+                {...(float(10, 6.8) ?? {})}
+                className="flex items-center gap-2 rounded-2xl border border-line bg-bg/70 px-4 py-2.5 text-[13px] font-semibold text-ink shadow-xl backdrop-blur"
+              >
+                <Icon name="check" className="h-4 w-4 text-gold-bright" />
+                Reel-Idee
+              </motion.div>
+            </Reveal>
+          </ParallaxY>
         </div>
-      </div>
+      </motion.div>
 
       {/* scroll cue */}
       <div className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex">

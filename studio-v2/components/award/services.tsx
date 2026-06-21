@@ -9,6 +9,7 @@ import {
   SPRING,
   EASE_OUT,
   useHoverCapable,
+  ParallaxY,
 } from "@/components/award/ux";
 import { Icon } from "@/components/cl/icons";
 import { SERVICES } from "@/lib/cl-data";
@@ -30,10 +31,11 @@ function ServiceCard({
   const showGlow = hover && !reduce;
 
   return (
-    <motion.div
-      {...stagger(i)}
+    <ParallaxY
+      amount={featured ? 18 : i % 2 === 0 ? 28 : 58}
       className={featured ? "lg:col-span-2 lg:row-span-1" : ""}
     >
+    <motion.div {...stagger(i)} className="h-full">
       <motion.article
         ref={ref}
         whileHover={showGlow ? { y: -6 } : undefined}
@@ -106,6 +108,7 @@ function ServiceCard({
         </div>
       </motion.article>
     </motion.div>
+    </ParallaxY>
   );
 }
 
@@ -115,6 +118,7 @@ export function AwServices() {
       id="leistungen"
       className="relative mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32"
     >
+      <ParallaxY amount={20}>
       <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-gold">
         01 — Leistungen
       </div>
@@ -136,6 +140,7 @@ export function AwServices() {
           Betrieb. Du veröffentlichst nur noch und wirkst sofort aktiver.
         </p>
       </Reveal>
+      </ParallaxY>
 
       <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {SERVICES.map((item, i) => (

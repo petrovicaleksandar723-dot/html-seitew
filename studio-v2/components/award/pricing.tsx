@@ -7,6 +7,7 @@ import {
   Button,
   stagger,
   useHoverCapable,
+  ParallaxY,
 } from "@/components/award/ux";
 import { Icon } from "@/components/cl/icons";
 import { PLANS, PAYS, MAIL } from "@/lib/cl-data";
@@ -23,28 +24,30 @@ export function AwPricing() {
           </span>
         </Reveal>
 
-        <AnimatedHeading
-          as="h2"
-          lines={[
-            "Wähle, wie sichtbar dein",
-            <span key="g" className="text-gold">
-              Betrieb werden soll.
-            </span>,
-          ]}
-          className="mx-auto mt-5 max-w-[20ch] text-center font-display text-[clamp(34px,5.5vw,64px)] font-extrabold leading-[1.04] tracking-[-0.03em]"
-        />
+        <ParallaxY amount={16}>
+          <AnimatedHeading
+            as="h2"
+            lines={[
+              "Wähle, wie sichtbar dein",
+              <span key="g" className="text-gold">
+                Betrieb werden soll.
+              </span>,
+            ]}
+            className="mx-auto mt-5 max-w-[20ch] text-center font-display text-[clamp(34px,5.5vw,64px)] font-extrabold leading-[1.04] tracking-[-0.03em]"
+          />
 
-        <Reveal delay={0.1}>
-          <p className="mx-auto mt-5 max-w-[560px] text-center text-[clamp(15px,1.2vw,17px)] text-dim">
-            Drei klare Pakete — je nachdem, ob du starten, wachsen oder deinen
-            Auftritt auf Premium-Niveau bringen willst.
-          </p>
-        </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mx-auto mt-5 max-w-[560px] text-center text-[clamp(15px,1.2vw,17px)] text-dim">
+              Drei klare Pakete — je nachdem, ob du starten, wachsen oder deinen
+              Auftritt auf Premium-Niveau bringen willst.
+            </p>
+          </Reveal>
+        </ParallaxY>
 
         <div className="mt-16 grid items-center gap-6 lg:grid-cols-3">
           {PLANS.map((p, i) => (
+            <ParallaxY key={p.name} amount={p.featured ? 18 : 50}>
             <motion.div
-              key={p.name}
               {...stagger(i)}
               whileHover={hover && !p.featured ? { y: -6 } : undefined}
               className={`relative rounded-[24px] border bg-gradient-to-b from-surface to-bg-2 p-8 ${
@@ -97,6 +100,7 @@ export function AwPricing() {
                 {p.cta}
               </Button>
             </motion.div>
+            </ParallaxY>
           ))}
         </div>
 

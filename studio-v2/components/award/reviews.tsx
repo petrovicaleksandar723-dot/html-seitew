@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatedHeading, CountUp, Marquee, Reveal } from "@/components/award/ux";
+import { AnimatedHeading, CountUp, Marquee, Reveal, ScrollScrub, VelocitySkew } from "@/components/award/ux";
 import { REVIEWS } from "@/lib/cl-data";
 
 function ReviewCard({ text, name, role }: { text: string; name: string; role: string }) {
@@ -26,12 +26,14 @@ export function AwReviews() {
   return (
     <section className="py-24">
       <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
-        <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-gold">Bewertungen</span>
-        <AnimatedHeading
-          as="h2"
-          lines={["Betriebe, die nicht mehr", <span key="g" className="text-gold">planlos posten.</span>]}
-          className="mt-5 font-display text-[clamp(34px,5.5vw,68px)] font-extrabold leading-[1.02] tracking-[-0.03em]"
-        />
+        <ScrollScrub>
+          <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-gold">Bewertungen</span>
+          <AnimatedHeading
+            as="h2"
+            lines={["Betriebe, die nicht mehr", <span key="g" className="text-gold">planlos posten.</span>]}
+            className="mt-5 font-display text-[clamp(34px,5.5vw,68px)] font-extrabold leading-[1.02] tracking-[-0.03em]"
+          />
+        </ScrollScrub>
       </div>
 
       <div className="relative mt-14 space-y-5">
@@ -43,10 +45,12 @@ export function AwReviews() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-bg to-transparent"
         />
-        <Marquee speed={48}>{cards}</Marquee>
-        <Marquee speed={48} reverse>
-          {cards}
-        </Marquee>
+        <VelocitySkew max={2.5} className="space-y-5">
+          <Marquee speed={48}>{cards}</Marquee>
+          <Marquee speed={48} reverse>
+            {cards}
+          </Marquee>
+        </VelocitySkew>
       </div>
 
       <Reveal className="mt-12 text-center text-[15px] text-dim">

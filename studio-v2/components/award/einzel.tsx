@@ -8,6 +8,7 @@ import {
   stagger,
   SPRING,
   useHoverCapable,
+  ParallaxY,
 } from "@/components/award/ux";
 import { Icon } from "@/components/cl/icons";
 import { EINZEL, MAIL } from "@/lib/cl-data";
@@ -18,6 +19,7 @@ function EinzelCard({ item, i }: { item: (typeof EINZEL)[number]; i: number }) {
   const lift = hover && !reduce;
 
   return (
+    <ParallaxY amount={i % 2 === 0 ? 28 : 58}>
     <motion.article
       {...stagger(i)}
       whileHover={lift ? { y: -6 } : undefined}
@@ -46,12 +48,14 @@ function EinzelCard({ item, i }: { item: (typeof EINZEL)[number]; i: number }) {
         <p className="mt-3 text-[15px] text-dim leading-relaxed">{item.body}</p>
       </div>
     </motion.article>
+    </ParallaxY>
   );
 }
 
 export function AwEinzel() {
   return (
     <section className="relative mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+      <ParallaxY amount={20}>
       <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-gold">
         Einzelaufträge
       </div>
@@ -72,6 +76,7 @@ export function AwEinzel() {
           und ein Ergebnis, das professionell wirkt.
         </p>
       </Reveal>
+      </ParallaxY>
 
       <div className="mt-14 grid gap-5 md:grid-cols-2">
         {EINZEL.map((item, i) => (
