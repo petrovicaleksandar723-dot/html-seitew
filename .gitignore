@@ -3,3 +3,4 @@
 # Standalone video renders delivered directly to the user (not site assets)
 /clean-lines-studios-15s.mp4
 *.render.mp4
+*.zip
